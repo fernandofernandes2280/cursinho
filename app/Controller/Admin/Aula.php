@@ -3,17 +3,7 @@
 namespace App\Controller\Admin;
 
 use \App\Utils\View;
-use \App\Model\Entity\Paciente as EntityPaciente;
-use \App\Model\Entity\Atendimento as EntityAtendimento;
-use \App\Model\Entity\AtendimentoAvulso as EntityAtendimentoAvulso;
-use \App\Model\Entity\Profissional as EntityProfissional;
-use \App\Model\Entity\Procedimento as EntityProcedimento;
 use \WilliamCosta\DatabaseManager\Pagination;
-use \App\Model\Entity\Agenda as EntityAgenda;
-use \App\Model\Entity\AgendaStatus as EntityAgendaStatus;
-use \App\Model\Entity\AgendaItems as EntityAgendaItems;
-use \App\Model\Entity\AgendaPresenca as EntityAgendaPresenca;
-
 use \App\Model\Entity\Aula as EntityAula;
 use \App\Model\Entity\Turma as EntityTurma;
 use \App\Model\Entity\Professor as EntityProfessor;
@@ -21,6 +11,7 @@ use \App\Model\Entity\Disciplina as EntityDisciplina;
 use \App\Model\Entity\DisciplinaProfessor as EntityDisciplinaProfessor;
 use \App\Model\Entity\Aluno as EntityAluno;
 use \App\Model\Entity\Frequencia as EntityFrequencia;
+use \App\Model\Entity\StatusAula as EntityStatusAula;
 
 class Aula extends Page{
 	
@@ -99,11 +90,12 @@ class Aula extends Page{
 			$filtroData = '';
 		}
 		
+		$turma = @$queryParams['turma'];
 		
 		//Condições SQL
 		$condicoes = [
 				
-		//		strlen($profissional) ? 'idProfissional = '.$profissional.' ' : null,
+				strlen($turma) ? 'turma = '.$turma.' ' : null,
 				strlen($filtroStatus) ? 'status = "'.$filtroStatus.'" ' : null,
 				strlen($filtroData) ? 'data = "'.$filtroData.'" ' : null
 		];
@@ -113,10 +105,7 @@ class Aula extends Page{
 		
 		//cláusula where
 		$where = implode(' AND ', $condicoes);
-	//	$where = 'id = 2 ';
-	//var_dump($where);exit;
-		//Quantidade total de registros
-		// $quantidadeTotal = EntityPaciente::getPacientes($where, null,null,'COUNT(*) as qtd')->fetchObject()->qtd;
+
 		
 		self::$qtdTotal = EntityAula::getAulas($where, 'data DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
 		
@@ -131,9 +120,6 @@ class Aula extends Page{
 		//Renderiza
 		while ($obAula = $results -> fetchObject(EntityAula::class)) {
 			
-			//retorna a qtd de pacientes de cada agenda
-		//	$qtdPacAgenda = EntityAgendaItems::getAgendaItems('idAgenda = '.$obAgenda->id.' ', 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
-
 			//View de Agendas
 			$resultados .= View::render('admin/modules/aulas/item',[
 
@@ -159,9 +145,7 @@ class Aula extends Page{
 		//Recebe os parâmetros da requisição
 		$queryParams = $request->getQueryParams();
 		
-	//	var_dump($queryParams); exit;
-		
-		$idProfissional = @$queryParams['profissional'] ?? null; 
+		$idTurma = @$queryParams['turma'] ?? null; 
 		$status = @$queryParams['status'] ?? null;
 		$data = @$queryParams['data'];
 		//Conteúdo da Home
@@ -171,8 +155,8 @@ class Aula extends Page{
 				'pagination' => parent::getPagination($request, $obPagination),
 				'totalAtendimentos' => self::$qtdTotal,
 				'statusMessage' => self::getStatus($request),
-				
-			//	'optionStatus' => self::getAgendaStatus($status),
+		        'optionTurma' => EntityTurma::getSelectTurmas($idTurma),
+		        'optionStatus' => EntityStatusAula::getSelectStatusAula($status),
 				'acao' => 'Pesquisa',
 				'data' => $data
 				
