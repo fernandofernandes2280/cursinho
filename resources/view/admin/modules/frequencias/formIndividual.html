@@ -1,16 +1,16 @@
 
 <form  method="post" action="?page=1">
 	<div class="row">
-			<div class="col-3 " >
+			<div class="col-md-3 " >
 			<h5>{{title}}</h5>
 			<input type="text" value="{{prontuario}}" hidden name="codPronto"/>
 		</div>
- 		<div class="col-7 " >
+ 		<div class="col-md-7 " >
 			{{statusMessage}}
 		</div>	
 	
 
-	<div class="col-2 text-right">
+	<div class="col-md-2 text-right">
 		<a href="{{URL}}/admin/frequencias">
 			<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
 				<i class="material-icons" style="font-size: 30px;">reply</i>
@@ -20,7 +20,7 @@
 </div>
 </form>	
 <div class="row">
-			<div class="col-6 " >
+			<div class="col-md-6 " >
 <div class="card card-stats">
           <div class="card-header card-header-success card-header-icon">
             <div class="card-icon">
@@ -29,7 +29,7 @@
             <p class="card-category">Lançar Frequência:</p>
            
             
-            <a href="{{URL}}/admin/frequencias">
+            <a href="{{URL}}/admin/frequencias/{{idAula}}/edit/individual">
 			<button type="button" class="btn btn-{{classebtn}} btn-round btn-sm " rel="tooltip" title="Frequência Individual">
 				Individual
 			</button>
@@ -50,11 +50,12 @@
       </div>
 
 	</div>
-	<div class="col-6">
+	<div class="col-md-6">
 	<form method="post">
+	
 			<a href="{{URL}}/admin/frequencias/{{id}}/edit/pesqAluno">
-			<button type="button" class="btn btn-info btn-round btn-sm " rel="tooltip" title="Frequência Geral">
-				Pesquisar Aluno
+			<button type="button" class="btn btn-facebook btn-round btn-sm " rel="tooltip" title="Pesquisar aluno">
+				<i class="material-icons" style="font-size: 30px;">search</i>Pesquisar Aluno
 			</button><br><br>
 		    </a>
 		    <label class="h5">Matrícula: {{matricula}}</label><br>

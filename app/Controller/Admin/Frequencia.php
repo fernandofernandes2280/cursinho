@@ -34,7 +34,10 @@ class Frequencia extends Page{
 	    //Mensagens de status
 	    switch ($queryParams['statusMessage']) {
 	        case 'confirmed':
-	            return Alert::getSuccess('Presença confirmada com sucesso!');
+	            return Alert::getSuccess('Presença Registrada com sucesso!');
+	            break;
+	        case 'jaconfirmed':
+	            return Alert::getWarning('Presença Já Registrada!');
 	            break;
 	        case 'updated':
 	            return Alert::getSuccess('Aula atualizada com sucesso!');
@@ -146,7 +149,7 @@ class Frequencia extends Page{
 		
 		//Conteúdo da Home
 		$content = View::render('admin/modules/frequencias/index',[
-				 'title'=> 'Frequências Abertas',
+				 'title'=> 'Frequências > Aulas Abertas',
 		         'aulas' => $resultados
 				
 				 
@@ -195,8 +198,10 @@ class Frequencia extends Page{
 	        'idAluno' => '',
 	        'turma' => '',
 	        'escondeBotaoConfirmar' => 'hidden',
-	        'classebtn' => 'info',
-	        'status' =>''
+	        'classebtn' => 'facebook',
+	        'status' =>'',
+	        'idAula' => $obAula->id,
+	        'statusMessage'=> ''
 	        
 	    ]);
 	    
@@ -253,21 +258,18 @@ class Frequencia extends Page{
 	    //obtem a frequencia
 	    $obFreq = EntityFrequencia::getFrequencias('idAula = '.$id.' AND idAluno = '.$idAluno) -> fetchObject(EntityFrequencia::class);
 	   
-	    //REGRA 1: de seg a sex, apenas alunos de suas respectivas turmas;
-	    //REGRA 2: sáb e Dom, todos os alunos de todas as turmas podem participar
+	    //REGRA : O aluno pode frequentas as aulas em qualquer dia e turma
 	    
-	    //verifica se a aula é no sábado ou domingo
-	    $diaSemana = array("SÁB", "DOM");
-	    if(!in_array($obAula->diaSemana,$diaSemana)){
 	        //se nao for, verifica se o aluno é da mesma turma da a aula 
-	        if(!$obFreq instanceof EntityFrequencia){
-	            //Redireciona caso aluno seje de outra turma
-	            $request->getRouter()->redirect('/admin/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=error');
-	        }else{//se for da mesma turma, registra a presença do mesmo
+	        if($obFreq instanceof EntityFrequencia){
+	            if($obFreq->status == 'P'){
+	                $request->getRouter()->redirect('/admin/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=jaconfirmed');
+	            }
+
 	            $obFreq->status = 'P';
 	            $obFreq->autor = 2; //id temporario do usuario logado para testes
 	            $obFreq->atualizar();
-	        }
+	        
 	    }else{
 	        //se for sáb ou dom, cria nova instancia de frequencia e registra a presença do aluno
 	        $frequencia = new EntityFrequencia();

@@ -22,7 +22,13 @@ class Alert{
 		]);
 	}
 	
-	
+	//Método responsavel por retornar uma mensagem de Atenção
+	public static function getWarning($message){
+	    return View::render('admin/alert/status',[
+	        'tipo' => 'warning',
+	        'mensagem' => $message
+	    ]);
+	}
 
 	
 }
