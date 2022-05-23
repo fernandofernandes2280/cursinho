@@ -4,6 +4,8 @@ namespace App\Model\Entity;
 
 use \WilliamCosta\DatabaseManager\Database;
 use \App\Utils\View;
+use \App\Model\Entity\Disciplina as EntityDisciplina;
+use \App\Model\Entity\Aula as EntityAula;
 
 class DisciplinaProfessor{
 	
@@ -44,6 +46,42 @@ class DisciplinaProfessor{
 	    return true;
 	}
 	
+	//Método responsavel por listar os disciplinas do PRofessor no select option
+	public static function getSelectDisciplinasProfessor($id, $idAula,$idDisciplina){
+	    $resultados = '';
+	    
+	    $obAula = EntityAula::getAulaById($idAula);
+	    
+	    $discProf = self::getDisciplinasProfessor('idProfessor = '.$id);
+        	   
+	    while ($ob = $discProf -> fetchObject(self::class)) {
+	        //ARMAZENA OS IDS DAS DISCIPLINAS DO PROFESSOR NUM ARRAY
+	        $idDisc[] = $ob->idDisciplina; 
+	    }
+	    //SELECIONA AS DISCIPLINAS DO PROFESSOR
+	    $results =  EntityDisciplina::getDisciplinas('id IN ('.implode(",", $idDisc).')','nome asc',null);
+	    
 
+	    if (($id)) {
+	        $selected = '';
+	        while ($obDisciplina = $results -> fetchObject(self::class)) {
+	            
+	            //SELECIONA A DISCIPLINA DA AULA
+	            $obDisciplina->id == $idDisciplina ? $selected = 'selected' : $selected = '';
+
+	            //RENDEREIZA A VIEW DE ITENS DO SELECT
+	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	                'id' => $obDisciplina ->id,
+	                'nome' => $obDisciplina->nome,
+	                'selecionado' => $selected
+	            ]);
+	        }
+	        //RETORNA OS RESULTADOS
+	        return $resultados;
+	    }
+	    
+	    
+	    }
+	
 	
 }

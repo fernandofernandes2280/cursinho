@@ -18,6 +18,7 @@ use \App\Model\Entity\Aula as EntityAula;
 use \App\Model\Entity\Turma as EntityTurma;
 use \App\Model\Entity\Professor as EntityProfessor;
 use \App\Model\Entity\Disciplina as EntityDisciplina;
+use \App\Model\Entity\DisciplinaProfessor as EntityDisciplinaProfessor;
 use \App\Model\Entity\Aluno as EntityAluno;
 use \App\Model\Entity\Frequencia as EntityFrequencia;
 
@@ -50,7 +51,7 @@ class Aula extends Page{
 	            return Alert::getSuccess('Aula excluída com sucesso!');
 	            break;
 	        case 'duplicad':
-	            return Alert::getError('Aula duplicada!');
+	            return Alert::getError('Aula já Cadastrada!');
 	            break;
 	        case 'notFound':
 	            return Alert::getError('Aula não encontrada!');
@@ -190,7 +191,8 @@ class Aula extends Page{
 			         'title' => 'Aula > Nova',
 					'statusMessage' => self::getStatus($request),
 					'optionTurmas' => EntityTurma::getSelectTurmas(null),
-			        'optionProfessores' => EntityProfessor::getSelectProfessores(null),
+			        'optionProfessores1' => EntityProfessor::getSelectProfessores(null),
+			        'optionProfessores2' => EntityProfessor::getSelectProfessores(null),
 			        'optionStatus' => EntityAula::getSelectStatusAula(null),
 			    'obs' => '',
 			    'dia' => ''
@@ -272,13 +274,14 @@ class Aula extends Page{
 					'statusMessage' => self::getStatus($request),
 				    'data' => date('Y-m-d',strtotime($obAula->data)),
 				    'optionTurmas' => EntityTurma::getSelectTurmas($obAula->turma),
-				    'optionProfessores' => EntityProfessor::getSelectProfessores($obAula->professor1),
+				    'optionProfessores1' => EntityProfessor::getSelectProfessores($obAula->professor1),
+				    'optionProfessores2' => EntityProfessor::getSelectProfessores($obAula->professor2),
 				    'optionStatus' => EntityAula::getSelectStatusAula($obAula->status),
-				    'optionDisciplina1' => EntityDisciplina::getSelectDisciplinas($obAula->disciplina1),
-				    'optionDisciplina2' => EntityDisciplina::getSelectDisciplinas($obAula->disciplina2),
+				    'optionDisciplina1' => EntityDisciplinaProfessor::getSelectDisciplinasProfessor($obAula->professor1,$obAula->id,$obAula->disciplina1),
+				    'optionDisciplina2' => EntityDisciplinaProfessor::getSelectDisciplinasProfessor($obAula->professor2,$obAula->id,$obAula->disciplina2),
 				    'obs' => $obAula->obs,
-				    'desabilitaData' => 'readonly',
-				    'desabilitaTurma' => 'disabled',
+				 //   'desabilitaData' => 'readonly',
+				  //  'desabilitaTurma' => 'disabled',
 				    'dia' => $obAula->diaSemana
 						
 					
@@ -292,24 +295,44 @@ class Aula extends Page{
 	//Metodo responsável por gravar a edição de uma agenda
 	public static function setAulaEdit($request, $id){
 	
-			
+	    //Post Vars
+	    $postVars = $request->getPostVars();
+	    
+	    $data = $postVars['data'];
+	    $turma = $postVars['turma'];
+	    
+	    
 		//obtém a agenda do banco de dados
 	    $obAula = EntityAula::getAulaById($id);
 	    
-		//Valida a instancia
+	    //Valida a instancia
 	    if(!$obAula instanceof EntityAula){
-			$request->getRouter()->redirect('/admin/aulas');
-		}
+	        $request->getRouter()->redirect('/admin/aulas');
+	    }
+	    
+	
+	    //verifica se aula já existe
+	    $obVerifica = EntityAula::getAulaDuplicada($data, $turma);
+	    //Valida a instancia
+	    if($obVerifica instanceof EntityAula){
+	        //verifica se a aula encontrada é a mesma da aula que está sendo editada
+	        if($obVerifica->id != $id){
+	            $request->getRouter()->redirect('/admin/aulas/'.$obAula->id.'/edit?statusMessage=duplicad');
+	        }
+	    }
+	    
+	    
 		
-		//Post Vars
-		$postVars = $request->getPostVars();
-
+		
 		$obAula->professor1 = $postVars['professor1'];
 		$obAula->professor2 = $postVars['professor2'];
 		$obAula->disciplina1 = $postVars['disciplina1'];
 		$obAula->disciplina2 = $postVars['disciplina2'];
+		$obAula->turma = $postVars['turma'];
 		$obAula->status = $postVars['status'];
 		$obAula->obs = $postVars['obs'];
+		$obAula->diaSemana = $postVars['dia'];
+		$obAula->data = implode('-', array_reverse(explode('/', $postVars['data'])));
 			
 			$obAula->atualizar();
 			

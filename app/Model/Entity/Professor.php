@@ -173,7 +173,7 @@ class Professor extends Generica {
 	//Método responsavel por listar os Professores no select option,
 	public static function getSelectProfessores($id){
 	    $resultados = '';
-	    $results =  self::getProfessores(null,'nome asc',null);
+	    $results =  self::getProfessores('status = 1','nome asc',null);
 	    //verifica se o id não é nulo e obtém o Procedencia do banco de dados
 	    if (!is_null($id)) {
 	        $selected = '';
@@ -182,7 +182,7 @@ class Professor extends Generica {
 	            //seleciona a Turma do aluno
 	            $ob->id == $id ? $selected = 'selected' : $selected = '';
 	            //View de Turmas
-	            $resultados .= View::render('admin/modules/alunos/itemSelect',[
+	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
 	                'id' => $ob ->id,
 	                'nome' => $ob->nome,
 	                'selecionado' => $selected
@@ -193,7 +193,7 @@ class Professor extends Generica {
 	    }else{ //se for nulo, lista todos e seleciona um em branco
 	        while ($ob = $results -> fetchObject(self::class)) {
 	            $selected = '';
-	            $resultados .= View::render('admin/modules/alunos/itemSelect',[
+	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
 	                'id' => $ob ->id,
 	                'nome' => $ob->nome,
 	                'selecionado' => $selected
