@@ -94,8 +94,12 @@ class Aluno extends Page{
 		//Renderiza
 		while ($obAluno = $results -> fetchObject(EntityAluno::class)) {
 			 
+		    
 			//View de pacientes
 			$resultados .= View::render('admin/modules/alunos/item',[
+			    
+			    //muda cor do texto do status para azul(ativo) ou vermelho(inativo)
+			    $obAluno->status == 1 ? $cor = 'text-success' : $cor = 'text-danger',
 
 			    'nome' => $obAluno->nome,
 			    'status' =>EntityStatus::getStatusById($obAluno->status)->nome,
@@ -104,6 +108,7 @@ class Aluno extends Page{
 			    'matricula' => $obAluno->matricula,
 			    'turma' =>EntityTurma::getTurmaById($obAluno->turma)->nome,
 			    'foto' => $obAluno->foto,
+			    'cor' => $cor,
 					
 					
 					
