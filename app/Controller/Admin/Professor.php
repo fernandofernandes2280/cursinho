@@ -91,7 +91,6 @@ class Professor extends Page{
 			    'cpf' =>Funcoes::mask($obProfessor->cpf, '###.###.###-##') ,
 			    'status' =>EntityStatus::getStatusById($obProfessor->status)->nome,
 			    'id' => $obProfessor->id,
-			    'titleStatus'=> $titleStatus,
 			    'cor' => $cor,
 			    'email' => $obProfessor->email,
 			    'foto' => $obProfessor->foto

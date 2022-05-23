@@ -164,6 +164,7 @@ h7,
 .colfotoUser {width: 70%;}
 .colfotoFreq {width: 100%;}
 .col-nomeProf {width: 84.002%;}
+.pt-fotoProf {padding-top: 1rem !important;}
 
 @media only screen and (max-width: 768px) {
   /* For mobile phones: */
@@ -175,6 +176,7 @@ h7,
   .colfotoFreq {width: 70%;}
   .col-nomeProf {width: 100%;}
   .col-funcao {width: 100%;}
+  .pt-fotoProf {padding-top: 0rem !important;}
 }
 
 .borda1{
