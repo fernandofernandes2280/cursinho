@@ -1,0 +1,169 @@
+								<div class="row">
+									<div class="col-sm-6 card-title">
+										<h5>{{title}}</h5>
+									</div>
+									<div class="col-sm-6">
+										{{statusMessage}}
+									</div>
+								</div>
+								<form  method="post" action="?page=1">
+									<div class="row ">
+
+										<div class="col-12 align-self-end text-right">
+																				    	 
+										      <button class="btn btn-facebook btn-sm btn-round" type="submit" rel="tooltip" title="Salvar">
+										     	<i class="material-icons" style="font-size: 30px;">save</i>
+										     </button>
+											
+												<a href="{{URL}}/admin/aulas">
+													<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
+														<i class="material-icons" style="font-size: 30px;">reply</i>
+													</button>
+												</a>	
+										</div>
+									</div>
+
+									<div>
+										
+										  <div class="form-row">
+										    <div class="col-md-3 mb-2">
+										      <label for="data">Data da Aula</label>
+										      <input {{desabilitaData}} type="date" max="9999-12-31" class="form-control-pessoal" id="data" name="data" value="{{data}}" required  >
+										    </div>
+										     <div class="col-md-2 mb-2">
+										      <label for="data">Dia Semana</label>
+										      <input type="text" class="form-control-pessoal" id="dia" name="dia" value="{{dia}}" readonly  >
+										    </div>
+										    
+										    <div class="col-md-3 mb-2">
+										       		<label for="profissional">Turma</label>
+												       <select {{desabilitaTurma}} class="custom-select" id="turma" name="turma" required>
+												       <option></option>
+													        {{optionTurmas}}
+													   </select>
+										    </div>
+										    <div class="col-md-4 mb-2">
+										      <label for="status">Status</label>
+												<select class="custom-select" id="status" name="status" required >
+												  {{optionStatus}}
+												</select>
+										    </div>
+	
+										  </div>
+										  <div class="form-row">
+										    
+										    <div class="col-md-4 mb-2">
+									       		<label for="profissional">Professor 1ª Aula </label>
+											       <select class="custom-select" id="professor1" name="professor1" required>
+											       <option></option>
+												        {{optionProfessores}}
+											   </select>
+										    </div>
+								
+										    <div class="col-md-4 mb-2">
+									       		<label for="profissional">Disciplina </label>
+											       <select class="custom-select" id="disciplina1" name="disciplina1" required>
+											       <option></option>
+											       {{optionDisciplina1}}
+											   </select>
+										    </div>
+	
+										  </div>
+										  <div class="form-row">
+										    
+										    <div class="col-md-4 mb-2">
+									       		<label for="profissional">Professor 2ª Aula </label>
+											       <select class="custom-select" id="professor2" name="professor2" required>
+											       <option></option>
+												        {{optionProfessores}}
+											   </select>
+										    </div>
+								
+										    <div class="col-md-4 mb-2">
+									       		<label for="profissional">Disciplina </label>
+											       <select class="custom-select" id="disciplina2" name="disciplina2" required>
+											       <option></option>
+											         {{optionDisciplina2}}
+											   </select>
+										    </div>
+	
+										  </div>
+										    <div class="form-row">
+										    <label for="profissional">Observações</label>
+										    <div class="col-md-12 mb-2">
+									       	 <textarea class="form-control-pessoal" id="obs" name="obs" spellcheck="false">{{obs}} </textarea>
+										    </div>
+	
+										  </div>
+										
+	
+ <script type="text/javascript">
+ //preenche select automaticamente
+    $(document).ready(function()
+  		{
+  		
+  		 $("#data").on("change", function(){
+		     var d = this.value.split("-");
+		     var data = new Date(d[0], d[1]-1, d[2]).getDay();
+		     var dia_semana = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'][data];
+		     $("#dia").val(dia_semana);
+		  }).change();
+  		
+  			//Select Professor 1
+  			$("#professor1").change(function()
+  			{
+  				var value = $(this).val();
+  				$.post("{{URL}}/app/Controller/Ajax/disciplinaProfessor.php", {id:value}, function(result){
+  					$("#disciplina1").empty();
+  					if (result)
+  					{
+  						var options = '';
+  						$.each(result, function(i,v)
+  						{
+  							options = options + '<option value="'+ v.idDisciplina +'">'+ v.nome +'</option>'
+  						});
+  						$("#disciplina1").html(options);
+  					}
+  				}, "json");
+  			});
+  			
+  			//Select Professor 2
+  			$("#professor2").change(function()
+  			{
+  				var value = $(this).val();
+  				$.post("{{URL}}/app/Controller/Ajax/disciplinaProfessor.php", {id:value}, function(result){
+  					$("#disciplina2").empty();
+  					if (result)
+  					{
+  						var options = '';
+  						$.each(result, function(i,v)
+  						{
+  							options = options + '<option value="'+ v.idDisciplina +'">'+ v.nome +'</option>'
+  						});
+  						$("#disciplina2").html(options);
+  					}
+  				}, "json");
+  			});
+  		})
+
+</script>
+										
+										
+									
+									</div>
+			
+
+								</form>	
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  

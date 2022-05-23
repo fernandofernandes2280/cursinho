@@ -1,0 +1,83 @@
+
+<form  method="post" action="">
+	<div class="row">
+			<div class="col-3 " >
+			<h5>{{title}}</h5>
+			<input type="text" value="{{idAula}}" hidden name="idAula"/>
+		</div>
+ 		<div class="col-4 " >
+			{{statusMessage}}
+		</div>	
+	
+
+	<div class="col-5 text-right">
+		<a href="{{URL}}/admin/frequencias">
+			<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
+				<i class="material-icons" style="font-size: 30px;">reply</i>
+			</button>
+		</a>
+	</div>
+</div>
+	
+<div class="row">
+			<div class="col-6 " >
+<div class="card card-stats">
+          <div class="card-header card-header-success card-header-icon">
+            <div class="card-icon">
+              {{aula}}
+            </div>
+            <p class="card-category">Lançar Frequência:</p>
+           
+            
+            <a href="{{URL}}/admin/frequencias/{{idAula}}/edit/individual">
+			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Frequência Individual">
+				Individual
+			</button>
+		    </a>
+		    <a href="{{URL}}/admin/frequencias">
+			<button type="submit" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Frequência Geral">
+				Geral
+			</button>
+		    </a>
+            
+            
+          </div>
+          <div class="card-footer">
+              <div class="stats">
+                  
+              </div>
+          </div>
+      </div>
+
+	</div>
+
+</div>						
+
+
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

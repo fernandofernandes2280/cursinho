@@ -1,0 +1,185 @@
+.rounded-circle,
+.avatar.rounded-circle img {
+  border-radius: 50% !important;
+}
+
+.avatar {
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  border-radius: 50rem;
+  height: 48px;
+  width: 48px;
+  transition: all .2s ease-in-out;
+}
+
+.avatar img {
+  width: 100%;
+}
+
+.avatar+.avatar-content {
+  display: inline-block;
+  margin-left: 0.75rem;
+}
+
+.avatar.avatar-raised {
+  margin-top: -24px;
+}
+
+.avatar.avatar-scale-up:hover {
+  transform: scale(1.2);
+}
+
+.active .avatar.avatar-scale-up {
+  transform: scale(1.2);
+}
+
+.avatar-xxl {
+  width: 200px !important;
+  height: 200px !important;
+}
+
+.avatar-xxl.avatar-raised {
+  margin-top: -55px;
+}
+
+.avatar-xl {
+  width: 74px !important;
+  height: 74px !important;
+}
+
+.avatar-xl.avatar-raised {
+  margin-top: -37px;
+}
+
+.avatar-lg {
+  width: 58px !important;
+  height: 58px !important;
+  font-size: 0.875rem;
+}
+
+.avatar-lg.avatar-raised {
+  margin-top: -29px;
+}
+
+.avatar-sm {
+  width: 36px !important;
+  height: 36px !important;
+  font-size: 0.875rem;
+}
+
+.avatar-sm.avatar-raised {
+  margin-top: -18px;
+}
+
+.avatar-xs {
+  width: 24px !important;
+  height: 24px !important;
+  font-size: 0.75rem;
+}
+
+.avatar-xs.avatar-raised {
+  margin-top: -12px;
+}
+
+.avatar-group .avatar {
+  position: relative;
+  z-index: 2;
+  border: 2px solid #fff;
+}
+
+.avatar-group .avatar:hover {
+  z-index: 3;
+}
+
+.avatar-group .avatar+.avatar {
+  margin-left: -1rem;
+}
+
+.navbar-vertical .navbar-nav .nav-link .avatar {
+  width: 1.875rem;
+  height: 1.875rem;
+}
+
+.rtl .avatar-group .avatar+.avatar {
+  margin-left: 0;
+  margin-right: -1rem;
+}
+
+
+h7,
+.h7 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #344767;
+}
+
+h7,
+.h7 {
+  font-size: 1rem;
+}
+.dark-version .sidenav.bg-white .collapse .nav-item h7,
+.dark-version .sidenav.bg-white .collapse .nav-item .h7 {
+  color: #344767 !important;
+}
+
+.dark-version h7,
+.dark-version .h7,
+.dark-version .h7,
+.dark-version a:not(.dropdown-item):not(.choices__item):not(.leaflet-control-zoom-in):not(.leaflet-control-zoom-out):not(.btn):not(.nav-link):not(.fixed-plugin-button),
+.dark-version .table thead tr th,
+.dark-version .kanban-title-board {
+  color: #fff !important;
+}
+h7,
+.h7,
+.h7 {
+  font-size: 1rem;
+  line-height: 1.625;
+}
+
+h7,
+.h7,
+.h7 {
+  font-weight: 600;
+}
+
+
+
+/* For desktop: */
+.col-data {width: 17%;}
+.col-cep {width: 16%;}
+.col-cpf {width: 17%;}
+.col-turma {width: 17%;}
+.col-obs {width: 56%;}
+.colfoto {width: 15%;}
+.col-nomeAl {width: 82%;}
+.col-endProf {width: 52%;}
+.col-funcao {width: 36%;}
+.col-emailProf {width: 47%;}
+.colfotoUser {width: 70%;}
+.colfotoFreq {width: 100%;}
+.col-nomeProf {width: 84.002%;}
+
+@media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+  [class*="col-"] {
+    width: 100%;
+  }
+  .colfoto {width: 30%;}
+  .colfotoUser {width: 30%;}
+  .colfotoFreq {width: 70%;}
+  .col-nomeProf {width: 100%;}
+  .col-funcao {width: 100%;}
+}
+
+.borda1{
+	 border-width: medium;
+  border-style: solid;
+  border-color: #00f;
+}
+

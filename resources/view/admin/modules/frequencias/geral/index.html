@@ -1,0 +1,476 @@
+<style>
+bodyu{
+  overflow: hidden;
+}
+</style>
+<style>
+    #reader {
+        width: 440px;
+        height: 330px;
+    }
+    .colfotoFreqGeral {
+    width: 14%;
+    margin-right: 2%;
+    }
+    @media(max-width: 640px) {
+        #reader {
+            width: 280px;
+            height: 240px;
+        }
+    
+	    .colfotoFreqGeral {
+		    width: 30%;
+		    margin-left: 2%;
+	    }
+	     .divDados {
+		    width: 60%;
+		    margin-left: 2%;
+	    }
+	      .divMsgPresenca {
+		    width: 90%;
+		    margin-left: 2%;
+	    }
+	   
+	    
+    
+    }
+    
+
+</style>
+<main>
+<br>
+<div class="container">
+	
+	<div class="row mb-4">
+		<div class="col-md-3 text-center pl-4">
+			<span class="h3 text-light">{{title}}</span>
+		</div>
+		<div class="col-md-8 text-center">
+			<div class="alert alert-primary col-md-12" role="alert">
+	 		<span class="h3">{{aula}}</span>
+	 		</div>
+		</div>
+		<div class="col-md-1 text-right pt-2">
+			
+				<a href="javascript:history.back()">
+				
+					<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
+					<span>	<i class="material-icons" style="font-size: 30px;">reply</i></span>
+					</button>
+					
+				</a>
+			
+		</div>
+	</div>
+
+
+<div class="row">
+    <div class="col-md-12 text-center">
+        <button id="start" hidden>Start Scanning</button>
+        <div class="empty"></div>
+        <div id="reader" style="display: inline-block;"></div>
+        <div class="empty"></div>
+        <div class="row justify-content-md-center ">
+        	
+        </div>
+    </div>
+</div>
+
+<div class="text-center" id="scanned-result"></div>
+
+
+
+</div>
+ 
+ 
+
+
+
+
+ 		
+ 		
+
+  <hr>
+  <div class="row text-center">
+  	<div class="col-md-12">
+  		<span class="text-light h3">Aproxime seu QRCODE da câmera, centralizando-o no local indicado.</span>
+  		 <p class="text-xs text-secondary mb-0">Desenvolvido por: Fernando (96)99115-8611</p>
+  	</div>
+  </div>
+  
+</main>
+
+<script>
+
+	var count = new Number();
+	var count = 4;  
+	// variável para o contador
+	var contador;
+	var tempo = document.getElementById("tempo");
+	function start(){
+	  if((count - 1) >= 0){
+	    count = count - 1;
+	     $("#timer").attr("value","Aguarde: "+count);
+	    contador = setTimeout(start,1000);
+	   
+	  }
+	}
+
+
+
+    var scanning = false;
+    var html5qrcode = new Html5Qrcode("reader", true);
+    function docReady(fn) {
+        // see if DOM is already available
+        if (document.readyState === "complete" || document.readyState === "interactive") {
+            // call on next available tick
+            setTimeout(fn, 1);
+        } else {
+            document.addEventListener("DOMContentLoaded", fn);
+        }
+    }
+    function startScanning(facingMode) {
+        console.log(facingMode)
+        var results = document.getElementById('scanned-result');
+        var lastMessage;
+        var codesFound = 0;
+        function onScanSuccess(qrCodeMessage) {
+            if (lastMessage !== qrCodeMessage) {
+                lastMessage = qrCodeMessage;
+                ++codesFound;
+              //  results.innerHTML += `<div>[${codesFound}] - ${qrCodeMessage}</div>`;
+
+
+                var dataString = { send : true , idAluno : qrCodeMessage, idAula : {{idAula}} };
+				var vartime = 3000;
+                $.ajax({
+
+                    type: "POST",
+                    url: "{{URL}}/app/Controller/Ajax/authenticateAluno.php",
+                    data: dataString,
+                    dataType: "json",
+                    cache : false,
+                    success: function(data){
+							
+							//Aluno existe	
+							if(data.successExiste == true){
+							
+								if(data.successAtivo){
+								
+								
+									if(data.successVinculo){
+									
+										//aluno já confirmou sua presença
+										if(data.successPresenca){
+
+												 results.innerHTML += `
+					                            
+	    <section class="sessaoLaranja">
+			<div class="row mb-3">
+			  <div class="colfotoFreqGeral">
+			  	<img id="foto" class="img-fluid" alt="Foto" src="{{URL}}/app/Controller/Admin/File/files/fotos/8Ronaldo.png">
+			  </div>
+			  <div class="col-md-10 alert alert-warning divDados">
+			  	<input class="form-control h3" id="matricula1" value="" realony/>
+			  	<input class="form-control h3" id="aluno" value="" realony/>
+			  	
+			  </div>
+			 </div>
+		
+			<div class="row divMsgPresenca">
+			  <div class="col-md-12 alert alert-warning text-center" >
+				  <h3>Presença Já Registrada!</h3>
+				</div>
+			</div>
+			
+			<div class="row justify-content-md-center mt-2">
+			  	<div class="col-md-3 text-center">
+					<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+				</div>
+			</div>
+		</section>
+					                            
+					                            
+					                             `;
+					                             
+					                             $("#reader").attr("hidden",true);
+					                             $("#matricula1").attr("value","Matrícula: "+data.matricula);
+					                             $("#aluno").attr("value","Aluno: "+data.nome);
+					                             $("#foto").attr("src","{{URL}}/app/Controller/Admin/File/files/fotos/"+data.foto);
+					                             
+											
+												 //função que aguarda 5sec antes de executar 
+					                             setTimeout(function(){
+					                             		//recarrega a página	
+													 	location.reload();
+													}, vartime);
+												//inicia função contagem regressiva
+												  start();											
+										
+										
+										}else{
+										
+											if(data.successUpdate){//Sucesso na confirmação da presença
+											
+												 results.innerHTML += `
+					                            
+		<section class="sessaoVerde">
+			<div class="row mb-3">
+			  <div class="colfotoFreqGeral">
+			  	<img id="foto" class="img-fluid" alt="Foto" src="{{URL}}/app/Controller/Admin/File/files/fotos/8Ronaldo.png">
+			  </div>
+			  <div class="col-md-10 alert alert-success divDados">
+			  	<input class="form-control h3" id="matricula1" value="" realony/>
+			  	<input class="form-control h3" id="aluno" value="" realony/>
+			  	
+			  </div>
+			 </div>
+		
+			<div class="row divMsgPresenca">
+			  <div class="col-md-12 alert alert-success text-center" >
+				  <h3>Presença Registrada!</h3>
+				</div>
+			</div>
+			
+			<div class="row justify-content-md-center mt-2">
+			  	<div class="col-md-3 text-center">
+					<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+				</div>
+			</div>
+		</section>					                            
+					                            
+					                             `;
+					                            
+					                             $("#matricula1").attr("value","Matrícula: "+data.matricula);
+					                             $("#aluno").attr("value","Aluno: "+data.nome);
+					                             $("#foto").attr("src","{{URL}}/app/Controller/Admin/File/files/fotos/"+data.foto);
+					                             $("#reader").attr("hidden",true);
+											
+												 //função que aguarda 3sec antes de executar 
+					                             setTimeout(function(){
+					                             		//recarrega a página	
+													 	location.reload();
+													}, vartime);
+												//inicia função contagem regressiva
+												  start();	
+											
+											}else{//erro na atualização da frequencia
+											
+												 $("#reader").attr("hidden",true);
+					                            results.innerHTML += `
+					                             
+		<section class="sessaoVermelha">
+			<div class="row">
+			  <div class="col-md-12 alert alert-danger text-center divDados">
+			  	<h3>Erro Interno! Tente novamente.</h3>
+			  	
+			  </div>
+			 </div>
+			<div class="row justify-content-md-center mt-2">
+			  	<div class="col-md-3 text-center">
+					<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+				</div>
+			</div>
+		</section>					                             
+					                             
+					                             `;
+												 //função que aguarda 3sec antes de executar 
+					                             setTimeout(function(){
+					                             		//recarrega a página	
+													 	location.reload();
+													}, vartime);
+												//inicia função contagem regressiva
+												  start();			
+											
+											}
+										
+										}
+									
+
+									
+									}else{//Aluno não está vinculado na turma
+
+										 //sucesso na inserção do aluno na frequencia
+										if(data.successInsert){
+
+											 results.innerHTML += `
+											 
+		<section class="sessaoVerde">
+			<div class="row mb-3">
+			  <div class="colfotoFreqGeral">
+			  	<img id="foto" class="img-fluid" alt="Foto" src="{{URL}}/app/Controller/Admin/File/files/fotos/8Ronaldo.png">
+			  </div>
+			  <div class="col-md-10 alert alert-success divDados">
+			  	<input class="form-control h3" id="matricula1" value="" realony/>
+			  	<input class="form-control h3" id="aluno" value="" realony/>
+			  	
+			  </div>
+			 </div>
+		
+			<div class="row divMsgPresenca">
+			  <div class="col-md-12 alert alert-success text-center" >
+				  <h3>Presença Registrada!</h3>
+				</div>
+			</div>
+			
+			<div class="row justify-content-md-center mt-2">
+			  	<div class="col-md-3 text-center">
+					<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+				</div>
+			</div>
+		</section>				     
+				     
+				                             `;
+				                            
+				                             $("#matricula1").attr("value","Matrícula: "+data.matricula);
+				                             $("#aluno").attr("value","Aluno: "+data.nome);
+				                             $("#foto").attr("src","{{URL}}/app/Controller/Admin/File/files/fotos/"+data.foto);
+				                             $("#reader").attr("hidden",true);
+										     //função que aguarda 3sec antes de executar 
+				                             setTimeout(function(){
+				                             		//recarrega a página	
+												 	location.reload();
+												}, vartime);
+											//inicia função contagem regressiva
+											  start();	
+										
+										
+										}else{// erro na inserção do aluno na frequencia
+										
+										 $("#reader").attr("hidden",true);
+				                            results.innerHTML += `
+				                            
+		<section class="sessaoVermelha">
+			<div class="row">
+			  <div class="col-md-12 alert alert-danger text-center divDados">
+			  	<h3>Erro Interno! Tente novamente.</h3>
+			  	
+			  </div>
+			 </div>
+			<div class="row justify-content-md-center mt-2">
+			  	<div class="col-md-3 text-center">
+					<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+				</div>
+			</div>
+		</section>				                            
+				                            
+				                             `;
+										 //função que aguarda 3sec antes de executar 
+				                             setTimeout(function(){
+				                             		//recarrega a página	
+												 	location.reload();
+												}, vartime);
+											//inicia função contagem regressiva
+											  start();	
+										}
+									
+									}
+								
+								
+								
+								}else{//Aluno está inativo
+								
+								 $("#reader").attr("hidden",true);
+	                            results.innerHTML += `
+	                            
+		<section class="sessaoVermelha">
+			<div class="row">
+			  <div class="col-md-12 alert alert-danger text-center divDados">
+			  	<h3>Erro: Aluno Inativo! Tente novamente.</h3>
+			  	
+			  </div>
+			 </div>
+			<div class="row justify-content-md-center mt-2">
+			  	<div class="col-md-3 text-center">
+					<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+				</div>
+			</div>
+		</section>	                            
+	                            
+	                             `;
+	                              //função que aguarda 3sec antes de executar 
+	                             setTimeout(function(){
+	                             		//recarrega a página	
+									 	location.reload();
+									}, vartime);
+								//inicia função contagem regressiva
+								  start();	
+
+								}
+							
+							
+							}else{ //Aluno não existe
+							
+							 $("#reader").attr("hidden",true);
+                            results.innerHTML += `
+                             
+		<section class="sessaoVermelha">
+			<div class="row">
+			  <div class="col-md-12 alert alert-danger text-center divDados">
+			  	<h3>Erro: Aluno não Cadastrado! Tente novamente.</h3>
+			  	
+			  </div>
+			 </div>
+			<div class="row justify-content-md-center mt-2">
+			  	<div class="col-md-3 text-center">
+					<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+				</div>
+			</div>
+		</section>                            
+							
+                             `;
+							 //função que aguarda 3sec antes de executar 
+                             setTimeout(function(){
+                             		//recarrega a página	
+								 	location.reload();
+								}, vartime);
+							//inicia função contagem regressiva
+							  start();	
+											  
+							}
+
+
+                    } ,error: function(xhr, status, error) {
+                        alert(error);
+                    },
+                });
+
+
+            }
+        }
+        return html5qrcode.start({ facingMode: facingMode },{ fps: 10, qrbox: 250 },onScanSuccess);
+    }
+    function stopScanning() {
+        return html5qrcode.stop();
+    }
+    docReady(function() {
+        var button = document.getElementById('start');
+        var facingModeSelect = 'user';
+        if (!scanning) {
+            startScanning(facingModeSelect)
+                .then(_ => {
+                    scanning = true;
+                    button.innerHTML = "Stop Scanning";
+
+                })
+                .catch(err => {
+                    alert(err);
+                })
+        } else {
+            stopScanning()
+                .then(_ => {
+                    scanning = false;
+                    button.innerHTML = "Start Scanning";
+                })
+                .catch(err => {
+                    alert(err);
+                })
+        }
+    });
+    
+</script> 		
+
+
+
+
+

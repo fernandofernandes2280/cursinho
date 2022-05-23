@@ -1,0 +1,105 @@
+
+	<div class="row">
+		<div class="col-md-3" >
+			<h5>{{title}}</h5>
+		</div>
+ 		<div class="col-md-5" >
+			{{statusMessage}}
+		</div>	
+	<div class="col-md-4 text-right">
+		<a href="javascript:history.back()">
+			<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
+				<i class="material-icons" style="font-size: 30px;">reply</i>
+			</button>
+		</a>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-6">
+		<form method="post">
+			<div class="form-row">
+			    <div class="col-md-12 mb-2">
+					<label>Nome</label>
+					<input type="text"name="nome" class="form-control-pessoal" value="{{nome}}" required>
+			
+			    </div>
+						  </div>
+			 <div class="form-row">
+			    <div class="col-md-12 mb-2">
+					<label>Email</label>
+					<input type="email" name="email" class="form-control-pessoal" value="{{email}}" required>
+			    </div>
+						  </div>
+			 <div class="form-row">
+			    <div class="col-md-12 mb-2">
+     	           <label for="cpf">CPF:</label><cite id="labelInvalid" hidden title="Source Title"> Inválido</cite>
+	                <input class="form-control-pessoal validate" {{readonly}} required type="text" id="cpf" value="{{cpf}}" name="cpf" />
+			
+			    </div>
+						  </div>
+			 <div class="form-row">
+			    <div class="col-md-12 mb-2">
+					<label>Tipo</label>
+					<select class="custom-select" id="tipo" name="tipo">
+				        <option {{selectedAdmin}} value="Admin">Admin</option>
+				        <option {{selectedOperador}} value="Operador">Operador</option>
+				        <option {{selectedVisitante}} value="Visitante">Visitante</option>
+				      </select>
+			    </div>
+						  </div>
+			 <div class="form-row">
+			    <div class="col-md-12 mb-2">
+					<label>Senha</label>
+					<input type="password" name="senha"  id="senha" class="form-control-pessoal" {{required}} value="{{senha}}">
+					<span class="lnr lnr-eye h2 text-dark" rel="tooltip" title="ver senha"></span>
+					<style>
+						.lnr-eye {
+							    position: absolute;
+							    top: 30px;
+							    right: 10px;
+							    cursor: pointer;
+							}
+					</style>
+					<script>
+						let btn = document.querySelector('.lnr-eye');
+						btn.addEventListener('click', function() {
+						    let input = document.querySelector('#senha');
+						    if(input.getAttribute('type') == 'password') {
+						        input.setAttribute('type', 'text');
+						    } else {
+						        input.setAttribute('type', 'password');
+						    }
+						});
+					</script>
+			    </div>
+			</div>
+
+	</div>
+	<div class="col-md-6">
+		<div class="form-row">
+			<div class="col-md-6 mb-2">
+				<label>Foto</label>
+			    <div class="colfotoUser mb-2 mr-2 text-center">
+			    	<a href="{{URL}}/admin/users/photo/{{id}}"  style="{{ponteiro}}">
+						<img style="border-radius: 10%" title="Carregar nova foto" class="img-fluid" alt="Foto" rel="tooltip" src="{{URL}}/app/Controller/Admin/File/files/fotos/{{foto}}" style="cursor:pointer">
+					</a>
+			    </div>
+			</div>
+		</div>
+		<div class="form-group">
+			<button class="btn btn-facebook btn-sm btn-round" type="submit" rel="tooltip" title="Salvar">
+	    		<i class="material-icons" style="font-size: 30px;">save</i>
+		    </button>
+			<a href="{{URL}}/admin/users/new">
+				<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo Usuário">
+					<i class="material-icons" style="font-size: 30px;">person_add</i>
+				</button>
+			</a>
+		</div>
+	</div>
+   </form>
+</div>
+
+
+							

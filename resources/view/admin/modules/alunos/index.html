@@ -1,0 +1,110 @@
+
+<main>
+<form method="get" id="form">
+      <h4 class="card-title"></h4>
+		<div class="row">
+			<div class="col-sm-4 card-title">
+				<h5>{{title}}</h5>
+			</div>
+			<div class="col-sm-5">
+				{{statusMessage}}
+			</div>
+				<div class="col-lg-3  mt-2">
+			<button type="submit" class="btn  btn-facebook btn-round btn-sm mr-2" rel="tooltip" title="Pesquisar">
+				 <i class="material-icons" style="font-size: 30px;">search</i>
+			</button>
+			<a href="{{URL}}/admin/alunos/new">
+			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo">
+				<i class="material-icons" style="font-size: 30px;">person_add</i>
+			</button>
+	   		 </a>
+		</div>
+		
+		</div>
+		<hr>
+
+<section id="pacientes">
+  	
+<div class="form-row">
+ 			<div class="col-lg-2">
+ 				<label>Matrícula:</label>
+ 				<input type="text" name="matricula" id="matricula" class="form-control-pessoal" value="{{matricula}}" style="color:black" >
+		</div>
+	  	<div class="col-lg-4">
+			<label>Nome:</label>
+			<input type="text" name="nome" class="form-control-pessoal" value="{{nome}}" style="color:black">
+	  	</div>
+		<div class="col-lg-2 " >
+			<label>CPF:</label>
+			<input type="text" name="cpf" class="form-control-pessoal" value="{{cpf}}" style="color:black" >
+		</div>
+		 <div class="col-md-2 mb-2">
+		      <label for="turma">Turma</label>
+		       <select class="custom-select" id="turma" name="turma"  >
+		       <option value="" >Todas</option>
+			        {{optionTurma}}
+			   </select>
+		    </div>	  
+		<div class="col-lg-2" >
+			<label>Status:</label>
+			<select name="status" class="custom-select" >
+			    
+				<option style="color:black" value="" {{selectedAtIn}}>Todos</option>
+			{{optionStatus}}
+			</select>
+		</div>
+	
+	</div>
+  	</form>
+  
+  </section>
+  
+  
+  <div class="table-responsive">
+  	<table class="table table-striped">
+  		
+  		<thead class="text-center" >
+  			<tr>
+  				<th class="text-light" style="font-weight: bold">Matrícula</th>
+  				<th class="text-light" style="font-weight: bold">Nome</th>
+  				<th class="text-light" style="font-weight: bold">Turma</th>
+  				<th class="text-light" style="font-weight: bold">CPF</th>
+  				<th class="text-light" style="font-weight: bold">Status</th>
+  				<th class="text-light" style="font-weight: bold; width:15%">Ações</th>
+  			</tr>
+  		</thead>
+  		<tbody >
+  		
+  			{{itens}}
+  			
+  		</tbody>
+  	
+  	</table>
+ </div>
+  <hr>
+  <div class="row " >
+  	<div class="col d-flex justify-content-start">
+  				{{pagination}} 
+  	</div>
+  	<div class="col d-flex justify-content-end">
+  				<span >&nbsp;&nbsp;&nbsp;Total de registros encontrados: {{total}}</span>
+  	</div>
+  	
+  </div>
+  <hr>
+</main>
+
+
+<!-- teste com ajax -->
+<section class="users" hidden>
+    
+    <article class="users_user">
+        <h3>TESTE DE AJAX</h3>
+        <a class="remove" href="#" data-action="{{URL}}/admin/delete" data-id="3">Deletar</a>
+        </article>
+    
+</section>
+
+
+
+

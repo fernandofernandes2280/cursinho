@@ -1,0 +1,48 @@
+    <div class="sidebar" data-color=danger data-background-color="black" data-image="{{URL}}/resources/assets/img/preparasantana.png">
+      <!--
+        Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
+
+        Tip 2: you can also add an image using data-image tag
+    -->
+
+
+
+
+    	<div class="logo">
+    
+        
+   		<div class="d-flex px-2 py-1">
+		  <div class="py-2">
+		    <img src="{{URL}}/app/Controller/Admin/File/files/fotos/{{foto}}" class="avatar avatar-lg me-3 border-radius-lg" alt="foto">
+		  </div>
+		  <div class="d-flex flex-column justify-content-center px-2">
+		    <h7 class="mb-0 text-sm px-2 text-light">{{usuarioLogado}}</h7>
+		    <span class="badge badge-secondary">{{tipoUsuario}}</span>
+		    <a href="{{URL}}/logout" class="text-right">
+	           				<span  rel="tooltip" title="Sair" style="font-size: 15px"> <i class="material-icons">logout</i>Sair</span>
+	      				</a>
+		  </div>
+		</div>
+
+
+        </div>
+      
+	 	<div class="sidebar-wrapper">
+
+        <ul class="nav">
+        		{{links}}
+				{{dropdownProducao}}
+				{{dropdownManutencao}}
+				
+        </ul>
+        
+      </div>
+			
+    </div>
+
+
+
+
+    
+
+
