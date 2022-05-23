@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Session\Admin;
+namespace App\Session\Operador;
 
 class Login{
 	
-	//Método responsavel por
+	//Método responsavel por iniciar a sessão
 	private static function init(){
 		//verifica se a sessao não está ativa
 		if(session_status() != PHP_SESSION_ACTIVE ){
@@ -18,13 +18,12 @@ class Login{
 		self::init();
 		
 		//Define a sessao do usuario
-		$_SESSION['admin']['usuario'] = [
+		$_SESSION['operador']['usuario'] = [
 				'id' => $obUser->id,
 				'nome' => $obUser->nome,
 				'email' => $obUser->email,
 				'tipo' => $obUser->tipo,
-				'cpf' => $obUser->cpf,
-		        'foto'=>$obUser->foto
+		        'foto' => $obUser->foto
 		];
 		$_SESSION['usuario'] = [
 		    'id' => $obUser->id,
@@ -44,7 +43,7 @@ class Login{
 		self::init();
 		
 		//retorna a verificação
-		return isset($_SESSION['admin']['usuario']['id']);
+		return isset($_SESSION['operador']['usuario']['id']);
 		
 		
 	}
@@ -53,9 +52,10 @@ class Login{
 	public static function logout(){
 		//Inicia a Sessão
 		self::init();
-		
+	
 		//desloga usuário
-		unset($_SESSION['admin']['usuario']);
+		unset($_SESSION['operador']['usuario']);
+		unset($_SESSION['usuario']);
 		
 		//sucesso
 		return true;

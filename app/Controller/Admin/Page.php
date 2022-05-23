@@ -308,9 +308,7 @@ class Page{
 			
 		}
 		
-	//	$id = $_SESSION['admin']['usuario']['id'];
-	//	$obUser = EntityUser::getUserById($id);
-	//	is_null($obUser->foto) ? $fotoPerfil = '/resources/imagens/profile.png' : $fotoPerfil = '/app/File/files/images/'.$obUser->foto; 
+	
 		
 		//Retorna a renderização do menu
 		return View::render('admin/menu/box',[
@@ -319,9 +317,9 @@ class Page{
 				'dropdownProducao' => $linksDropProducao,
 				'dropdownRelatorio' => $linksDropRelatorio,
 				'dropdownManutencao' => $linksDropManutencao,
-				'usuarioLogado' => $_SESSION['admin']['usuario']['nome'] ?? '',
-				'tipoUsuario' => $_SESSION['admin']['usuario']['tipo'] ?? '',
-		        'foto' => $_SESSION['admin']['usuario']['foto'] ?? '',
+		         'usuarioLogado' => $_SESSION['usuario']['nome'] ?? '',
+		         'tipoUsuario' => $_SESSION['usuario']['tipo'] ?? '',
+		         'foto' => $_SESSION['usuario']['foto'] ?? '',
 				
 		]);
 		

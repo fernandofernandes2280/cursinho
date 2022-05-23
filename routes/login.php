@@ -6,29 +6,6 @@ use \App\Controller\Login;
 
 //ROTAS DE LOGIN RAIZ
 
-//ROTA Login
-$obRouter->get('/login',[
-		'middlewares' => [
-				'require-visitor-logout'
-		],
-		function ($request){
-			return new Response(200, Login\Login::getLogin($request));
-		}
-		]);
-
-
-
-//ROTA Login POst
-$obRouter->post('/login',[
-		'middlewares' => [
-				'require-visitor-logout'
-		],
-		function ($request){
-			
-			return new Response(200, Login\Login::setLogin($request));
-		}
-		]);
-
 //ROTA Logout
 $obRouter->get('/logout',[
 		
@@ -141,9 +118,29 @@ $obRouter->get('/admin/logout',[
 
 
 
+///////////ROTAS DE LOGIN DE OPERADOR///////////////////
+//ROTA Login
+$obRouter->get('/operador/login',[
+    'middlewares' => [
+        'require-operador-logout'
+    ],
+    function ($request){
+        return new Response(200, Login\Login::getLogin($request));
+    }
+    ]);
 
 
-
+//ROTA Login POst
+$obRouter->post('/operador/login',[
+    'middlewares' => [
+        'require-operador-logout'
+    ],
+    
+    function ($request){
+        
+        return new Response(200, Login\Login::setLogin($request));
+    }
+    ]);
 
 
 

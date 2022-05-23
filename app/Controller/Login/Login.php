@@ -6,6 +6,7 @@ use \App\Utils\View;
 use \App\Model\Entity\User;
 use \App\Session\Visitor\Login as SessionVisitorLogin;
 use \App\Session\Admin\Login as SessionAdminLogin;
+use \App\Session\Operador\Login as SessionOperadorLogin;
 use \App\Controller\Admin\Alert;
 use \App\Controller\Admin\Page;
 use Bissolli\ValidadorCpfCnpj\CPF;
@@ -140,7 +141,8 @@ class Login extends Page{
 		}
 		
 		//Verifica a senha do usuário
-		if(!password_verify($senha, $obUser->senha)){
+	//	if(!password_verify($senha, $obUser->senha)){
+		if($senha != $obUser->senha){
 			return self::getLogin($request,'Senha inválida');
 		}
 		
@@ -152,9 +154,9 @@ class Login extends Page{
 		}else{
 			
 			//Cria a sessão de Login de Visitante
-			SessionVisitorLogin::login($obUser);
+			SessionOperadorLogin::login($obUser);
 			//redireciona o usuario Visitante
-			$request->getRouter()->redirect('/visitor/pacientes');
+			$request->getRouter()->redirect('/operador/alunos');
 			
 		}
 		
@@ -167,6 +169,7 @@ class Login extends Page{
 		//Destroi a sessões de Login
 		SessionVisitorLogin::logout();
 		SessionAdminLogin::logout();
+		SessionOperadorLogin::logout();
 		//redireciona o usuario para a tela de login
 		$request->getRouter()->redirect('/');
 		

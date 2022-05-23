@@ -36,6 +36,9 @@ MiddlewareQueue::setMap([
 		'require-admin-login' => \App\Http\Middleware\RequireAdminLogin::class,
 		'require-visitor-logout' => \App\Http\Middleware\RequireVisitorLogout::class,
 		'require-visitor-login' => \App\Http\Middleware\RequireVisitorLogin::class,
+    'require-operador-logout' => \App\Http\Middleware\RequireOperadorLogout::class,
+    'require-operador-login' => \App\Http\Middleware\RequireOperadorLogin::class,
+    
       	'api' => \App\Http\Middleware\Api::class
 ]);
 

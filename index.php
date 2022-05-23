@@ -18,6 +18,11 @@ include __DIR__.'/routes/admin.php';
 include __DIR__.'/routes/visitor.php';
 
 
+//Inclui as rotas de OPERADOR
+include __DIR__.'/routes/operador.php';
+
+
+
 //Inclui as da API
 include __DIR__.'/routes/api.php';
 
