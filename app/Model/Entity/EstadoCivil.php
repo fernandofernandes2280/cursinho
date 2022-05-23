@@ -42,7 +42,7 @@ class EstadoCivil {
 				//seleciona o Estado Civil do paciente
 				$obEstadoCivil->id == $id ? $selected = 'selected' : $selected = '';
 				//View de Estados Civil
-				$resultados .= View::render('admin/modules/pacientes/itemSelect',[
+				$resultados .= View::render('admin/modules/selectOption/itemSelect',[
 						'id' => $obEstadoCivil ->id,
 						'nome' => $obEstadoCivil->nome,
 						'selecionado' => $selected
@@ -53,7 +53,7 @@ class EstadoCivil {
 		}else{ //se for nulo, lista todos e seleciona um em branco
 			while ($obEstadoCivil = $results -> fetchObject(self::class)) {
 				$obEstadoCivil->nome == 'Não Informado' ? $selected = 'selected' : $selected = '';
-				$resultados .= View::render('admin/modules/pacientes/itemSelect',[
+				$resultados .= View::render('admin/modules/selectOption/itemSelect',[
 						'id' => $obEstadoCivil ->id,
 						'nome' => $obEstadoCivil->nome,
 						'selecionado' => $selected
