@@ -169,7 +169,7 @@ class Upload{
 					//$sucesso = $obUpload->upload(__DIR__.'/files/fotos',false);
 				$nameFile = $obUpload->nomeArquivo($obAluno->matricula, str_replace(' ', '',$obAluno->nome), '.png');	
 				$sucesso = $obUpload->uploadFotoAluno(__DIR__.'/files/fotos',false,$nameFile);
-					
+				chmod(__DIR__."/files/fotos/".$nameFile, 0777); //Corrige a permissão do arquivo.
 				//corta a foto
 				$img = new Resize();
 				$config = array();
@@ -192,7 +192,7 @@ class Upload{
 						//salva o nome do arquivo no banco
 							$obAluno->foto = $nameFile;
 							$obAluno->Atualizar();
-						//redireciona de acordo com usuário logado
+							
 						
 							
 							
@@ -318,7 +318,7 @@ class Upload{
 	            //$sucesso = $obUpload->upload(__DIR__.'/files/fotos',false);
 	            $nameFile = $obUpload->nomeArquivo($obProfessor->id, str_replace(' ', '',$obProfessor->nome), '.png');
 	            $sucesso = $obUpload->uploadFotoAluno(__DIR__.'/files/fotos',false,$nameFile);
-
+	            chmod(__DIR__."/files/fotos/".$nameFile, 0777); //Corrige a permissão do arquivo.
 	            $img = new Resize();
 	            $config = array(); 
 	            $config['source_image'] = __DIR__.'/files/fotos/'.$nameFile;
@@ -373,7 +373,7 @@ class Upload{
 	            //$sucesso = $obUpload->upload(__DIR__.'/files/fotos',false);
 	            $nameFile = $obUpload->nomeArquivo($obUser->id, str_replace(' ', '',$obUser->nome), '.png');
 	            $sucesso = $obUpload->uploadFotoAluno(__DIR__.'/files/fotos',false,$nameFile);
-	            
+	            chmod(__DIR__."/files/fotos/".$nameFile, 0777); //Corrige a permissão do arquivo.
 	            $img = new Resize();
 	            $config = array();
 	            $config['source_image'] = __DIR__.'/files/fotos/'.$nameFile;

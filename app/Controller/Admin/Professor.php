@@ -530,6 +530,7 @@ class Professor extends Page{
 	        $obProfessor->atualizar();
 	        $file = $folderPath . $fileName;
 	        file_put_contents($file, $image_base64);
+	        chmod($file, 0777); //Corrige a permissão do arquivo.
 	        
 	        $img = new Resize();
 	        $config = array();

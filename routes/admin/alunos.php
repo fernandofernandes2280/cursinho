@@ -17,7 +17,6 @@ $obRouter->get('',[
     ]);
 
 
-
 //Rota de listagem de alunos
 $obRouter->get('/admin/alunos',[
 
