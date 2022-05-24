@@ -167,7 +167,7 @@ h7,
 .pt-fotoProf {padding-top: 1rem !important;}
 .freqGeralMobile{display: none;}
 .freqGeralDesktop{display: inline;}
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 640px) {
   /* For mobile phones: */
   [class*="col-"] {
     width: 100%;
