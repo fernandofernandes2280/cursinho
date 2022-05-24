@@ -89,7 +89,7 @@ $obRouter->post('/admin/frequencias/{id}/edit/individual/{idAluno}',[
     ]);
 
 
-//ROTA de Confirmação da presença do aluno
+//ROTA DE FREQUENCIA GERAL PELO QRCODE NO DESKTOP
 $obRouter->post('/admin/frequencias/{id}/edit',[
     
     'middlewares' => [
@@ -102,6 +102,19 @@ $obRouter->post('/admin/frequencias/{id}/edit',[
     }
     ]);
 
+
+//ROTA DE FREQUENCIA GERAL PELO QRCODE NO CELULAR USANDO A CÂMERA TRASEIRA
+$obRouter->get('/admin/frequencias/{id}/edit/mobile',[
+    
+    'middlewares' => [
+        'require-admin-login'
+    ],
+    
+    
+    function ($request,$id){
+        return new Response(200, Admin\Frequencia::getFrequenciaGeralMobile($request,$id));
+    }
+    ]);
 
 
 

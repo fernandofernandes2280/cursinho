@@ -450,7 +450,30 @@ class Frequencia extends Page{
 			return parent::getPage('Frêquencias > Cursinho', $content,'frequencias', 'hidden');
 	}
 	
-
+	//MÉTODO RESPONSÁVEL POR RENDERIZAR FREQUENCIA GERAL COM QRCODE NO CELULAR
+	public static function getFrequenciaGeralMobile($request,$id){
+	    //Post vars
+	  //  $postVars = $request->getPostVars();
+	    
+	    
+	    $obAula = EntityAula::getAulaById($id);
+	    if(!$obAula instanceof EntityAula){
+	        //Redireciona
+	        $request->getRouter()->redirect('/admin/frequencias');
+	    }
+	    
+	    //Conteúdo da Home
+	    $content = View::render('admin/modules/frequencias/geral/indexMobile',[
+	        
+	        'title'=> 'Frequência Geral',
+	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' - '.$obAula->diaSemana.' - '.EntityTurma::getTurmaById($obAula->turma)->nome,
+	        'idAula' => $obAula->id
+	        
+	    ]);
+	    
+	    //Retorna a página completa
+	    return parent::getPage('Frêquencias > Cursinho', $content,'frequencias', 'hidden');
+	}
 	
 }
 
