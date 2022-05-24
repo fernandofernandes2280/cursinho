@@ -12,7 +12,16 @@ bodyu{
     width: 14%;
     margin-right: 2%;
     }
-    @media(max-width: 640px) {
+    .title{
+    position: relative;
+    }
+    .btnVoltar{
+    position: absolute;
+    
+    right:0;
+    padding-top: 1px;
+    }
+    @media(max-width: 576px) {
         #reader {
             width: 280px;
             height: 240px;
@@ -37,29 +46,30 @@ bodyu{
     
 
 </style>
+
 <main>
 <br>
 <div class="container">
 	
-	<div class="row mb-4">
-		<div class="col-md-3 text-center pl-4">
-			<span class="h3 text-light">{{title}}</span>
+	<div class="row mb-2" >
+		<div class="col-md-12 text-center title">
+			<span class="h2 text-light">{{title}}</span>
 		</div>
-		<div class="col-md-8 text-center">
-			<div class="alert alert-primary col-md-12" role="alert">
-	 		<span class="h3">{{aula}}</span>
-	 		</div>
-		</div>
-		<div class="col-md-1 text-right pt-2">
-			
+				<div class="col-md-2 text-right btnVoltar">
 				<a href="javascript:history.back()">
-				
 					<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
 					<span>	<i class="material-icons" style="font-size: 30px;">reply</i></span>
 					</button>
-					
 				</a>
+		</div>
+		
+	</div>
+	<div class="row mb-4 justify-content-md-center" >
+		
+		<div class="col-md-7 bg-warning text-center pt-2 pb-2">
 			
+	 		<span class="h2">{{aula}}</span>
+	 		
 		</div>
 	</div>
 
