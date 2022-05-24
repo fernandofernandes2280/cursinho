@@ -8,7 +8,7 @@ use \WilliamCosta\DatabaseManager\Pagination;
 use Bissolli\ValidadorCpfCnpj\CPF;
 use \App\Utils\Funcoes;
 use \App\Model\Entity\Profissional as EntityProfissional;
-use App\Controller\Admin\File\Upload;
+use App\Controller\File\Upload;
 
 class User extends Page{
 	
@@ -362,31 +362,8 @@ class User extends Page{
 	    
 	    if ($postVars['image'] != ''){
 	        
-	        $img = $postVars['image'];
-	        $folderPath = __DIR__."/File/files/fotos/";
-	        $image_parts = explode(";base64,", $img);
-	        $image_type_aux = explode("image/", $image_parts[0]);
-	        $image_type = $image_type_aux[1];
-	        $image_base64 = base64_decode($image_parts[1]);
-	        $nome =  str_replace(' ', '',$obUser->nome);
-	        $matricula = $obUser->id;
-	        $fileName = $matricula.$nome . '.png';
-	        $obUser->foto = $fileName;
-	        $obUser->atualizar();
-	        $file = $folderPath . $fileName;
-	        file_put_contents($file, $image_base64);
-	        chmod($file, 0777); //Corrige a permissão do arquivo.
-	        
-	        $img = new Resize();
-	        $config = array();
-	        $config['source_image'] = $file;
-	        $config['width'] = 195;
-	        $config['height'] = 230;
-	        $img->initialize($config);
-	        $img->crop();
-	        
-	        
-	        
+	        //MÉTODO RESPONSÁVEL POR FAZER O UPLOADO DA IMAGE VINDA DA WEB CAM DO PROFESSOR
+	        Upload::setUploadImagesWebCamUser($request);
 	        
 	        //Redireciona o usuário
 	        $request->getRouter()->redirect('/admin/users/'.$obUser->id.'/edit?statusMessage=updated');

@@ -1,0 +1,113 @@
+
+<form  method="post" action="?page=1">
+	<div class="row">
+			<div class="col-md-10 " >
+			<h5>{{title}}</h5>
+		</div>
+ 		
+	
+
+	<div class="col-md-2 text-right">
+		<a href="{{URL}}/operador/frequencias/{{idAula}}/edit">
+			<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
+				<i class="material-icons" style="font-size: 30px;">reply</i>
+			</button>
+		</a>
+	</div>
+</div>
+</form>	
+<div class="row">
+			<div class="col-md-6 " >
+<div class="card card-stats">
+          <div class="card-header card-header-success card-header-icon">
+            <div class="card-icon">
+              <strong class="h6">{{aula}}</strong>
+            </div>
+            
+            <p class="card-category text-light mt-5">Lançar Frequência:</p>
+           
+            
+            <a href="{{URL}}/operador/frequencias/{{idAula}}/edit/individual">
+			<button type="button" class="btn btn-facebook btn-round btn-sm" rel="tooltip" title="Frequência Individual">
+				<i class="material-icons" style="font-size: 30px;">person</i><strong class="h6">Individual</strong>
+			</button>
+		    </a>
+			
+            
+            
+          </div>
+          <div class="card-footer">
+              <div class="stats">
+                  
+              </div>
+          </div>
+      </div>
+
+	</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<form method="post">
+			<div class="row">
+					
+				<div class="col-md-4">
+					<a href="{{URL}}/operador/frequencias/{{id}}/edit/pesqAluno">
+					<button type="button" class="btn btn-facebook btn-round btn-sm " rel="tooltip" title="Pesquisar aluno">
+						<i class="material-icons" style="font-size: 30px;">search</i><strong class="h6">Pesquisar Aluno</strong>
+					</button><br><br>
+				    </a>
+				</div>
+				<div class="col-md-8" >
+						{{statusMessage}}
+				</div>
+			</div>
+				    
+					<div class="row">
+					    <div class="colfoto mb-2 mr-2 ml-3 mt-2 text-center">
+					    	<a href="{{URL}}/admin/alunos/photo/{{id}}" style="{{ponteiro}}">
+								<img style="background-color: #fff; border-radius: 10%" title="Carregar nova foto" class="img-fluid" alt="Foto" rel="tooltip" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" style="cursor:pointer">
+							</a>
+					    </div>
+						<div class="col-md-8">
+						    <label class="h5">Matrícula: <span class="text-light">{{matricula}}</span></label><br>
+				     	    <label class="h5">Aluno: <span class="text-light">{{nome}}</span></label><br>
+						    <label class="h5">Turma: <span class="text-light">{{turma}}</span></label><br>
+						    <label class="h5">Status: <span class="text-light">{{status}}</span></label><br>
+						    <button {{escondeBotaoConfirmar}} type="submit" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Clique para Confirmar">
+								<strong class="h6">Confirmar Presença?</strong>
+							</button>
+					    </div>
+				    </div>
+					
+			</form>
+		</div>
+	</div>					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

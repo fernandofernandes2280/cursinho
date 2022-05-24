@@ -10,7 +10,7 @@ use \App\Model\Entity\EstadoCivil as EntityEstadoCivil;
 use \App\Model\Entity\Turma as EntityTurma;
 use \App\Model\Entity\Status as EntityStatus;
 use \App\Utils\Funcoes;
-use \App\Controller\Admin\File\Upload as Upload;
+use \App\Controller\File\Upload as Upload;
  
 
 use \WilliamCosta\DatabaseManager\Pagination;
@@ -99,7 +99,7 @@ class Aluno extends Page{
 			$resultados .= View::render('admin/modules/alunos/item',[
 			    
 			    //muda cor do texto do status para azul(ativo) ou vermelho(inativo)
-			    $obAluno->status == 1 ? $cor = 'text-success' : $cor = 'text-danger',
+			    $obAluno->status == 1 ? $cor = 'bg-gradient-success' : $cor = 'bg-gradient-danger',
 
 			    'nome' => $obAluno->nome,
 			    'status' =>EntityStatus::getStatusById($obAluno->status)->nome,

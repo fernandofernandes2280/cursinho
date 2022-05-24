@@ -1,85 +1,85 @@
 <?php
 
 use \App\Http\Response;
-use \App\Controller\Admin;
+use \App\Controller\Operador;
 
 
 //ROTA de Listage de Disciplinas
-$obRouter->get('/admin/disciplinas',[
+$obRouter->get('/operador/disciplinas',[
 		
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
 		function ($request){
-			return new Response(200, Admin\Disciplina::getDisciplina($request));
+		    return new Response(200, Operador\Disciplina::getDisciplina($request));
 		}
 		]);
 
 
 //ROTA de Cadastro de um Novo de Disciplina
-$obRouter->get('/admin/disciplinas/new',[
+$obRouter->get('/operador/disciplinas/new',[
 		
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
 		
 		function ($request){
-		    return new Response(200, Admin\Disciplina::getDisciplinaNew($request));
+		    return new Response(200, Operador\Disciplina::getDisciplinaNew($request));
 		}
 		]);
 
 //ROTA de Cadastro de um Novo de Disciplina (POST)
-$obRouter->post('/admin/disciplinas/new',[
+$obRouter->post('/operador/disciplinas/new',[
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
 		function ($request){
-		    return new Response(200, Admin\Disciplina::setDisciplinaNew($request));
+		    return new Response(200, Operador\Disciplina::setDisciplinaNew($request));
 		}
 		]);
 
 //ROTA de Edição de um de Disciplina
-$obRouter->get('/admin/disciplinas/{id}/edit',[
+$obRouter->get('/operador/disciplinas/{id}/edit',[
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
 		
 		function ($request,$id){
-		    return new Response(200, Admin\Disciplina::getDisciplinaEdit($request,$id));
+		    return new Response(200, Operador\Disciplina::getDisciplinaEdit($request,$id));
 		}
 		]);
 
 //ROTA de Edição de um de Disciplina (POST)
-$obRouter->post('/admin/disciplinas/{id}/edit',[
+$obRouter->post('/operador/disciplinas/{id}/edit',[
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
 		
 		
 		function ($request,$id){
-		    return new Response(200, Admin\Disciplina::setDisciplinaEdit($request,$id));
+		    return new Response(200, Operador\Disciplina::setDisciplinaEdit($request,$id));
 		}
 		]);
 
 //ROTA de Exclusão de um de Disciplina
-$obRouter->get('/admin/disciplinas/{id}/delete',[
+$obRouter->get('/operador/disciplinas/{id}/delete',[
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
 		
 		
 		function ($request,$id){
-		    return new Response(200, Admin\Disciplina::getDisciplinaDelete($request,$id));
+		    return new Response(200, Operador\Disciplina::getDisciplinaDelete($request,$id));
 		}
 		]);
 //ROTA de Exclusão de um de Disciplina (POST)
-$obRouter->post('/admin/disciplinas/{id}/delete',[
+$obRouter->post('/operador/disciplinas/{id}/delete',[
     'middlewares' => [
         'require-admin-login'
     ],
 		
 		function ($request,$id){
-		    return new Response(200, Admin\Disciplina::setDisciplinaDelete($request,$id));
+		    return new Response(200, Operador\Disciplina::setDisciplinaDelete($request,$id));
 		}
 		]);
 

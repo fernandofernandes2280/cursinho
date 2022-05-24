@@ -3,15 +3,16 @@
 	<td>
 		<div class="d-flex px-2 py-1">
            <div>
-             <img style="background-color: #fff; border-radius: 15px" src="{{URL}}/app/Controller/Admin/File/files/fotos/{{foto}}" class="avatar avatar-sm me-3 border-radius-lg" alt="foto">
+             <img style="background-color: #fff; border-radius: 10px" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="avatar avatar-sm me-3 border-radius-lg" alt="foto">
            </div>
            <div class="d-flex flex-column justify-content-center">
              <h7 class="mb-0 text-sm px-2"><a href="{{URL}}/admin/professores/{{id}}/edit" rel="tooltip" title="Visualizar">{{nome}}</a></h7>
+              <p class="text-xs text-secondary mb-0 ml-2">{{disciplinas}}</p>
            </div>
          </div>
 	</td>
 	<td class="text-center" ><span>{{cpf}}</span></td>
-	<td class="{{cor}} text-center">{{status}}</td>
+	<td class="text-center align-middle text-md"><span class="badge badge-sm {{cor}}">{{status}}</span></td>
 	<td class="text-center">
 		<a href="{{URL}}/admin/professores/{{id}}/edit" >
 			  <i class="material-icons" style="font-size: 30px;" rel="tooltip" title="Visualizar">visibility</i>

@@ -1,0 +1,198 @@
+
+
+<form  method="post">
+	<div class="row">
+			<div class="col-md-3 " >
+			<h5>{{title}} </h5>
+		</div>
+ 		<div class="col-md-5 " >
+			{{statusMessage}}
+		</div>	
+	
+
+	<div class="col-md-4 text-right">
+	 <button class="btn btn-facebook btn-sm btn-round" type="submit" rel="tooltip" title="Salvar">
+     	<i class="material-icons" style="font-size: 30px;">save</i>
+     </button>
+		 
+		 <a href="{{URL}}/operador/professores/new">
+			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo">
+			<i class="material-icons" style="font-size: 30px;">add_circle_outline</i>
+			</button>
+		</a>
+		
+		<a href="{{URL}}/operador/professores">
+			<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
+				<i class="material-icons" style="font-size: 30px;">reply</i>
+			</button>
+		</a>
+	</div>
+</div>
+
+<br>
+
+
+		<div class="form-row  ">
+		    <div class="colfoto mb-1 mr-2 pt-fotoProf text-center ">
+		    	<a href="{{URL}}/operador/professores/photo/{{id}}" style="{{ponteiro}}">
+					<img style="background-color: #fff;; border-radius: 10%" {{hiddenFoto}} title="Carregar nova foto" class="img-fluid" alt="Foto" rel="tooltip" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" style="cursor:pointer">
+				</a>
+		    </div>
+		    
+    <div class="col-md-10 mb-2">
+     
+        <div class="form-row">
+    		<div class="col-nomeProf mb-2">
+      		<label for="nome">Nome</label>
+      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required  oninvalid="this.setCustomValidity('Username cannot be empty.')" 
+>
+    		</div>
+    		<div class="col-cep mb-2">
+			      <label for="cep">Cep</label>
+			      <input type="text" class="form-control-pessoal" data-action="{{URL}}/operador/delete" data-id="3" id="cep" name="cep" value="{{cep}}">
+      		
+    		</div>
+    	</div>
+    	<div class="form-row">
+		    <div class="col-endProf  ">
+		      <label for="endereco">Endereço</label>
+		      <small class="text-muted"> logradouro (rua, avenida, ..) + número</small>
+		      <input type="text" class="form-control-pessoal" id="endereco" name="endereco" value="{{endereco}}"  >
+		    </div>   
+		    
+		    <div class="col-md-3">
+		      <label for="bairro">Bairro</label>
+		       <select class="custom-select" id="bairro" name="bairro" required>
+			        {{optionBairros}}
+			   </select>
+   			 </div> 
+   			   	<div class="col-md-2">
+			      <label for="cidade">Cidade</label>
+			      <input type="text" class="form-control-pessoal" id="cidade" name="cidade" value="{{cidade}}" >
+			    </div> 
+   			 	    <div class="col-md-1">
+					<label for="uf">UF</label>
+					<input type="text" class="form-control-pessoal" id="uf" name="uf" value="{{uf}}" >   
+				</div>  
+    	</div>
+      
+      
+    </div>
+		    
+		   
+		    
+		  </div>
+		
+	  
+		  <div class="form-row">
+			
+				  <div class="col-funcao mb-2">
+				      <label for="funcao">Função</label>
+				      <input type="text" class="form-control-pessoal" id="funcao" name="funcao" value="{{funcao}}" required >
+					</div>
+					<div class="col-data mb-2">
+				      <label for="dataNasc">Data Nascimento</label>
+				      <input type="date" class="form-control-pessoal" id="dataNasc" name="dataNasc" value="{{dataNasc}}" required>
+					</div>
+					
+				    <div class="col-cpf mb-2">
+						<label for="cpf">CPF:</label><cite id="labelInvalid" hidden title="Source Title"> Inválido</cite>
+		                <input class="form-control-pessoal validate" {{readonly}} required type="text" id="cpf" value="{{cpf}}" name="cpf" />
+				    </div>
+				    
+				    <div class="col-md-2 mb-2">
+				      <label for="fone1">Telefone</label>
+				      <input type="text" class="form-control-pessoal" id="fone" name="fone" value="{{fone}}" maxlength="9">
+				    </div>
+				     <script>
+				      	$('#fone').keyup(function() {
+						  $(this).val(this.value.replace(/\D/g, ''));
+						});
+				      </script>
+				      
+   				    <div class="col-md-2 mb-2">
+				      <label for="status">Status</label>
+				          <select class="custom-select" id="status" name="status" required>
+					        {{optionStatus}}
+					   </select>
+				    </div>
+				
+		   </div>   
+		   
+		   <div class="form-row">
+
+
+				   
+				    <div class="col-md-12 mb-2">
+						<label>Email</label>
+						<input type="email" name="email" class="form-control-pessoal" value="{{email}}" required>
+			    	</div>
+				    
+			</div>	  	
+				
+		</form>
+		
+		<form method="get" {{adicionarDisciplina}}>	
+		<div class="form-row">
+			  	<div class="col-md-6">
+			      <label for="bairro">Adicionar Disciplina</label>
+			       <select class="custom-select" id="disciplina" name="disciplina" required>
+			       <option></option>
+				        {{optionDisciplinas}}
+				   </select>
+			    </div>
+			    <div class="col-md-4 mt-4">
+			    
+					<button type="submit" class="btn btn-primary btn-round btn-sm " rel="tooltip" title="Adicionar">
+					<i class="material-icons" style="font-size: 30px;">add_circle_outline</i>
+					</button>
+				
+			    </div>
+		</div>
+		<div class="row">
+			<div class="col-md-6 " >
+					  <div class="table-responsive">
+					  	<table class="table table-striped">
+					  		
+					  		<thead class=" text-light text-center">
+					  			
+					  		</thead>
+					  		<tbody >
+					  		
+					  			{{itensDisciplina}}
+					  			
+					  		</tbody>
+					  	
+					  	</table>
+					 </div>
+			</div>
+		</div>							
+
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

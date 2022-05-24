@@ -1,7 +1,7 @@
 <?php
 
 use \App\Http\Response;
-use \App\Controller\Admin;
+use \App\Controller\Operador;
 use \App\File;
 
 //ROTA HOME
@@ -12,7 +12,7 @@ $obRouter->get('',[
     ],
     
     function ($request){
-        return new Response(200, Admin\Aluno::getAlunos($request));
+        return new Response(200, Operador\Aluno::getAlunos($request));
     }
     ]);
 
@@ -25,7 +25,7 @@ $obRouter->get('/operador/alunos',[
     ],
     
     function ($request){
-        return new Response(200, Admin\Aluno::getAlunos($request));
+        return new Response(200, Operador\Aluno::getAlunos($request));
     }
     ]);
 
@@ -38,7 +38,7 @@ $obRouter->post('/operador/alunos',[
  
     
     function ($request){
-        return new Response(200, Admin\Aluno::getAlunos($request));
+        return new Response(200, Operador\Aluno::getAlunos($request));
     }
     ]);
 
@@ -51,7 +51,7 @@ $obRouter->get('/operador/alunos/photo/{id}',[
     ],
     
     function ($request,$id){
-        return new Response(200, Admin\Aluno::getPhotoAluno($request,$id));
+        return new Response(200, Operador\Aluno::getPhotoAluno($request,$id));
     }
     ]);
 
@@ -63,7 +63,7 @@ $obRouter->post('/operador/alunos/photo/{id}',[
     ],
     
     function ($request){
-        return new Response(200, Admin\Aluno::setPhotoAluno($request));
+        return new Response(200, Operador\Aluno::setPhotoAluno($request));
     }
     ]);
 
@@ -77,7 +77,7 @@ $obRouter->get('/operador/alunos/{id}/edit',[
     ],
     
     function ($request,$id){
-        return new Response(200, Admin\Aluno::getEditAluno($request,$id));
+        return new Response(200, Operador\Aluno::getEditAluno($request,$id));
     }
     ]);
 
@@ -89,7 +89,7 @@ $obRouter->post('/operador/alunos/{id}/edit',[
     ],
     
     function ($request,$id){
-        return new Response(200, Admin\Aluno::setEditAluno($request,$id));
+        return new Response(200, Operador\Aluno::setEditAluno($request,$id));
     }
     ]);
 
@@ -103,7 +103,7 @@ $obRouter->get('/operador/alunos/new',[
 
     
     function ($request){
-        return new Response(200, Admin\Aluno::getNewAluno($request));
+        return new Response(200, Operador\Aluno::getNewAluno($request));
     }
     ]);
 
@@ -115,7 +115,7 @@ $obRouter->post('/operador/alunos/new',[
  ],
     
     function ($request){
-        return new Response(200, Admin\Aluno::setNewAluno($request));
+        return new Response(200, Operador\Aluno::setNewAluno($request));
     }
     ]);
 
@@ -128,7 +128,7 @@ $obRouter->get('/operador/alunos/{id}/delete',[
     ],
     
     function ($request,$id){
-        return new Response(200, Admin\Aluno::getDeleteAluno($request,$id));
+        return new Response(200, Operador\Aluno::getDeleteAluno($request,$id));
     }
     ]);
 
@@ -136,11 +136,11 @@ $obRouter->get('/operador/alunos/{id}/delete',[
 $obRouter->post('/operador/alunos/{id}/delete',[
 
     'middlewares' => [
-        'require-operador-login'
+        'require-admin-login'
     ],
     
     function ($request,$id){
-        return new Response(200, Admin\Aluno::setDeleteAluno($request,$id));
+        return new Response(200, Operador\Aluno::setDeleteAluno($request,$id));
     }
     ]);
 

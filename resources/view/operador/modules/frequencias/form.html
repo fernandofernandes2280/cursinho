@@ -1,0 +1,87 @@
+
+<form  method="post" action="">
+	<div class="row">
+			<div class="col-md-3 " >
+			<h5>{{title}}</h5>
+			<input type="text" value="{{idAula}}" hidden name="idAula"/>
+		</div>
+	
+
+	<div class="col-md-9 text-right ">
+		<a href="{{URL}}/operador/frequencias">
+			<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
+				<i class="material-icons" style="font-size: 30px;">reply</i>
+			</button>
+		</a>
+	</div>
+</div>
+	
+<div class="row">
+			<div class="col-md-6 " >
+<div class="card card-stats">
+          <div class="card-header card-header-success card-header-icon">
+            <div class="card-icon">
+              <strong class="h6">{{aula}}</strong>
+            </div>
+           
+            <p class="card-category text-light mt-5">Lançar Frequência:</p>
+           
+            
+            <a href="{{URL}}/operador/frequencias/{{idAula}}/edit/individual">
+			<button type="button" class="btn btn-facebook btn-round btn-sm " rel="tooltip" title="Frequência Individual">
+				<i class="material-icons" style="font-size: 30px;">person</i><strong class="h6">Individual</strong>
+			</button>
+		    </a>
+		    
+			<button type="submit" class="btn btn-primary btn-round btn-sm freqGeralDesktop" rel="tooltip" title="Frequência Geral">
+				<i class="material-icons" style="font-size: 30px;">qr_code_2</i><strong class="h6">Geral Desktop</strong>
+			</button>
+		    
+		    
+		     <a href="{{URL}}/operador/frequencias/{{idAula}}/edit/mobile" class="freqGeralMobile">
+			<button type="button" class="btn btn-primary btn-round btn-sm " rel="tooltip" title="Frequência Mobile">
+				<i class="material-icons" style="font-size: 30px;">qr_code_2</i><strong class="h6">Geral Mobile</strong> 
+			</button>
+		    </a>
+            
+            
+          </div>
+          <div class="card-footer">
+              <div class="stats">
+                  
+              </div>
+          </div>
+      </div>
+
+	</div>
+
+</div>						
+
+
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

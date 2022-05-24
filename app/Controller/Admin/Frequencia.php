@@ -142,7 +142,7 @@ class Frequencia extends Page{
 		    $resultados .= View::render('admin/modules/frequencias/item',[
 		        
                  'idAula' => $obAula->id,
-		        'data' => date('d/m/Y',strtotime($obAula->data)).' - '.$obAula->diaSemana.' - '.EntityTurma::getTurmaById($obAula->turma)->nome
+		        'data' => date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome
 		    ]);
 		}
 		
@@ -172,7 +172,7 @@ class Frequencia extends Page{
 	    //Conteúdo da Home
 	    $content = View::render('admin/modules/frequencias/form',[
 	        'title' => 'Frequências > Editar',
-	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' - '.$obAula->diaSemana.' - '.EntityTurma::getTurmaById($obAula->turma)->nome,
+	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
 	        'idAula' => $obAula->id,
 	        
 	    ]);
@@ -201,7 +201,8 @@ class Frequencia extends Page{
 	        'classebtn' => 'facebook',
 	        'status' =>'',
 	        'idAula' => $obAula->id,
-	        'statusMessage'=> ''
+	        'statusMessage'=> '',
+	        'foto' => 'profile.png'
 	        
 	    ]);
 	    
@@ -237,7 +238,8 @@ class Frequencia extends Page{
 	        'escondeBotaoConfirmar' => '',
 	        'statusMessage' => self::getStatus($request),
 	        'status' =>EntityStatus::getStatusById(EntityAluno::getAlunoById($idAluno)->status)->nome,
-	        'classebtn' => 'info',
+	        'foto' => $obAluno->foto,
+	        'idAula' => $obAula->id
 	        
 	    ]);
 	    

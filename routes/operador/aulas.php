@@ -1,79 +1,92 @@
 <?php
 
 use \App\Http\Response;
-use \App\Controller\Admin;
+use \App\Controller\Operador;
 
 //ROTA de Listagem de Aulas
-$obRouter->get('/admin/aulas',[
+$obRouter->get('/operador/aulas',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
                 function ($request){
-					return new Response(200, Admin\Aula::getAulas($request));
+                    return new Response(200, Operador\Aula::getAulas($request));
 					
 				}
 		]);
 
-//ROTA de POST de Agendas
-$obRouter->post('/admin/agendas',[
-	
-    'middlewares' => [
-        'require-admin-login'
-    ],
-		function ($request){
-		    return new Response(200, Admin\Aula::setAgendas($request));
-			
-		}
-		]);
 
 
 //ROTA de get de nova Aula
-$obRouter->get('/admin/aulas/new',[
+$obRouter->get('/operador/aulas/new',[
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
     
     function ($request){
-        return new Response(200, Admin\Aula::getAulasNew($request));
+        return new Response(200, Operador\Aula::getAulasNew($request));
         
     }
     ]);
 
 //ROTA de POST de nova Aula
-$obRouter->post('/admin/aulas/new',[
+$obRouter->post('/operador/aulas/new',[
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
     
     function ($request){
-        return new Response(200, Admin\Aula::setAulasNew($request));
+        return new Response(200, Operador\Aula::setAulasNew($request));
         
     }
     ]);
 
 
 //ROTA de Get de Edição de Aula
-$obRouter->get('/admin/aulas/{id}/edit',[
+$obRouter->get('/operador/aulas/{id}/edit',[
 	
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
 		function ($request,$id){
-		    return new Response(200, Admin\Aula::getAulaEdit($request,$id));
+		    return new Response(200, Operador\Aula::getAulaEdit($request,$id));
 			
 		}
 		]);
 
 //ROTA de Post de Edição de Aulas
-$obRouter->post('/admin/aulas/{id}/edit',[
+$obRouter->post('/operador/aulas/{id}/edit',[
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
     
 		function ($request, $id){
-		    return new Response(200, Admin\Aula::setAulaEdit($request, $id));
+		    return new Response(200, Operador\Aula::setAulaEdit($request, $id));
 			
 		}
 		]);
 
+
+//ROTA de Get de EXCLUSÃO de Aula
+$obRouter->get('/operador/aulas/{id}/delete',[
+    
+    'middlewares' => [
+        'require-operador-login'
+    ],
+    function ($request,$id){
+        return new Response(200, Operador\Aula::getAulaDelete($request,$id));
+        
+    }
+    ]);
+
+//ROTA de Post de EXCLUSÃO de Aulas
+$obRouter->post('/operador/aulas/{id}/delete',[
+    'middlewares' => [
+        'require-admin-login'
+    ],
+    
+    function ($request, $id){
+        return new Response(200, Operador\Aula::setAulaDelete($request, $id));
+        
+    }
+    ]);

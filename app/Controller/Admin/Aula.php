@@ -119,17 +119,21 @@ class Aula extends Page{
 		
 		//Renderiza
 		while ($obAula = $results -> fetchObject(EntityAula::class)) {
-			
+		    
+		    if($obAula->status == 1) $cor = 'bg-gradient-success';
+		    if($obAula->status == 2) $cor = 'bg-gradient-danger' ;
+		    if($obAula->status == 3) $cor = 'bg-gradient-warning';
+		    
 			//View de Agendas
 			$resultados .= View::render('admin/modules/aulas/item',[
-
+			    
 			    'id' => $obAula->id,
 			    'data' =>  date('d/m/Y', strtotime($obAula->data)).' - '.$obAula->diaSemana,
 			    'status' => EntityAula::getStatusAulaById($obAula->status)->nome,
 			    'turma' => EntityTurma::getTurmaById($obAula->turma)->nome,
 			    'presencas' => EntityFrequencia::getFrequencias('idAula = '.$obAula->id.' AND status = "P"', null,null,'COUNT(*) as qtd')->fetchObject()->qtd,
 			    'faltas' => EntityFrequencia::getFrequencias('idAula = '.$obAula->id.' AND status = "F"', null,null,'COUNT(*) as qtd')->fetchObject()->qtd,
-			    
+			    'cor' => $cor
 			]);
 		}
 		//Retorna as agendas

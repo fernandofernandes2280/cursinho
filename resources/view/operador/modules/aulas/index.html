@@ -1,0 +1,89 @@
+							<form method="get" id="form">
+								<div class="row">
+									<div class="col-md-4 card-title">
+										<h5>{{title}}</h5>
+									</div>
+									<div class="col-md-5">
+										{{statusMessage}}
+									</div>
+									<div class="col-md-3 align-self-end text-right">
+										<button type="submit" class="btn  btn-facebook btn-round btn-sm mr-2" rel="tooltip" title="Pesquisar">
+											 <i class="material-icons" style="font-size: 30px;">search</i>
+										</button>
+								     	<a href="{{URL}}/operador/aulas/new">
+								     		<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Nova">
+											<i class="material-icons" style="font-size: 30px;">add_circle_outline</i>
+											</button>
+										</a>
+									</div>
+								</div>
+
+									<div>
+										
+										  <div class="form-row">
+										    <div class="col-md-3 mb-2">
+										      <label for="data">Data da Aula</label>
+										      <input type="date" max="9999-12-31" class="form-control-pessoal" id="data" name="data" value="{{data}}"   >
+										    </div>
+										    
+										    <div class="col-md-4 mb-2">
+									       		<label for="profissional">Turma</label>
+											       <select class="custom-select" id="turma" name="turma" >
+											       <option></option>
+												        {{optionTurma}}
+											   </select>
+										    </div>
+										      <div class="col-md-4 mb-2">
+									       		<label for="profissional">Status</label>
+											       <select class="custom-select" id="status" name="status" >
+											       <option></option>
+												        {{optionStatus}}
+											   </select>
+										    </div>
+		
+						
+										  </div>
+										</form>
+									
+									</div>
+									<div class="table-responsive">
+									  	<table class="table  table-hover mt-3">
+									  		<thead class=" text-light text-center titulo-tabela">
+									  			<tr >
+									  				<th>ID</th>
+									  				<th>Data</th>
+									  				<th>Turma</th>
+									  				<th>Presenças</th>
+									  				<th>Faltas</th>
+									  				<th>Status</th>
+									  				<th style="width:13%">Ações</th>
+									  			</tr>
+									  		</thead>
+									  		<tbody>
+									  			{{itens}}
+									  		</tbody>
+									  	</table>
+									 </div>
+									    <div class="row" >
+										  	<div class="col-12 pt-0 ">
+										  		<span>{{pagination}}</span>
+										  	</div>
+										   	<div class="col-12 text-right pt-3">
+										   		<span>Total: {{totalAtendimentos}}</span>
+										  	</div>
+									  </div> 
+
+							
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  

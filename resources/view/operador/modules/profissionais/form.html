@@ -1,0 +1,156 @@
+<form  method="post" action="?page=1">
+	<div class="row">
+			<div class="col-4 " >
+			<h5>Profissionais > {{title}} </h5>
+			<input type="text" value="{{prontuario}}" hidden name="codPronto"/>
+		</div>
+ 		<div class="col-3 " >
+			{{statusMessage}}
+		</div>	
+	
+
+	<div class="col-5 text-right">
+	 <button class="btn btn-facebook btn-sm btn-round" type="submit" rel="tooltip" title="Salvar">
+     	<i class="material-icons" style="font-size: 30px;">save</i>
+     </button>
+		 
+		 <a href="{{URL}}/admin/profissionais/new">
+			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo Profissional">
+			<i class="material-icons" style="font-size: 30px;">add_circle_outline</i>
+			</button>
+		</a>
+		<a href="{{URL}}/admin/profissionais/{{id}}/acesso">
+			<button type="button" class="btn btn-alert btn-round btn-sm " rel="tooltip" title="Acesso ao sistema" {{escondeBotaoAcesso}}>
+			<i class="material-icons" style="font-size: 30px;">key</i>
+			</button>
+		</a>
+		<a href="{{URL}}/admin/profissionais">
+			<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
+				<i class="material-icons" style="font-size: 30px;">reply</i>
+			</button>
+		</a>
+	</div>
+</div>
+<br>
+  <div class="form-row">
+   
+    <div class="col-md-5 mb-2">
+      <label for="nome">Nome</label>
+      <input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required  >
+    </div>
+    
+    <div class="col-md-2 mb-2">
+      <label for="cep">Cep</label>
+      <input type="text" class="form-control-pessoal" data-action="{{URL}}/admin/delete" data-id="3" id="cep" name="cep" value="{{cep}}">
+    </div>
+     
+    <div class="col-md-5 mb-2">
+      <label for="endereco">Endereço</label>
+      <small class="text-muted"> logradouro (rua, avenida, ..) + número</small>
+      <input type="text" class="form-control-pessoal" id="endereco" name="endereco" value="{{endereco}}" >
+    </div>
+    
+  </div>
+  
+  <div class="form-row">
+
+	  	<div class="col-md-4">
+	      <label for="bairro">Bairro</label>
+	       <select class="custom-select" id="bairro" name="bairro" required>
+		        {{optionBairros}}
+		   </select>
+	    </div>
+	  	<div class="col-md-2">
+	      <label for="cidade">Cidade</label>
+	      <input type="text" class="form-control-pessoal" id="cidade" name="cidade" value="{{cidade}}" required>
+	    </div>  
+
+      	<div class="col-md-1">
+	      	<label for="uf">UF</label>
+			<input type="text" class="form-control-pessoal" id="uf" name="uf" value="{{uf}}" required>    
+		</div>  
+
+		<div class="col-md-3 mb-2">
+	      <label for="cartaoSus">Cartão SUS</label>
+	      <input type="text" class="form-control-pessoal" id="cartaoSus" name="cartaoSus" value="{{cartaoSus}}" required>
+		</div>
+		
+		<div class="col-md-2 mb-2">
+	      <label for="cbo">CBO</label>
+	      <input type="text" class="form-control-pessoal" id="cbo" name="cbo" value="{{cbo}}" required>
+		</div>
+		
+   </div>   
+   
+   <div class="form-row">
+
+		    <div class="col-md-4 mb-2">
+		      <label for="funcao">Função</label>
+		      <input type="text" class="form-control-pessoal" id="funcao" name="funcao" value="{{funcao}}" required>
+			</div>
+
+		    <div class="col-md-3 mb-2">
+		      <label for="dataNasc">Data Nascimento</label>
+		      <input type="date" class="form-control-pessoal" id="dataNasc" name="dataNasc" value="{{dataNasc}}" required>
+			</div>
+
+		    <div class="col-md-3 mb-2">
+				<label>CPF</label>
+				<input type="text" name="cpf" id="cpf" onKeyPress="mascara(this, formatarCpf)" class="form-control-pessoal" value="{{cpf}}" required>
+
+		    </div>
+		    
+		    <div class="col-md-2 mb-2">
+		      <label for="fone1">Telefone</label>
+		      <input type="text" class="form-control-pessoal" id="fone" name="fone" value="{{fone}}">
+		    </div>
+		    
+	</div>	  	
+		<div class="form-row">
+		
+			<div class="col-md-2 mb-2">
+		      <label for="status">Status</label>
+		         <select class="custom-select" id="status" name="status" required>
+			        <option {{selectedStatusA}} value=1>Ativo</option>
+			        <option {{selectedStatusI}} value=0>Inativo</option>
+			   </select>
+		    </div>
+		   
+		    <div class="col-md-5 mb-2">
+				<label>Email</label>
+				<input type="email" name="email" class="form-control-pessoal" value="{{email}}" required>
+	    	</div>
+		</div>
+</form>	
+
+
+							
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

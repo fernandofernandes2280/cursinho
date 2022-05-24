@@ -1,106 +1,105 @@
 <?php
 
 use \App\Http\Response;
-use \App\Controller\Admin;
-use \App\File;
+use \App\Controller\Operador;
 
 
 //Rota de listagem de professores
-$obRouter->get('/admin/professores',[
+$obRouter->get('/operador/professores',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
     
     
     function ($request){
-        return new Response(200, Admin\Professor::getProfessores($request));
+        return new Response(200, Operador\Professor::getProfessores($request));
     }
     ]);
 
 //Rota de listagem de professores
-$obRouter->post('/admin/professores',[
+$obRouter->post('/operador/professores',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
     
     
     function ($request){
-        return new Response(200, Admin\Professor::getProfessores($request));
+        return new Response(200, Operador\Professor::getProfessores($request));
     }
     ]);
 
 
 //ROTA de Edição de um de Professor
-$obRouter->get('/admin/professores/{id}/edit',[
+$obRouter->get('/operador/professores/{id}/edit',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
     
     
     function ($request,$id){
-        return new Response(200, Admin\Professor::getEditProfessor($request,$id));
+        return new Response(200, Operador\Professor::getEditProfessor($request,$id));
     }
     ]);
 
 //ROTA de Edição de um de Paciente (POST)
-$obRouter->post('/admin/professores/{id}/edit',[
+$obRouter->post('/operador/professores/{id}/edit',[
    
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
     
     
     function ($request,$id){
-        return new Response(200, Admin\Professor::setEditProfessor($request,$id));
+        return new Response(200, Operador\Professor::setEditProfessor($request,$id));
     }
     ]);
 
 
 //Rota GET para Novo Professor
-$obRouter->get('/admin/professores/new',[
+$obRouter->get('/operador/professores/new',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
     
     
     function ($request){
-        return new Response(200, Admin\Professor::getNewProfessor($request));
+        return new Response(200, Operador\Professor::getNewProfessor($request));
     }
     ]);
 
 //Rota POST para Novo Professor
-$obRouter->post('/admin/professores/new',[
+$obRouter->post('/operador/professores/new',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
     
     
     function ($request){
-        return new Response(200, Admin\Professor::setNewProfessor($request));
+        return new Response(200, Operador\Professor::setNewProfessor($request));
     }
     ]);
 
 
 //Rota GET para excluir Professor
-$obRouter->get('/admin/professores/{id}/delete',[
+$obRouter->get('/operador/professores/{id}/delete',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
     
     
     function ($request,$id){
-        return new Response(200, Admin\Professor::getDeleteProfessor($request,$id));
+        return new Response(200, Operador\Professor::getDeleteProfessor($request,$id));
     }
     ]);
 
 //Rota POST para excluir Professor
-$obRouter->post('/admin/professores/{id}/delete',[
+$obRouter->post('/operador/professores/{id}/delete',[
 
     'middlewares' => [
         'require-admin-login'
@@ -108,33 +107,33 @@ $obRouter->post('/admin/professores/{id}/delete',[
     
     
     function ($request,$id){
-        return new Response(200, Admin\Professor::setDeleteProfessor($request,$id));
+        return new Response(200, Operador\Professor::setDeleteProfessor($request,$id));
     }
     ]);
 
 //ROTA de Captura Foto do professores
-$obRouter->get('/admin/professores/photo/{id}',[
+$obRouter->get('/operador/professores/photo/{id}',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
     
     
     function ($request,$id){
-        return new Response(200, Admin\Professor::getPhotoProfessor($request,$id));
+        return new Response(200, Operador\Professor::getPhotoProfessor($request,$id));
     }
     ]);
 
 //ROTA de Captura Foto do professores
-$obRouter->post('/admin/professores/photo/{id}',[
+$obRouter->post('/operador/professores/photo/{id}',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-operador-login'
     ],
     
     
     function ($request){
-        return new Response(200, Admin\Professor::setPhotoProfessor($request));
+        return new Response(200, Operador\Professor::setPhotoProfessor($request));
     }
     ]);
 

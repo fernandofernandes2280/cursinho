@@ -12,7 +12,7 @@ use \App\Model\Entity\DisciplinaProfessor as EntityDisciplinaProfessor;
 use \WilliamCosta\DatabaseManager\Pagination;
 use Dompdf\Dompdf;
 use Bissolli\ValidadorCpfCnpj\CPF;
-use \App\Controller\Admin\File\Upload as Upload;
+use \App\Controller\File\Upload as Upload;
 use \App\Controller\Admin\Resize;
 
 
@@ -77,15 +77,20 @@ class Professor extends Page{
 		
 		
 		
+		$resultadoDisciplinas = '';
 		//Renderiza
 		while ($obProfessor = $results -> fetchObject(EntityProfessor::class)) {
+		    
+		    $resultsDisciplina = EntityDisciplinaProfessor::getDisciplinasProfessor('idProfessor = '.$obProfessor->id);
+		    while ($obDisciplina = $resultsDisciplina -> fetchObject(EntityDisciplinaProfessor::class)) {
+		        $resultadoDisciplinas .= ''.@EntityDisciplina::getDisciplinaById($obDisciplina->idDisciplina)->nome.', ';
+		    }
 			 
 			//View de pacientes
 			$resultados .= View::render('admin/modules/professores/item',[
 			
 			//muda cor do texto do status para azul(ativo) ou vermelho(inativo)
-			    $obProfessor->status == 1 ? $cor = 'text-success' : $cor = 'text-danger',
-			    $obProfessor->status == 1 ? $titleStatus = 'Ativo' : $titleStatus = 'Inativo',
+			    $obProfessor->status == 1 ? $cor = 'bg-gradient-success' : $cor = 'bg-gradient-danger',
 
 			    'nome' => $obProfessor->nome,
 			    'cpf' =>Funcoes::mask($obProfessor->cpf, '###.###.###-##') ,
@@ -93,9 +98,10 @@ class Professor extends Page{
 			    'id' => $obProfessor->id,
 			    'cor' => $cor,
 			    'email' => $obProfessor->email,
-			    'foto' => $obProfessor->foto
+			    'foto' => $obProfessor->foto,
+			    'disciplinas' => rtrim($resultadoDisciplinas,', ')
 			]);
-			
+			$resultadoDisciplinas = '';
 		}
 	
 		//Grava o Log do usuário

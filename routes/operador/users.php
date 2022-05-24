@@ -1,141 +1,28 @@
 <?php
 
 use \App\Http\Response;
-use \App\Controller\Admin;
-use \App\Controller\Visitor;
+use \App\Controller\Operador;
 
 
-//ROTA de Listage de Usuários
-$obRouter->get('/admin/users',[
-    
-    'middlewares' => [
-        'require-admin-login'
-    ],
-		
-		function ($request){
-			return new Response(200, Admin\User::getUsers($request));
-		}
-		]);
-
-
-//ROTA de Cadastro de um Novo de Usuário
-$obRouter->get('/admin/users/new',[
-		
-    
-    'middlewares' => [
-        'require-admin-login'
-    ],
-		
-		function ($request,$id){
-			return new Response(200, Admin\User::getNewUser($request,$id));
-		}
-		]);
-
-//ROTA de Cadastro de um Novo de Usuário (POST)
-$obRouter->post('/admin/users/new',[
-    
-    'middlewares' => [
-        'require-admin-login'
-    ],
-		
-		
-		function ($request,$id){
-			return new Response(200, Admin\User::setNewUser($request,$id));
-		}
-		]);
-
-//ROTA de Edição de um de Usuário
-$obRouter->get('/admin/users/{id}/edit',[
-		
-    
-    'middlewares' => [
-        'require-admin-login'
-    ],
-		
-		function ($request,$id){
-			return new Response(200, Admin\User::getEditUser($request,$id));
-		}
-		]);
-
-//ROTA de Edição de um de Usuário (POST)
-$obRouter->post('/admin/users/{id}/edit',[
-		
-    
-    'middlewares' => [
-        'require-admin-login'
-    ],
-		
-		function ($request,$id){
-			return new Response(200, Admin\User::setEditUser($request,$id));
-		}
-		]);
-
-//ROTA de Exclusão de um de Usuário
-$obRouter->get('/admin/users/{id}/delete',[
-		'middlewares' => [
-				'require-admin-login'
-		],
-		
-		
-		function ($request,$id){
-			return new Response(200, Admin\User::getDeleteUser($request,$id));
-		}
-		]);
-//ROTA de Exclusão de um de Usuário (POST)
-$obRouter->post('/admin/users/{id}/delete',[
-		'middlewares' => [
-				'require-admin-login'
-		],
-		
-		
-		function ($request,$id){
-			return new Response(200, Admin\User::setDeleteUser($request,$id));
-		}
-		]);
 
 //ROTA get para alterar senha
-$obRouter->get('/admin/trocarSenha',[
+$obRouter->get('/operador/trocarSenha',[
 		'middlewares' => [
-				'require-admin-login'
+				'require-operador-login'
 		],
 		function ($request){
-			return new Response(200, Admin\Senha::getTrocarSenha($request));
+		    return new Response(200, Operador\Senha::getTrocarSenha($request));
 			//return new Response(200, Visitor\Home::getHome($request));
 		}
 		]);
 
 
-$obRouter->post('/admin/trocarSenha',[
+$obRouter->post('/operador/trocarSenha',[
 		'middlewares' => [
-				'require-admin-login'
+				'require-operador-login'
 		],
 		function ($request){
-			return new Response(200, Admin\Senha::setTrocarSenha($request));
+		    return new Response(200, Operador\Senha::setTrocarSenha($request));
 			//return new Response(200, Visitor\Home::getHome($request));
 		}
 		]);
-
-//ROTA de Captura Foto do Usuário
-$obRouter->get('/admin/users/photo/{id}',[
-    
-    'middlewares' => [
-        'require-admin-login'
-    ],
-    
-    function ($request,$id){
-        return new Response(200, Admin\User::getPhoto($request,$id));
-    }
-    ]);
-
-//ROTA de Captura Foto do Usuário
-$obRouter->post('/admin/users/photo/{id}',[
-    
-    'middlewares' => [
-        'require-admin-login'
-    ],
-    
-    function ($request){
-        return new Response(200, Admin\User::setPhoto($request));
-    }
-    ]);
-

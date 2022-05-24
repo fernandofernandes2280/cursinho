@@ -1,0 +1,209 @@
+
+<form  method="post">
+	<div class="row">
+			<div class="col-md-3 " >
+			<h5>{{title}}</h5>
+		</div>
+ 		<div class="col-md-4 " >
+			{{statusMessage}}
+		</div>	
+	
+	
+	<div class="col-md-5 text-right">
+		<a href="#" target="_blank" rel="tooltip" title="Imprimir Capa">
+               <i class="material-icons" style="font-size: 30px;">print</i>
+		</a>
+		
+	  <button class="btn btn-facebook btn-sm btn-round" type="submit" rel="tooltip" title="Salvar">
+     	<i class="material-icons" style="font-size: 30px;">save</i>
+     </button>
+		 
+		 <a href="{{URL}}/operador/alunos/new">
+			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo">
+			<i class="material-icons" style="font-size: 30px;">add_circle_outline</i>
+			</button>
+		</a>
+		
+		<a href="javascript:history.back()">
+			<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
+				<i class="material-icons" style="font-size: 30px;">reply</i>
+			</button>
+		</a>
+		
+		
+		
+		
+	</div>
+</div>
+
+<div class="form-row">
+    <div class="colfoto mb-2 mr-2 text-center">
+    	<a href="{{URL}}/operador/alunos/photo/{{id}}" style="{{ponteiro}}">
+			<img style="background-color: #fff; border-radius: 10%" title="Carregar nova foto" class="img-fluid" alt="Foto" rel="tooltip" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" style="cursor:pointer">
+		</a>
+		
+    </div>
+    
+     <div class="col-md-10 mb-2">
+      {{matricula}}
+        <div class="form-row">
+    		<div class="col-nomeAl mb-2">
+      		<label for="nome">Nome</label>
+      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required  oninvalid="this.setCustomValidity('Username cannot be empty.')" 
+>
+    		</div>
+    		<div class="col-cep mb-2">
+			      <label for="cep">Cep</label>
+			      <input type="text" class="form-control-pessoal" data-action="{{URL}}/operador/delete" data-id="3" id="cep" name="cep" value="{{cep}}">
+      		
+    		</div>
+    	</div>
+    	<div class="form-row">
+		    <div class="col-md-6 mb-2">
+		      <label for="endereco">Endereço</label>
+		      <small class="text-muted"> logradouro (rua, avenida, ..) + número</small>
+		      <input type="text" class="form-control-pessoal" id="endereco" name="endereco" value="{{endereco}}"  >
+		    </div>   
+		    
+		    <div class="col-md-3">
+		      <label for="bairro">Bairro</label>
+		       <select class="custom-select" id="bairro" name="bairro" required>
+			        {{optionBairros}}
+			   </select>
+   			 </div> 
+   			   	<div class="col-md-2">
+			      <label for="cidade">Cidade</label>
+			      <input type="text" class="form-control-pessoal" id="cidade" name="cidade" value="{{cidade}}" >
+			    </div> 
+   			 	    <div class="col-md-1">
+					<label for="uf">UF</label>
+					<input type="text" class="form-control-pessoal" id="uf" name="uf" value="{{uf}}" >   
+				</div>  
+    	</div>
+      
+      
+    </div>
+    
+   
+    
+  </div>
+
+  
+  <div class="form-row">
+    
+   	<div class="col-md-4 mb-2">
+		      <label for="naturalidade">Naturalidade</label>
+		      <input type="text" class="form-control-pessoal" id="naturalidade" name="naturalidade" value="{{naturalidade}}">
+		    </div>  
+
+		<div class="col-md-3 mb-2">
+		      <label for="escolaridade">Escolaridade</label>
+		       <select class="custom-select" id="escolaridade" name="escolaridade" required>
+			        {{optionEscolaridade}}
+			   </select>
+		    </div>			
+		  
+		    <div class="col-md-3 mb-2">
+		      <label for="estadoCivil">Estado Civil</label>
+		       <select  class="custom-select" id="estadoCivil" name="estadoCivil"  required>
+			        {{optionEstadoCivil}}
+			   </select>
+		    </div>    
+	 <div class="col-md-2 mb-2">
+		      <label for="sexo">Sexo</label><br>
+		      <select class="custom-select" id="sexo" name="sexo">
+		        <option {{selectedSexoM}} value="MAS">MAS</option>
+		        <option {{selectedSexoF}} value="FEM">FEM</option>
+		      </select>
+		    </div> 	   		
+    
+     
+   </div>   
+   
+   <div class="form-row">
+   		
+		     
+		    <div class="col-data mb-2">
+		      <label for="dataNasc">Data Nascimento</label>
+		      <input  type="date" class="form-control-pessoal" id="dataNasc" name="dataNasc" value="{{dataNasc}}" required>
+			</div>
+			
+			<div class="col-data mb-2">
+		      <label for="dataCad">Data Cadastro</label>
+		      <input type="date" class="form-control-pessoal" id="dataCad" name="dataCad" value="{{dataCad}}" required>
+		    </div>  
+		    
+		    <div class="col-md-2 mb-2">
+		      <label for="fone">Telefone</label>
+		      <input type="text" class="form-control-pessoal" id="fone" name="fone" value="{{fone}}" maxlength="9">
+		      <script>
+		      	$('#fone').keyup(function() {
+				  $(this).val(this.value.replace(/\D/g, ''));
+				});
+		      </script>
+		    </div>
+		    <div class="col-cpf mb-2">
+	           <label for="cpf">CPF:</label><cite id="labelInvalid" hidden title="Source Title"> Inválido</cite>
+                <input class="form-control-pessoal validate" {{readonly}} required type="text" id="cpf" value="{{cpf}}" name="cpf" />
+		    </div>  
+		     	<div class="col-md-2 mb-2">
+		      <label for="status">Status</label>
+		         <select class="custom-select" id="status" name="status" required>
+			        {{optionStatus}}
+			   </select>
+
+		    </div>
+		    <div class="col-turma mb-2">
+		      <label for="turma">Turma</label>
+		       <select class="custom-select" id="turma" name="turma"  required>
+			        {{optionTurma}}
+			   </select>
+		    </div>	  	
+  </div>
+      
+    <div class="form-row">
+		    <div class="col-md-5 mb-2">
+		      <label for="mae">Mãe</label>
+		      <input type="text" class="form-control-pessoal" id="mae" name="mae" value="{{mae}}">
+		    </div>
+		   
+		  	 <div class="col-obs mb-2">
+		      <label for="obs">Observações</label>
+		      <input type="text" class="form-control-pessoal" id="obs" name="obs" value="{{obs}}" >
+		    </div>	
+
+   </div>   
+  
+</form>	
+
+
+							
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

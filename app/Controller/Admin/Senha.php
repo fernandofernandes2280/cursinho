@@ -69,7 +69,7 @@ class Senha extends Page{
 			
 		//	var_dump($obUser->senha); exit;
 			//Verifica a senha do usuário
-			if(!password_verify($senhaAtual, $obUser->senha)){
+			if($senhaAtual !== $obUser->senha){
 				return self::getTrocarSenha($request,'Error','Senha atual inválida');
 			}
 			
@@ -78,7 +78,7 @@ class Senha extends Page{
 			}
 			
 			//Atualiza a instância
-			$obUser->senha = password_hash($novaSenha,PASSWORD_DEFAULT);
+			$obUser->senha = $novaSenha;
 			$obUser->atualizar();
 		
 			return self::getTrocarSenha($request, 'Success','Senha atualizada com sucesso!');
