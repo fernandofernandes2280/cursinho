@@ -438,7 +438,11 @@ bodyu{
 
             }
         }
-        return html5qrcode.start({ facingMode: facingMode },{ fps: 10, qrbox: 250 },onScanSuccess);
+         return html5qrcode.start({ facingMode:  { exact: "environment"} },{ fps: 10, qrbox: 250 },onScanSuccess);
+        
+    	
+    	 /** load scanner using back camera **/
+    	//return html5qrcode.start({ facingMode: { exact: "environment"} }, config, qrCodeSuccessCallback);
     }
     function stopScanning() {
         return html5qrcode.stop();
