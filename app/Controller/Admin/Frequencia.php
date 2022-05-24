@@ -190,7 +190,7 @@ class Frequencia extends Page{
 	    //Conteúdo da Home
 	    $content = View::render('admin/modules/frequencias/formIndividual',[
 	        'title' => 'Frequências > Editar',
-	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' - '.$obAula->diaSemana.' - '.EntityTurma::getTurmaById($obAula->turma)->nome,
+	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
 	        'id' => $obAula->id,
 	        //'matricula' => EntityAluno::getAlunoById($idAluno)->matricula ?? '',
 	        'matricula' => '',
@@ -228,7 +228,7 @@ class Frequencia extends Page{
 	    //Conteúdo da Home
 	    $content = View::render('admin/modules/frequencias/formIndividual',[
 	        'title' => 'Frequências > Editar',
-	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' - '.$obAula->diaSemana.' - '.EntityTurma::getTurmaById($obAula->turma)->nome,
+	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
 	        'id' => $obAula->id,
 	        'matricula' => EntityAluno::getAlunoById($idAluno)->matricula,
 	        'nome' => EntityAluno::getAlunoById($idAluno)->nome,
@@ -441,7 +441,7 @@ class Frequencia extends Page{
 			$content = View::render('admin/modules/frequencias/geral/index',[
 			  
 			   'title'=> 'Frequência Geral',
-			    'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' - '.$obAula->diaSemana.' - '.EntityTurma::getTurmaById($obAula->turma)->nome,
+			    'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
 			    'idAula' => $obAula->id
 					
 			]);
@@ -466,7 +466,7 @@ class Frequencia extends Page{
 	    $content = View::render('admin/modules/frequencias/geral/indexMobile',[
 	        
 	        'title'=> 'Frequência Geral',
-	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' - '.$obAula->diaSemana.' - '.EntityTurma::getTurmaById($obAula->turma)->nome,
+	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
 	        'idAula' => $obAula->id
 	        
 	    ]);
