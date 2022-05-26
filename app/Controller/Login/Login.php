@@ -109,7 +109,7 @@ class Login extends Page{
 		]);
 		
 		//Retornar a página completa
-		return parent::getPage('Login > SisCaps', $content);
+		return parent::getPage('Login > Cursinho', $content);
 		
 	}
 	
