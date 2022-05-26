@@ -35,7 +35,7 @@ class Page{
 	    'frequencias' =>[
 	        'label' => 'Frequências',
 	        'link' => URL.'/operador/frequencias',
-	        'material-icons' => 'how_to_reg',
+	        'material-icons' => 'checklist_rtl',
 	        'modal' => ''
 	        
 	    ],

@@ -15,11 +15,10 @@
      	<i class="material-icons" style="font-size: 30px;">save</i>
      </button>
 		 
-		 <a href="{{URL}}/admin/professores/new">
-			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo">
-			<i class="material-icons" style="font-size: 30px;">add_circle_outline</i>
+		 <!-- Aciona modal novoCPF -->
+			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfProfessor">
+			  <i class="material-icons" style="font-size: 30px;">person_add</i>
 			</button>
-		</a>
 		
 		<a href="{{URL}}/admin/professores">
 			<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
@@ -35,7 +34,7 @@
 		<div class="form-row  ">
 		    <div class="colfoto mb-1 mr-2 pt-fotoProf text-center ">
 		    	<a href="{{URL}}/admin/professores/photo/{{id}}" style="{{ponteiro}}">
-					<img style="background-color: #fff;; border-radius: 10%" {{hiddenFoto}} title="Carregar nova foto" class="img-fluid" alt="Foto" rel="tooltip" src="{{URL}}/app/Controller/Admin/File/files/fotos/{{foto}}" style="cursor:pointer">
+					<img style="background-color: #fff;; border-radius: 10%" {{hiddenFoto}} title="Carregar nova foto" class="img-fluid" alt="Foto" rel="tooltip" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" style="cursor:pointer">
 				</a>
 		    </div>
 		    
@@ -44,7 +43,7 @@
         <div class="form-row">
     		<div class="col-nomeProf mb-2">
       		<label for="nome">Nome</label>
-      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required  oninvalid="this.setCustomValidity('Username cannot be empty.')" 
+      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required  /> 
 >
     		</div>
     		<div class="col-cep mb-2">
@@ -96,8 +95,8 @@
 					</div>
 					
 				    <div class="col-cpf mb-2">
-						<label for="cpf">CPF:</label><cite id="labelInvalid" hidden title="Source Title"> Inválido</cite>
-		                <input class="form-control-pessoal validate" {{readonly}} required type="text" id="cpf" value="{{cpf}}" name="cpf" />
+						<label for="cpf">CPF:</label>
+		                <input class="form-control-pessoal cpfProfessor mascara-cpf" required type="text" id="cpf" value="{{cpf}}" name="cpf" />
 				    </div>
 				    
 				    <div class="col-md-2 mb-2">

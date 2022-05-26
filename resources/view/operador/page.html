@@ -46,24 +46,22 @@
     
       {{content}}
   
-    <!-- Modal Produção-->
-<div class="modal fade" id="producaoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Modal Novo Aluno CPF-->
+<div class="modal fade" id="modalNovoCpfAluno" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document" >
     <div class="modal-content">
-    <form  method="post" action="{{URL}}/admin/producao" target="_blank">
+    <form  method="get" action="{{URL}}/operador/alunos/new">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalLabel">Texto alterado conforme item clicado </h5>
+        <h5 class="modal-title" id="modalLabel">Informe o CPF do novo Aluno: </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        Informe o perído de apuração:<br>
-        Data Início:
-        <input class="mt-1" type="date" id="dataInicial" name="dataInicial" required><br>
-        Data Fim:&nbsp;&nbsp;&nbsp;
-        <input class="mt-2" type="date" id="dataFinal" name="dataFinal" required>
-        <input id="instrumento" name="instrumento" value="" hidden><br>
+        <label for="cpf">CPF:</label>
+        	
+       		<input class="form-control-pessoal mascara-cpf cpfNovo" {{readonly}} required type="text" id="cpf" name="cpf" />
+           
       </div>
       <div class="modal-footer">
       		<button class="btn btn-danger btn-round btn-just-icon" data-dismiss="modal" rel="tooltip" title="Fechar">
@@ -79,30 +77,29 @@
   </div>
 </div>	
 
-    <!-- Modal Relatórios-->
-<div class="modal fade" id="relatorioModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Modal Novo Professor CPF-->
+<div class="modal fade" id="modalNovoCpfProfessor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document" >
     <div class="modal-content">
-    <form  method="post" action="{{URL}}{{relatorio}}">
+    <form  method="get" action="{{URL}}/operador/professores/new">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalLabel">Relatório de Atendimentos</h5>
+        <h5 class="modal-title" id="modalLabel">Informe o CPF do novo Professor: </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        Informe o perído de apuração:<br>
-        Data Início:
-        <input class="mt-1" type="date" id="dataInicial" name="dataInicial" required><br>
-        Data Fim:&nbsp;&nbsp;&nbsp;
-        <input class="mt-2" type="date" id="dataFinal" name="dataFinal" required>
+        <label for="cpf">CPF:</label>
+        	
+       		<input class="form-control-pessoal mascara-cpf cpfNovo" {{readonly}} required type="text" id="cpf" name="cpf" />
+           
       </div>
       <div class="modal-footer">
       		<button class="btn btn-danger btn-round btn-just-icon" data-dismiss="modal" rel="tooltip" title="Fechar">
                 <i class="material-icons">close</i>
               </button>
       
-              <button type="submit" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Gerar Relatório">
+              <button type="submit" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Gerar Produção">
                 <i class="material-icons">description</i>
               </button>
        </div>

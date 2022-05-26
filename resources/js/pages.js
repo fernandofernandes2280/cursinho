@@ -1,61 +1,118 @@
-	//mascara CPF CNPJ
+
+//FUNÇÃO PARA VALIDAR CPF
+function verificarCPF(cpf) {  
+    // Remove os pontos/traço da expressão regular, caso exista
+    cpf = cpf.replace(/[^\d]+/g,'');    
+    if(cpf == '') return false;     
+
+    // Elimina CPFs invalidos conhecidos    
+    if (cpf.length != 11 ||         
+    cpf == "00000000000" ||         
+    cpf == "11111111111" ||         
+    cpf == "22222222222" ||         
+    cpf == "33333333333" ||         
+    cpf == "44444444444" ||         
+    cpf == "55555555555" ||         
+    cpf == "66666666666" ||         
+    cpf == "77777777777" ||         
+    cpf == "88888888888" ||         
+    cpf == "99999999999")       
+    return false;         
+
+    // Valida 1o digito 
+    add = 0;        
+
+    for (i=0; i < 9; i ++) {
+        add += parseInt(cpf.charAt(i)) * (10 - i);  
+    }
+    rev = 11 - (add % 11);  
+    if (rev == 10 || rev == 11) {
+        rev = 0;
+    }  
+
+    if (rev != parseInt(cpf.charAt(9))) {
+        return false;
+    }   
+
+    // Valida 2o digito 
+    add = 0;    
+    for (i = 0; i < 10; i ++) {
+        add += parseInt(cpf.charAt(i)) * (11 - i);
+    }    
+    rev = 11 - (add % 11);     
+    if (rev == 10 || rev == 11) {
+        rev = 0;
+    }    
+    if (rev != parseInt(cpf.charAt(10))) {
+        return false;
+    }  
+    return true;   
+}
+
+verifica_validacao = function(campo, funcaoValidacao, mensagemErro) {
+    if(campo.next().hasClass("label-error")) {
+        campo.next().remove();
+    }
+    // Verifica se é um CPF
+    if(campo.val() != '' && funcaoValidacao(campo.val()) == false) {
+        // Se for um CPF, incluir a label do erro e marca o item com a classe de erro
+      campo.after("<div class='label-error'><span class='badge badge-sm bg-gradient-danger'>" + mensagemErro + "</span></div>");
+     campo.addClass("item-error");
 
 
 
-	function mascara(o,f){
-	    v_obj=o
-	    v_fun=f
-	    setTimeout("execmascara()",1)
-	}
+    } else {
+        // Se não for um CPF, remove a classe item-error
+ 
+        campo.removeClass("item-error");
 
-	function execmascara(){
-	    v_obj.value=v_fun(v_obj.value)
-	}
+    }
+}
 
-	function formatarCpf(v){
-	    v=v.replace(/\D/g,"")                    //Remove tudo o que não é dígito
-	    v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto dígitos
-	    v=v.replace(/(\d{3})(\d)/,"$1.$2")       //Coloca um ponto entre o terceiro e o quarto dígitos
-	                                             //de novo (para o segundo bloco de números)
-	    v=v.replace(/(\d{3})(\d{1,2})$/,"$1-$2") //Coloca um hífen entre o terceiro e o quarto dígitos
-	    return v
-	}
+$( document ).ready(function() {
 
-//valida cpf no form
-        $(document).ready(function () {
-				
-	
-            $('.validate').cpfcnpj({
-                mask: true,
-                validate: 'cpf',
-                event: 'focusout',
-               // validateOnlyFocus: true,
-                handler: '.validate',
-                ifValid: function (input) {
-					 input.removeClass("error"); 
-				document.getElementById('labelInvalid').setAttribute('hidden','');
-					  },
-				ifInvalid: function (input) {
-					 
-						input.addClass("error");
-						document.getElementById('labelInvalid').removeAttribute('hidden');
-					   document.getElementById("cpf").value = "";
-		 			
-		 					 
-				}
-            });
+       // Definições de Máscaras
+       $(".mascara-data").mask("99/99/9999");
+       $(".mascara-cpf").mask("999.999.999-99");
+       $(".mascara-cnpj").mask("99.999.999/9999-99");
+       $(".mascara-telefone").mask("(99)9999-9999?9");
+       $(".mascara-cep").mask("99.999-999");
 
-        });
+       $('.mascara-telefone').focusout(function(){
+        var phone, element;
+        element = $(this);
+        element.unmask();
+        phone = element.val().replace(/\D/g, '');
+        if(phone.length > 10) {
+            element.mask("(99)99999-999?9");
+        } else {
+            element.mask("(99)9999-9999?9");
+        }
+    });
+
+	//APLICA A VALIDAÇÃO AO VIVO
+	$(".cpfLogin:not(.no-validation)").change(function() {verifica_validacao($(this), verificarCPF, "CPF inválido");});
+	$(".cpfPesquisa:not(.no-validation)").change(function() {verifica_validacao($(this), verificarCPF, "CPF inválido");});
+	$(".cpfNovo:not(.no-validation)").change(function() {verifica_validacao($(this), verificarCPF, "CPF inválido");});
+	$(".cpfAluno:not(.no-validation)").change(function() {verifica_validacao($(this), verificarCPF, "CPF inválido");});
+	$(".cpfProfessor:not(.no-validation)").change(function() {verifica_validacao($(this), verificarCPF, "CPF inválido");});
+	$(".cpfUser:not(.no-validation)").change(function() {verifica_validacao($(this), verificarCPF, "CPF inválido");});
+});
+
+
+
+
+
+
+
+
+
 
 
 
 
 
 $(document).ready(function() {
-    
-	
-	
-	
 //	showAllUser();
 	function showAllUser(){
 		$.ajax({
@@ -118,7 +175,7 @@ $(document).ready(function() {
         $(this).find('ul.dropdown-menu').removeClass('show open');
     });
 	
-
+/*
 	
 	//Evento qdo botao RAAS é clicado
 	document.getElementById("btnRaas").addEventListener("click", labelRaas);
@@ -145,7 +202,7 @@ $(document).ready(function() {
 	  document.getElementById("modalLabel").innerHTML = "Relatório BPA-I";
 	document.getElementById("instrumento").value = "1";
 	}
-	
+	*/
 /////Máscaras para Telefone //////////////////	
 
 	$("#fone1").blur(function() {

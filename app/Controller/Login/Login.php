@@ -103,7 +103,7 @@ class Login extends Page{
 		
 		
 		//COnteúdo da página de login
-		$content = View::render('admin/login',[
+		$content = View::render('login',[
 				'status' => $status,
 				
 		]);

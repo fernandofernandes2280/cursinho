@@ -61,10 +61,10 @@ class User extends Page{
 		$content = View::render('admin/modules/users/index',[
 				'itens' => self::getUserItems($request, $obPagination),
 				'pagination' => parent::getPagination($request, $obPagination),
-				'status' => self::getStatus($request),
+				'statusMessage' => self::getStatus($request),
 				'navBar'=>View::render('admin/navBar',[]),
 				'footer'=>View::render('admin/modules/pacientes/footer',[]),
-				'statusMessage' => ''
+				
 				
 		]);
 		
@@ -79,12 +79,33 @@ class User extends Page{
 	    //Inicia sessão
 	    Funcoes::init();
 	    
+	    //QUERY PARAMS
+	    $queryParams = $request->getQueryParams();
+	    
+	    //instancia classe pra verificar CPF
+	    $validaCpf = new CPF($queryParams['cpf']);
+	    
+	    //verifica se é válido o cpf
+	    if (!$validaCpf->isValid()){
+	        
+	        $request->getRouter()->redirect('/admin/users?statusMessage=cpfInvalid');
+	    }
+	    
+	    
+	    //busca usuário pelo CPF sem a maskara
+	    $ob = EntityUser::getUserByCPF($validaCpf->getValue());
+	    //verifica se o cpf já está cadastrado
+	    if($ob instanceof EntityUser){
+	        $request->getRouter()->redirect('/admin/users?statusMessage=duplicated');
+	    }
+	    
+	    
 		//Conteúdo do Formulário
 		$content = View::render('admin/modules/users/form',[
 				'title' => 'Usuários > Novo',
 		         'nome' => @$_SESSION['usuario']['novo']['nome'] ?? '',
 		         'email' => @$_SESSION['usuario']['novo']['email'] ?? '',
-		         'cpf' => @$_SESSION['usuario']['novo']['cpf'] ?? '',
+		    'cpf' => @$_SESSION['usuario']['novo']['cpf'] ?? @$validaCpf->getValue(),
 		         'senha' => @$_SESSION['usuario']['novo']['senha'] ?? '',
 				'statusMessage' => self::getStatus($request),
 		        'selectedVisitante'=> 'selected',
@@ -170,10 +191,10 @@ class User extends Page{
 			case 'deleted':
 				return Alert::getSuccess('Usuário excluído com sucesso!');
 				break;
-			case 'cpfDuplicated':
-			    return Alert::getError('CPF já está sendo utilizado por outro usuário!');
+			case 'duplicated':
+			    return Alert::getError('Usuário já cadastrado!');
 				break;
-			case 'cpfInvalido':
+			case 'cpfInvalid':
 				return Alert::getError('CPF Inválido!');
 				break;
 			case 'emailDuplicated':

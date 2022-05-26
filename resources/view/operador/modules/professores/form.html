@@ -44,7 +44,7 @@
         <div class="form-row">
     		<div class="col-nomeProf mb-2">
       		<label for="nome">Nome</label>
-      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required  oninvalid="this.setCustomValidity('Username cannot be empty.')" 
+      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required /> 
 >
     		</div>
     		<div class="col-cep mb-2">
@@ -96,8 +96,8 @@
 					</div>
 					
 				    <div class="col-cpf mb-2">
-						<label for="cpf">CPF:</label><cite id="labelInvalid" hidden title="Source Title"> Inválido</cite>
-		                <input class="form-control-pessoal validate" {{readonly}} required type="text" id="cpf" value="{{cpf}}" name="cpf" />
+						<label for="cpf">CPF:</label>
+		                 <input class="form-control-pessoal cpfProfessor mascara-cpf" required type="text" id="cpf" value="{{cpf}}" name="cpf" />
 				    </div>
 				    
 				    <div class="col-md-2 mb-2">

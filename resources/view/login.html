@@ -1,0 +1,85 @@
+<style>
+body{
+  overflow: hidden;
+}
+</style>
+<div class="row justify-content-center" style="overflow:hidden;">
+	<div class="col-sm-7 col-md-7 col-lg-4" style="overflow:hidden;">
+
+		<div class="d-flex " >
+		    <div class="card card-login mx-auto text-center " >
+   				<div class="" style="margin-top:20px">
+                    <span><img src="{{URL}}/resources/assets/img/preparasantana.png" class="mb-0"  height="80" alt="Prepara Santana" style="border-radius:10px"></span>
+                </div>
+		       
+		        <div class="card-body">
+		            <form action="" method="post">
+		                <div class="input-group form-group">
+		                
+		                	
+		                
+		                    <div class="input-group-prepend" >
+		                        
+		                        <span style="background-color:#8b929f; padding-top: 7px; color:#000; font-weight: bold ;">CPF</span>
+		                    </div>
+		                    
+		         
+	                <input class="form-control-pessoal mascara-cpf cpfLogin" {{readonly}} required type="text" id="cpf" value="" name="cpf" />
+		               
+		               
+		               
+		               <cite class="text-dark labelInvalid" hidden title="Source Title">CPF Inválido</cite>
+		                    
+		                    
+		                </div>
+		
+		                <div class="input-group form-group">
+		                    <div class="input-group-prepend">
+		                        <!-- <span class="input-group-text"><i class="fas fa-key"></i></span> -->
+		                        <span style="background-color:#8b929f; padding-top: 7px; color:#000; font-weight: bold ;">Senha</span>
+		                    </div>
+		                    <input type="password" name="senha" id="senha" class="form-control-pessoal" placeholder="Password">
+		                    <span class="lnr lnr-eye h2 text-dark" rel="tooltip" title="ver senha"></span>
+							<style>
+								.lnr-eye {
+									    position: absolute;
+									    top: 5px;
+									    right: 10px;
+									    cursor: pointer;
+									}
+									
+							</style>
+							<script>
+								let btn = document.querySelector('.lnr-eye');
+								btn.addEventListener('click', function() {
+								    let input = document.querySelector('#senha');
+								    if(input.getAttribute('type') == 'password') {
+								        input.setAttribute('type', 'text');
+								    } else {
+								        input.setAttribute('type', 'password');
+								    }
+								});
+							</script>
+		                </div>
+	
+		                <div class="form-group">
+		                	<a href="{{URL}}/">
+								<button type="button"  class="btn btn-warning btn-sm" rel="tooltip" title="Voltar para Home">Voltar</button>
+							</a>
+		                    <input type="submit" value="Entrar" class="btn-entrar btn btn-success float-right login_btn btn-sm" rel="tooltip" title="Entrar no sistema">
+		                </div>
+		          
+		            </form>
+		            <!-- Recuperar Senha -->
+		           <div class="row justify-content-start">
+						<a href="{{URL}}/login/recuperarSenha"><i style="color:#8b929f">Recuperar Senha</i></a>
+					</div>
+		        </div>
+		    </div>
+		</div>
+{{status}} 
+	
+	</div>
+
+
+</div>

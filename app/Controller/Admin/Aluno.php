@@ -37,12 +37,28 @@ class Aluno extends Page{
 		$paginaAtual = $queryParams['page'] ?? 1;
 		
 		
-		//Armazena valor busca pelo nome do paciente
+		
 		$nome = $queryParams['nome'] ?? '';
 		
 		$id = $queryParams['id'] ?? '';
 		
 		$turma = $queryParams['turma'] ?? '';
+		
+		
+		If(@$queryParams['cpfPesq'] != ''){
+		
+    		$cpf = $queryParams['cpfPesq'] ?? '';
+    		
+    		//instancia classe pra verificar CPF
+    		$validaCpf = new CPF($cpf);
+    		
+    		//verifica se é válido o cpf
+    		if (!$validaCpf->isValid()){
+    		    $request->getRouter()->redirect('/admin/alunos?statusMessage=cpfInvalid');
+    		}
+            //ARMAZENA O CPF (SOMENTE OS NÚMEROS)		
+    		$cpf= $validaCpf->getValue();
+		}else{$cpf = null;}
 		
 		//recebe a matrícula vindo do form de pesquisa ou da Navbar
 		$matricula = $queryParams['matricula'] ?? '';
@@ -62,6 +78,7 @@ class Aluno extends Page{
 		        strlen($turma) ? 'turma = "'.$turma.'"' : null,
 		        strlen($matricula) ? 'matricula = "'.$matricula.'"' : null,
 		        strlen($status) ? 'status = "'.$status.'" ' : null,
+		        strlen($cpf) ? 'cpf = "'.$cpf.'" ' : null,
 				
 		];
 		
@@ -162,7 +179,7 @@ class Aluno extends Page{
 				'matricula' =>  $queryParams['matricula'] ?? '',
 		        'id' =>  $queryParams['id'] ?? '',
 		        'matricula' =>  $queryParams['matricula'] ?? '',
-		        'cpf' =>  $queryParams['cpf'] ?? '',
+		        'cpf' =>  $queryParams['cpfPesq'] ?? '',
 				'total' => self::$qtdTotal,
 				'selectedAtivo' =>  $selectedAtivo,
 				'selectedInativo' =>  $selectedInativo,
@@ -240,11 +257,11 @@ class Aluno extends Page{
 	        case 'deletedfail':
 	            return Alert::getError('Você não tem permissão para Excluir! Contate o administrador.');
 	            break;
-	        case 'cpfduplicated':
-	            return Alert::getError('CPF em uso!');
-	            break;
 	        case 'semfoto':
 	            return Alert::getError('Nenhuma foto foi enviada!');
+	            break;
+	        case 'cpfInvalid':
+	            return Alert::getError('CPF Inválido!');
 	            break;
 	    }
 	}
@@ -461,6 +478,27 @@ class Aluno extends Page{
 	    //Inicia sessão
 	    Funcoes::init();
 	    
+	    $queryParams = $request->getQueryParams();
+	    
+	    
+	    //instancia classe pra verificar CPF
+	    $validaCpf = new CPF($queryParams['cpf']);
+	    
+	    //verifica se é válido o cpf
+	    if (!$validaCpf->isValid()){
+	        
+	        $request->getRouter()->redirect('/admin/alunos/?statusMessage=cpfInvalid');
+	    }
+	    
+	    
+	    //busca usuário pelo CPF sem a maskara
+	    $ob = EntityAluno::getAlunoByCpf($validaCpf->getValue());
+	    //verifica se o cpf já está cadastrado
+	    if($ob instanceof EntityAluno){
+	        $request->getRouter()->redirect('/admin/alunos?statusMessage=duplicad');
+	    }
+	    
+	    
 	    //Conteúdo do Formulário
 	    $content = View::render('admin/modules/alunos/form',[
 	        'matricula'=> '',
@@ -472,7 +510,7 @@ class Aluno extends Page{
 	        'fone' => @$_SESSION['aluno']['novo']['fone'] ?? '',
 	        'mae' => @$_SESSION['aluno']['novo']['mae'] ?? '',
 	        'obs' => @$_SESSION['aluno']['novo']['obs'] ?? '',
-	        'cpf' => @$_SESSION['aluno']['novo']['cpf'] ?? '',
+	        'cpf' => @$_SESSION['aluno']['novo']['cpf'] ?? @$validaCpf->getValue(),
 	        'dataNasc' => @$_SESSION['aluno']['novo']['dataNasc'] ??'',
 	        'dataCad' => @$_SESSION['aluno']['novo']['dataCad'] ??'',
 	        'statusMessage' => self::getStatus($request),

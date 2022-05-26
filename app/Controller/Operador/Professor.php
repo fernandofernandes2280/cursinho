@@ -171,6 +171,26 @@ class Professor extends Page{
 
 	    //Inicia sessão
 	    Funcoes::init();
+	    
+	    //QUERY PARAMS
+	    $queryParams = $request->getQueryParams();
+	    
+	    //instancia classe pra verificar CPF
+	    $validaCpf = new CPF($queryParams['cpf']);
+	    
+	    //verifica se é válido o cpf
+	    if (!$validaCpf->isValid()){
+	        
+	        $request->getRouter()->redirect('/operador/professores/?statusMessage=cpfInvalid');
+	    }
+	    
+	    
+	    //busca usuário pelo CPF sem a maskara
+	    $ob = EntityProfessor::getProfessorByCPF($validaCpf->getValue());
+	    //verifica se o cpf já está cadastrado
+	    if($ob instanceof EntityProfessor){
+	        $request->getRouter()->redirect('/operador/professores?statusMessage=duplicad');
+	    }
 
 	    //Conteúdo do Formulário
 	    $content = View::render('operador/modules/professores/form',[
@@ -183,7 +203,7 @@ class Professor extends Page{
 	        'fone' => @$_SESSION['professor']['novo']['fone'] ??'',
 	        'cidade' => @$_SESSION['professor']['novo']['cidade'] ??'Santana',
 	        'uf' => @$_SESSION['professor']['novo']['uf'] ??'AP',
-	        'cpf' => @$_SESSION['professor']['novo']['cpf'] ??'',
+	        'cpf' => @$_SESSION['professor']['novo']['cpf'] ?? @$validaCpf->getValue(),
 	        'funcao' => @$_SESSION['professor']['novo']['funcao'] ??'Professor',
 	        'dataNasc' => @$_SESSION['professor']['novo']['dataNasc'] ??'',
 	        'optionBairros' =>@$_SESSION['professor']['novo']['bairro'] ? EntityBairro::getSelectBairros($_SESSION['professor']['novo']['dataNasc']) : EntityBairro::getSelectBairros(null),
@@ -426,7 +446,7 @@ class Professor extends Page{
 			case 'cpfDuplicated':
 			    return Alert::getError('CPF já está sendo utilizado por outro usuário!');
 			    break;
-			case 'cpfInvalido':
+			case 'cpfInvalid':
 			    return Alert::getError('CPF Inválido!');
 			    break;
 			case 'emailDuplicated':

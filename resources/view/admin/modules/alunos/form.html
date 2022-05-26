@@ -19,11 +19,10 @@
      	<i class="material-icons" style="font-size: 30px;">save</i>
      </button>
 		 
-		 <a href="{{URL}}/admin/alunos/new">
-			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo">
-			<i class="material-icons" style="font-size: 30px;">add_circle_outline</i>
+		 <!-- Aciona modal novoCPF -->
+			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfAluno">
+			  <i class="material-icons" style="font-size: 30px;">person_add</i>
 			</button>
-		</a>
 		
 		<a href="javascript:history.back()">
 			<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
@@ -144,8 +143,8 @@
 		      </script>
 		    </div>
 		    <div class="col-cpf mb-2">
-	           <label for="cpf">CPF:</label><cite id="labelInvalid" hidden title="Source Title"> Inválido</cite>
-                <input class="form-control-pessoal validate" {{readonly}} required type="text" id="cpf" value="{{cpf}}" name="cpf" />
+	           <label for="cpf">CPF:</label>
+                <input class="form-control-pessoal cpfAluno mascara-cpf" required type="text" id="cpf" value="{{cpf}}" name="cpf" />
 		    </div>  
 		     	<div class="col-md-2 mb-2">
 		      <label for="status">Status</label>

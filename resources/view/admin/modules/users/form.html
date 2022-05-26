@@ -33,8 +33,8 @@
 						  </div>
 			 <div class="form-row">
 			    <div class="col-md-12 mb-2">
-     	           <label for="cpf">CPF:</label><cite id="labelInvalid" hidden title="Source Title"> Inválido</cite>
-	                <input class="form-control-pessoal validate" {{readonly}} required type="text" id="cpf" value="{{cpf}}" name="cpf" />
+     	           <label for="cpf">CPF:</label>
+	               <input class="form-control-pessoal cpfUser mascara-cpf" required type="text" id="cpf" value="{{cpf}}" name="cpf" />
 			
 			    </div>
 						  </div>
@@ -91,11 +91,10 @@
 			<button class="btn btn-facebook btn-sm btn-round" type="submit" rel="tooltip" title="Salvar">
 	    		<i class="material-icons" style="font-size: 30px;">save</i>
 		    </button>
-			<a href="{{URL}}/admin/users/new">
-				<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo Usuário">
-					<i class="material-icons" style="font-size: 30px;">person_add</i>
-				</button>
-			</a>
+						 <!-- Aciona modal novoCPF -->
+			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfUser">
+			  <i class="material-icons" style="font-size: 30px;">person_add</i>
+			</button>
 		</div>
 	</div>
    </form>
