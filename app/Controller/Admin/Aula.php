@@ -234,6 +234,7 @@ class Aula extends Page{
     		    $frequencia = new EntityFrequencia();
     		    $frequencia->idAluno = $obAlunos->id;
     		    $frequencia->idAula = $obAula->id;
+    		    $frequencia->status = 'F';
     		    $frequencia->autor = 1; //id temporario do usuario logado para testes
     		    $frequencia->cadastrar();
     		}

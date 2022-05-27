@@ -78,7 +78,7 @@ $obRouter->post('/admin/aulas/{id}/edit',[
 		]);
 
 //ROTA de Get de EXCLUSÃO de Aula
-$obRouter->get('/operador/aulas/{id}/delete',[
+$obRouter->get('/admin/aulas/{id}/delete',[
     
     'middlewares' => [
         'require-admin-login'
@@ -90,7 +90,7 @@ $obRouter->get('/operador/aulas/{id}/delete',[
     ]);
 
 //ROTA de Post de EXCLUSÃO de Aulas
-$obRouter->post('/operador/aulas/{id}/delete',[
+$obRouter->post('/admin/aulas/{id}/delete',[
     'middlewares' => [
         'require-admin-login'
     ],
