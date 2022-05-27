@@ -659,14 +659,7 @@ class Aluno extends Page{
 	    $oQRC->fullName($obAluno->matricula) // Add Full Name
 	        ->finish(); // End vCard
 	    
-	        
-	        $path = $oQRC->get(300);
-	        $type = pathinfo($path, PATHINFO_EXTENSION);
-	        $data = file_get_contents($path);
-	        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-	        //Decode the string
-	        $unencodedData=base64_decode($base64);
-	        file_put_contents(__DIR__.'/carteiras/imgQrcode.png', $base64);
+	    
 	    // echo '<p><img src="' . $oQRC->get(300) . '" alt="QR Code" /></p>'; // Generate and display the QR Code
 	  //  $oQRC->display(300); // Set size and display QR Code default 150px
 	    
