@@ -11,11 +11,13 @@ use \App\Model\Entity\Turma as EntityTurma;
 use \App\Model\Entity\Status as EntityStatus;
 use \App\Utils\Funcoes;
 use \App\Controller\File\Upload as Upload;
+use \App\Controller\Qrcode;
  
 
 use \WilliamCosta\DatabaseManager\Pagination;
 use Dompdf\Dompdf;
 use Bissolli\ValidadorCpfCnpj\CPF;
+use WilliamCosta\DatabaseManager\Database;
 
 
 class Aluno extends Page{
@@ -367,7 +369,7 @@ class Aluno extends Page{
 	    
 	    //Conteúdo do Formulário
 	    $content = View::render('admin/modules/alunos/form',[
-	        'matricula'=>'<label class="h5">Matrícula: '.$obAluno->matricula.'</label>',
+	        'matricula'=>$obAluno->matricula,
 	        'id' => $obAluno->id,
 	        'title' => 'Editar',
 	        'nome' => $obAluno->nome,
@@ -639,6 +641,90 @@ class Aluno extends Page{
 	    //Redireciona o usuário
 	    $request->getRouter()->redirect('/admin/alunos?statusMessage=deleted');
 	    
+	    
+	}
+	
+	//MÉTODO RESPONSÁVEL POR RENDERIZAR A CARTEIRA DE ALUNO
+	public static function getCarteiraAluno($request,$id){
+	    
+	    //obtém o Aluno do banco de dados
+	    $obAluno = EntityAluno::getAlunoById($id);
+	    
+	    //Valida a instancia
+	    if(!$obAluno instanceof EntityAluno){
+	        $request->getRouter()->redirect('/admin/alunos');
+	    }
+	    
+	    $oQRC = new \App\Controller\Qrcode\Qrcode(); // Create vCard Object
+	    $oQRC->fullName($obAluno->matricula) // Add Full Name
+	        ->finish(); // End vCard
+	    
+	        
+	        $path = $oQRC->get(300);
+	        $type = pathinfo($path, PATHINFO_EXTENSION);
+	        $data = file_get_contents($path);
+	        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+	        //Decode the string
+	        $unencodedData=base64_decode($base64);
+	        file_put_contents(__DIR__.'/carteiras/imgQrcode.png', $base64);
+	    // echo '<p><img src="' . $oQRC->get(300) . '" alt="QR Code" /></p>'; // Generate and display the QR Code
+	  //  $oQRC->display(300); // Set size and display QR Code default 150px
+	    
+	    //Conteúdo do Formulário
+	    $content = View::render('pages/carteira',[
+	        'foto' => $obAluno->foto,
+	        'matricula'=> $obAluno->matricula,
+	        'nome' => strtoupper($obAluno->nome),
+	        'turma' => strtoupper(EntityTurma::getTurmaById($obAluno->turma)->nome),
+	        'mae' => strtoupper($obAluno->mae),
+	        'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##'),
+	        'dataNasc' => date('d/m/Y', strtotime($obAluno->dataNasc)),
+	        'dataCad'=>date('d/m/Y', strtotime($obAluno->dataCad)),
+	        'qrcode' => $oQRC->get(300)
+	        
+	    ]);
+	    
+	    //Retorna a página completa
+	    return parent::getPanel('Carteira do Aluno > Cursinho', $content,'alunos', self::$hidden);
+	    
+	}
+	
+	//MÉTODO RESPONSÁVEL POR GERAR O ARQUIVO DE IMAGEM DA CARTEIRA DE ALUNO
+	public static function setCarteiraAluno($request,$id){
+	    
+	    
+	    //Get the base-64 string from data
+	    $filteredData=substr($_POST['img_val'], strpos($_POST['img_val'], ",")+1);
+	    
+	    //Decode the string
+	    $unencodedData=base64_decode($filteredData);
+	    
+	 //   var_dump(__DIR__.'/carteiras/img.png');exit;
+	    //Save the image
+	    file_put_contents(__DIR__.'/carteiras/img.png', $unencodedData);
+	    	    
+	    $imagem = __DIR__.'/carteiras/img.png';
+	    
+	    $file = $imagem;
+	    
+	    header("Expires: 0");
+	    header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+	    header("Cache-Control: no-store, no-cache, must-revalidate");
+	    header("Cache-Control: post-check=0, pre-check=0", false);
+	    header("Pragma: no-cache");
+	    
+	    $ext = pathinfo($file, PATHINFO_EXTENSION);
+	    $basename = pathinfo($file, PATHINFO_BASENAME);
+	    
+	    header("Content-type: application/".$ext);
+	    // tell file size
+	    header('Content-length: '.filesize($file));
+	    // set file name
+	    header("Content-Disposition: attachment; filename=\"$basename\"");
+	    readfile($file);
+	    // Exit script. So that no useless data is output.
+	    exit;
+	   
 	    
 	}
 	

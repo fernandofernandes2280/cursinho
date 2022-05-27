@@ -3,7 +3,6 @@
 	<div class="row">
 			<div class="col-md-3 " >
 			<h5>{{title}}</h5>
-			<input type="text" value="{{prontuario}}" hidden name="codPronto"/>
 		</div>
  		<div class="col-md-4 " >
 			{{statusMessage}}
@@ -11,6 +10,9 @@
 	
 
 	<div class="col-md-5 text-right">
+	<a href="{{URL}}/admin/alunos/{{id}}/carteira" rel="tooltip" title="Imprimir Carteira de Estudante">
+               <i class="material-icons" style="font-size: 30px;">badge</i>
+		</a>
 		<a href="#" target="_blank" rel="tooltip" title="Imprimir Capa">
                <i class="material-icons" style="font-size: 30px;">print</i>
 		</a>
@@ -45,12 +47,11 @@
     </div>
     
      <div class="col-md-10 mb-2">
-      {{matricula}}
+      <label class="h5">Matrícula: </label><span class="text-light h5"> {{matricula}}</span>
         <div class="form-row">
     		<div class="col-nomeAl mb-2">
       		<label for="nome">Nome</label>
-      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required  oninvalid="this.setCustomValidity('Username cannot be empty.')" 
->
+      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required />
     		</div>
     		<div class="col-cep mb-2">
 			      <label for="cep">Cep</label>

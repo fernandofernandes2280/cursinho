@@ -1,0 +1,175 @@
+
+<h2>Carteira do Estudante</h2>
+
+<form method="POST" enctype="multipart/form-data" id="myForm">
+	<input type="hidden" name="img_val" id="img_val" value="" />
+</form>
+<style>
+#target {
+		
+		background-color:#ffff;
+		position:relative;
+		
+		
+	}
+	.col-titulo{
+		width: 97%;
+	}
+	.cabecalho{
+		position: relative;
+	}
+	.logocurso{
+		position: absolute;
+		width: 150px;
+	}
+	.logopms{
+		position: absolute;
+		right:0;
+		width: 150px;
+		padding:5px;
+	}
+	.logocursocontainer{
+		position: absolute;
+		top:0;
+		width: 100%;
+		height:100%;
+		right: 0;	
+		opacity: 50%;
+	}
+	
+</style>
+<table>
+	<tr>
+		<td colspan="2">
+			<table width="100%">
+				<tr>
+					<td>
+						<input type="submit" value="Take Screenshot Of Div Below" onclick="capture();" />
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+
+		<td>
+			<div class="col-md-11" id="target">
+		     	<img width=400 class="img-fluid logocursocontainer" alt="FotoCursinho" src="{{URL}}/resources/assets/img/preparasantana.png">
+				
+				<div class="form-row">
+					<div class="col-md-12">
+						<div class="form-row">
+							<div class="cabecalho col-titulo ml-2 mb-2 pl-2 pr-2 text-center pt-2 mt-2 pb-2" style="border:2px solid;border-radius: 10px">
+						
+					
+								<div class="form-row">
+									<div class="colfoto logocurso">
+										<img style="border-radius: 10px;" width=400 class="img-fluid" alt="FotoCursinho" src="{{URL}}/resources/assets/img/preparasantana.png">
+									</div>
+									<div class="col-md-9 pt-2 text-dark" style="padding-left: 180px">
+										<label class="h5">Curso Preparatório Gratuito<br>PREPARA SANTANA</label>
+									</div>
+									<div class="colfoto logopms ">
+										<img width=200 class="img-fluid mb-2" alt="FotoCursinho" src="{{URL}}/resources/assets/img/logopms.png">
+									</div>
+								</div>
+						
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="form-row ">
+				 <div class="col-md-12">
+				  <div class="form-row">
+				   <div class="col-titulo ml-2 mb-2 pl-2 pr-2 pt-2 mt-0 pb-2" style="border:2px solid; border-radius: 10px">
+				    <div class="row">
+					 <div class="colfoto ml-3">
+				      <img style="background-color: #fff; border-radius: 10%" class="img-fluid" alt="FotoAluno" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}">
+				     </div>
+				     <div class="col-md-8 mb-2">
+				        <div class="form-row">
+				        	<div class="col-md-3">
+				        		 <span class="badge badge-sm bg-gradient-success">Matrícula:</span>
+				      			<input type="text" class="form-control-pessoal mb-2" id="nome" name="nome" value="{{matricula}}"/>	
+				        	</div>
+				    		<div class="col-md-9 mb-0">
+				    		    <span class="badge badge-sm bg-gradient-success">Nome:</span>
+					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required/>
+				    		</div>
+				    	</div>
+				        <div class="form-row">
+				        	<div class="col-md-3">
+				        	    <span class="badge badge-sm bg-gradient-success">Turma:</span>
+				      			<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{turma}}"/>	
+				        	</div>
+				    		<div class="col-md-6 mb-0">
+				    			<span class="badge badge-sm bg-gradient-success">CPF:</span>
+					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{cpf}}" required/>
+				    		</div>
+				    	
+				    		<div class="col-md-3 mb-0">
+				    			<span class="badge badge-sm bg-gradient-success">Data Nasc.:</span>
+					      		<input type="text" class="form-control-pessoal mb-2" id="nome" name="nome" value="{{dataNasc}}" required/>
+				    		</div>
+				    	</div>
+				        <div class="form-row">
+				        	<div class="col-md-3">
+				        		<span class="badge badge-sm bg-gradient-success">Data Cad.:</span>
+				      			<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{dataCad}}"/>	
+				        	</div>
+				    		<div class="col-md-9 mb-0">
+				    			<span class="badge badge-sm bg-gradient-success">Mãe:</span>
+					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{mae}}" required/>
+				    		</div>
+				    	</div>
+							
+					</div>
+				
+				    
+				    	
+				   
+				     <div class="col-md-2 mb-2 pl-0 pr-0">
+				        
+				    			<span class="badge badge-sm bg-gradient-success">Qr-Code:</span>
+							     <img class="img-fluid" alt="" src="{{qrcode}}">
+				    		
+				    </div>
+				  </div>
+				       
+				    </div>
+				    	</div>
+					</div>
+				    
+				  </div>
+				  
+				  <!-- Footer -->
+				 <div class="form-row ">
+					 <div class="col-md-12">
+						 <div class="form-row">
+						 	<div class="col-titulo ml-2 mb-2 text-center" style="border:2px solid; border-radius: 10px">
+						 		<label class="text-dark">Obrigatório a apresentação na entrada do cursinho!</label>
+						 	</div>
+						 </div>
+					 </div>
+				 </div>
+				  
+				  
+
+			</div>
+		</td>
+	</tr>
+</table>
+<script type="text/javascript">
+	function capture() {
+		$('#target').html2canvas({
+			onrendered: function (canvas) {
+                //Defina o valor do campo oculto para dados de imagem (base-64 string)
+				$('#img_val').val(canvas.toDataURL("image/png"));
+                //Envie o formulário manualmente
+				document.getElementById("myForm").submit();
+			}
+		});
+	}
+</script>
+

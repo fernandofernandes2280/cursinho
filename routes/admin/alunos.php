@@ -2,7 +2,6 @@
 
 use \App\Http\Response;
 use \App\Controller\Admin;
-use \App\File;
 
 //ROTA HOME
 $obRouter->get('',[
@@ -144,4 +143,26 @@ $obRouter->post('/admin/alunos/{id}/delete',[
     }
     ]);
 
+//ROTA GET DE CARTEIRA DE ALUNO
+$obRouter->get('/admin/alunos/{id}/carteira',[
+    
+    'middlewares' => [
+        'require-admin-login'
+    ],
+    
+    function ($request,$id){
+        return new Response(200, Admin\Aluno::getCarteiraAluno($request,$id));
+    }
+    ]);
 
+//ROTA GET DE CARTEIRA DE ALUNO
+$obRouter->post('/admin/alunos/{id}/carteira',[
+    
+    'middlewares' => [
+        'require-admin-login'
+    ],
+    
+    function ($request,$id){
+        return new Response(200, Admin\Aluno::setCarteiraAluno($request,$id));
+    }
+    ]);

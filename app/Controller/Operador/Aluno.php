@@ -351,7 +351,7 @@ class Aluno extends Page{
 	    
 	    //Conteúdo do Formulário
 	    $content = View::render('operador/modules/alunos/form',[
-	        'matricula'=>'<label class="h5">Matrícula: '.$obAluno->matricula.'</label>',
+	        'matricula'=>$obAluno->matricula,
 	        'id' => $obAluno->id,
 	        'title' => 'Editar',
 	        'nome' => $obAluno->nome,
