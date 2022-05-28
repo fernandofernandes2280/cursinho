@@ -62,6 +62,10 @@ class Aluno extends Generica{
 	//Matrícula do aluno
 	public $matricula;
 	
+	//Autor do cadastrio
+	public $autor;
+	
+	
 	public static function geraMatricula($turma,$id){
 	   
 	    $nossoNumero = date('Y').$id.$turma;
@@ -103,7 +107,9 @@ class Aluno extends Generica{
 	    $this->foto = 'profile.png';
 	    
 		//define a data
-	//	$this->dataCad = date('Y-m-d H:i:s');
+		$this->dataCad = date('Y-m-d H:i:s');
+		//DEFINE A DATA DE NASC TEMPORARIA
+		$this->dataNasc = date('Y-m-d H:i:s');
 		//Insere aluno no banco de dados
 		$this->id = (new Database('alunos'))->insert([
 				'nome' => $this->nome,
@@ -125,6 +131,7 @@ class Aluno extends Generica{
 				'status'=>$this->status,
 		        'cpf'=>$this->cpf,
 		        'turma'=>$this->turma,
+		        'autor'=>$_SESSION['usuario']['id'] //id  do usuario logado,
 		        
 		]);
 		//Sucesso

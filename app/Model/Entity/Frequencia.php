@@ -28,7 +28,7 @@ class Frequencia{
     		    'idAluno'=>$this->idAluno,
     		    'dataReg'=>$this->dataReg,
 		        'status'=>$this->status,
-    		    'autor'=>$this->autor,
+		        'autor'=>$_SESSION['usuario']['id'] //id  do usuario logado,
     		    
 		]);
 		//Sucesso

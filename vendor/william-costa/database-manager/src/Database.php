@@ -88,7 +88,7 @@ class Database{
       $this->connection = new PDO('mysql:host='.self::$host.';dbname='.self::$name.';port='.self::$port,self::$user,self::$pass);
       $this->connection->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
     }catch(PDOException $e){
-      die('ERROR: '.$e->getMessage());
+        die('ERROR: '.$e->getMessage());
     }
   }
 
@@ -106,7 +106,14 @@ class Database{
       $statement->execute($params);
       return $statement;
     }catch(PDOException $e){
-      die('ERROR: '.$e->getMessage());
+        
+        if($e->getCode() == 23000){
+            die('ERROR: VIOLAÇÃO DE CHAVE ESTRANGEIRA!');
+        }else{
+            die('ERROR: '.$e->getMessage());
+        }
+        
+        
     }
   }
 

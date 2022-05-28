@@ -40,7 +40,7 @@ class Aula {
 		        'status'=>$this->status,
 		        'diaSemana'=>$this->diaSemana,
     		    'dataReg'=>$this->dataReg,
-    		    'autor'=>$this->autor,
+		        'autor'=>$_SESSION['usuario']['id'] //id  do usuario logado
 		]);
 		
 		//Grava o Log do usuário

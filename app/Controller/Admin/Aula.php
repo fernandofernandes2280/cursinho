@@ -212,7 +212,7 @@ class Aula extends Page{
 		$obAula->obs = $postVars['obs'];
 		$obAula->status = $postVars['status'];
 		$obAula->diaSemana = $postVars['dia'];
-		$obAula->autor = 1; //id temporario do usuario logado, para testes
+		
 		
 		//Verifica se a agenda já está existe no banco de dados
 		$duplicado = EntityAula::getAulaDuplicada(date('Y-m-d',strtotime($postVars['data'])), $postVars['turma']);

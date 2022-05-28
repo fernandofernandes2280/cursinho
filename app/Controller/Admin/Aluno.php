@@ -552,7 +552,7 @@ class Aluno extends Page{
 	    //recebe a data do formulário e converte para objeto data
 	    $dataCad = date_create_from_format('Y-m-d', $postVars['dataCad']);
 	    //formata a data vinda do formulário com a hora atual
-	    $obAluno->dataCad = $dataCad->format('Y-m-d H:i:s');
+	    //$obAluno->dataCad = $dataCad->format('Y-m-d H:i:s');
 	    $obAluno->sexo = $postVars['sexo'];
 	    $obAluno->naturalidade = $postVars['naturalidade'];
 	    $obAluno->escolaridade = $postVars['escolaridade'];
