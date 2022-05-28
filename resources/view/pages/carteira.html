@@ -1,8 +1,10 @@
 
-<h2>Carteira do Estudante</h2>
+<h5>{{title}}</h5>
 
 <form method="POST" enctype="multipart/form-data" id="myForm">
 	<input type="hidden" name="img_val" id="img_val" value="" />
+	<input type="hidden" name="matricula" value="{{matricula}}"/>
+	<input type="hidden" name="nome" value="{{nome}}"/>
 </form>
 <style>
 #target {
@@ -36,6 +38,20 @@
 		right: 0;	
 		opacity: 50%;
 	}
+	.label{
+	background-color:#57AF5B; 
+	 display: inline-block;
+  padding: 0.55em 0.9em;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.45rem;
+  text-transform: uppercase;
+	}
 	
 </style>
 <table>
@@ -44,7 +60,7 @@
 			<table width="100%">
 				<tr>
 					<td>
-						<input type="submit" value="Take Screenshot Of Div Below" onclick="capture();" />
+						<input type="submit" value="Download da Carteira" onclick="capture();" />
 					</td>
 				</tr>
 			</table>
@@ -90,36 +106,36 @@
 				     <div class="col-md-8 mb-2">
 				        <div class="form-row">
 				        	<div class="col-md-3">
-				        		 <span class="badge badge-sm bg-gradient-success">Matrícula:</span>
+				        		 <span class="label" >Matrícula:</span>
 				      			<input type="text" class="form-control-pessoal mb-2" id="nome" name="nome" value="{{matricula}}"/>	
 				        	</div>
 				    		<div class="col-md-9 mb-0">
-				    		    <span class="badge badge-sm bg-gradient-success">Nome:</span>
+				    		    <span class="label">Nome:</span>
 					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required/>
 				    		</div>
 				    	</div>
 				        <div class="form-row">
 				        	<div class="col-md-3">
-				        	    <span class="badge badge-sm bg-gradient-success">Turma:</span>
+				        	    <span class="label">Turma:</span>
 				      			<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{turma}}"/>	
 				        	</div>
 				    		<div class="col-md-6 mb-0">
-				    			<span class="badge badge-sm bg-gradient-success">CPF:</span>
+				    			<span class="label">CPF:</span>
 					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{cpf}}" required/>
 				    		</div>
 				    	
 				    		<div class="col-md-3 mb-0">
-				    			<span class="badge badge-sm bg-gradient-success">Data Nasc.:</span>
+				    			<span class="label">Data Nasc.:</span>
 					      		<input type="text" class="form-control-pessoal mb-2" id="nome" name="nome" value="{{dataNasc}}" required/>
 				    		</div>
 				    	</div>
 				        <div class="form-row">
 				        	<div class="col-md-3">
-				        		<span class="badge badge-sm bg-gradient-success">Data Cad.:</span>
+				        		<span class="label">Data Cad.:</span>
 				      			<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{dataCad}}"/>	
 				        	</div>
 				    		<div class="col-md-9 mb-0">
-				    			<span class="badge badge-sm bg-gradient-success">Mãe:</span>
+				    			<span class="label">Mãe:</span>
 					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{mae}}" required/>
 				    		</div>
 				    	</div>
@@ -131,7 +147,7 @@
 				   
 				     <div class="col-md-2 mb-2 pl-0 pr-0">
 				        
-				    			<span class="badge badge-sm bg-gradient-success">Qr-Code:</span>
+				    			<span class="label">Qr-Code:</span>
 							     <img class="img-fluid" alt="" src="{{URL}}/app/Controller/Admin/carteiras/{{qrcode}}"/>
 				    		
 				    </div>

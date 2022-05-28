@@ -684,6 +684,7 @@ class Aluno extends Page{
 	     
 	    //Conteúdo do Formulário
 	    $content = View::render('pages/carteira',[
+	        'title'=>'Alunos > Carteira de Estudante',
 	        'foto' => $obAluno->foto,
 	        'matricula'=> $obAluno->matricula,
 	        'nome' => strtoupper($obAluno->nome),
@@ -711,11 +712,13 @@ class Aluno extends Page{
 	    //Decode the string
 	    $unencodedData=base64_decode($filteredData);
 	    
+	    $name=$_POST['matricula'].$_POST['nome'].'.png';
+	    
 	 //   var_dump(__DIR__.'/carteiras/img.png');exit;
 	    //Save the image
-	    file_put_contents(__DIR__.'/carteiras/img.png', $unencodedData);
+	    file_put_contents(__DIR__.'/carteiras/'.$name, $unencodedData);
 	    	    
-	    $imagem = __DIR__.'/carteiras/img.png';
+	    $imagem = __DIR__.'/carteiras/'.$name;
 	    
 	    $file = $imagem;
 	    
