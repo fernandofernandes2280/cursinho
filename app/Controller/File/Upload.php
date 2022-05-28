@@ -223,6 +223,8 @@ class Upload{
 	    $img->crop();
 	}
 	
+	
+	
 	public static function setUploadImages($request){
 		
 		//Post Vars

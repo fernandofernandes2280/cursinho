@@ -309,28 +309,10 @@ class Aluno extends Page{
 	    
 	    if ($postVars['image'] != ''){
 	        
-    	    $img = $postVars['image'];
-    	    $folderPath = __DIR__."/File/files/fotos/";
-    	    $image_parts = explode(";base64,", $img);
-    	    $image_type_aux = explode("image/", $image_parts[0]);
-    	    $image_type = $image_type_aux[1];
-    	    $image_base64 = base64_decode($image_parts[1]);
-    	    $nome =  str_replace(' ', '',$obAluno->nome);
-    	    $matricula = $obAluno->matricula;
-    	    $fileName = $matricula.$nome . '.png';
-    	    $obAluno->foto = $fileName;
-    	    $obAluno->atualizar();
-    	    $file = $folderPath . $fileName;
-    	    file_put_contents($file, $image_base64);
-    	    chmod($file, 0777); //Corrige a permissão do arquivo.
+    	 
     	    
-    	    $img = new Resize();
-    	    $config = array();
-    	    $config['source_image'] = $file;
-    	    $config['width'] = 195;
-    	    $config['height'] = 230;
-    	    $img->initialize($config);
-    	    $img->crop();
+    	    //MÉTODO RESPONSÁVEL POR FAZER O UPLOADO DA IMAGE VINDA DA WEB CAM DO PROFESSOR
+    	    Upload::setUploadImagesWebCamAluno($request);
     	    
     	    
     	    
@@ -658,8 +640,8 @@ class Aluno extends Page{
 	    
 	    
 	    $oQRC = new \App\Controller\Qrcode\Qrcode(); // Create vCard Object
-	    $oQRC->fullName($obAluno->matricula) // Add Full Name
-	        ->finish(); // End vCard
+	    $oQRC->fullName($obAluno->matricula); // Add Full Name
+	      //  ->finish(); // End vCard
 	    
 	        
 	      $path = $oQRC->get(300);
@@ -720,8 +702,28 @@ class Aluno extends Page{
 	    	    
 	    $imagem = __DIR__.'/carteiras/'.$name;
 	    
-	    $file = $imagem;
 	    
+	    
+	    $filename = $imagem;
+	    $rotang = -90; // Rotation angle
+	    $source = imagecreatefrompng($filename) or die('Error opening file '.$filename);
+	    imagealphablending($source, false);
+	    imagesavealpha($source, true);
+	    
+	    $rotation = imagerotate($source, $rotang, imageColorAllocateAlpha($source, 0, 0, 0, 127));
+	    imagealphablending($rotation, false);
+	    imagesavealpha($rotation, true);
+	    
+	    header('Content-type: image/png');
+	    imagepng($rotation);
+	   imagedestroy($source);
+	    imagedestroy($rotation);
+	    unlink($filename);
+	    
+	  //  header("Content-Disposition: attachment; filename=\"$rotation\"");
+	    //readfile($rotation);
+	    
+	    /*
 	    header("Expires: 0");
 	    header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 	    header("Cache-Control: no-store, no-cache, must-revalidate");
@@ -737,6 +739,7 @@ class Aluno extends Page{
 	    // set file name
 	    header("Content-Disposition: attachment; filename=\"$basename\"");
 	    readfile($file);
+	    */
 	    // Exit script. So that no useless data is output.
 	    exit;
 	   

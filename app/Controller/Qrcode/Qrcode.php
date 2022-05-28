@@ -47,7 +47,8 @@ class Qrcode
      */
     public function fullName($sFullName)
     {
-        $this->sData .= 'FN:' . $sFullName . "\n";
+        $this->sData = $sFullName;
+        $this->sData = urlencode($this->sData);
         return $this;
     }
 
