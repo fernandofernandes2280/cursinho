@@ -132,7 +132,7 @@
 				     <div class="col-md-2 mb-2 pl-0 pr-0">
 				        
 				    			<span class="badge badge-sm bg-gradient-success">Qr-Code:</span>
-							     <img class="img-fluid" alt="" src="{{qrcode}}">
+							     <img class="img-fluid" alt="" src="{{URL}}/app/Controller/Admin/carteiras/{{qrcode}}"/>
 				    		
 				    </div>
 				  </div>
@@ -163,6 +163,8 @@
 <script type="text/javascript">
 	function capture() {
 		$('#target').html2canvas({
+			
+			allowTaint : true,
 			onrendered: function (canvas) {
                 //Defina o valor do campo oculto para dados de imagem (base-64 string)
 				$('#img_val').val(canvas.toDataURL("image/png"));

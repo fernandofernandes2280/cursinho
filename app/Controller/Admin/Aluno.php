@@ -655,14 +655,33 @@ class Aluno extends Page{
 	        $request->getRouter()->redirect('/admin/alunos');
 	    }
 	    
+	    
+	    
 	    $oQRC = new \App\Controller\Qrcode\Qrcode(); // Create vCard Object
 	    $oQRC->fullName($obAluno->matricula) // Add Full Name
 	        ->finish(); // End vCard
 	    
-	    
+	        
+	      $path = $oQRC->get(300);
+	      header('Content-Type: image/png');
+	    //  header('Content-Disposition: attachment; filename="chart.png"');
+	      $image = file_get_contents($path);
+	    //  header('Content-Length: ' . strlen($image));
+	    //  header("Content-Disposition: attachment; filename=\"$basename\"");
+	    //  readfile($file);
+	      $dir = __DIR__.'/carteiras/';
+	      $name = $obAluno->matricula.'.png';
+	      file_put_contents($dir.$name, $image);
+	      
+	   //     $type = pathinfo($path, PATHINFO_EXTENSION);
+	    //    $data = file_get_contents($path);
+	     //   $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+	        //Decode the string
+	     //   $unencodedData=base64_decode($base64);
+	   //     file_put_contents(__DIR__.'/carteiras/imgQrcode.png', $path);
 	    // echo '<p><img src="' . $oQRC->get(300) . '" alt="QR Code" /></p>'; // Generate and display the QR Code
 	  //  $oQRC->display(300); // Set size and display QR Code default 150px
-	    
+	     
 	    //Conteúdo do Formulário
 	    $content = View::render('pages/carteira',[
 	        'foto' => $obAluno->foto,
@@ -673,7 +692,7 @@ class Aluno extends Page{
 	        'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##'),
 	        'dataNasc' => date('d/m/Y', strtotime($obAluno->dataNasc)),
 	        'dataCad'=>date('d/m/Y', strtotime($obAluno->dataCad)),
-	        'qrcode' => $oQRC->get(300)
+	        'qrcode' => $name
 	        
 	    ]);
 	    
