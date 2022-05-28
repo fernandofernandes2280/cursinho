@@ -12,6 +12,7 @@ use \App\Model\Entity\DisciplinaProfessor as EntityDisciplinaProfessor;
 use \App\Model\Entity\Aluno as EntityAluno;
 use \App\Model\Entity\Frequencia as EntityFrequencia;
 use \App\Model\Entity\StatusAula as EntityStatusAula;
+use \App\Model\Entity\User as EntityUser;
 
 class Aula extends Page{
 	
@@ -133,7 +134,8 @@ class Aula extends Page{
 			    'turma' => EntityTurma::getTurmaById($obAula->turma)->nome,
 			    'presencas' => EntityFrequencia::getFrequencias('idAula = '.$obAula->id.' AND status = "P"', null,null,'COUNT(*) as qtd')->fetchObject()->qtd,
 			    'faltas' => EntityFrequencia::getFrequencias('idAula = '.$obAula->id.' AND status = "F"', null,null,'COUNT(*) as qtd')->fetchObject()->qtd,
-			    'cor' => $cor
+			    'cor' => $cor,
+			    'autor' => EntityUser::getUserById($obAula->autor)->nome
 			]);
 		}
 		//Retorna as agendas

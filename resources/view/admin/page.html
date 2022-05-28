@@ -72,7 +72,7 @@ input.item-error {
     <!-- Modal Novo Aluno CPF-->
 <div class="modal fade" id="modalNovoCpfAluno" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document" >
-    <div class="modal-content">
+    <div class="modal-content modal-content-aluno">
     <form  method="get" action="{{URL}}/admin/alunos/new">
       <div class="modal-header">
         <h5 class="modal-title" id="modalLabel">Informe o CPF do novo Aluno: </h5>
@@ -91,7 +91,7 @@ input.item-error {
                 <i class="material-icons">close</i>
               </button>
       
-              <button type="submit" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Gerar Produção">
+              <button type="submit" class="btn btn-success btn-round btn-just-icon" id="novoAluno" rel="tooltip" title="Confirmar">
                 <i class="material-icons">description</i>
               </button>
        </div>
@@ -99,11 +99,29 @@ input.item-error {
     </div>
   </div>
 </div>	
-
+<script type="text/javascript">
+$(function(){
+  $('.modal-content-aluno').keypress(function(e){
+    if(e.which == 13) {
+      $('#novoAluno').click();
+    }
+  })
+  $('.modal-content-professor').keypress(function(e){
+    if(e.which == 13) {
+      $('#novoProfessor').click();
+    }
+  })
+  $('.modal-content-user').keypress(function(e){
+    if(e.which == 13) {
+      $('#novoUser').click();
+    }
+  })
+})
+</script>
     <!-- Modal Novo Professor CPF-->
 <div class="modal fade" id="modalNovoCpfProfessor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document" >
-    <div class="modal-content">
+    <div class="modal-content modal-content-professor">
     <form  method="get" action="{{URL}}/admin/professores/new">
       <div class="modal-header">
         <h5 class="modal-title" id="modalLabel">Informe o CPF do novo Professor: </h5>
@@ -122,7 +140,7 @@ input.item-error {
                 <i class="material-icons">close</i>
               </button>
       
-              <button type="submit" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Gerar Produção">
+              <button type="submit" class="btn btn-success btn-round btn-just-icon" rel="tooltip" id="novoProfessor" title="Confirmar">
                 <i class="material-icons">description</i>
               </button>
        </div>
@@ -134,7 +152,7 @@ input.item-error {
     <!-- Modal Novo Usuário CPF-->
 <div class="modal fade" id="modalNovoCpfUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document" >
-    <div class="modal-content">
+    <div class="modal-content modal-content-user">
     <form  method="get" action="{{URL}}/admin/users/new">
       <div class="modal-header">
         <h5 class="modal-title" id="modalLabel">Informe o CPF do novo Usuário: </h5>
@@ -153,7 +171,7 @@ input.item-error {
                 <i class="material-icons">close</i>
               </button>
       
-              <button type="submit" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Gerar Produção">
+              <button type="submit" class="btn btn-success btn-round btn-just-icon" rel="tooltip" id="novoUser" title="Confirmar">
                 <i class="material-icons">description</i>
               </button>
        </div>

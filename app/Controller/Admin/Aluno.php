@@ -12,7 +12,7 @@ use \App\Model\Entity\Status as EntityStatus;
 use \App\Utils\Funcoes;
 use \App\Controller\File\Upload as Upload;
 use \App\Controller\Qrcode;
- 
+use \App\Model\Entity\User as EntityUser;
 
 use \WilliamCosta\DatabaseManager\Pagination;
 use Dompdf\Dompdf;
@@ -128,6 +128,7 @@ class Aluno extends Page{
 			    'turma' =>EntityTurma::getTurmaById($obAluno->turma)->nome,
 			    'foto' => $obAluno->foto,
 			    'cor' => $cor,
+			    'autor' => EntityUser::getUserById($obAluno->autor)->nome
 					
 					
 					
