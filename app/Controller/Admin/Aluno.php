@@ -467,7 +467,7 @@ class Aluno extends Page{
 	    
 	    
 	    //instancia classe pra verificar CPF
-	    $validaCpf = new CPF($queryParams['cpf']);
+	    $validaCpf = new CPF($queryParams['cpfAluno']);
 	    
 	    //verifica se é válido o cpf
 	    if (!$validaCpf->isValid()){

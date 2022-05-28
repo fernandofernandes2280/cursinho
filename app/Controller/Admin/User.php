@@ -83,7 +83,7 @@ class User extends Page{
 	    $queryParams = $request->getQueryParams();
 	    
 	    //instancia classe pra verificar CPF
-	    $validaCpf = new CPF($queryParams['cpf']);
+	    $validaCpf = new CPF($queryParams['cpfUser']);
 	    
 	    //verifica se é válido o cpf
 	    if (!$validaCpf->isValid()){

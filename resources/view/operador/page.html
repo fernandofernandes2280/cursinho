@@ -83,7 +83,7 @@ input.item-error {
       <div class="modal-body">
         <label for="cpf">CPF:</label>
         	
-       		<input class="form-control-pessoal mascara-cpf cpfNovo" {{readonly}} required type="text" id="cpf" name="cpf" />
+       		<input autofocus class="form-control-pessoal mascara-cpf cpfNovo" {{readonly}} required type="text" id="cpfAluno" name="cpfAluno" />
            
       </div>
       <div class="modal-footer">
@@ -101,6 +101,13 @@ input.item-error {
 </div>	
 <script type="text/javascript">
 $(function(){
+$('#modalNovoCpfAluno').on('shown.bs.modal', function(event) {
+  $("#cpfAluno").focus();
+})
+$('#modalNovoCpfProfessor').on('shown.bs.modal', function(event) {
+  $("#cpfProfessor").focus();
+})
+
   $('.modal-content-aluno').keypress(function(e){
     if(e.which == 13) {
       $('#novoAluno').click();
@@ -112,6 +119,7 @@ $(function(){
     }
   })
 })
+
 </script>
     <!-- Modal Novo Professor CPF-->
 <div class="modal fade" id="modalNovoCpfProfessor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -127,7 +135,7 @@ $(function(){
       <div class="modal-body">
         <label for="cpf">CPF:</label>
         	
-       		<input class="form-control-pessoal mascara-cpf cpfNovo" {{readonly}} required type="text" id="cpf" name="cpf" />
+       		<input class="form-control-pessoal mascara-cpf cpfNovo" {{readonly}} required type="text" id="cpfProfessor" name="cpfProfessor" />
            
       </div>
       <div class="modal-footer">
