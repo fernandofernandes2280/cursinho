@@ -106,13 +106,14 @@ class Database{
       $statement->execute($params);
       return $statement;
     }catch(PDOException $e){
-        
+        die('ERROR: '.$e->getMessage());
+        /*
         if($e->getCode() == 23000){
             die('ERROR: VIOLAÇÃO DE CHAVE ESTRANGEIRA!');
         }else{
             die('ERROR: '.$e->getMessage());
         }
-        
+      */  
         
     }
   }

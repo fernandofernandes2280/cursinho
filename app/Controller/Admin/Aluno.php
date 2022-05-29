@@ -151,6 +151,7 @@ class Aluno extends Page{
 	//Método responsavel por renderizar a view de Listagem de Pacientes
 	public static function getAlunos($request){
 	    
+	    //finaliza sessao de aluno novo caso estejam ativas
 	    Funcoes::init();
 	    EntityAluno::getFinalizaSessaoDados();
 	    
