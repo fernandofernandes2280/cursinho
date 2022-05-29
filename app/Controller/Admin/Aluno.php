@@ -150,6 +150,10 @@ class Aluno extends Page{
 	
 	//Método responsavel por renderizar a view de Listagem de Pacientes
 	public static function getAlunos($request){
+	    
+	    Funcoes::init();
+	    EntityAluno::getFinalizaSessaoDados();
+	    
 		$selectedAtivo = '';
 		$selectedInativo = '';
 		$selectedAtIn = '';
