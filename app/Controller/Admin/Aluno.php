@@ -569,7 +569,7 @@ class Aluno extends Page{
 	    
 	    //define a matrícula
 	    $obMatricula = EntityAluno::getAlunoByCpf($validaCpf->getValue());
-	    $obMatricula->matricula = EntityAluno::geraMatricula($obMatricula->turma, $obMatricula->id);
+	    $obMatricula->matricula = EntityAluno::geraMatricula($obMatricula->id);
 	    $obMatricula->atualizar();
 	    
 	    //encerra sessão com os dados do form

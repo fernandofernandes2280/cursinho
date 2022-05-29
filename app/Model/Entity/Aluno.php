@@ -66,9 +66,9 @@ class Aluno extends Generica{
 	public $autor;
 	
 	
-	public static function geraMatricula($turma,$id){
+	public static function geraMatricula($id){
 	   
-	    $nossoNumero = date('Y').$id.$turma;
+	    $nossoNumero = date('Y').$id;
 	    
 	    // agora vamos definir os índices de multiplicação
 	    $indices = "29876543298765432";
