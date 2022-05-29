@@ -114,6 +114,12 @@ class Aluno extends Page{
 		while ($obAluno = $results -> fetchObject(EntityAluno::class)) {
 			 
 		    
+		    //define a matrícula
+		//    $validaCpf = new CPF($obAluno->cpf);
+		  //  $obMatricula = EntityAluno::getAlunoByCpf($validaCpf->getValue());
+		    $obAluno->matricula = EntityAluno::geraMatricula($obAluno->id);
+		    $obAluno->atualizar();
+		    
 			//View de pacientes
 			$resultados .= View::render('admin/modules/alunos/item',[
 			    
