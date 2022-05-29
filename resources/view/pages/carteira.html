@@ -5,6 +5,8 @@
 	<input type="hidden" name="img_val" id="img_val" value="" />
 	<input type="hidden" name="matricula" value="{{matricula}}"/>
 	<input type="hidden" name="nome" value="{{nome}}"/>
+	<input type="hidden" name="opcao" id="opcao" value=""/>
+	
 </form>
 <style>
 #target {
@@ -12,6 +14,7 @@
 		background-color:#ffff;
 		position:relative;
 		height:450px;
+		width: 960px;
 		
 		
 	}
@@ -28,7 +31,7 @@
 	.logopms{
 		position: absolute;
 		right:0;
-		width: 150px;
+		width: 180px;
 		padding:5px;
 	}
 	.logocursocontainer{
@@ -53,7 +56,35 @@
   border-radius: 0.45rem;
   text-transform: uppercase;
 	}
+	.colfotoCarteira{
+	width: 20%;
+	}
+	.colfotoQrcode{
+	width: 18%;
+	}
+	.colcpfCarteira{
+	margin-right: 10px;
+	width: 47%;
+	}
+	.coldatacarteira{
+	width: 25%;
 	
+	}
+	.prepara{
+	 
+	font-size: 30px;
+	color:#E7B538;
+	-webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: #E7B538;
+	}
+	.santana{
+	
+	font-size: 30px;
+	color:#fff;
+	-webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: #fff;
+		
+	}
 </style>
 <table>
 	<tr>
@@ -61,7 +92,8 @@
 			<table width="100%">
 				<tr>
 					<td>
-						<input type="submit" value="Download da Carteira" onclick="capture();" />
+						<input type="submit" rel="tooltip" title="Visualizar Imagem" value="Visualizar" onclick="capture();" />
+						<input type="submit" rel="tooltip" title="Download da Imagem da Carteira" value="Download" name="imageDown" onclick="captureDown();" />
 					</td>
 				</tr>
 			</table>
@@ -84,10 +116,10 @@
 										<img style="border-radius: 10px;" width=400 class="img-fluid" alt="FotoCursinho" src="{{URL}}/resources/assets/img/preparasantana.png">
 									</div>
 									<div class="col-md-9 pt-2 text-dark" style="padding-left: 180px">
-										<label class="h5">Curso Preparatório Gratuito<br>PREPARA SANTANA</label>
+										<label class="h5">Progama Municipal de Cursos Preparatório<br><b class="prepara">PREPARA</b> <b class="santana">SANTANA</b></label>
 									</div>
-									<div class="colfoto logopms ">
-										<img width=200 class="img-fluid mb-2" alt="FotoCursinho" src="{{URL}}/resources/assets/img/logopms.png">
+									<div class="logopms ">
+										<img width=250 class="img-fluid mb-2" alt="FotoCursinho" src="{{URL}}/resources/assets/img/logopms.png">
 									</div>
 								</div>
 						
@@ -101,37 +133,40 @@
 				  <div class="form-row">
 				   <div class="col-titulo ml-2 mb-2 pl-2 pr-2 pt-2 mt-0 pb-2" style="border:2px solid; border-radius: 10px">
 				    <div class="row">
-					 <div class="colfoto ml-3">
+					 <div class="colfotoCarteira ml-3">
 				      <img style="background-color: #fff; border-radius: 10%" class="img-fluid" alt="FotoAluno" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}">
+				      <span class="label mt-1" >Status:</span>
+				      <input type="text" class="form-control-pessoal mb-2" id="status" name="status" value="{{status}}"/>
 				     </div>
-				     <div class="col-md-8 mb-2">
+				    
+				     
+				     <div class="col-md-7 mb-2">
 				        <div class="form-row">
-				        	<div class="col-md-3">
+				        	<div class="col-md-3 mb-3">
 				        		 <span class="label" >Matrícula:</span>
 				      			<input type="text" class="form-control-pessoal mb-2" id="nome" name="nome" value="{{matricula}}"/>	
 				        	</div>
-				    		<div class="col-md-9 mb-0">
+				    		<div class="col-md-9">
 				    		    <span class="label">Nome:</span>
 					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required/>
 				    		</div>
 				    	</div>
 				        <div class="form-row">
-				        	<div class="col-md-3">
+				        	<div class="col-md-3 mb-4">
 				        	    <span class="label">Turma:</span>
 				      			<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{turma}}"/>	
 				        	</div>
-				    		<div class="col-md-6 mb-0">
+				    		<div class="colcpfCarteira ">
 				    			<span class="label">CPF:</span>
 					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{cpf}}" required/>
 				    		</div>
-				    	
-				    		<div class="col-md-3 mb-0">
+				    		<div class="coldatacarteira">
 				    			<span class="label">Data Nasc.:</span>
 					      		<input type="text" class="form-control-pessoal mb-2" id="nome" name="nome" value="{{dataNasc}}" required/>
 				    		</div>
 				    	</div>
 				        <div class="form-row">
-				        	<div class="col-md-3">
+				        	<div class="coldatacarteira">
 				        		<span class="label">Data Cad.:</span>
 				      			<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{dataCad}}"/>	
 				        	</div>
@@ -146,10 +181,10 @@
 				    
 				    	
 				   
-				     <div class="col-md-2 mb-2 pl-0 pr-0">
+				     <div class="mb-2 pl-0 pr-0 colfotoQrcode">
 				        
-				    			<span class="label">Qr-Code:</span>
-							     <img class="img-fluid" alt="" src="{{URL}}/app/Controller/Admin/carteiras/{{qrcode}}"/>
+				    			<span class="label ">Qr-Code:</span>
+							     <img class="img-fluid " alt="" src="{{URL}}/app/Controller/Admin/carteiras/{{qrcode}}"/>
 				    		
 				    </div>
 				  </div>
@@ -184,15 +219,28 @@
 
 	function capture() {
 		$('#target').html2canvas({
-			
 			allowTaint : true,
 			onrendered: function (canvas) {
                 //Defina o valor do campo oculto para dados de imagem (base-64 string)
 				$('#img_val').val(canvas.toDataURL("image/png"));
                 //Envie o formulário manualmente
+                document.getElementById("opcao").value = "view";
 				document.getElementById("myForm").submit();
 			}
 		});
 	}
+	function captureDown() {
+		$('#target').html2canvas({
+			allowTaint : true,
+			onrendered: function (canvas) {
+                //Defina o valor do campo oculto para dados de imagem (base-64 string)
+				$('#img_val').val(canvas.toDataURL("image/png"));
+                //Envie o formulário manualmente
+                document.getElementById("opcao").value = "down";
+				document.getElementById("myForm").submit();
+			}
+		});
+	}
+	
 </script>
 

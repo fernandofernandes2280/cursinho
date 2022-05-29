@@ -676,7 +676,8 @@ class Aluno extends Page{
 	        'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##'),
 	        'dataNasc' => date('d/m/Y', strtotime($obAluno->dataNasc)),
 	        'dataCad'=>date('d/m/Y', strtotime($obAluno->dataCad)),
-	        'qrcode' => $name
+	        'qrcode' => $name,
+	        'status' => EntityStatus::getStatusById($obAluno->status)->nome
 	        
 	    ]);
 	    
@@ -688,7 +689,7 @@ class Aluno extends Page{
 	//MÉTODO RESPONSÁVEL POR GERAR O ARQUIVO DE IMAGEM DA CARTEIRA DE ALUNO
 	public static function setCarteiraAluno($request,$id){
 	    
-	    
+	  
 	    //Get the base-64 string from data
 	    $filteredData=substr($_POST['img_val'], strpos($_POST['img_val'], ",")+1);
 	    
@@ -715,14 +716,19 @@ class Aluno extends Page{
 	    imagealphablending($rotation, false);
 	    imagesavealpha($rotation, true);
 	    
+	    //download da imagem
+	    if($_POST['opcao'] == 'down'){
+	        header('Content-Disposition: Attachment;filename='.$name.'');
+	    }
+	    
 	    header('Content-type: image/png');
 	    imagepng($rotation);
 	   imagedestroy($source);
 	    imagedestroy($rotation);
 	    unlink($filename);
 	    
-	  //  header("Content-Disposition: attachment; filename=\"$rotation\"");
-	    //readfile($rotation);
+	 //   header("Content-Disposition: attachment; filename=\"$filename\"");
+	  //  readfile($filename);
 	    
 	    /*
 	    header("Expires: 0");
