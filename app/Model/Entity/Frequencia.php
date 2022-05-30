@@ -19,7 +19,7 @@ class Frequencia{
 	//Método responsavel por cadastrar um disciplina no banco de dados
 	public function cadastrar(){
 	    $date->setTimezone(new \DateTimeZone('America/Sao_Paulo'));
-	    $date->format('Y-m-d H:i:sP');
+	    $date->format('Y-m-d H:i:s');
 	    //define a data
 	    $this->dataReg = $date;
 	    
