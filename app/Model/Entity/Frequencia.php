@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Model\Entity;
-date_default_timezone_set('America/Sao_Paulo');
+
 use \WilliamCosta\DatabaseManager\Database;
 use \App\Utils\View;
 
@@ -18,9 +18,10 @@ class Frequencia{
 		
 	//Método responsavel por cadastrar um disciplina no banco de dados
 	public function cadastrar(){
-		
+	    $date->setTimezone(new \DateTimeZone('America/Sao_Paulo'));
+	    
 	    //define a data
-	    $this->dataReg = date('Y-m-d H:i:s');
+	    $this->dataReg = date('Y-m-d H:i:s',$date);
 	    
 		//Insere no banco de dados
 		$this->id = (new Database('frequencia'))->insert([
