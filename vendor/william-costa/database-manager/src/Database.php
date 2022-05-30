@@ -2,6 +2,8 @@
 
 namespace WilliamCosta\DatabaseManager;
 
+date_default_timezone_set('America/Sao_Paulo');
+
 use \PDO;
 use \PDOException;
 use \PDOStatement;

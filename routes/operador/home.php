@@ -1,20 +1,19 @@
 <?php
 
 use \App\Http\Response;
-use \App\Controller\Admin;
+use \App\Controller\Pages;
 
 
 //ROTA Admin
-$obRouter->get('/admin',[
+$obRouter->get('',[
 		'middlewares' => [
-				'require-admin-login'
+				//'require-admin-login'
 		],
 		
 		
 		function ($request){
-			//return new Response(200, Admin\Home::getHome($request));
-		    return new Response(200, Admin\Aluno::getAlunos($request));
+			return new Response(200, Pages\Home::getHome($request));
+		    
 		}
 		]);
-		
 		

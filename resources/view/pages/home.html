@@ -2,37 +2,29 @@
         <div class="container">
            <div class="card card-stats">
 			                <div class="card-header card-header-light card-header-icon">
-			                  <div class="card-icon">
-			                  	<span><img src="{{URL}}/resources/assets/img/logoCaps.png" class="mb-0"  height="80" alt="SISCAPS" style="border-radius:10px"></span>
-			                    <span><img src="{{URL}}/resources/imagens/logoSiscaps.png" class="mb-0"  height="45" alt="SISCAPS" style="border-radius:10px"></span>
-			                  </div>
-			                 <h4 class="card-title">Sistema de Controle de Prontuários do CAPS</h4>
-			                  <a href="{{URL}}/login">
-									<button style="background: #202940" type="button" class="btn btn-round btn-sm " rel="tooltip" title="Acesso ao Sistema">
-									<i class="material-icons" style="font-size: 30px;">login</i>Acessar
-									</button>
-								</a>
+			                
+			                
+			                  
 			                
 			                </div>
 			               
 			              </div>
        
-          <div class="row ">
-          
-			{{grafico1}}
+          <div class="row " style="position:relative; height: 450px">
+          <img style="position:absolute; width:100%; opacity:40%" src="{{URL}}/resources/assets/img/preparasantana.png">
             
-            <div class="col-lg-6">
-            	<div class="row">
+            <div class="col-md-12">
+            	<div class="row ml-5">
             	 
-			           <div class="col-lg-4">
+			           <div class="col-md-2">
 			              <div class="card card-stats">
 			                <div class="card-header card-header-warning card-header-icon">
 			                  <div class="card-icon">
 			                    <i class="material-icons">family_restroom</i>
 			                  </div>
 			              
-			                  <h3 style="margin-top: 60px" class="card-title">{{totalPacientes}}<br>
-			                    <small>Pacientes</small>
+			                  <h3 style="margin-top: 60px" class="card-title text-light">{{totalAlunos}}<br>
+			                    <small>Alunos</small>
 			                  </h3>
 			                  
 			                </div>
@@ -41,13 +33,13 @@
 			            
 						
 			            
-			            <div class="col-lg-4">
+			            <div class="col-md-2">
 			              <div class="card card-stats">
 			                <div class="card-header card-header-info card-header-icon">
 			                  <div class="card-icon">
 			                    <i class="material-icons" style="color:green">star</i>
 			                  </div>
-			                 <h3 style="margin-top: 60px" class="card-title">{{totalAtivos}}<br>
+			                 <h3 style="margin-top: 60px" class="card-title text-light">{{totalAtivos}}<br>
 			                    <small>Ativos</small>
 			                  </h3>
 			                </div>
@@ -55,14 +47,14 @@
 			              </div>
 			            </div>
 			            
-						<div class="col-lg-4">
+						<div class="col-md-2">
 			              <div class="card card-stats">
 			                <div class="card-header card-header-success card-header-icon">
 			                  <div class="card-icon">
 			                    <i class="material-icons" style="color:red">star</i>
 			                  </div>
 			                  
-			                   <h3 style="margin-top: 60px" class="card-title">{{totalInativos}}<br>
+			                   <h3 style="margin-top: 60px" class="card-title text-light">{{totalInativos}}<br>
 			                    <small>Inativos</small>
 			                  </h3>
 			                </div>
@@ -70,32 +62,40 @@
 			              </div>
 			            </div>
 			            
-						<div class="col-lg-4">
+						<div class="col-md-2">
 			              <div class="card card-stats">
 			                <div class="card-header card-header-success card-header-icon">
 			                  <div class="card-icon">
-			                    <i class="material-icons">local_bar</i>
+			                    <i class="material-icons">sunny</i>
 			                  </div>
-			                 <h3 style="margin-top: 60px" class="card-title">{{totalAd}}<br>
-			                    <small>Ad Ativos</small>
+			                 <h3 style="margin-top: 60px" class="card-title text-light">{{totalManha}}<br>
+			                    <small>Manhã</small>
 			                  </h3>
 			                </div>
 			               
 			              </div>
 			            </div>
 			            
-						 <div class="col-lg-4">
+						 <div class="col-md-2">
 			              <div class="card card-stats">
 			                <div class="card-header card-header-danger card-header-icon">
 			                  <div class="card-icon">
-			                    <i class="material-icons">extension</i>
+			                    <i class="material-icons">dark_mode</i>
 			                  </div>
-			                   <h3 style="margin-top: 60px" class="card-title">{{totalTm}}<br>
-			                    <small>Tm Ativos</small>
+			                   <h3 style="margin-top: 60px" class="card-title text-light">{{totalNoite}}<br>
+			                    <small>Noite</small>
 			                  </h3>
 			                </div>
 			                
 			              </div>
+			            </div>
+			            
+			             <div class="col-md-3 text-right">
+			                  <a href="{{URL}}/login">
+									<button style="background: #202940" type="button" class="btn btn-round btn-sm " rel="tooltip" title="Acesso ao Sistema">
+									<i class="material-icons" style="font-size: 30px;">login</i>Entrar
+									</button>
+								</a>
 			            </div>
             	
             	
@@ -111,7 +111,7 @@
            
             
           </div>
-          <div class="row">
+        
 
             
 

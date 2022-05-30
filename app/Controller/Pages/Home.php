@@ -3,13 +3,12 @@
 namespace App\Controller\Pages;
 
 use \App\Utils\View;
-use \App\Model\Entity\Organization;
 use App\Controller\Admin;
-use \App\Model\Entity\Paciente as EntityPaciente;
+use \App\Model\Entity\Aluno as EntityAluno;
 
 class Home extends Page{
 	
-	
+	/*
 	//Método responsável por retornar os atendimentos do relatório da RAAS
 	public static function getProducaoPorAtendimento($dataInicio,$dataFim){
 		
@@ -28,13 +27,11 @@ class Home extends Page{
 			$resultado .=  "['$obAtendimento->atendimento', $obAtendimento->total], "  ;
 		}
 		
-	//	var_dump($resultado);exit;
-		
 		return $resultado;
 		
 	}
 	
-	
+	*/
 	
 	
 	
@@ -58,28 +55,23 @@ class Home extends Page{
 				'December' => 'Dezembro'
 		);
 
-	//var_dump(self::getProducaoPorAtendimento('2021-09-01', '2021-09-30')); exit;
 		$mes = $mes_extenso[date('F',strtotime("-1 month"))] ;
 		$P_Dia = date('Y-m-01',strtotime("-1 month"));
 		$U_Dia = date('Y-m-t',strtotime("-1 month"));
 		
-		$totalPacientes = EntityPaciente::getPacientes(null, 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
-		$totalPacientesAd = EntityPaciente::getPacientes('tipo = "Ad" AND status = "Ativo" ', 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
-		$totalPacientesTm = EntityPaciente::getPacientes('tipo = "Tm" AND status = "Ativo" ', 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
-		$totalPacientesAtivos = EntityPaciente::getPacientes('status = "Ativo"', 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
-		$totalPacientesInativos = EntityPaciente::getPacientes('status = "Inativo"', 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
+		$totalAlunos = EntityAluno::getAlunos(null, 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
+		$totalAtivos = EntityAluno::getAlunos('status = 1', 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
+		$totalInativos = EntityAluno::getAlunos('status = 2', 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
+		$totalManha = EntityAluno::getAlunos('turma = 1', 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
+		$totalNoite = EntityAluno::getAlunos('turma = 3', 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
 		
-	//	var_dump($U_Dia);exit;
 		$content = View::render('pages/home',[
-				'grafico1'=>View::render('pages/graficos/graficos',[
-    				'label'=> self::getProducaoPorAtendimento($P_Dia, $U_Dia),
-    				'title' => 'Atendimentos do mês de '.$mes .'/'.date('Y'),
-				    ]), 
-				'totalPacientes' => $totalPacientes,
-				'totalAd' => $totalPacientesAd,
-				'totalTm' => $totalPacientesTm,
-				'totalAtivos' => $totalPacientesAtivos,
-				'totalInativos' => $totalPacientesInativos
+				
+				'totalAlunos' => $totalAlunos,
+				'totalAtivos' => $totalAtivos,
+				'totalInativos' => $totalInativos,
+		        'totalManha' => $totalManha,
+		        'totalNoite' => $totalNoite
 		]);
 		
 		return parent::getPage('Siscaps', $content);

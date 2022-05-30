@@ -12,6 +12,13 @@ class Page{
 	
 	//Módulos disponíveis no painel
 	private static $modules = [
+	    
+	    'dashboard' =>[
+	        'label' => 'Dashboard',
+	        'link' => URL.'/',
+	        'material-icons' => 'dashboard',
+	        'modal' => ''
+	    ],
 		
 		'alunos' =>[
 					'label' => 'Alunos',

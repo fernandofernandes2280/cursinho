@@ -2,20 +2,6 @@
 
 use \App\Http\Response;
 use \App\Controller\Operador;
-use \App\File;
-
-//ROTA HOME
-$obRouter->get('',[
-    
-    'middlewares' => [
-        'require-operador-login'
-    ],
-    
-    function ($request){
-        return new Response(200, Operador\Aluno::getAlunos($request));
-    }
-    ]);
-
 
 //Rota de listagem de alunos
 $obRouter->get('/operador/alunos',[
