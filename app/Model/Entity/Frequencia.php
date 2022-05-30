@@ -19,9 +19,9 @@ class Frequencia{
 	//Método responsavel por cadastrar um disciplina no banco de dados
 	public function cadastrar(){
 	    $date->setTimezone(new \DateTimeZone('America/Sao_Paulo'));
-	    
+	    $date->format('Y-m-d H:i:sP');
 	    //define a data
-	    $this->dataReg = date('Y-m-d H:i:s',$date);
+	    $this->dataReg = $date;
 	    
 		//Insere no banco de dados
 		$this->id = (new Database('frequencia'))->insert([
