@@ -2,7 +2,6 @@
 
 use \App\Http\Response;
 use \App\Controller\Admin;
-use \App\File;
 
 
 //Rota de listagem de frequencias

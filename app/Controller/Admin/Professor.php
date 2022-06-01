@@ -292,7 +292,7 @@ class Professor extends Page{
 	        'cep' => $obProfessor->cep,
 	        'endereco' => $obProfessor->endereco,
 	        'statusMessage' => self::getStatus($request),
-	        'fone' => Funcoes::maskFone($obProfessor->fone),
+	        'fone' => $obProfessor->fone,
 	        'cidade' => $obProfessor->cidade,
 	        'uf' => $obProfessor->uf,
 	        'cpf' => Funcoes::mask($obProfessor->cpf, '###.###.###-##') ,

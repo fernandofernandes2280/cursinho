@@ -1,0 +1,300 @@
+<?php
+
+namespace App\Controller\Pages;
+
+use \App\Utils\View;
+use App\Controller\Admin;
+use \App\Model\Entity\Aluno as EntityAluno;
+use \App\Model\Entity\Bairro as EntityBairro;
+use \App\Model\Entity\Escolaridade as EntityEscolaridade;
+use \App\Model\Entity\EstadoCivil as EntityEstadoCivil;
+use \App\Model\Entity\Turma as EntityTurma;
+use \App\Model\Entity\Status as EntityStatus;
+use Bissolli\ValidadorCpfCnpj\CPF;
+use App\Controller\Admin\Alert;
+use App\Utils\Funcoes;
+use CoffeeCode\Uploader\Image;
+use App\Controller\File\Upload;
+use App\Controller\Admin\Resize;
+
+class UpdateAluno extends Page{
+	
+	//retorna o conteudo (view) Para o Aluno atualizar seu cadastro
+    public static function getUpdate($request,$id){
+	 
+        
+        
+	    $content = View::render('pages/updateAluno/form',[
+	        'title' => 'Curso Prepara Santana - Atualização Cadastral do Aluno',
+	        'nome' => '',
+	        'cep' => '',
+	        'endereco' => '',
+	        'naturalidade' => '',
+	        'fone' => '',
+	        'mae' => '',
+	        'obs' => '',
+	        'dataNasc' => '',
+	        'dataCad' => '',
+	        'statusMessage' => self::getStatus($request),
+	        'optionBairros' => self::getSelectBairros(null),
+	        'optionEscolaridade' => self::getSelectEscolaridade(null),
+	        'optionEstadoCivil' => self::getSelectEstadoCivil(null),
+	        'optionTurma' => self::getSelectTurmas(null),
+	        'foto' => 'profile.png',
+	        'ponteiro' => 'pointer-events: none;'
+
+	        
+	    ]);
+	    
+	    return parent::getPageUpdateAluno('Prepara Santana', $content);
+	    
+	}
+	
+	//retorna o conteudo (view) Para o Aluno atualizar seu cadastro
+	public static function setUpdate($request){
+	    
+	    
+	    Funcoes::init();
+	    $idAluno = $_SESSION['idAluno'];
+	    
+	    //busca usuário pelo CPF sem a maskara
+	    $obAluno = EntityAluno::getAlunoById($idAluno);
+	    
+	    
+	    $postVars = $request->getPostVars();
+	    //Atualiza a instância
+	    $obAluno->nome = Funcoes::convertePriMaiuscula($postVars['nome']);
+	    $obAluno->cep = $postVars['cep'];
+	    $obAluno->endereco = Funcoes::convertePriMaiuscula($postVars['endereco']);
+	    $obAluno->bairro =  $postVars['bairro'];
+	    $obAluno->dataNasc = implode("-",array_reverse(explode("/",$postVars['dataNasc'])));
+	    $obAluno->sexo = $postVars['sexo'] ?? $obAluno->sexo;
+	    $obAluno->naturalidade = $postVars['naturalidade'];
+	    $obAluno->escolaridade = $postVars['escolaridade'];
+	    $obAluno->fone =str_replace('-', '', $postVars['fone']);
+	    $obAluno->mae = Funcoes::convertePriMaiuscula($postVars['mae']);
+	    $obAluno->estadoCivil = $postVars['estadoCivil'];
+	    $obAluno->turma = $postVars['turma'];
+	    $obAluno->atualizar();
+	    
+	    
+	    //FAZ O ULPOAD DA FOTO DO ALUNO
+	   Upload::setUploadImagesUpdateAluno($request);
+	   
+	   $request->getRouter()->redirect('/aluno?statusMessage=updated');
+	}
+	
+	
+	//retorna a tela de cpf para o aluno informar o seu
+	public static function getIndex($request){
+	    Funcoes::init();
+	    $content = View::render('pages/updateAluno/index',[
+	        'title' => 'Curso Prepara Santana - Atualização Cadastral do Aluno',
+	        'statusMessage' => self::getStatus($request),
+	        'esconder' =>@$_SESSION['idAluno'] ? '' : 'hidden',
+	        'escondeForm' =>@$_SESSION['idAluno'] ? 'hidden' : '',
+	        
+	    ]);
+	    
+	    return parent::getPageUpdateAluno('Prepara Santana', $content);
+	    
+	}
+	
+	//FAZ A VERIFICAÇÃO DO CPF DO ALUNO
+	public static function setIndex($request){
+	    Funcoes::init();
+	    $postVars = $request->getPostVars();
+	    
+	    //instancia classe pra verificar CPF
+	    $validaCpf = new CPF($postVars['cpfAluno']);
+	    
+	    //busca usuário pelo CPF sem a maskara
+	    $obUser = EntityAluno::getAlunoByCpf($validaCpf->getValue());
+	    
+	    if(!$obUser instanceof EntityAluno){
+	        
+	        $request->getRouter()->redirect('/aluno?statusMessage=unknown');
+	    }
+	    
+	    
+	    if($obUser->status == '2'){
+	        $request->getRouter()->redirect('/aluno?statusMessage=inativo');
+	    }
+	    
+	    if($obUser->mae != ''){
+	        $_SESSION['idAluno'] = $obUser->id;
+	        $request->getRouter()->redirect('/aluno?statusMessage=updated');
+	    }
+	    
+	    
+	    
+	    
+	    
+	    $_SESSION['idAluno'] = $obUser->id;
+	    
+	    $request->getRouter()->redirect('/aluno/update');
+	    
+
+	    
+	}
+	
+	
+	
+	
+	//Método responsavel por retornar a mensagem de status
+	private static function getStatus($request){
+	    //Query PArams
+	    $queryParams = $request->getQueryParams();
+	    
+	    //Status
+	    if(!isset($queryParams['statusMessage'])) return '';
+	    
+	    //Mensagens de status
+	    switch ($queryParams['statusMessage']) {
+	        case 'unknown':
+	            return Alert::getError('CPF não encontrado! Procure a coordenação.');
+	            break;
+	        case 'updated':
+	            return Alert::getSuccess('Seu cadastro Já foi Atualizado!');
+	            break;
+	        case 'inativo':
+	            return Alert::getError('ALUNO INATIVO! Procure a coordenação para regularizar sua situação.');
+	            break;
+	      
+	    }
+	}
+	
+	
+	//Método responsavel por listar os Bairros no select option, selecionando o do paciente
+	public static function getSelectBairros($id){
+	    $resultados = '';
+	    $results =  EntityBairro::getBairros(null,'nome asc',null);
+	    //verifica se o id não é nulo e obtém o Procedencia do banco de dados
+	    if (!is_null($id)) {
+	        $selected = '';
+	        while ($ob = $results -> fetchObject(self::class)) {
+	            
+	            //seleciona o Procedencia do paciente
+	            $ob->id == $id ? $selected = 'selected' : $selected = '';
+	            //View de Procedencia
+	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	                'id' => $ob ->id,
+	                'nome' => $ob->nome,
+	                'selecionado' => $selected
+	            ]);
+	        }
+	        //retorna
+	        return $resultados;
+	    }else{ //se for nulo, lista todos e seleciona um em branco
+	        while ($ob = $results -> fetchObject(self::class)) {
+	           
+	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	                'id' => $ob ->id,
+	                'nome' => $ob->nome,
+	               
+	            ]);
+	        }
+	        //retorna a listagem
+	        return $resultados;
+	    }
+	}
+	//Método responsavel por listar as Escolaridades
+	public static function getSelectEscolaridade($id){
+	    $resultados = '';
+	    $results =  EntityEscolaridade::getEscolaridades(null,'nome asc',null);
+	    //verifica se o id não é nulo e obtém a Escolaridade do banco de dados
+	    if (!is_null($id)) {
+	        $selected = '';
+	        while ($obEscolaridade = $results -> fetchObject(self::class)) {
+	            
+	            //seleciona as Escolaridades do paciente
+	            $obEscolaridade->id == $id ? $selected = 'selected' : $selected = '';
+	            //View de as Escolaridades
+	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	                'id' => $obEscolaridade ->id,
+	                'nome' => $obEscolaridade->nome,
+	                'selecionado' => $selected
+	            ]);
+	        }
+	        //retorna os as Escolaridades
+	        return $resultados;
+	    }else{ //se as Escolaridades for nulo, lista todos e seleciona um em branco
+	        while ($obEscolaridade = $results -> fetchObject(self::class)) {
+	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	                'id' => $obEscolaridade ->id,
+	                'nome' => $obEscolaridade->nome,
+	            ]);
+	        }
+	        //retorna os as Escolaridades
+	        return $resultados;
+	    }
+	}
+	
+	//Método responsavel por listar os Estados Civis, 
+	public static function getSelectEstadoCivil($id){
+	    $resultados = '';
+	    $results =  EntityEstadoCivil::getEstadoCivils(null,'nome asc',null);
+	    //verifica se o id não é nulo e obtém o Estado Civil do banco de dados
+	    if (!is_null($id)) {
+	        $selected = '';
+	        while ($obEstadoCivil = $results -> fetchObject(self::class)) {
+	            
+	            //seleciona o Estado Civil do paciente
+	            $obEstadoCivil->id == $id ? $selected = 'selected' : $selected = '';
+	            //View de Estados Civil
+	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	                'id' => $obEstadoCivil ->id,
+	                'nome' => $obEstadoCivil->nome,
+	                'selecionado' => $selected
+	            ]);
+	        }
+	        //retorna os Estados Civis
+	        return $resultados;
+	    }else{ //se for nulo, lista todos e seleciona um em branco
+	        while ($obEstadoCivil = $results -> fetchObject(self::class)) {
+	            
+	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	                'id' => $obEstadoCivil ->id,
+	                'nome' => $obEstadoCivil->nome,
+	            
+	            ]);
+	        }
+	        //retorna a listagem
+	        return $resultados;
+	    }
+	}
+	//Método responsavel por listar As Turmas no select option, 
+	public static function getSelectTurmas($id){
+	    $resultados = '';
+	    $results =  EntityTurma::getTurmas(null,'nome asc',null);
+	    //verifica se o id não é nulo e obtém o Procedencia do banco de dados
+	    if (!is_null($id)) {
+	        $selected = '';
+	        while ($ob = $results -> fetchObject(self::class)) {
+	            
+	            //seleciona a Turma do aluno
+	            $ob->id == $id ? $selected = 'selected' : $selected = '';
+	            //View de Turmas
+	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	                'id' => $ob ->id,
+	                'nome' => $ob->nome,
+	                'selecionado' => $selected
+	            ]);
+	        }
+	        //retorna
+	        return $resultados;
+	    }else{ //se for nulo, lista todos e seleciona um em branco
+	        while ($ob = $results -> fetchObject(self::class)) {
+	           
+	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	                'id' => $ob ->id,
+	                'nome' => $ob->nome,
+	           
+	            ]);
+	        }
+	        //retorna a listagem
+	        return $resultados;
+	    }
+	}
+	
+}

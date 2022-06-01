@@ -154,12 +154,12 @@ h7,
 .col-data {width: 17%;}
 .col-cep {width: 16%;}
 .col-cpf {width: 17%;}
-.col-turma {width: 17%;}
-.col-obs {width: 56%;}
+.col-turma {width: 22%;}
+.col-obs {width: 50%;}
 .colfoto {width: 15%;}
 .col-nomeAl {width: 82%;}
 .col-endProf {width: 52%;}
-.col-funcao {width: 36%;}
+.col-funcao {width: 25%;}
 .col-emailProf {width: 47%;}
 .colfotoUser {width: 70%;}
 .colfotoFreq {width: 100%;}
@@ -172,6 +172,7 @@ h7,
   [class*="col-"] {
     width: 100%;
   }
+  
   .colfoto {width: 30%;}
   .colfotoUser {width: 30%;}
   .colfotoFreq {width: 70%;}

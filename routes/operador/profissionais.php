@@ -2,7 +2,6 @@
 
 use \App\Http\Response;
 use \App\Controller\Admin;
-use \App\File;
 
 //ROTA DE LISTAGEM DE PROFISSIONAL
 $obRouter->get('/admin/profissionais',[

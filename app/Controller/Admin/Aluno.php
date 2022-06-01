@@ -365,7 +365,7 @@ class Aluno extends Page{
 	        'endereco' => $obAluno->endereco,
 	        'statusMessage' => self::getStatus($request),
 	        'naturalidade' => $obAluno->naturalidade,
-	        'fone' =>@$obAluno->fone ? Funcoes::maskFone($obAluno->fone) : '',
+	        'fone' =>$obAluno->fone ,
 	        'mae' => $obAluno->mae,
 	        'obs' => $obAluno->obs,
 	        'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##') ,
@@ -634,6 +634,13 @@ class Aluno extends Page{
 	
 	//MÉTODO RESPONSÁVEL POR RENDERIZAR A CARTEIRA DE ALUNO
 	public static function getCarteiraAluno($request,$id){
+	    Funcoes::init();
+	    
+	    if(empty($id)){
+	        
+	        @$_SESSION['idAluno'] ? $id = $_SESSION['idAluno'] :  $request->getRouter()->redirect('/aluno');
+	    }
+	    
 	    
 	    //obtém o Aluno do banco de dados
 	    $obAluno = EntityAluno::getAlunoById($id);
@@ -687,8 +694,14 @@ class Aluno extends Page{
 	    ]);
 	    
 	    //Retorna a página completa
-	    return parent::getPanel('Carteira do Aluno > Cursinho', $content,'alunos', self::$hidden);
-	    
+	   
+	    if(@$_SESSION['idAluno']){
+	        unset($_SESSION['idAluno']);
+	        return parent::getPage('Carteira do Aluno > Cursinho', $content,'alunos', self::$hidden);
+	    }else{
+	        
+	        return parent::getPanel('Carteira do Aluno > Cursinho', $content,'alunos', self::$hidden);
+	    }
 	}
 	
 	//MÉTODO RESPONSÁVEL POR GERAR O ARQUIVO DE IMAGEM DA CARTEIRA DE ALUNO

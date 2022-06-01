@@ -23,7 +23,7 @@ include __DIR__.'/admin/aulas.php';
 include __DIR__.'/admin/ajax.php';
 
 //Inclui as rotas de Home
-include __DIR__.'/admin/home.php';
+include __DIR__.'/admin/dashboard.php';
 
 //Inclui as rotas de Escolaridades
 include __DIR__.'/admin/escolaridades.php';

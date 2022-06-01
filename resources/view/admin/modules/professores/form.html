@@ -44,7 +44,7 @@
     		<div class="col-nomeProf mb-2">
       		<label for="nome">Nome</label>
       		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required  /> 
->
+
     		</div>
     		<div class="col-cep mb-2">
 			      <label for="cep">Cep</label>
@@ -99,9 +99,9 @@
 		                <input class="form-control-pessoal cpfProfessor mascara-cpf" required type="text" id="cpf" value="{{cpf}}" name="cpf" />
 				    </div>
 				    
-				    <div class="col-md-2 mb-2">
+				    <div class="col-md-3 mb-2">
 				      <label for="fone1">Telefone</label>
-				      <input type="text" class="form-control-pessoal" id="fone" name="fone" value="{{fone}}" maxlength="9">
+				      <input type="text" class="form-control-pessoal mascara-telefone" id="fone" name="fone" value="{{fone}}" maxlength="11">
 				    </div>
 				     <script>
 				      	$('#fone').keyup(function() {

@@ -130,4 +130,14 @@ class Page extends Generica{
 		
 	}
 	
+	//retorna o conteudo (view) da nossa página genérica para Atualizacao do Aluno
+	public static function getPageUpdateAluno($title, $content){
+	    return View::render('pages/updateAluno/page',[
+	        'title' => $title,
+	        'content' => $content,
+	        
+	    ]);
+	    
+	}
+	
 }

@@ -14,8 +14,8 @@ $obRouter = new Router(URL);
 include __DIR__.'/routes/admin.php';
 
 
-//Inclui as rotas de Usuários
-include __DIR__.'/routes/visitor.php';
+//Inclui as rotas de Atualizcao Cadastral do aluno
+include __DIR__.'/routes/updateAluno.php';
 
 
 //Inclui as rotas de OPERADOR

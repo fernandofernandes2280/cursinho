@@ -150,13 +150,13 @@ class Login extends Page{
 			//Cria a sessão de Login de Admin
 			SessionAdminLogin::login($obUser);
 			//redireciona o usuario Admin
-			$request->getRouter()->redirect('/admin/alunos');
+			$request->getRouter()->redirect('/admin/dashboard');
 		}else{
 			
 			//Cria a sessão de Login de Visitante
 			SessionOperadorLogin::login($obUser);
 			//redireciona o usuario Visitante
-			$request->getRouter()->redirect('/operador/alunos');
+			$request->getRouter()->redirect('/operador/dashboard');
 			
 		}
 		

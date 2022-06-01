@@ -2,6 +2,7 @@
 
 use \App\Http\Response;
 use \App\Controller\Admin;
+use \App\Controller\Pages;
 
 //ROTA HOME
 $obRouter->get('',[

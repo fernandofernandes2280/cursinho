@@ -46,14 +46,14 @@
 		
     </div>
     
-     <div class="col-md-10 mb-2">
+     <div class="col-md-10  mb-2">
       <label class="h5">Matrícula: </label><span class="text-light h5"> {{matricula}}</span>
         <div class="form-row">
-    		<div class="col-nomeAl mb-2">
+    		<div class="col-md-9 mb-2">
       		<label for="nome">Nome</label>
       		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required />
     		</div>
-    		<div class="col-cep mb-2">
+    		<div class="col-md-2 mb-2">
 			      <label for="cep">Cep</label>
 			      <input type="text" class="form-control-pessoal" data-action="{{URL}}/admin/delete" data-id="3" id="cep" name="cep" value="{{cep}}">
       		
@@ -134,9 +134,9 @@
 		      <input type="date" class="form-control-pessoal" id="dataCad" name="dataCad" value="{{dataCad}}" >
 		    </div>  
 		    
-		    <div class="col-md-2 mb-2">
+		    <div class="col-md-3 mb-2">
 		      <label for="fone">Telefone</label>
-		      <input type="text" class="form-control-pessoal" id="fone" name="fone" value="{{fone}}" maxlength="9">
+		      <input type="text" class="form-control-pessoal mascara-telefone" id="fone" name="fone" value="{{fone}}" maxlength="11">
 		      <script>
 		      	$('#fone').keyup(function() {
 				  $(this).val(this.value.replace(/\D/g, ''));
@@ -147,13 +147,7 @@
 	           <label for="cpf">CPF:</label>
                 <input class="form-control-pessoal cpfAluno mascara-cpf" required type="text" id="cpf" value="{{cpf}}" name="cpf" />
 		    </div>  
-		     	<div class="col-md-2 mb-2">
-		      <label for="status">Status</label>
-		         <select class="custom-select" id="status" name="status" required>
-			        {{optionStatus}}
-			   </select>
-
-		    </div>
+		     
 		    <div class="col-turma mb-2">
 		      <label for="turma">Turma</label>
 		       <select class="custom-select" id="turma" name="turma"  >
@@ -163,11 +157,17 @@
   </div>
       
     <div class="form-row">
-		    <div class="col-md-5 mb-2">
+		    <div class="col-md-4 mb-2">
 		      <label for="mae">Mãe</label>
 		      <input type="text" class="form-control-pessoal" id="mae" name="mae" value="{{mae}}">
 		    </div>
-		   
+		   	<div class="col-md-2 mb-2">
+		      <label for="status">Status</label>
+		         <select class="custom-select" id="status" name="status" required>
+			        {{optionStatus}}
+			   </select>
+
+		    </div>
 		  	 <div class="col-obs mb-2">
 		      <label for="obs">Observações</label>
 		      <input type="text" class="form-control-pessoal" id="obs" name="obs" value="{{obs}}" >

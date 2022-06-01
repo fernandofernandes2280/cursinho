@@ -1,0 +1,151 @@
+<style>
+.borda{
+	border: 1px solid #fff;
+}
+
+</style>
+
+
+  <div class="container">
+     <div class="card card-stats">
+          <div class="card-header card-header-light card-header-icon">
+          </div>
+     </div>
+ 
+    <div class="row" style="borda: 1px solid">
+   
+      <div class="col-md-12">
+      
+<form  method="post" enctype="multipart/form-data">
+	<div class="row">
+			<div class="col-md-12 text-light " >
+			<h5>{{title}}</h5>
+		</div>
+ 		<div class="col-md-12 " >
+			{{statusMessage}}
+		</div>	
+  </div>
+
+<div class="form-row" style="border: 1px solid">
+     <div class="col-md-6">
+     	<div class="form-row">
+    		<div class="col-md-12 mb-2">
+	      		<label for="nome">Nome</label>
+	      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required />
+	      		<input type="text" id="id" name="id" value="{{id}}" hidden />
+    		</div>
+    		<div class="col-md-12 mb-2">
+			      <label for="cep">Cep</label>
+			      <input type="text" class="form-control-pessoal" id="cep" name="cep" value="{{cep}}" required>
+    		</div>
+		    <div class="col-md-12 mb-2">
+		      <label for="endereco">Endereço</label>
+		      <small class="text-muted"> logradouro (rua, avenida, ..) + número</small>
+		      <input type="text" class="form-control-pessoal" id="endereco" name="endereco" value="{{endereco}}" required >
+		    </div>   
+		    
+		    <div class="col-md-12 mb-2">
+		      <label for="bairro">Bairro</label>
+		       <select class="custom-select" id="bairro" name="bairro" required >
+		       		<option></option>
+			        {{optionBairros}}
+			   </select>
+   			 </div> 
+			<div class="col-md-12 mb-2">
+		      <label for="naturalidade">Naturalidade</label>
+		      <input type="text" class="form-control-pessoal" id="naturalidade" name="naturalidade" value="{{naturalidade}}" required>
+		    </div>  
+     			<div class="col-md-12 mb-2">
+		      <label for="escolaridade">Escolaridade</label>
+		       <select class="custom-select" id="escolaridade" name="escolaridade" required>
+		       		<option></option>
+			        {{optionEscolaridade}}
+			   </select>
+		    </div>			
+		    <div class="col-md-12 mb-2">
+		      <label for="estadoCivil">Estado Civil</label>
+		       <select  class="custom-select" id="estadoCivil" name="estadoCivil"  required>
+		       		<option></option>
+			        {{optionEstadoCivil}}
+			   </select>
+		    </div>    
+			 <div class="col-md-12 mb-2">
+		      <label for="sexo">Sexo</label><br>
+		      <select class="custom-select" id="sexo" name="sexo" required>
+		        <option></option>
+		        <option {{selectedSexoM}} value="MAS">MAS</option>
+		        <option {{selectedSexoF}} value="FEM">FEM</option>
+		      </select>
+		    </div> 	   		
+		    <div class="col-md-12 mb-2">
+		      <label for="dataNasc">Data de Nascimento</label>
+		      <input  type="date" class="form-control-pessoal" id="dataNasc" name="dataNasc" value="{{dataNasc}}" required>
+			</div>
+		    <div class="col-md-12 mb-2">
+		      <label for="fone">Telefone</label>
+		      <input type="text" class="form-control-pessoal" id="fone" name="fone" value="{{fone}}" maxlength="9" required>
+		      <script>
+		      	$('#fone').keyup(function() {
+				  $(this).val(this.value.replace(/\D/g, ''));
+				});
+		      </script>
+		    </div>
+		    <div class="col-md-12 mb-2">
+		      <label for="turma">Turma</label>
+		       <select class="custom-select" id="turma" name="turma"  >
+		       		<option></option>
+			        {{optionTurma}}
+			   </select>
+		    </div>	  	
+		    <div class="col-md-12 mb-2">
+		      <label for="mae">Mãe</label>
+		      <input type="text" class="form-control-pessoal" id="mae" name="mae" value="{{mae}}" required>
+		    </div>
+		    <div class="col-md-12">
+		    <label>Foto</label>	
+		    	<div class="row">
+		    	
+		    		<div class="col-md-3 col-sm-3 mb-2 ">
+		    			
+		    			<img id="preview" style="background-color: #fff; border-radius: 10%" class="img-fluid" alt="Foto" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}">	
+		    		</div>
+		    	</div>
+		    	<div class="row">
+		    		<div class="col-md-12">
+		    				<input id="img-input" type="file" name="imagem" required>
+		    		</div>
+		    	</div>
+		    </div>
+		    <div class="col-md-12 text-right">
+		    	 <button class="btn btn-facebook btn-sm btn-round" type="submit" rel="tooltip" title="Salvar">
+			     	Enviar Formulário
+			     </button>
+		    </div>
+     	</div>
+     </div>
+  </div>
+
+  
+  
+</form>	      
+      
+           
+      </div>
+    </div>
+   
+</div>
+<script type="text/javascript">
+function readImage() {
+    if (this.files && this.files[0]) {
+        var file = new FileReader();
+        file.onload = function(e) {
+            document.getElementById("preview").src = e.target.result;
+        };       
+        file.readAsDataURL(this.files[0]);
+    }
+}
+document.getElementById("img-input").addEventListener("change", readImage, false);
+</script>
+            
+
+          

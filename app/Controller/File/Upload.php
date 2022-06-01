@@ -10,6 +10,7 @@ use \App\Model\Entity\Aluno as EntityAluno;
 use \App\Model\Entity\Professor as EntityProfessor;
 
 use \App\Controller\Admin\Resize;
+use App\Utils\Funcoes;
 
 class Upload{
 	
@@ -478,6 +479,75 @@ class Upload{
 	                $obUser->foto = $nameFile;
 	                $obUser->Atualizar();
 	                $_SESSION['admin']['usuario']['foto'] = $nameFile;
+	            }
+	        }
+	    }
+	    
+	}
+	
+	//FAZ O UPLOAD DA IMAGEM VINDA DO FORMULÁRIO DE ATUALIZAÇÃO CADASTRAL DO ALUNO
+	public static function setUploadImagesUpdateAluno($request){
+	    
+	    
+	    Funcoes::init();
+	    $idAluno = $_SESSION['idAluno'];
+	    
+	    //busca Aluno no banco
+	    $obAluno = EntityAluno::getAlunoById($idAluno);
+	    
+	    $upload = new Image(__DIR__.'/files', '/fotos');
+	    
+	    $files = $request->getFileVars();
+	    
+	    if(!empty($files['imagem'])){
+	        $file = $files['imagem'];
+	        
+	        //verifica se o arquivo existe e se o tipo é permitido
+	        if(empty($file['type']) || !in_array($file['type'], $upload::isAllowed())  ){
+	            
+	            //$request->getRouter()->redirect('/admin/pacientes');
+	            
+	        }else{
+	            //faz o upload da imagem
+	            
+	            //instancia de upload
+	            $obUpload = new Upload($files['imagem']);
+	            
+	            //gera um nome aleatório pro arquivo
+	            //$obUpload->generateNewName();
+	            
+	            //Move os arquivos de upload
+	            //$sucesso = $obUpload->upload(__DIR__.'/files/fotos',false);
+	            $nameFile = $obUpload->nomeArquivo($obAluno->matricula, str_replace(' ', '',$obAluno->nome), '.png');
+	            $sucesso = $obUpload->uploadFotoAluno(__DIR__.'/files/fotos',false,$nameFile);
+	            //	chmod(__DIR__."/files/fotos/".$nameFile, 0777); //Corrige a permissão do arquivo.
+	            //corta a foto
+	            $img = new Resize();
+	            $config = array();
+	            $config['source_image'] = __DIR__.'/files/fotos/'.$nameFile;
+	            $config['width'] = 195;
+	            $config['height'] = 230;
+	            $img->initialize($config);
+	            $img->crop();
+	            
+	            
+	            if($sucesso){
+	                
+	                
+	                //caminho da imagem completo gravada no banco
+	                //	$filename = __DIR__.'/files/fotos/'.$obAluno->foto;
+	                //verifica se o arquivo existe, se existir, atribui as permissoes e apaga o arquivo anterior
+	                //		if (file_exists($filename)){
+	                //		chmod($filename, 0777);
+	                    //			unlink($filename);}
+	                    //salva o nome do arquivo no banco
+	                    $obAluno->foto = $nameFile;
+	                    $obAluno->Atualizar();
+	                    
+	                    
+	                    
+	                    
+	                    //exit;
 	            }
 	        }
 	    }
