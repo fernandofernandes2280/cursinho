@@ -55,7 +55,9 @@ class UpdateAluno extends Page{
 	    
 	    
 	    Funcoes::init();
-	    $idAluno = $_SESSION['idAluno'];
+	    
+	    //VERIFICA SE A SESSAO ALUNO EXISTE, SE NÃO EXISTE REDIRECIONA PARA O INDEX
+	    @$_SESSION['idAluno'] ? $idAluno = $_SESSION['idAluno'] : $request->getRouter()->redirect('/aluno');
 	    
 	    //busca usuário pelo CPF sem a maskara
 	    $obAluno = EntityAluno::getAlunoById($idAluno);
@@ -81,7 +83,7 @@ class UpdateAluno extends Page{
 	    //FAZ O ULPOAD DA FOTO DO ALUNO
 	   Upload::setUploadImagesUpdateAluno($request);
 	   
-	   $request->getRouter()->redirect('/aluno?statusMessage=updated');
+	   $request->getRouter()->redirect('/aluno/carteira');
 	}
 	
 	
@@ -89,12 +91,12 @@ class UpdateAluno extends Page{
 	public static function getIndex($request){
 	    Funcoes::init();
 	    $content = View::render('pages/updateAluno/index',[
-	        'title' => 'Curso Prepara Santana - Atualização Cadastral do Aluno',
+	        'title' => 'Curso Prepara Santana - Carteira Digital do Estudante',
 	        'statusMessage' => self::getStatus($request),
-	        'esconder' =>@$_SESSION['idAluno'] ? '' : 'hidden',
-	        'escondeForm' =>@$_SESSION['idAluno'] ? 'hidden' : '',
+	       
 	        
 	    ]);
+	    unset($_SESSION['statusMessage']);
 	    
 	    return parent::getPageUpdateAluno('Prepara Santana', $content);
 	    
@@ -103,6 +105,7 @@ class UpdateAluno extends Page{
 	//FAZ A VERIFICAÇÃO DO CPF DO ALUNO
 	public static function setIndex($request){
 	    Funcoes::init();
+	    
 	    $postVars = $request->getPostVars();
 	    
 	    //instancia classe pra verificar CPF
@@ -111,28 +114,37 @@ class UpdateAluno extends Page{
 	    //busca usuário pelo CPF sem a maskara
 	    $obUser = EntityAluno::getAlunoByCpf($validaCpf->getValue());
 	    
+	    
+	    //VERIFICA SE O ALUNO EXISTE
 	    if(!$obUser instanceof EntityAluno){
-	        
-	        $request->getRouter()->redirect('/aluno?statusMessage=unknown');
+	        $_SESSION['statusMessage'] = 'unknown';
+	        $request->getRouter()->redirect('/aluno');
 	    }
 	    
-	    
+	    //VERIFICA SE O ALUNO ESTÁ INATIVO
 	    if($obUser->status == '2'){
-	        $request->getRouter()->redirect('/aluno?statusMessage=inativo');
+	        $_SESSION['statusMessage'] = 'inactive';
+	        $request->getRouter()->redirect('/aluno');
 	    }
 	    
-	    if($obUser->mae != ''){
+	    //VERIFICA SE O ALUNO JÁ COMPLETOU O SEU CADASTRO
+	    if(empty($obUser->nome) || empty($obUser->cep) || empty($obUser->endereco) || empty($obUser->bairro) || empty($obUser->naturalidade) 
+	        || empty($obUser->escolaridade) || empty($obUser->estadoCivil) || empty($obUser->sexo) || empty($obUser->dataNasc) 
+	        || empty($obUser->fone) || empty($obUser->turma) || empty($obUser->mae) || empty($obUser->foto)){
+	        
+	            //REDIRECIONA PARA O FORMULÁRIO DE ATUALIZAÇÃO CADASTRAL
+	            $_SESSION['idAluno'] = $obUser->id;
+	            $request->getRouter()->redirect('/aluno/update');
+	            
+	        
+	    }
+	      
+	       //SE JA TIVER ATUALIZADO, REDIRECIONA PARA A CARTEIRA
 	        $_SESSION['idAluno'] = $obUser->id;
-	        $request->getRouter()->redirect('/aluno?statusMessage=updated');
-	    }
+	        $request->getRouter()->redirect('/aluno/carteira');
 	    
 	    
 	    
-	    
-	    
-	    $_SESSION['idAluno'] = $obUser->id;
-	    
-	    $request->getRouter()->redirect('/aluno/update');
 	    
 
 	    
@@ -141,23 +153,25 @@ class UpdateAluno extends Page{
 	
 	
 	
+	
 	//Método responsavel por retornar a mensagem de status
 	private static function getStatus($request){
+	    Funcoes::init();
 	    //Query PArams
 	    $queryParams = $request->getQueryParams();
 	    
 	    //Status
-	    if(!isset($queryParams['statusMessage'])) return '';
+	    if(!isset($_SESSION['statusMessage'])) return '';
 	    
 	    //Mensagens de status
-	    switch ($queryParams['statusMessage']) {
+	    switch ($_SESSION['statusMessage']) {
 	        case 'unknown':
 	            return Alert::getError('CPF não encontrado! Procure a coordenação.');
 	            break;
 	        case 'updated':
 	            return Alert::getSuccess('Seu cadastro Já foi Atualizado!');
 	            break;
-	        case 'inativo':
+	        case 'inactive':
 	            return Alert::getError('ALUNO INATIVO! Procure a coordenação para regularizar sua situação.');
 	            break;
 	      

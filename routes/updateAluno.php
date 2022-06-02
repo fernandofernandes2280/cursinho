@@ -46,7 +46,7 @@ $obRouter->post('/aluno/update',[
     ]);
 
 //ROTA GET DE CARTEIRA DE ALUNO
-$obRouter->get('/alunos/carteira',[
+$obRouter->get('/aluno/carteira',[
    
     
     function ($request,$id){
@@ -55,7 +55,7 @@ $obRouter->get('/alunos/carteira',[
     ]);
 
 //ROTA GET DE CARTEIRA DE ALUNO
-$obRouter->post('/alunos/carteira',[
+$obRouter->post('/aluno/carteira',[
     
     
     
