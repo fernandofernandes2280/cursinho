@@ -22,6 +22,7 @@ class UpdateAluno extends Page{
 	//retorna o conteudo (view) Para o Aluno atualizar seu cadastro
     public static function getUpdate($request,$id){
         
+     
 	    $content = View::render('pages/updateAluno/form',[
 	        'title' => 'Curso Prepara Santana - Atualização Cadastral do Aluno',
 	        'nome' => '',
@@ -81,7 +82,7 @@ class UpdateAluno extends Page{
 	    
 	    //FAZ O ULPOAD DA FOTO DO ALUNO
 	   Upload::setUploadImagesUpdateAluno($request);
-	   
+	   unset($_SESSION['naoCompleto']);
 	   $request->getRouter()->redirect('/aluno/carteira');
 	}
 	
@@ -138,6 +139,7 @@ class UpdateAluno extends Page{
 	            //REDIRECIONA PARA O FORMULÁRIO DE ATUALIZAÇÃO CADASTRAL
 	            Funcoes::init();
 	            $_SESSION['idAluno'] = $obUser->id;
+	            $_SESSION['naoCompleto'] = true;
 	            $request->getRouter()->redirect('/aluno/update');
 	            
 	        

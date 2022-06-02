@@ -638,6 +638,9 @@ class Aluno extends Page{
 	    
 	    if(empty($id)){
 	        
+	        //VERIFICA SE O CADASTRO ESTÁ INCOMPLETO 
+	        if(isset($_SESSION['naoCompleto'])) $request->getRouter()->redirect('/aluno');
+	        
 	        @$_SESSION['idAluno'] ? $id = $_SESSION['idAluno'] :  $request->getRouter()->redirect('/aluno');
 	    }
 	    
