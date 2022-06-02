@@ -21,7 +21,9 @@ class UpdateAluno extends Page{
 	
 	//retorna o conteudo (view) Para o Aluno atualizar seu cadastro
     public static function getUpdate($request,$id){
-        
+        Funcoes::init();
+        //VERIFICA SE A SESSAO ALUNO EXISTE, SE NÃO EXISTE REDIRECIONA PARA O INDEX
+        if(!isset($_SESSION['idAluno'])) $request->getRouter()->redirect('/aluno');
      
 	    $content = View::render('pages/updateAluno/form',[
 	        'title' => 'Curso Prepara Santana - Atualização Cadastral do Aluno',
