@@ -301,9 +301,9 @@ class Page{
 		return View::render('operador/menu/box',[
 				'links' => $links,
 				'logout'=>'operador',
-				//'dropdownProducao' => $linksDropProducao,
-			//	'dropdownRelatorio' => $linksDropRelatorio,
-				//'dropdownManutencao' => $linksDropManutencao,
+				'dropdownProducao' => '',
+				'dropdownRelatorio' => '',
+				'dropdownManutencao' => '',
 		         'usuarioLogado' => $_SESSION['usuario']['nome'] ?? '',
 		         'tipoUsuario' => $_SESSION['usuario']['tipo'] ?? '',
 		         'foto' => $_SESSION['usuario']['foto'].'?var='.$reload,
