@@ -21,8 +21,6 @@ class UpdateAluno extends Page{
 	
 	//retorna o conteudo (view) Para o Aluno atualizar seu cadastro
     public static function getUpdate($request,$id){
-        Funcoes::init();
-        
         
 	    $content = View::render('pages/updateAluno/form',[
 	        'title' => 'Curso Prepara Santana - Atualização Cadastral do Aluno',
@@ -55,8 +53,7 @@ class UpdateAluno extends Page{
 	    
 	    
 	    Funcoes::init();
-	    unset($_SESSION['statusMessage']);
-	    unset($_SESSION['idAluno']);
+	  
 	    
 	    //VERIFICA SE A SESSAO ALUNO EXISTE, SE NÃO EXISTE REDIRECIONA PARA O INDEX
 	    @$_SESSION['idAluno'] ? $idAluno = $_SESSION['idAluno'] : $request->getRouter()->redirect('/aluno');
@@ -92,6 +89,7 @@ class UpdateAluno extends Page{
 	//retorna a tela de cpf para o aluno informar o seu
 	public static function getIndex($request){
 	    Funcoes::init();
+	    if(isset($_SESSION['idAluno'])) unset($_SESSION['idAluno']);
 	    
 	    $content = View::render('pages/updateAluno/index',[
 	        'title' => 'Curso Prepara Santana - Carteira Digital do Estudante',
@@ -100,7 +98,6 @@ class UpdateAluno extends Page{
 	        
 	    ]);
 	    unset($_SESSION['statusMessage']);
-	    unset($_SESSION['idAluno']);
 	    
 	    return parent::getPageUpdateAluno('Prepara Santana', $content);
 	    
@@ -108,7 +105,7 @@ class UpdateAluno extends Page{
 	
 	//FAZ A VERIFICAÇÃO DO CPF DO ALUNO
 	public static function setIndex($request){
-	    Funcoes::init();
+	    
 	    
 	    $postVars = $request->getPostVars();
 	    
@@ -137,6 +134,7 @@ class UpdateAluno extends Page{
 	        || empty($obUser->fone) || empty($obUser->turma) || empty($obUser->mae) || empty($obUser->foto)){
 	        
 	            //REDIRECIONA PARA O FORMULÁRIO DE ATUALIZAÇÃO CADASTRAL
+	            Funcoes::init();
 	            $_SESSION['idAluno'] = $obUser->id;
 	            $request->getRouter()->redirect('/aluno/update');
 	            
@@ -144,6 +142,7 @@ class UpdateAluno extends Page{
 	    }
 	      
 	       //SE JA TIVER ATUALIZADO, REDIRECIONA PARA A CARTEIRA
+	        Funcoes::init();
 	        $_SESSION['idAluno'] = $obUser->id;
 	        $request->getRouter()->redirect('/aluno/carteira');
 	    
