@@ -11,7 +11,7 @@ use \App\Model\Entity\Turma as EntityTurma;
 use \App\Model\Entity\Status as EntityStatus;
 use \App\Utils\Funcoes;
 use \App\Controller\File\Upload as Upload;
-use \App\Controller\Qrcode;
+use \App\Controller\Operador;
 use \App\Model\Entity\User as EntityUser;
 
 use \WilliamCosta\DatabaseManager\Pagination;
@@ -354,7 +354,7 @@ class Aluno extends Page{
 	    if(!$obAluno instanceof EntityAluno){
 	        $request->getRouter()->redirect('/admin/alunos');
 	    }
-	    
+	    $reload = rand();
 	    //Conteúdo do Formulário
 	    $content = View::render('admin/modules/alunos/form',[
 	        'matricula'=>$obAluno->matricula,
@@ -378,7 +378,7 @@ class Aluno extends Page{
 	        'dataCad' => date('Y-m-d', strtotime($obAluno->dataCad)),
 	        'optionTurma' => EntityTurma::getSelectTurmas($obAluno->turma),
 	        'optionStatus' => EntityStatus::getSelectStatus($obAluno->status),
-	        'foto'=> $obAluno->foto,
+	        'foto' => $obAluno->foto.'?var='.$reload,
 	        'ponteiro' => ''
 	       
 	    ]);
@@ -679,11 +679,12 @@ class Aluno extends Page{
 	   //     file_put_contents(__DIR__.'/carteiras/imgQrcode.png', $path);
 	    // echo '<p><img src="' . $oQRC->get(300) . '" alt="QR Code" /></p>'; // Generate and display the QR Code
 	  //  $oQRC->display(300); // Set size and display QR Code default 150px
-	     
+	     $reload = rand();
 	    //Conteúdo do Formulário
+	     
 	    $content = View::render('pages/carteira',[
 	        'title'=>'Alunos > Carteira de Estudante',
-	        'foto' => $obAluno->foto,
+	        'foto' => $obAluno->foto.'?var='.$reload,
 	        'matricula'=> $obAluno->matricula,
 	        'nome' => strtoupper($obAluno->nome),
 	        'turma' => strtoupper(EntityTurma::getTurmaById($obAluno->turma)->nome),
@@ -692,7 +693,8 @@ class Aluno extends Page{
 	        'dataNasc' => date('d/m/Y', strtotime($obAluno->dataNasc)),
 	        'dataCad'=>date('d/m/Y', strtotime($obAluno->dataCad)),
 	        'qrcode' => $name,
-	        'status' => EntityStatus::getStatusById($obAluno->status)->nome
+	        'status' => EntityStatus::getStatusById($obAluno->status)->nome,
+	       
 	        
 	    ]);
 	    
@@ -707,10 +709,13 @@ class Aluno extends Page{
 	    }
 	}
 	
+	
+
+	
 	//MÉTODO RESPONSÁVEL POR GERAR O ARQUIVO DE IMAGEM DA CARTEIRA DE ALUNO
 	public static function setCarteiraAluno($request,$id){
 	    
-	  
+	    
 	    //Get the base-64 string from data
 	    $filteredData=substr($_POST['img_val'], strpos($_POST['img_val'], ",")+1);
 	    
@@ -719,10 +724,10 @@ class Aluno extends Page{
 	    
 	    $name=$_POST['matricula'].$_POST['nome'].'.png';
 	    
-	 //   var_dump(__DIR__.'/carteiras/img.png');exit;
+	    //   var_dump(__DIR__.'/carteiras/img.png');exit;
 	    //Save the image
 	    file_put_contents(__DIR__.'/carteiras/'.$name, $unencodedData);
-	    	    
+	    
 	    $imagem = __DIR__.'/carteiras/'.$name;
 	    
 	    
@@ -744,34 +749,36 @@ class Aluno extends Page{
 	    
 	    header('Content-type: image/png');
 	    imagepng($rotation);
-	   imagedestroy($source);
+	    imagedestroy($source);
 	    imagedestroy($rotation);
 	    unlink($filename);
 	    
-	 //   header("Content-Disposition: attachment; filename=\"$filename\"");
-	  //  readfile($filename);
+	    //   header("Content-Disposition: attachment; filename=\"$filename\"");
+	    //  readfile($filename);
 	    
 	    /*
-	    header("Expires: 0");
-	    header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-	    header("Cache-Control: no-store, no-cache, must-revalidate");
-	    header("Cache-Control: post-check=0, pre-check=0", false);
-	    header("Pragma: no-cache");
-	    
-	    $ext = pathinfo($file, PATHINFO_EXTENSION);
-	    $basename = pathinfo($file, PATHINFO_BASENAME);
-	    
-	    header("Content-type: application/".$ext);
-	    // tell file size
-	    header('Content-length: '.filesize($file));
-	    // set file name
-	    header("Content-Disposition: attachment; filename=\"$basename\"");
-	    readfile($file);
-	    */
+	     header("Expires: 0");
+	     header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+	     header("Cache-Control: no-store, no-cache, must-revalidate");
+	     header("Cache-Control: post-check=0, pre-check=0", false);
+	     header("Pragma: no-cache");
+	     
+	     $ext = pathinfo($file, PATHINFO_EXTENSION);
+	     $basename = pathinfo($file, PATHINFO_BASENAME);
+	     
+	     header("Content-type: application/".$ext);
+	     // tell file size
+	     header('Content-length: '.filesize($file));
+	     // set file name
+	     header("Content-Disposition: attachment; filename=\"$basename\"");
+	     readfile($file);
+	     */
 	    // Exit script. So that no useless data is output.
 	    exit;
-	   
+	    
 	    
 	}
+	
+
 	
 }

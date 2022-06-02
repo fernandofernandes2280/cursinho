@@ -316,7 +316,7 @@ class Page{
 		}
 		
 	
-		
+		$reload = rand();
 		//Retorna a renderização do menu
 		return View::render('admin/menu/box',[
 				'links' => $links,
@@ -326,7 +326,7 @@ class Page{
 				'dropdownManutencao' => $linksDropManutencao,
 		         'usuarioLogado' => $_SESSION['usuario']['nome'] ?? '',
 		         'tipoUsuario' => $_SESSION['usuario']['tipo'] ?? '',
-		         'foto' => $_SESSION['usuario']['foto'] ?? '',
+		         'foto' => $_SESSION['usuario']['foto'].'?var='.$reload,
 				
 		]);
 		

@@ -11,10 +11,13 @@ use \App\Model\Entity\Turma as EntityTurma;
 use \App\Model\Entity\Status as EntityStatus;
 use \App\Utils\Funcoes;
 use \App\Controller\File\Upload as Upload;
- 
+use \App\Controller\Qrcode;
+use \App\Model\Entity\User as EntityUser;
+
 use \WilliamCosta\DatabaseManager\Pagination;
 use Dompdf\Dompdf;
 use Bissolli\ValidadorCpfCnpj\CPF;
+use WilliamCosta\DatabaseManager\Database;
 
 
 class Aluno extends Page{
@@ -36,7 +39,7 @@ class Aluno extends Page{
 		$paginaAtual = $queryParams['page'] ?? 1;
 		
 		
-		//Armazena valor busca pelo nome do paciente
+		
 		$nome = $queryParams['nome'] ?? '';
 		
 		$id = $queryParams['id'] ?? '';
@@ -45,18 +48,18 @@ class Aluno extends Page{
 		
 		
 		If(@$queryParams['cpfPesq'] != ''){
-		    
-		    $cpf = $queryParams['cpfPesq'] ?? '';
-		    
-		    //instancia classe pra verificar CPF
-		    $validaCpf = new CPF($cpf);
-		    
-		    //verifica se é válido o cpf
-		    if (!$validaCpf->isValid()){
-		        $request->getRouter()->redirect('/operador/alunos?statusMessage=cpfInvalid');
-		    }
-		    //ARMAZENA O CPF (SOMENTE OS NÚMEROS)
-		    $cpf= $validaCpf->getValue();
+		
+    		$cpf = $queryParams['cpfPesq'] ?? '';
+    		
+    		//instancia classe pra verificar CPF
+    		$validaCpf = new CPF($cpf);
+    		
+    		//verifica se é válido o cpf
+    		if (!$validaCpf->isValid()){
+    		    $request->getRouter()->redirect('/operador/alunos?statusMessage=cpfInvalid');
+    		}
+            //ARMAZENA O CPF (SOMENTE OS NÚMEROS)		
+    		$cpf= $validaCpf->getValue();
 		}else{$cpf = null;}
 		
 		//recebe a matrícula vindo do form de pesquisa ou da Navbar
@@ -109,7 +112,7 @@ class Aluno extends Page{
 				
 		//Renderiza
 		while ($obAluno = $results -> fetchObject(EntityAluno::class)) {
-			 
+	 
 		    
 			//View de pacientes
 			$resultados .= View::render('operador/modules/alunos/item',[
@@ -125,6 +128,7 @@ class Aluno extends Page{
 			    'turma' =>EntityTurma::getTurmaById($obAluno->turma)->nome,
 			    'foto' => $obAluno->foto,
 			    'cor' => $cor,
+			    'autor' => EntityUser::getUserById($obAluno->autor)->nome
 					
 					
 					
@@ -146,6 +150,11 @@ class Aluno extends Page{
 	
 	//Método responsavel por renderizar a view de Listagem de Pacientes
 	public static function getAlunos($request){
+	    
+	    //finaliza sessao de aluno novo caso estejam ativas
+	    Funcoes::init();
+	    EntityAluno::getFinalizaSessaoDados();
+	    
 		$selectedAtivo = '';
 		$selectedInativo = '';
 		$selectedAtIn = '';
@@ -196,40 +205,7 @@ class Aluno extends Page{
 	
 
 	
-	//Método responsavel por renderizar a view de Listagem de Pacientes
-	public static function setCortarFoto($request){
-	    
-	    //Recebe os parâmetros da requisição
-	    $postVars = $request->getPostVars();
-	    
-	    var_dump($postVars);exit;
-	    //obtém o Aluno do banco de dados
-	    $obAluno = EntityAluno::getAlunoById($id);
-	    
-	    //Valida a instancia
-	    if(!$obAluno instanceof EntityAluno){
-	        $request->getRouter()->redirect('/operador/alunos');
-	    }
-	    
-	    $src = $obAluno->foto;
-	    
-	    //esconde busca rápida de prontuário no navBar
-	    $hidden = '';
-	    
-	    
-	    
-	    //oculta o botão excluir para usuário Operador
-	    //	($_SESSION['operador']['usuario']['tipo'] == 'Operador' ? $botãoExcluir = 'hidden' : $botãoExcluir =  '' );
-	    //Conteúdo da Home
-	    $content = View::render('operador/modules/alunos/formCortarPhoto',[
-	        'foto' => $src
-	        
-	    ]);
-	    
-	    //Retorna a página completa
-	    return parent::getPanel('Cortar Foto > Cursinho', $content,'alunos', self::$hidden);
-	    
-	}
+
 	
 	//Método responsavel por retornar a mensagem de status
 	private static function getStatus($request){
@@ -256,14 +232,11 @@ class Aluno extends Page{
 	        case 'deletedfail':
 	            return Alert::getError('Você não tem permissão para Excluir! Contate o operadoristrador.');
 	            break;
-	        case 'cpfduplicated':
-	            return Alert::getError('CPF em uso!');
-	            break;
 	        case 'semfoto':
 	            return Alert::getError('Nenhuma foto foi enviada!');
 	            break;
 	        case 'cpfInvalid':
-	            return Alert::getError('CPF inválido!');
+	            return Alert::getError('CPF Inválido!');
 	            break;
 	    }
 	}
@@ -299,11 +272,9 @@ class Aluno extends Page{
 	   
 	    $obAluno = EntityAluno::getAlunoById($postVars['id']);
 	    
-	    //VERIFICA SE IMAGEM VEIO DO ARQUIVO
 	    if(!empty($fileVars['fImage']['name'] != '')){
 	        $postVars['image'] = '';
-	        
-	       //MÉTODO RESPONSÁVEL POR FAZER O UPLOAD DA IMAGEM VINDA DO ARQUIVO
+	     
 	        Upload::setUploadImages($request);
 	        //Redireciona o usuário
 	        $request->getRouter()->redirect('/operador/alunos/'.$obAluno->id.'/edit?statusMessage=updated');
@@ -311,8 +282,10 @@ class Aluno extends Page{
 	    
 	    if ($postVars['image'] != ''){
 	        
-	    //MÉTODO RESPONSÁVEL POR FAZER O UPLOAD DA IMAGEM VINDA DA WEBCAM    
-	        Upload::setUploadImagesWebCamAluno($request);
+    	 
+    	    
+    	    //MÉTODO RESPONSÁVEL POR FAZER O UPLOADO DA IMAGE VINDA DA WEB CAM DO PROFESSOR
+    	    Upload::setUploadImagesWebCamAluno($request);
     	    
     	    
     	    
@@ -348,7 +321,7 @@ class Aluno extends Page{
 	    if(!$obAluno instanceof EntityAluno){
 	        $request->getRouter()->redirect('/operador/alunos');
 	    }
-	    
+	    $reload = rand();
 	    //Conteúdo do Formulário
 	    $content = View::render('operador/modules/alunos/form',[
 	        'matricula'=>$obAluno->matricula,
@@ -359,7 +332,7 @@ class Aluno extends Page{
 	        'endereco' => $obAluno->endereco,
 	        'statusMessage' => self::getStatus($request),
 	        'naturalidade' => $obAluno->naturalidade,
-	        'fone' =>@$obAluno->fone ? Funcoes::maskFone($obAluno->fone) : '',
+	        'fone' =>$obAluno->fone ,
 	        'mae' => $obAluno->mae,
 	        'obs' => $obAluno->obs,
 	        'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##') ,
@@ -372,7 +345,7 @@ class Aluno extends Page{
 	        'dataCad' => date('Y-m-d', strtotime($obAluno->dataCad)),
 	        'optionTurma' => EntityTurma::getSelectTurmas($obAluno->turma),
 	        'optionStatus' => EntityStatus::getSelectStatus($obAluno->status),
-	        'foto'=> $obAluno->foto,
+	        'foto' => $obAluno->foto.'?var='.$reload,
 	        'ponteiro' => ''
 	       
 	    ]);
@@ -552,7 +525,7 @@ class Aluno extends Page{
 	    //recebe a data do formulário e converte para objeto data
 	    $dataCad = date_create_from_format('Y-m-d', $postVars['dataCad']);
 	    //formata a data vinda do formulário com a hora atual
-	    $obAluno->dataCad = $dataCad->format('Y-m-d H:i:s');
+	    //$obAluno->dataCad = $dataCad->format('Y-m-d H:i:s');
 	    $obAluno->sexo = $postVars['sexo'];
 	    $obAluno->naturalidade = $postVars['naturalidade'];
 	    $obAluno->escolaridade = $postVars['escolaridade'];
@@ -568,7 +541,7 @@ class Aluno extends Page{
 	    
 	    //define a matrícula
 	    $obMatricula = EntityAluno::getAlunoByCpf($validaCpf->getValue());
-	    $obMatricula->matricula = EntityAluno::geraMatricula($obMatricula->turma, $obMatricula->id);
+	    $obMatricula->matricula = EntityAluno::geraMatricula($obMatricula->id);
 	    $obMatricula->atualizar();
 	    
 	    //encerra sessão com os dados do form
@@ -622,6 +595,150 @@ class Aluno extends Page{
 	    
 	    //Redireciona o usuário
 	    $request->getRouter()->redirect('/operador/alunos?statusMessage=deleted');
+	    
+	    
+	}
+	
+	//MÉTODO RESPONSÁVEL POR RENDERIZAR A CARTEIRA DE ALUNO
+	public static function getCarteiraAluno($request,$id){
+	    Funcoes::init();
+	    
+	    if(empty($id)){
+	        
+	        //VERIFICA SE O CADASTRO ESTÁ INCOMPLETO
+	        if(isset($_SESSION['naoCompleto'])) $request->getRouter()->redirect('/aluno');
+	        
+	        @$_SESSION['idAluno'] ? $id = $_SESSION['idAluno'] :  $request->getRouter()->redirect('/aluno');
+	    }
+	    
+	    
+	    //obtém o Aluno do banco de dados
+	    $obAluno = EntityAluno::getAlunoById($id);
+	    
+	    //Valida a instancia
+	    if(!$obAluno instanceof EntityAluno){
+	        $request->getRouter()->redirect('/operador/alunos');
+	    }
+	    
+	    
+	    
+	    $oQRC = new \App\Controller\Qrcode\Qrcode(); // Create vCard Object
+	    $oQRC->fullName($obAluno->matricula); // Add Full Name
+	    //  ->finish(); // End vCard
+	    
+	    
+	    $path = $oQRC->get(300);
+	    header('Content-Type: image/png');
+	    //  header('Content-Disposition: attachment; filename="chart.png"');
+	    $image = file_get_contents($path);
+	    //  header('Content-Length: ' . strlen($image));
+	    //  header("Content-Disposition: attachment; filename=\"$basename\"");
+	    //  readfile($file);
+	    $dir = __DIR__.'/carteiras/';
+	    $name = $obAluno->matricula.'.png';
+	    file_put_contents($dir.$name, $image);
+	    
+	    //     $type = pathinfo($path, PATHINFO_EXTENSION);
+	    //    $data = file_get_contents($path);
+	    //   $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+	    //Decode the string
+	    //   $unencodedData=base64_decode($base64);
+	    //     file_put_contents(__DIR__.'/carteiras/imgQrcode.png', $path);
+	    // echo '<p><img src="' . $oQRC->get(300) . '" alt="QR Code" /></p>'; // Generate and display the QR Code
+	    //  $oQRC->display(300); // Set size and display QR Code default 150px
+	    $reload = rand();
+	    //Conteúdo do Formulário
+	    
+	    $content = View::render('pages/carteira',[
+	        'title'=>'Alunos > Carteira de Estudante',
+	        'foto' => $obAluno->foto.'?var='.$reload,
+	        'matricula'=> $obAluno->matricula,
+	        'nome' => strtoupper($obAluno->nome),
+	        'turma' => strtoupper(EntityTurma::getTurmaById($obAluno->turma)->nome),
+	        'mae' => strtoupper($obAluno->mae),
+	        'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##'),
+	        'dataNasc' => date('d/m/Y', strtotime($obAluno->dataNasc)),
+	        'dataCad'=>date('d/m/Y', strtotime($obAluno->dataCad)),
+	        'qrcode' => $name,
+	        'status' => EntityStatus::getStatusById($obAluno->status)->nome,
+	        
+	        
+	    ]);
+	    
+	    //Retorna a página completa
+	    
+	    if(@$_SESSION['idAluno']){
+	        unset($_SESSION['idAluno']);
+	        return parent::getPage('Carteira do Aluno > Cursinho', $content,'alunos', self::$hidden);
+	    }else{
+	        
+	        return parent::getPanel('Carteira do Aluno > Cursinho', $content,'alunos', 'hidden');
+	    }
+	}
+	
+	//MÉTODO RESPONSÁVEL POR GERAR O ARQUIVO DE IMAGEM E DOWNLOAD DA CARTEIRA DE ALUNO
+	public static function setCarteiraAluno($request,$id){
+	    
+	    
+	    //Get the base-64 string from data
+	    $filteredData=substr($_POST['img_val'], strpos($_POST['img_val'], ",")+1);
+	    
+	    //Decode the string
+	    $unencodedData=base64_decode($filteredData);
+	    
+	    $name=$_POST['matricula'].$_POST['nome'].'.png';
+	    
+	    //   var_dump(__DIR__.'/carteiras/img.png');exit;
+	    //Save the image
+	    file_put_contents(__DIR__.'/carteiras/'.$name, $unencodedData);
+	    
+	    $imagem = __DIR__.'/carteiras/'.$name;
+	    
+	    
+	    
+	    $filename = $imagem;
+	    $rotang = -90; // Rotation angle
+	    $source = imagecreatefrompng($filename) or die('Error opening file '.$filename);
+	    imagealphablending($source, false);
+	    imagesavealpha($source, true);
+	    
+	    $rotation = imagerotate($source, $rotang, imageColorAllocateAlpha($source, 0, 0, 0, 127));
+	    imagealphablending($rotation, false);
+	    imagesavealpha($rotation, true);
+	    
+	    //download da imagem
+	    if($_POST['opcao'] == 'down'){
+	        header('Content-Disposition: Attachment;filename='.$name.'');
+	    }
+	    
+	    header('Content-type: image/png');
+	    imagepng($rotation);
+	    imagedestroy($source);
+	    imagedestroy($rotation);
+	    unlink($filename);
+	    
+	    //   header("Content-Disposition: attachment; filename=\"$filename\"");
+	    //  readfile($filename);
+	    
+	    /*
+	     header("Expires: 0");
+	     header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+	     header("Cache-Control: no-store, no-cache, must-revalidate");
+	     header("Cache-Control: post-check=0, pre-check=0", false);
+	     header("Pragma: no-cache");
+	     
+	     $ext = pathinfo($file, PATHINFO_EXTENSION);
+	     $basename = pathinfo($file, PATHINFO_BASENAME);
+	     
+	     header("Content-type: application/".$ext);
+	     // tell file size
+	     header('Content-length: '.filesize($file));
+	     // set file name
+	     header("Content-Disposition: attachment; filename=\"$basename\"");
+	     readfile($file);
+	     */
+	    // Exit script. So that no useless data is output.
+	    exit;
 	    
 	    
 	}

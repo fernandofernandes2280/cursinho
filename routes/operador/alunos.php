@@ -2,6 +2,7 @@
 
 use \App\Http\Response;
 use \App\Controller\Operador;
+use \App\Controller\Admin;
 
 //Rota de listagem de alunos
 $obRouter->get('/operador/alunos',[
@@ -130,4 +131,26 @@ $obRouter->post('/operador/alunos/{id}/delete',[
     }
     ]);
 
+//ROTA GET DE CARTEIRA DE ALUNO
+$obRouter->get('/operador/alunos/{id}/carteira',[
+    
+    'middlewares' => [
+        'require-operador-login'
+    ],
+    
+    function ($request,$id){
+        return new Response(200, Operador\Aluno::getCarteiraAluno($request,$id));
+    }
+    ]);
+//ROTA POST PARA DOWNLOAD DA CARTEIRA
+$obRouter->post('/operador/alunos/{id}/carteira',[
+    
+    'middlewares' => [
+        'require-operador-login'
+    ],
+    
+    function ($request,$id){
+        return new Response(200, Operador\Aluno::setCarteiraAluno($request,$id));
+    }
+    ]);
 

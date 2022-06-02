@@ -84,7 +84,7 @@ class Professor extends Page{
 		    while ($obDisciplina = $resultsDisciplina -> fetchObject(EntityDisciplinaProfessor::class)) {
 		        $resultadoDisciplinas .= ''.@EntityDisciplina::getDisciplinaById($obDisciplina->idDisciplina)->nome.', ';
 		    }
-		
+		    $reload = rand();
 			//View de pacientes
 			$resultados .= View::render('operador/modules/professores/item',[
 			    
@@ -97,7 +97,7 @@ class Professor extends Page{
 			    'id' => $obProfessor->id,
 			    'cor' => $cor,
 			    'email' => $obProfessor->email,
-			    'foto' => $obProfessor->foto,
+			    'foto' => $obProfessor->foto.'?var='.$reload,
 			    'disciplinas' => rtrim($resultadoDisciplinas,', ')
 			]);
 			$resultadoDisciplinas = '';
@@ -281,6 +281,8 @@ class Professor extends Page{
 	    
 	    self::setDisciplinaAdd($request,$id);
 	    self::setDisciplinaRemove($request,$id);
+	    
+	    $reload = rand();
 	    //Conteúdo do Formulário
 	    $content = View::render('operador/modules/professores/form',[
 	       
@@ -306,7 +308,7 @@ class Professor extends Page{
 	        'itensDisciplina' => self::getProfessorDisciplinaItems($request, $obPagination, $obProfessor->id),
 	        'adicionarDisciplina' => '',
 	        'optionStatus' => EntityStatus::getSelectStatus($obProfessor->status),
-	        'foto' => $obProfessor->foto,
+	        'foto' => $obProfessor->foto.'?var='.$reload,
 	        'ponteiro' => ''
 	        
 	    ]);

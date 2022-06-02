@@ -8,8 +8,11 @@
 			{{statusMessage}}
 		</div>	
 	
-	
+
 	<div class="col-md-5 text-right">
+	<a href="{{URL}}/operador/alunos/{{id}}/carteira" rel="tooltip" title="Imprimir Carteira de Estudante">
+               <i class="material-icons" style="font-size: 30px;">badge</i>
+		</a>
 		<a href="#" target="_blank" rel="tooltip" title="Imprimir Capa">
                <i class="material-icons" style="font-size: 30px;">print</i>
 		</a>
@@ -19,7 +22,7 @@
      </button>
 		 
 		 <!-- Aciona modal novoCPF -->
-			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfAluno">
+			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" id="novo" title="Novo" data-toggle="modal" data-target="#modalNovoCpfAluno">
 			  <i class="material-icons" style="font-size: 30px;">person_add</i>
 			</button>
 		
@@ -43,15 +46,14 @@
 		
     </div>
     
-     <div class="col-md-10 mb-2">
+     <div class="col-md-10  mb-2">
       <label class="h5">Matrícula: </label><span class="text-light h5"> {{matricula}}</span>
         <div class="form-row">
-    		<div class="col-nomeAl mb-2">
+    		<div class="col-md-9 mb-2">
       		<label for="nome">Nome</label>
-      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required  oninvalid="this.setCustomValidity('Username cannot be empty.')" 
->
+      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required />
     		</div>
-    		<div class="col-cep mb-2">
+    		<div class="col-md-2 mb-2">
 			      <label for="cep">Cep</label>
 			      <input type="text" class="form-control-pessoal" data-action="{{URL}}/operador/delete" data-id="3" id="cep" name="cep" value="{{cep}}">
       		
@@ -66,7 +68,7 @@
 		    
 		    <div class="col-md-3">
 		      <label for="bairro">Bairro</label>
-		       <select class="custom-select" id="bairro" name="bairro" required>
+		       <select class="custom-select" id="bairro" name="bairro" >
 			        {{optionBairros}}
 			   </select>
    			 </div> 
@@ -97,14 +99,14 @@
 
 		<div class="col-md-3 mb-2">
 		      <label for="escolaridade">Escolaridade</label>
-		       <select class="custom-select" id="escolaridade" name="escolaridade" required>
+		       <select class="custom-select" id="escolaridade" name="escolaridade" >
 			        {{optionEscolaridade}}
 			   </select>
 		    </div>			
 		  
 		    <div class="col-md-3 mb-2">
 		      <label for="estadoCivil">Estado Civil</label>
-		       <select  class="custom-select" id="estadoCivil" name="estadoCivil"  required>
+		       <select  class="custom-select" id="estadoCivil" name="estadoCivil"  >
 			        {{optionEstadoCivil}}
 			   </select>
 		    </div>    
@@ -124,17 +126,17 @@
 		     
 		    <div class="col-data mb-2">
 		      <label for="dataNasc">Data Nascimento</label>
-		      <input  type="date" class="form-control-pessoal" id="dataNasc" name="dataNasc" value="{{dataNasc}}" required>
+		      <input  type="date" class="form-control-pessoal" id="dataNasc" name="dataNasc" value="{{dataNasc}}" >
 			</div>
 			
 			<div class="col-data mb-2">
 		      <label for="dataCad">Data Cadastro</label>
-		      <input type="date" class="form-control-pessoal" id="dataCad" name="dataCad" value="{{dataCad}}" required>
+		      <input type="date" class="form-control-pessoal" id="dataCad" name="dataCad" value="{{dataCad}}" >
 		    </div>  
 		    
-		    <div class="col-md-2 mb-2">
+		    <div class="col-md-3 mb-2">
 		      <label for="fone">Telefone</label>
-		      <input type="text" class="form-control-pessoal" id="fone" name="fone" value="{{fone}}" maxlength="9">
+		      <input type="text" class="form-control-pessoal mascara-telefone" id="fone" name="fone" value="{{fone}}" maxlength="11">
 		      <script>
 		      	$('#fone').keyup(function() {
 				  $(this).val(this.value.replace(/\D/g, ''));
@@ -143,29 +145,29 @@
 		    </div>
 		    <div class="col-cpf mb-2">
 	           <label for="cpf">CPF:</label>
-				<input class="form-control-pessoal cpfAluno mascara-cpf" required type="text" id="cpf" value="{{cpf}}" name="cpf" />
+                <input class="form-control-pessoal cpfAluno mascara-cpf" required type="text" id="cpf" value="{{cpf}}" name="cpf" />
 		    </div>  
-		     	<div class="col-md-2 mb-2">
-		      <label for="status">Status</label>
-		         <select class="custom-select" id="status" name="status" required>
-			        {{optionStatus}}
-			   </select>
-
-		    </div>
+		     
 		    <div class="col-turma mb-2">
 		      <label for="turma">Turma</label>
-		       <select class="custom-select" id="turma" name="turma"  required>
+		       <select class="custom-select" id="turma" name="turma"  >
 			        {{optionTurma}}
 			   </select>
 		    </div>	  	
   </div>
       
     <div class="form-row">
-		    <div class="col-md-5 mb-2">
+		    <div class="col-md-4 mb-2">
 		      <label for="mae">Mãe</label>
 		      <input type="text" class="form-control-pessoal" id="mae" name="mae" value="{{mae}}">
 		    </div>
-		   
+		   	<div class="col-md-2 mb-2">
+		      <label for="status">Status</label>
+		         <select class="custom-select" id="status" name="status" required>
+			        {{optionStatus}}
+			   </select>
+
+		    </div>
 		  	 <div class="col-obs mb-2">
 		      <label for="obs">Observações</label>
 		      <input type="text" class="form-control-pessoal" id="obs" name="obs" value="{{obs}}" >
@@ -175,8 +177,6 @@
   
 </form>	
 
-
-							
 
 
 

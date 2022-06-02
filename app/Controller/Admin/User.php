@@ -33,6 +33,7 @@ class User extends Page{
 		//Resultados da Página
 		$results = EntityUser::getUsers(null, 'id DESC',$obPagination->getLimit());
 		
+		$reload = rand();
 		//Renderiza o item
 		while ($obUser = $results->fetchObject(EntityUser::class)) {
 		
@@ -43,7 +44,7 @@ class User extends Page{
 					'email' => $obUser->email,
 					'cpf' => Funcoes::mask($obUser->cpf, '###.###.###-##') ,
 					'tipo' => $obUser->tipo,
-			         'foto'=>$obUser->foto
+    			    'foto' => $obUser->foto.'?var='.$reload,
 			]);
 		}
 		
@@ -220,6 +221,7 @@ class User extends Page{
 		$obUser->tipo == 'Visitante' ? $selectedVisitante = 'selected' : $selectedVisitante = '' ;
 		$obUser->tipo == 'Operador' ? $selectedOperador = 'selected' : $selectedOperador = '' ;
 		
+		$reload = rand();
 		//Conteúdo do Formulário
 		$content = View::render('admin/modules/users/form',[
 		       'title' => 'Usuários > Editar',
@@ -233,8 +235,8 @@ class User extends Page{
 				'selectedOperador'=> $selectedOperador,
 				'statusMessage' => self::getStatus($request),
 				'navBar'=>View::render('admin/navBar',[]),
-				'footer'=>View::render('admin/modules/pacientes/footer',[]),
-		        'foto'=> $obUser->foto,
+			 	'footer'=>View::render('admin/modules/pacientes/footer',[]),
+		          'foto' => $obUser->foto.'?var='.$reload,
 		        'required' => '',
 		         'ponteiro' => ''
 				
