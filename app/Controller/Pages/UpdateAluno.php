@@ -90,6 +90,7 @@ class UpdateAluno extends Page{
 	//retorna a tela de cpf para o aluno informar o seu
 	public static function getIndex($request){
 	    Funcoes::init();
+	    
 	    $content = View::render('pages/updateAluno/index',[
 	        'title' => 'Curso Prepara Santana - Carteira Digital do Estudante',
 	        'statusMessage' => self::getStatus($request),
@@ -97,6 +98,7 @@ class UpdateAluno extends Page{
 	        
 	    ]);
 	    unset($_SESSION['statusMessage']);
+	    unset($_SESSION['idAluno']);
 	    
 	    return parent::getPageUpdateAluno('Prepara Santana', $content);
 	    
