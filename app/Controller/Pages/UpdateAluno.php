@@ -118,12 +118,14 @@ class UpdateAluno extends Page{
 	    
 	    //VERIFICA SE O ALUNO EXISTE
 	    if(!$obUser instanceof EntityAluno){
+	        Funcoes::init();
 	        $_SESSION['statusMessage'] = 'unknown';
 	        $request->getRouter()->redirect('/aluno');
 	    }
 	    
 	    //VERIFICA SE O ALUNO ESTÁ INATIVO
 	    if($obUser->status == '2'){
+	        Funcoes::init();
 	        $_SESSION['statusMessage'] = 'inactive';
 	        $request->getRouter()->redirect('/aluno');
 	    }
