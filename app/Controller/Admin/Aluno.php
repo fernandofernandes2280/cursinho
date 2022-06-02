@@ -113,7 +113,7 @@ class Aluno extends Page{
 		//Renderiza
 		while ($obAluno = $results -> fetchObject(EntityAluno::class)) {
 	 
-		    
+		    $reload = rand();
 			//View de pacientes
 			$resultados .= View::render('admin/modules/alunos/item',[
 			    
@@ -126,7 +126,7 @@ class Aluno extends Page{
 			    'id' => $obAluno->id,
 			    'matricula' => $obAluno->matricula,
 			    'turma' =>EntityTurma::getTurmaById($obAluno->turma)->nome,
-			    'foto' => $obAluno->foto,
+			    'foto' => $obAluno->foto.'?var='.$reload,
 			    'cor' => $cor,
 			    'autor' => EntityUser::getUserById($obAluno->autor)->nome
 					
