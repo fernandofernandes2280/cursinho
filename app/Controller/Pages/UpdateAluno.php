@@ -19,6 +19,45 @@ use App\Controller\Admin\Resize;
 
 class UpdateAluno extends Page{
 	
+    public static function validaRecaptcha($request){
+        
+        $postVars = $request->getPostVars();
+        //CURL
+        $curl = curl_init();
+        
+        //DEFINIÇÕES DA REQUISIÇÃO
+        curl_setopt_array($curl, [
+           
+           CURLOPT_URL => 'https://www.google.com/recaptcha/api/siteverify', 
+           CURLOPT_RETURNTRANSFER => true,
+           CURLOPT_CUSTOMREQUEST => 'POST',
+           CURLOPT_POSTFIELDS => [
+                'secret' => '6LdTbDwgAAAAABanS5an0LyWQK0vrKGjsE1XtrQv',
+               'response' => $postVars['g-recaptcha-response'] ?? ''
+            ]
+            
+        ]);
+        
+        //EXECUTA A REQUISIÇÃO
+        $response = curl_exec($curl);
+        
+        //FECHA A CONEXÇÃO CURL
+        curl_close($curl);
+        
+        //RESPONSE EM ARRAY
+        $responseArray = json_decode($response,true);
+        
+        //SUCESSO DO RECAPTCHA
+        $sucesso = $responseArray['success'] ?? false;
+        
+        return $sucesso;
+        
+    }
+    
+    
+    
+    
+    
 	//retorna o conteudo (view) Para o Aluno atualizar seu cadastro
     public static function getUpdate($request,$id){
         Funcoes::init();
@@ -79,13 +118,19 @@ class UpdateAluno extends Page{
 	    $obAluno->mae = Funcoes::convertePriMaiuscula($postVars['mae']);
 	    $obAluno->estadoCivil = $postVars['estadoCivil'];
 	    $obAluno->turma = $postVars['turma'];
-	    $obAluno->atualizar();
+
 	    
-	    
-	    //FAZ O ULPOAD DA FOTO DO ALUNO
-	   Upload::setUploadImagesUpdateAluno($request);
-	   unset($_SESSION['naoCompleto']);
-	   $request->getRouter()->redirect('/aluno/carteira');
+	    if(self::validaRecaptcha($request)){
+    	    $obAluno->atualizar();
+    	    //FAZ O ULPOAD DA FOTO DO ALUNO
+    	    Upload::setUploadImagesUpdateAluno($request);
+    	    unset($_SESSION['naoCompleto']);
+    	    $request->getRouter()->redirect('/aluno/carteira');
+	    }else{
+	        $_SESSION['statusMessage'] = 'recaptchaInvalido';
+	        unset($_SESSION['naoCompleto']);
+	        $request->getRouter()->redirect('/aluno');
+	    }
 	}
 	
 	
@@ -93,6 +138,8 @@ class UpdateAluno extends Page{
 	public static function getIndex($request){
 	    Funcoes::init();
 	    if(isset($_SESSION['idAluno'])) unset($_SESSION['idAluno']);
+	    
+	 
 	    
 	    $content = View::render('pages/updateAluno/index',[
 	        'title' => 'Curso Prepara Santana - Carteira Digital do Estudante',
@@ -182,6 +229,9 @@ class UpdateAluno extends Page{
 	            break;
 	        case 'inactive':
 	            return Alert::getError('ALUNO INATIVO! Procure a coordenação para regularizar sua situação.');
+	            break;
+	        case 'recaptchaInvalido':
+	            return Alert::getError('Sua Sessão Expirou!.');
 	            break;
 	      
 	    }
