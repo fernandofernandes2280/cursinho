@@ -705,7 +705,7 @@ class Aluno extends Page{
 	        return parent::getPage('Carteira do Aluno > Cursinho', $content,'alunos', self::$hidden);
 	    }else{
 	        
-	        return parent::getPanel('Carteira do Aluno > Cursinho', $content,'alunos', self::$hidden);
+	        return parent::getPanel('Carteira do Aluno > Cursinho', $content,'alunos', 'hidden');
 	    }
 	}
 	
