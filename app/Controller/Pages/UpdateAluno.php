@@ -21,7 +21,7 @@ class UpdateAluno extends Page{
 	
 	//retorna o conteudo (view) Para o Aluno atualizar seu cadastro
     public static function getUpdate($request,$id){
-	 
+        Funcoes::init();
         
         
 	    $content = View::render('pages/updateAluno/form',[
@@ -55,6 +55,8 @@ class UpdateAluno extends Page{
 	    
 	    
 	    Funcoes::init();
+	    unset($_SESSION['statusMessage']);
+	    unset($_SESSION['idAluno']);
 	    
 	    //VERIFICA SE A SESSAO ALUNO EXISTE, SE NÃO EXISTE REDIRECIONA PARA O INDEX
 	    @$_SESSION['idAluno'] ? $idAluno = $_SESSION['idAluno'] : $request->getRouter()->redirect('/aluno');
