@@ -701,7 +701,7 @@ class Aluno extends Page{
 	    //Retorna a página completa
 	   
 	    if(@$_SESSION['idAluno']){
-	        unset($_SESSION['idAluno']);
+	       
 	        return parent::getPage('Carteira do Aluno > Cursinho', $content,'alunos', self::$hidden);
 	    }else{
 	        
