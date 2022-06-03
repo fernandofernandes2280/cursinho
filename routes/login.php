@@ -170,6 +170,28 @@ $obRouter->post('/operador',[
     }
     ]);
 
+//ROTA Login
+$obRouter->get('/operador/login',[
+    'middlewares' => [
+        'require-operador-logout'
+    ],
+    function ($request){
+        return new Response(200, Login\Login::getLogin($request));
+    }
+    ]);
+
+
+//ROTA Login POst
+$obRouter->post('/operador/login',[
+    'middlewares' => [
+        'require-operador-logout'
+    ],
+    
+    function ($request){
+        
+        return new Response(200, Login\Login::setLogin($request));
+    }
+    ]);
 
 
 
