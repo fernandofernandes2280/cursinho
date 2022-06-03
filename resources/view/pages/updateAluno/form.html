@@ -26,15 +26,15 @@
 		</div>	
   </div>
 
-<div class="form-row" style="border: 1px solid">
-     <div class="col-md-6">
+<div class="form-row" >
+     <div class="col-md-9 col-lg-6"  >
      	<div class="form-row">
-    		<div class="col-md-12 mb-2">
+    		<div class="col-md-12  mb-2" >
 	      		<label for="nome">Nome</label>
 	      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required />
 	      		<input type="text" id="id" name="id" value="{{id}}" hidden />
     		</div>
-    		<div class="col-md-12 mb-2">
+    		<div class="col-md-12  mb-2">
 			      <label for="cep">Cep</label>
 			      <input type="text" class="form-control-pessoal" id="cep" name="cep" value="{{cep}}" required>
     		</div>
@@ -83,7 +83,7 @@
 			</div>
 		    <div class="col-md-12 mb-2">
 		      <label for="fone">Telefone</label>
-		      <input type="text" class="form-control-pessoal" id="fone" name="fone" value="{{fone}}" maxlength="9" required>
+		      <input type="text" class="form-control-pessoal" id="fone" name="fone" value="{{fone}}" maxlength="11" required>
 		      <script>
 		      	$('#fone').keyup(function() {
 				  $(this).val(this.value.replace(/\D/g, ''));
@@ -105,7 +105,7 @@
 		    <label>Foto <p class="text-xs text-secondary mb-0 ml-2 mt-2">Se for tirar selfie, use o celular na horizontal.</p></label>	
 		    	<div class="row">
 		    	
-		    		<div class="col-md-3 col-sm-3 mb-2 ">
+		    		<div class="col-md-3 col-sm-3 col-4 mb-2 ">
 		    			
 		    			<img id="preview" style="background-color: #fff; border-radius: 10%" class="img-fluid" alt="Foto" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}">	
 		    		</div>
