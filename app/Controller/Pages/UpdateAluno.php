@@ -224,7 +224,7 @@ class UpdateAluno extends Page{
 	            return Alert::getError('CPF não encontrado!');
 	            break;
 	        case 'updated':
-	            return Alert::getSuccess('Seu cadastro Já foi Atualizado!');
+	            return Alert::getSuccess('Seu cadastro Já foi Atualizado! Informe novamente seu CPF para validar sua Carteira.');
 	            break;
 	        case 'inactive':
 	            return Alert::getError('ALUNO INATIVO! Procure a coordenação para regularizar sua situação.');
