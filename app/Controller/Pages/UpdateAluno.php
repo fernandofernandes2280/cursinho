@@ -180,7 +180,7 @@ class UpdateAluno extends Page{
 	    }
 	    
 	    
-	    if(self::validaRecaptcha($request)){
+	  
     	    //VERIFICA SE O ALUNO JÁ COMPLETOU O SEU CADASTRO
     	    if(empty($obUser->nome) || empty($obUser->cep) || empty($obUser->endereco) || empty($obUser->bairro) || empty($obUser->naturalidade) 
     	        || empty($obUser->escolaridade) || empty($obUser->estadoCivil) || empty($obUser->sexo) || empty($obUser->dataNasc) 
@@ -191,8 +191,7 @@ class UpdateAluno extends Page{
     	            $_SESSION['idAluno'] = $obUser->id;
     	            $_SESSION['naoCompleto'] = true;
     	            $request->getRouter()->redirect('/aluno/update');
-    	    }
-	   
+    	
 	    
 	       //SE JA TIVER ATUALIZADO, REDIRECIONA PARA A CARTEIRA
 	        Funcoes::init();
