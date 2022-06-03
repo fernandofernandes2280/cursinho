@@ -83,7 +83,18 @@
 	color:#fff;
 	-webkit-text-stroke-width: 1px;
     -webkit-text-stroke-color: #fff;
-		
+	}
+	.subtitle{
+	 
+	font-size: 20px;
+	color:#3b8c0c;
+	-webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: #3b8c0c;
+	}
+	.assinatura{
+	position:absolute; top:68%;
+	left: 79%
+	
 	}
 </style>
 <table>
@@ -104,7 +115,7 @@
 		<td>
 			<div class="col-md-11" id="target">
 		     	<img width=400 class="img-fluid logocursocontainer" alt="FotoCursinho" src="{{URL}}/resources/assets/img/preparasantana.png">
-				
+				<img width="140" class="assinatura" src="{{URL}}/resources/assets/img/assinaturasousa.png">
 				<div class="form-row">
 					<div class="col-md-12">
 						<div class="form-row">
@@ -115,20 +126,25 @@
 									<div class="colfoto logocurso">
 										<img style="border-radius: 10px;" width=400 class="img-fluid" alt="FotoCursinho" src="{{URL}}/resources/assets/img/preparasantana.png">
 									</div>
-									<div class="col-md-9 pt-2 text-dark" style="padding-left: 180px">
+									<div class="col-md-9 pt-0 text-dark" style="padding-left: 180px">
 										<label class="h5">Progama Municipal de Cursos Preparatório<br><b class="prepara">PREPARA</b> <b class="santana">SANTANA</b></label>
 									</div>
 									<div class="logopms ">
 										<img width=250 class="img-fluid mb-2" alt="FotoCursinho" src="{{URL}}/resources/assets/img/logopms.png">
 									</div>
 								</div>
-						
+								
 							</div>
 						</div>
+							<div class="row">
+								<div class="col-md-12 text-center text-dark font-weight-bold">
+								<span class="subtitle ">CARTEIRA DIGITAL DO ESTUDANTE</span>
+								</div>
+							</div>
 					</div>
 				</div>
 				
-				<div class="form-row mt-3 ">
+				<div class="form-row mt-1 ">
 				 <div class="col-md-12">
 				  <div class="form-row">
 				   <div class="col-titulo ml-2 mb-2 pl-2 pr-2 pt-2 mt-0 pb-2" style="border:2px solid; border-radius: 10px">
@@ -136,7 +152,7 @@
 					 <div class="colfotoCarteira ml-3">
 				      <img style="background-color: #fff; border-radius: 10%" class="img-fluid" alt="FotoAluno" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}">
 				      <span class="label mt-1" >Status:</span>
-				      <input type="text" class="form-control-pessoal mb-2" id="status" name="status" value="{{status}}"/>
+				      <input type="text" class="form-control-pessoal mb-2" id="status" name="status" value="{{status}}" readonly/>
 				     </div>
 				    
 				     
@@ -144,35 +160,35 @@
 				        <div class="form-row">
 				        	<div class="col-md-3 mb-3">
 				        		 <span class="label" >Matrícula:</span>
-				      			<input type="text" class="form-control-pessoal mb-2" id="nome" name="nome" value="{{matricula}}"/>	
+				      			<input type="text" class="form-control-pessoal mb-2" id="nome" name="nome" value="{{matricula}}" readonly/>	
 				        	</div>
 				    		<div class="col-md-9">
 				    		    <span class="label">Nome:</span>
-					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required/>
+					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required readonly/>
 				    		</div>
 				    	</div>
 				        <div class="form-row">
 				        	<div class="col-md-3 mb-5">
 				        	    <span class="label">Turma:</span>
-				      			<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{turma}}"/>	
+				      			<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{turma}}" readonly/>	
 				        	</div>
 				    		<div class="colcpfCarteira ">
 				    			<span class="label">CPF:</span>
-					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{cpf}}" required/>
+					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{cpf}}" required readonly/>
 				    		</div>
 				    		<div class="coldatacarteira">
 				    			<span class="label">Data Nasc.:</span>
-					      		<input type="text" class="form-control-pessoal mb-2" id="nome" name="nome" value="{{dataNasc}}" required/>
+					      		<input type="text" class="form-control-pessoal mb-2" id="nome" name="nome" value="{{dataNasc}}" required readonly/>
 				    		</div>
 				    	</div>
 				        <div class="form-row">
 				        	<div class="coldatacarteira">
 				        		<span class="label">Data Cad.:</span>
-				      			<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{dataCad}}"/>	
+				      			<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{dataCad}}" readonly/>	
 				        	</div>
 				    		<div class="col-md-9 mb-0">
 				    			<span class="label">Mãe:</span>
-					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{mae}}" required/>
+					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{mae}}" required readonly/>
 				    		</div>
 				    	</div>
 							
@@ -200,7 +216,7 @@
 					 <div class="col-md-12">
 						 <div class="form-row">
 						 	<div class="col-titulo ml-2 mb-2 text-center" style="border:2px solid; border-radius: 10px">
-						 		<label class="text-dark">Obrigatório a apresentação na entrada do cursinho!</label>
+						 		<label class="text-dark">A autenticidade do documento pode ser conferida em: www.flash380.com/cursinho/aluno</label>
 						 	</div>
 						 </div>
 					 </div>
@@ -208,6 +224,11 @@
 				  
 				  
 
+			</div>
+			<div class="row">
+				<div class="col-md-11 mt-2 text-light">
+					<span>Atenção: se estiver utizando smarthphone, mude a exibição para computador ou desktop. <a target="_blank" href="https://tecnoblog.net/responde/como-acessar-sites-na-versao-desktop-pelo-celular/">Veja como</a></span>
+				</div>
 			</div>
 		</td>
 	</tr>

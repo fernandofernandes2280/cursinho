@@ -120,17 +120,14 @@ class UpdateAluno extends Page{
 	    $obAluno->turma = $postVars['turma'];
 
 	    
-	    if(self::validaRecaptcha($request)){
+	  
     	    $obAluno->atualizar();
     	    //FAZ O ULPOAD DA FOTO DO ALUNO
     	    Upload::setUploadImagesUpdateAluno($request);
     	    unset($_SESSION['naoCompleto']);
-    	    $request->getRouter()->redirect('/aluno/carteira');
-	    }else{
-	        $_SESSION['statusMessage'] = 'recaptchaInvalido';
-	        unset($_SESSION['naoCompleto']);
-	        $request->getRouter()->redirect('/aluno');
-	    }
+    	    $_SESSION['statusMessage'] = 'updated';
+    	    $request->getRouter()->redirect('/aluno');
+	  
 	}
 	
 	
@@ -142,7 +139,8 @@ class UpdateAluno extends Page{
 	 
 	    
 	    $content = View::render('pages/updateAluno/index',[
-	        'title' => 'Curso Prepara Santana - Carteira Digital do Estudante',
+	        'title' => 'Curso Prepara Santana',
+	        'subtitle'=> 'Validação da Carteira Digital do Estudante',
 	        'statusMessage' => self::getStatus($request),
 	       
 	        
@@ -180,27 +178,28 @@ class UpdateAluno extends Page{
 	        $request->getRouter()->redirect('/aluno');
 	    }
 	    
-	    //VERIFICA SE O ALUNO JÁ COMPLETOU O SEU CADASTRO
-	    if(empty($obUser->nome) || empty($obUser->cep) || empty($obUser->endereco) || empty($obUser->bairro) || empty($obUser->naturalidade) 
-	        || empty($obUser->escolaridade) || empty($obUser->estadoCivil) || empty($obUser->sexo) || empty($obUser->dataNasc) 
-	        || empty($obUser->fone) || empty($obUser->turma) || empty($obUser->mae) || empty($obUser->foto)){
-	        
-	            //REDIRECIONA PARA O FORMULÁRIO DE ATUALIZAÇÃO CADASTRAL
-	            Funcoes::init();
-	            $_SESSION['idAluno'] = $obUser->id;
-	            $_SESSION['naoCompleto'] = true;
-	            $request->getRouter()->redirect('/aluno/update');
-	            
-	        
-	    }
-	      
+	    
+	    if(self::validaRecaptcha($request)){
+    	    //VERIFICA SE O ALUNO JÁ COMPLETOU O SEU CADASTRO
+    	    if(empty($obUser->nome) || empty($obUser->cep) || empty($obUser->endereco) || empty($obUser->bairro) || empty($obUser->naturalidade) 
+    	        || empty($obUser->escolaridade) || empty($obUser->estadoCivil) || empty($obUser->sexo) || empty($obUser->dataNasc) 
+    	        || empty($obUser->fone) || empty($obUser->turma) || empty($obUser->mae) || empty($obUser->foto)){
+    	        
+    	            //REDIRECIONA PARA O FORMULÁRIO DE ATUALIZAÇÃO CADASTRAL
+    	            Funcoes::init();
+    	            $_SESSION['idAluno'] = $obUser->id;
+    	            $_SESSION['naoCompleto'] = true;
+    	            $request->getRouter()->redirect('/aluno/update');
+    	    }
+	   
+	    
 	       //SE JA TIVER ATUALIZADO, REDIRECIONA PARA A CARTEIRA
 	        Funcoes::init();
 	        $_SESSION['idAluno'] = $obUser->id;
 	        $request->getRouter()->redirect('/aluno/carteira');
 	    
 	    
-	    
+	    }
 	    
 
 	    
