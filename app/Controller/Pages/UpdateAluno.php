@@ -134,7 +134,8 @@ class UpdateAluno extends Page{
 	//retorna a tela de cpf para o aluno informar o seu
 	public static function getIndex($request){
 	    Funcoes::init();
-	    if(isset($_SESSION['idAluno'])) unset($_SESSION['idAluno']);
+	   
+	    unset($_SESSION['idAluno']);
 	    
 	 
 	    
@@ -143,10 +144,10 @@ class UpdateAluno extends Page{
 	        'subtitle'=> 'Validação da Carteira Digital do Estudante',
 	        'statusMessage' => self::getStatus($request),
 	       
+	       
 	        
 	    ]);
 	    unset($_SESSION['statusMessage']);
-	    
 	    return parent::getPageUpdateAluno('Prepara Santana', $content);
 	    
 	}
@@ -231,6 +232,9 @@ class UpdateAluno extends Page{
 	            break;
 	        case 'recaptchaInvalido':
 	            return Alert::getError('Sua Sessão Expirou!.');
+	            break;
+	        case 'success':
+	            return Alert::getSuccess('Carteira Validada com Sucesso!.');
 	            break;
 	      
 	    }
