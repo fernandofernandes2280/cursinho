@@ -191,7 +191,7 @@ class UpdateAluno extends Page{
     	            $_SESSION['idAluno'] = $obUser->id;
     	            $_SESSION['naoCompleto'] = true;
     	            $request->getRouter()->redirect('/aluno/update');
-    	
+    	    }
 	    
 	       //SE JA TIVER ATUALIZADO, REDIRECIONA PARA A CARTEIRA
 	        Funcoes::init();
@@ -199,7 +199,7 @@ class UpdateAluno extends Page{
 	        $request->getRouter()->redirect('/aluno/carteira');
 	    
 	    
-	    }
+	    
 	    
 
 	    

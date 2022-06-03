@@ -634,16 +634,14 @@ class Aluno extends Page{
 	
 	//MÉTODO RESPONSÁVEL POR RENDERIZAR A CARTEIRA DE ALUNO
 	public static function getCarteiraAluno($request,$id){
+	 
 	    Funcoes::init();
 	    
 	    if(empty($id)){
-	        
 	        //VERIFICA SE O CADASTRO ESTÁ INCOMPLETO 
 	        if(isset($_SESSION['naoCompleto'])) $request->getRouter()->redirect('/aluno');
-	        
-	        @$_SESSION['idAluno'] ? $id = $_SESSION['idAluno'] :  $id = $id;
 	    }
-	    
+	    @$_SESSION['idAluno'] ? $id = $_SESSION['idAluno'] :  $id = $id;
 	    
 	    //obtém o Aluno do banco de dados
 	    $obAluno = EntityAluno::getAlunoById($id);
@@ -654,7 +652,7 @@ class Aluno extends Page{
 	    }
 	    
 	    
-	    
+	
 	    $oQRC = new \App\Controller\Qrcode\Qrcode(); // Create vCard Object
 	    $oQRC->fullName($obAluno->matricula); // Add Full Name
 	      //  ->finish(); // End vCard
