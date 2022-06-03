@@ -221,7 +221,7 @@ class UpdateAluno extends Page{
 	    //Mensagens de status
 	    switch ($_SESSION['statusMessage']) {
 	        case 'unknown':
-	            return Alert::getError('CPF não encontrado! Procure a coordenação.');
+	            return Alert::getError('CPF não encontrado!');
 	            break;
 	        case 'updated':
 	            return Alert::getSuccess('Seu cadastro Já foi Atualizado!');
