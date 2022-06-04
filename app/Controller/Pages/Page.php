@@ -140,7 +140,7 @@ class Page extends Generica{
 	}
 	//retorna o conteudo (view) da form de cadastro da validacao da carteira
 	public static function getPageUpdateAlunoForm($title, $content){
-	    return View::render('pages/updateAluno/page',[
+	    return View::render('pages/updateAluno/pageForm',[
 	        'title' => $title,
 	        'content' => $content,
 	    ]);
