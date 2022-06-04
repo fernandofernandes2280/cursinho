@@ -341,6 +341,14 @@ class Page{
 		]);
 	}
 	
+	//Método responsavel por retornar o conteudo específico pra carteira do estudante
+	public static function getPageCarteira($title,$content){
+	    return View::render('pages/page',[
+	        'title' => $title,
+	        'content' => $content,
+	        'relatorio' =>'/admin/relatorios'
+	    ]);
+	}
 	
 	//Método resposanvel por renderizar a view do painel com conteúdos dinâmicos
 	public static function getPanel($title, $content, $currentModule, $hidden){

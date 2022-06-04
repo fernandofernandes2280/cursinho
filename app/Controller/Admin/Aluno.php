@@ -700,7 +700,7 @@ class Aluno extends Page{
 	   
 	    if(@$_SESSION['idAluno']){
 	       
-	        return parent::getPage('Carteira do Aluno > Cursinho', $content,'alunos', self::$hidden);
+	        return parent::getPageCarteira('Carteira do Aluno > Cursinho', $content,'alunos', self::$hidden);
 	    }else{
 	        
 	        return parent::getPanel('Carteira do Aluno > Cursinho', $content,'alunos', 'hidden');
