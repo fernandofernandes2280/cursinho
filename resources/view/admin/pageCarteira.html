@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+  <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="{{URL}}/resources/assets/img/iconPrepara.png">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  
+  <title>{{title}}</title>
+   
+  <meta content='initial-scale=1.2, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+  <!-- CSS Files -->
+        <!-- Bootstrap CSS   -->
+
+
+  <link href="{{URL}}/resources/assets/css/material-dashboard.css?v=2.1.0" rel="stylesheet" />
+  
+  
+  
+    
+    <link href="{{URL}}/resources/css/pages.css" rel="stylesheet">
+    <link href="{{URL}}/resources/css/material-dashboard-personalizado.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+    <style>
+        .error { border-color: #F70202; background-color:#FF6347  }
+        .errorLabel {color: #fff; background-color:#D7332F; visibility: visible;}
+        .esconde {visibility: hidden;}
+        
+
+        
+        
+        
+        
+    </style>
+  
+  <script src="{{URL}}/resources/js/photo/webcam.min.js"></script>
+  
+  
+  <script src="{{URL}}/resources/assets/js/core/jquery.min.js"></script>
+  
+  <script src="{{URL}}/resources/js/qrcode/html5-qrcode.min.js"></script>
+</head>
+
+<body class="dark-edition" >
+
+  <div class="wrapper">
+  	
+  		
+  	
+  	
+
+    
+      {{content}}
+
+  <style>
+input.item-error {
+    border-color: #D61E1E;
+}
+
+.label-error {     
+    color: #D61E1E;
+   
+}
+</style>
+  
+  
+    <!-- Modal Novo Aluno CPF-->
+<div class="modal fade" id="modalNovoCpfAluno" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" >
+    <div class="modal-content modal-content-aluno">
+    <form  method="get" action="{{URL}}/admin/alunos/new">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">Informe o CPF do novo Aluno: </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <label for="cpf">CPF:</label>
+        	
+       		<input class="form-control-pessoal mascara-cpf cpfNovo" {{readonly}} required type="text" id="cpfAluno" name="cpfAluno" />
+           
+      </div>
+      <div class="modal-footer">
+      		<button class="btn btn-danger btn-round btn-just-icon" data-dismiss="modal" rel="tooltip" title="Fechar">
+                <i class="material-icons">close</i>
+              </button>
+      
+              <button type="submit" class="btn btn-success btn-round btn-just-icon" id="novoAluno" rel="tooltip" title="Confirmar">
+                <i class="material-icons">description</i>
+              </button>
+       </div>
+     </form> 
+    </div>
+  </div>
+</div>	
+<script type="text/javascript">
+$(function(){
+
+$('#modalNovoCpfAluno').on('shown.bs.modal', function(event) {
+  $("#cpfAluno").focus();
+})
+$('#modalNovoCpfProfessor').on('shown.bs.modal', function(event) {
+  $("#cpfProfessor").focus();
+})
+$('#modalNovoCpfUser').on('shown.bs.modal', function(event) {
+  $("#cpfUser").focus();
+})
+
+  $('.modal-content-aluno').keypress(function(e){
+    if(e.which == 13) {
+      $('#novoAluno').click();
+    }
+  })
+  $('.modal-content-professor').keypress(function(e){
+    if(e.which == 13) {
+      $('#novoProfessor').click();
+    }
+  })
+  $('.modal-content-user').keypress(function(e){
+    if(e.which == 13) {
+      $('#novoUser').click();
+    }
+  })
+  
+})
+</script>
+    <!-- Modal Novo Professor CPF-->
+<div class="modal fade" id="modalNovoCpfProfessor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" >
+    <div class="modal-content modal-content-professor">
+    <form  method="get" action="{{URL}}/admin/professores/new">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">Informe o CPF do novo Professor: </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <label for="cpf">CPF:</label>
+        	
+       		<input class="form-control-pessoal mascara-cpf cpfNovo" {{readonly}} required type="text" id="cpfProfessor" name="cpfProfessor" />
+           
+      </div>
+      <div class="modal-footer">
+      		<button class="btn btn-danger btn-round btn-just-icon" data-dismiss="modal" rel="tooltip" title="Fechar">
+                <i class="material-icons">close</i>
+              </button>
+      
+              <button type="submit" class="btn btn-success btn-round btn-just-icon" rel="tooltip" id="novoProfessor" title="Confirmar">
+                <i class="material-icons">description</i>
+              </button>
+       </div>
+     </form> 
+    </div>
+  </div>
+</div>	
+
+    <!-- Modal Novo Usuário CPF-->
+<div class="modal fade" id="modalNovoCpfUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" >
+    <div class="modal-content modal-content-user">
+    <form  method="get" action="{{URL}}/admin/users/new">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">Informe o CPF do novo Usuário: </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <label for="cpf">CPF:</label>
+        	
+       		<input class="form-control-pessoal mascara-cpf cpfNovo" {{readonly}} required type="text" id="cpfUser" name="cpfUser" />
+           
+      </div>
+      <div class="modal-footer">
+      		<button class="btn btn-danger btn-round btn-just-icon" data-dismiss="modal" rel="tooltip" title="Fechar">
+                <i class="material-icons">close</i>
+              </button>
+      
+              <button type="submit" class="btn btn-success btn-round btn-just-icon" rel="tooltip" id="novoUser" title="Confirmar">
+                <i class="material-icons">description</i>
+              </button>
+       </div>
+     </form> 
+    </div>
+  </div>
+</div>	
+  <!--   Core JS Files   -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="{{URL}}/resources/assets/js/core/jquery.min.js"></script>
+  <script src="{{URL}}/resources/assets/js/core/popper.min.js"></script>
+  <script src="{{URL}}/resources/assets/js/core/bootstrap-material-design.min.js"></script>
+  <script src="https://unpkg.com/default-passive-events"></script>
+  <script src="{{URL}}/resources/assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+  <!-- Place this tag in your head or just before your close body tag. -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  <!-- Chartist JS -->
+  <script src="{{URL}}/resources/assets/js/plugins/chartist.min.js"></script>
+  <!--  Notifications Plugin    -->
+  <script src="{{URL}}/resources/assets/js/plugins/bootstrap-notify.js"></script>
+  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="{{URL}}/resources/assets/js/material-dashboard.js?v=2.1.0"></script>
+  
+   
+      
+    <script src="{{URL}}/resources/js/jquery.mask.js"></script>
+       <script src="{{URL}}/resources/js/pages.js"></script>
+   <script src="{{URL}}/resources/js/jquery.plugin.html2canvas.js"></script>
+   <script src="{{URL}}/resources/js/html2canvas.js"></script>
+  <script>
+  
+	
+  
+    $(document).ready(function() {
+    	
+      $().ready(function() {
+        $sidebar = $('.sidebar');
+
+        $sidebar_img_container = $sidebar.find('.sidebar-background');
+
+        $full_page = $('.full-page');
+
+        $sidebar_responsive = $('body > .navbar-collapse');
+
+        window_width = $(window).width();
+
+        $('.fixed-plugin a').click(function(event) {
+          // Alex if we click on switch, stop propagation of the event, so the dropdown will not be hide, otherwise we set the  section active
+          if ($(this).hasClass('switch-trigger')) {
+            if (event.stopPropagation) {
+              event.stopPropagation();
+            } else if (window.event) {
+              window.event.cancelBubble = true;
+            }
+          }
+        });
+
+        $('.fixed-plugin .active-color span').click(function() {
+          $full_page_background = $('.full-page-background');
+
+          $(this).siblings().removeClass('active');
+          $(this).addClass('active');
+
+          var new_color = $(this).data('color');
+
+          if ($sidebar.length != 0) {
+            $sidebar.attr('data-color', new_color);
+          }
+
+          if ($full_page.length != 0) {
+            $full_page.attr('filter-color', new_color);
+          }
+
+          if ($sidebar_responsive.length != 0) {
+            $sidebar_responsive.attr('data-color', new_color);
+          }
+        });
+
+        $('.fixed-plugin .background-color .badge').click(function() {
+          $(this).siblings().removeClass('active');
+          $(this).addClass('active');
+
+          var new_color = $(this).data('background-color');
+
+          if ($sidebar.length != 0) {
+            $sidebar.attr('data-background-color', new_color);
+          }
+        });
+
+        $('.fixed-plugin .img-holder').click(function() {
+          $full_page_background = $('.full-page-background');
+
+          $(this).parent('li').siblings().removeClass('active');
+          $(this).parent('li').addClass('active');
+
+
+          var new_image = $(this).find("img").attr('src');
+
+          if ($sidebar_img_container.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
+            $sidebar_img_container.fadeOut('fast', function() {
+              $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
+              $sidebar_img_container.fadeIn('fast');
+            });
+          }
+
+          if ($full_page_background.length != 0 && $('.switch-sidebar-image input:checked').length != 0) {
+            var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
+
+            $full_page_background.fadeOut('fast', function() {
+              $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
+              $full_page_background.fadeIn('fast');
+            });
+          }
+
+          if ($('.switch-sidebar-image input:checked').length == 0) {
+            var new_image = $('.fixed-plugin li.active .img-holder').find("img").attr('src');
+            var new_image_full_page = $('.fixed-plugin li.active .img-holder').find('img').data('src');
+
+            $sidebar_img_container.css('background-image', 'url("' + new_image + '")');
+            $full_page_background.css('background-image', 'url("' + new_image_full_page + '")');
+          }
+
+          if ($sidebar_responsive.length != 0) {
+            $sidebar_responsive.css('background-image', 'url("' + new_image + '")');
+          }
+        });
+
+        $('.switch-sidebar-image input').change(function() {
+          $full_page_background = $('.full-page-background');
+
+          $input = $(this);
+
+          if ($input.is(':checked')) {
+            if ($sidebar_img_container.length != 0) {
+              $sidebar_img_container.fadeIn('fast');
+              $sidebar.attr('data-image', '#');
+            }
+
+            if ($full_page_background.length != 0) {
+              $full_page_background.fadeIn('fast');
+              $full_page.attr('data-image', '#');
+            }
+
+            background_image = true;
+          } else {
+            if ($sidebar_img_container.length != 0) {
+              $sidebar.removeAttr('data-image');
+              $sidebar_img_container.fadeOut('fast');
+            }
+
+            if ($full_page_background.length != 0) {
+              $full_page.removeAttr('data-image', '#');
+              $full_page_background.fadeOut('fast');
+            }
+
+            background_image = false;
+          }
+        });
+
+        $('.switch-sidebar-mini input').change(function() {
+          $body = $('body');
+
+          $input = $(this);
+
+          if (md.misc.sidebar_mini_active == true) {
+            $('body').removeClass('sidebar-mini');
+            md.misc.sidebar_mini_active = false;
+
+            $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
+
+          } else {
+
+            $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar('destroy');
+
+            setTimeout(function() {
+              $('body').addClass('sidebar-mini');
+
+              md.misc.sidebar_mini_active = true;
+            }, 300);
+          }
+
+          // we simulate the window Resize so the charts will get updated in realtime.
+          var simulateWindowResize = setInterval(function() {
+            window.dispatchEvent(new Event('resize'));
+          }, 180);
+
+          // we stop the simulation of Window Resize after the animations are completed
+          setTimeout(function() {
+            clearInterval(simulateWindowResize);
+          }, 1000);
+
+        });
+      });
+    });
+  </script>
+  <script>
+    $(document).ready(function() {
+      // Javascript method's body can be found in assets/js/demos.js
+      //md.initDashboardPageCharts();
+
+    });
+  </script>
+  
+  </div>
+</body>
+
+</html>
