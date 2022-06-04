@@ -130,12 +130,19 @@ class Page extends Generica{
 		
 	}
 	
-	//retorna o conteudo (view) da nossa página genérica para Atualizacao do Aluno
+	//retorna o conteudo (view) da tela de index do validacao da carteira
 	public static function getPageUpdateAluno($title, $content){
 	    return View::render('pages/updateAluno/page',[
 	        'title' => $title,
 	        'content' => $content,
-	        
+	    ]);
+	    
+	}
+	//retorna o conteudo (view) da form de cadastro da validacao da carteira
+	public static function getPageUpdateAlunoForm($title, $content){
+	    return View::render('pages/updateAluno/page',[
+	        'title' => $title,
+	        'content' => $content,
 	    ]);
 	    
 	}

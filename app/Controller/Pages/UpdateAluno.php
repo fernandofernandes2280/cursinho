@@ -89,7 +89,7 @@ class UpdateAluno extends Page{
 	        
 	    ]);
 	    
-	    return parent::getPageUpdateAluno('Prepara Santana', $content);
+	    return parent::getPageUpdateAlunoForm('Prepara Santana', $content);
 	    
 	}
 	
