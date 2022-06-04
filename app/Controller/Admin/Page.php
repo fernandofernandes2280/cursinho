@@ -343,10 +343,10 @@ class Page{
 	
 	//Método responsavel por retornar o conteudo específico pra carteira do estudante
 	public static function getPageCarteira($title,$content){
-	    return View::render('admin/pageCarteira',[
+	    return View::render('pages/updateAluno/page',[
 	        'title' => $title,
 	        'content' => $content,
-	        'relatorio' =>'/admin/relatorios'
+	        
 	    ]);
 	}
 	
