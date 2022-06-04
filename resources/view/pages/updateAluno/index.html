@@ -1,13 +1,4 @@
-<script type="text/javascript">
-	function validarPost(){
-		//VERIFICA SE O RECAPTCHA FOI SELECIONADO
-		if(grecaptcha.getResponse() != '') return true;
-		
-		//ERRO: NÃO SELECIONADO	
-		alert('Selecione a caixa de "Não sou um robô" ');
-		return false;
-	}
-</script>
+
 
 
 <div class="container pt-5" >
@@ -31,9 +22,6 @@
 				      </div>
 				      <div class="modal-footer">
 				      	<div class="row">
-				      		<div class="col-sm-12 text-left">
-				      			<div class="g-recaptcha" data-sitekey="6LdTbDwgAAAAAP6brXorTstwUDy08iTglSl6TFWE"></div>
-				      		</div>
 				      		<div class="col-sm-12 text-right">
 				      		<button type="submit" class="btn btn-success btn-round " id="novoAluno" rel="tooltip" title="Confirmar">
 				                OK

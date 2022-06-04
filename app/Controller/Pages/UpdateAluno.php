@@ -63,25 +63,28 @@ class UpdateAluno extends Page{
         Funcoes::init();
         //VERIFICA SE A SESSAO ALUNO EXISTE, SE NÃO EXISTE REDIRECIONA PARA O INDEX
         if(!isset($_SESSION['idAluno'])) $request->getRouter()->redirect('/aluno');
-     
+        
+        $idAluno = $_SESSION['idAluno'];
+        //busca usuário pelo CPF sem a maskara
+        $obAluno = EntityAluno::getAlunoById($idAluno);
+      
 	    $content = View::render('pages/updateAluno/form',[
 	        'title' => 'Curso Prepara Santana - Atualização Cadastral do Aluno',
-	        'nome' => '',
+	        'nome' => $obAluno->nome ?? '',
 	        'cep' => '',
-	        'endereco' => '',
-	        'naturalidade' => '',
-	        'fone' => '',
-	        'mae' => '',
-	        'obs' => '',
-	        'dataNasc' => '',
-	        'dataCad' => '',
+	        'endereco' => $obAluno->endereco ??'',
+	        'naturalidade' => $obAluno->naturalidade ?? '',
+	        'fone' => $obAluno->fone ?? '',
+	        'mae' => $obAluno->mae ?? '',
+	        'dataNasc' => date('Y-m-d', strtotime($obAluno->dataNasc)),
 	        'statusMessage' => self::getStatus($request),
 	        'optionBairros' => self::getSelectBairros(null),
 	        'optionEscolaridade' => self::getSelectEscolaridade(null),
 	        'optionEstadoCivil' => self::getSelectEstadoCivil(null),
 	        'optionTurma' => self::getSelectTurmas(null),
 	        'foto' => 'profile.png',
-	        'ponteiro' => 'pointer-events: none;'
+	        'ponteiro' => 'pointer-events: none;',
+	        'foto' => $obAluno->foto.'?var='.rand(),
 
 	        
 	    ]);
@@ -182,9 +185,7 @@ class UpdateAluno extends Page{
 	    
 	  
     	    //VERIFICA SE O ALUNO JÁ COMPLETOU O SEU CADASTRO
-    	    if(empty($obUser->nome) || empty($obUser->cep) || empty($obUser->endereco) || empty($obUser->bairro) || empty($obUser->naturalidade) 
-    	        || empty($obUser->escolaridade) || empty($obUser->estadoCivil) || empty($obUser->sexo) || empty($obUser->dataNasc) 
-    	        || empty($obUser->fone) || empty($obUser->turma) || empty($obUser->mae) || empty($obUser->foto)){
+    	    if(empty($obUser->mae)){
     	        
     	            //REDIRECIONA PARA O FORMULÁRIO DE ATUALIZAÇÃO CADASTRAL
     	            Funcoes::init();
