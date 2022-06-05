@@ -485,6 +485,8 @@ class Upload{
 	    
 	}
 	
+
+	
 	//FAZ O UPLOAD DA IMAGEM VINDA DO FORMULÁRIO DE ATUALIZAÇÃO CADASTRAL DO ALUNO
 	public static function setUploadImagesUpdateAluno($request){
 	    
@@ -502,10 +504,8 @@ class Upload{
 	    if(!empty($files['imagem'])){
 	        $file = $files['imagem'];
 	        
-	   //  var_dump($files);exit;
-	        
-	        var_dump(exif_read_data($files['imagem']['tmp_name'])); exit;
-	        
+	  
+	  
 	        //verifica se o arquivo existe e se o tipo é permitido
 	        if(empty($file['type']) || !in_array($file['type'], $upload::isAllowed())  ){
 	            
