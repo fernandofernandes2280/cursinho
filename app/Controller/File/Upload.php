@@ -525,7 +525,7 @@ class Upload{
 	            $img = new Resize();
 	            $config = array();
 	            $config['source_image'] = __DIR__.'/files/fotos/'.$nameFile;
-	            $config['width'] = 195;
+	            $config['width'] = 190;
 	            $config['height'] = 230;
 	            $img->initialize($config);
 	            $img->crop();
