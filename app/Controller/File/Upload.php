@@ -523,7 +523,7 @@ class Upload{
 	            //	chmod(__DIR__."/files/fotos/".$nameFile, 0777); //Corrige a permissão do arquivo.
 	            
 	            
-	            $sucesso = $obUpload->uploadFotoAluno($img);
+	        
 	            //corta a foto
 	            $img = new Resize();
 	            $config = array();
