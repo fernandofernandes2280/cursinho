@@ -519,8 +519,10 @@ class Upload{
 	            //Move os arquivos de upload
 	            //$sucesso = $obUpload->upload(__DIR__.'/files/fotos',false);
 	            $nameFile = $obUpload->nomeArquivo($obAluno->matricula, str_replace(' ', '',$obAluno->nome), '.png');
-	            $sucesso = $obUpload->uploadFotoAluno(__DIR__.'/files/fotos',false,$nameFile);
+	            $sucesso = $obUpload->uploadFotoAluno(imagerotate(__DIR__.'/files/fotos',false,$nameFile));
 	            //	chmod(__DIR__."/files/fotos/".$nameFile, 0777); //Corrige a permissão do arquivo.
+	            
+	         //   $img = imagerotate(__DIR__.'/files/fotos/'.$nameFile, -90, 0);
 	            //corta a foto
 	            $img = new Resize();
 	            $config = array();
