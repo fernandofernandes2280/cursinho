@@ -522,14 +522,14 @@ class Upload{
 	            $sucesso = $obUpload->uploadFotoAluno(__DIR__.'/files/fotos',false,$nameFile);
 	            //	chmod(__DIR__."/files/fotos/".$nameFile, 0777); //Corrige a permissão do arquivo.
 	            
-	            $img = imagerotate(__DIR__.'/files/fotos/'.$nameFile, 180, 0);
+	            
 	            $sucesso = $obUpload->uploadFotoAluno($img);
 	            //corta a foto
 	            $img = new Resize();
 	            $config = array();
 	            $config['source_image'] = __DIR__.'/files/fotos/'.$nameFile;
-	            $config['width'] = 180;
-	            $config['height'] = 230;
+	            $config['width'] = 160;
+	            $config['height'] = 200;
 	            $img->initialize($config);
 	            $img->crop();
 	            
