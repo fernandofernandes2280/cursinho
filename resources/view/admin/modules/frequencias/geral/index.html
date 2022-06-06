@@ -52,7 +52,7 @@ body{
 	<div class="row mb-2" >
 		<div class="col-md-12 text-center ">
 			<span class="text-light h2">{{title}}</span>
-	</div>
+		</div>
 		
 	</div>
 	<div class="row mb-4 justify-content-md-center" >
@@ -76,6 +76,10 @@ body{
         </div>
     </div>
 </div>
+
+  		
+
+
 
 <div class="text-center" id="scanned-result"></div>
 
@@ -105,6 +109,7 @@ body{
 
 	var count = new Number();
 	var count = 4;  
+	var numero = Math.random();
 	// variável para o contador
 	var contador;
 	var tempo = document.getElementById("tempo");
@@ -172,8 +177,8 @@ body{
 			  	<img style="background-color:#ffff" id="foto" class="img-fluid" alt="Foto" src="">
 			  </div>
 			  <div class="col-md-10 alert alert-warning divDados">
-			  	<input class="form-control h3" id="matricula1" value="" realony/>
-			  	<input class="form-control h3" id="aluno" value="" realony/>
+			  	<p class="h3 text-left" id="divMatricula"></p>
+			  	<p class="h3 text-left" id="divNome"></p>
 			  	
 			  </div>
 			 </div>
@@ -193,11 +198,10 @@ body{
 					                            
 					                            
 					                             `;
-					                             
+					                             document.getElementById("divMatricula").innerHTML = data.matricula;
+					                             document.getElementById("divNome").innerHTML = data.nome;
 					                             $("#reader").attr("hidden",true);
-					                             $("#matricula1").attr("value",data.matricula);
-					                             $("#aluno").attr("value",data.nome);
-					                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto);
+					                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
 					                             
 											
 												 //função que aguarda 5sec antes de executar 
@@ -221,8 +225,8 @@ body{
 			  	<img style="background-color:#ffff" id="foto" class="img-fluid" alt="Foto" src="">
 			  </div>
 			  <div class="col-md-10 alert alert-success divDados">
-			  	<input class="form-control h3" id="matricula1" value="" realony/>
-			  	<input class="form-control h3" id="aluno" value="" realony/>
+			  	<p class="h3 text-left" id="divMatricula"></p>
+			  	<p class="h3 text-left" id="divNome"></p>
 			  	
 			  </div>
 			 </div>
@@ -242,9 +246,9 @@ body{
 					                            
 					                             `;
 					                            
-					                             $("#matricula1").attr("value",data.matricula);
-					                             $("#aluno").attr("value",data.nome);
-					                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto);
+					                             document.getElementById("divMatricula").innerHTML = data.matricula;
+					                             document.getElementById("divNome").innerHTML = data.nome;
+					                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
 					                             $("#reader").attr("hidden",true);
 											
 												 //função que aguarda 3sec antes de executar 
@@ -302,8 +306,8 @@ body{
 			  	<img style="background-color:#ffff" id="foto" class="img-fluid" alt="Foto" src="">
 			  </div>
 			  <div class="col-md-10 alert alert-success divDados">
-			  	<input class="form-control h3" id="matricula1" value="" realony/>
-			  	<input class="form-control h3" id="aluno" value="" realony/>
+			  	<p class="h3 text-left" id="divMatricula"></p>
+			  	<p class="h3 text-left" id="divNome"></p>
 			  	
 			  </div>
 			 </div>
@@ -323,9 +327,9 @@ body{
 				     
 				                             `;
 				                            
-				                             $("#matricula1").attr("value",data.matricula);
-				                             $("#aluno").attr("value",data.nome);
-				                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto);
+				                             document.getElementById("divMatricula").innerHTML = data.matricula;
+				                             document.getElementById("divNome").innerHTML = data.nome;
+				                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
 				                             $("#reader").attr("hidden",true);
 										     //função que aguarda 3sec antes de executar 
 				                             setTimeout(function(){
@@ -375,12 +379,22 @@ body{
 	                            results.innerHTML += `
 	                            
 		<section class="sessaoVermelha">
-			<div class="row">
-			  <div class="col-md-12 alert alert-danger text-center divDados">
-			  	<h3>Erro: Aluno Inativo! Tente novamente.</h3>
+			<div class="row mb-3">
+			  <div class="colfotoFreqGeral">
+			  	<img style="background-color:#ffff" id="foto" class="img-fluid" alt="Foto" src="">
+			  </div>
+			  <div class="col-md-10 alert alert-danger divDados">
+			  	<p class="h3 text-left" id="divMatricula"></p>
+			  	<p class="h3 text-left" id="divNome"></p>
 			  	
 			  </div>
 			 </div>
+		
+			<div class="row divMsgPresenca">
+			  <div class="col-md-12 alert alert-danger text-center" >
+				  <h3>Aluno Inativo! Procure a Coordenação.</h3>
+				</div>
+			</div>
 			<div class="row justify-content-md-center mt-2">
 			  	<div class="col-md-3 text-center">
 					<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
@@ -389,6 +403,11 @@ body{
 		</section>	                            
 	                            
 	                             `;
+	                             
+	                             document.getElementById("divMatricula").innerHTML = data.matricula;
+	                             document.getElementById("divNome").innerHTML = data.nome;
+	                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
+	                             
 	                              //função que aguarda 3sec antes de executar 
 	                             setTimeout(function(){
 	                             		//recarrega a página	
