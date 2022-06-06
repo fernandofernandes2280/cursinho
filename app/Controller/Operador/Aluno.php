@@ -668,13 +668,8 @@ class Aluno extends Page{
 	    
 	    //Retorna a página completa
 	    
-	    if(@$_SESSION['idAluno']){
-	        unset($_SESSION['idAluno']);
 	        return parent::getPage('Carteira do Aluno > Cursinho', $content,'alunos', self::$hidden);
-	    }else{
-	        
-	        return parent::getPanel('Carteira do Aluno > Cursinho', $content,'alunos', 'hidden');
-	    }
+	   
 	}
 	
 	//MÉTODO RESPONSÁVEL POR GERAR O ARQUIVO DE IMAGEM E DOWNLOAD DA CARTEIRA DE ALUNO
