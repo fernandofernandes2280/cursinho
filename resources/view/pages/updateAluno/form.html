@@ -16,7 +16,7 @@
    
       <div class="col-md-12">
       
-<form  method="post" enctype="multipart/form-data">
+<form  method="post" enctype="multipart/form-data" onsubmit="return validarPost()">
 	<div class="row">
 			<div class="col-md-12 text-light " >
 			<h5>{{title}}</h5>
@@ -106,13 +106,13 @@
 		    	<div class="row">
 		    	
 		    		<div class="col-md-3 col-sm-3 col-5 mb-2 ">
-		    			
+		    			<input type="text" id="foto" value="{{foto}}" hidden/>
 		    			<img id="preview" style="background-color: #fff; border-radius: 10%" class="img-fluid" alt="Foto" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}">	
 		    		</div>
 		    	</div>
 		    	<div class="row">
-		    		<div class="col-md-12">
-		    				<input id="img-input" type="file" name="imagem" required>
+		    		<div class="col-md-12 text-light">
+		    				<input id="img-input" type="file" name="imagem" >
 		    				
 		    		</div>
 		    	</div>
@@ -136,6 +136,18 @@
    
 </div>
 <script type="text/javascript">
+function validarPost(){
+var foto = document.getElementById("foto").value; 
+
+if (document.getElementById("img-input").files.length === 0 && foto.substring(0,11) === "profile.png") {
+   alert("Você não escolheu uma foto!" );
+   return false;
+}else{
+return true;
+}
+}
+
+
 function readImage() {
     if (this.files && this.files[0]) {
         var file = new FileReader();

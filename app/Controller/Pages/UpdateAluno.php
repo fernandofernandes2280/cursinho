@@ -67,24 +67,29 @@ class UpdateAluno extends Page{
         $idAluno = $_SESSION['idAluno'];
         //busca usuário pelo CPF sem a maskara
         $obAluno = EntityAluno::getAlunoById($idAluno);
-      
+        
+        $obAluno->sexo == 'MAS' ? $selectedSexoM = 'selected' : $selectedSexoM = '';
+        $obAluno->sexo == 'FEM' ? $selectedSexoF = '' : $selectedSexoF = 'selected';
+        
 	    $content = View::render('pages/updateAluno/form',[
 	        'title' => 'Curso Prepara Santana - Atualização Cadastral do Aluno',
 	        'nome' => $obAluno->nome ?? '',
-	        'cep' => '',
+	        'cep' => $obAluno->cep ?? '',
 	        'endereco' => $obAluno->endereco ??'',
 	        'naturalidade' => $obAluno->naturalidade ?? '',
 	        'fone' => $obAluno->fone ?? '',
 	        'mae' => $obAluno->mae ?? '',
 	        'dataNasc' => date('Y-m-d', strtotime($obAluno->dataNasc)),
 	        'statusMessage' => self::getStatus($request),
-	        'optionBairros' => self::getSelectBairros(null),
-	        'optionEscolaridade' => self::getSelectEscolaridade(null),
-	        'optionEstadoCivil' => self::getSelectEstadoCivil(null),
-	        'optionTurma' => self::getSelectTurmas(null),
+	        'optionBairros' => self::getSelectBairros($obAluno->bairro),
+	        'optionEscolaridade' => self::getSelectEscolaridade($obAluno->escolaridade),
+	        'optionEstadoCivil' => self::getSelectEstadoCivil($obAluno->estadoCivil),
+	        'optionTurma' => self::getSelectTurmas($obAluno->turma),
 	        'foto' => 'profile.png',
 	        'ponteiro' => 'pointer-events: none;',
 	        'foto' => $obAluno->foto.'?var='.rand(),
+	        'selectedSexoM' => $selectedSexoM  ,
+	        'selectedSexoF' => $selectedSexoF
 
 	        
 	    ]);
@@ -128,8 +133,9 @@ class UpdateAluno extends Page{
     	    //FAZ O ULPOAD DA FOTO DO ALUNO
     	    Upload::setUploadImagesUpdateAluno($request);
     	    unset($_SESSION['naoCompleto']);
-    	    $_SESSION['statusMessage'] = 'updated';
-    	    $request->getRouter()->redirect('/aluno');
+    	   // $_SESSION['statusMessage'] = 'updated';
+    	  //  $_SESSION['statusMessage'] = 'ConfirmUpdated';
+    	    $request->getRouter()->redirect('/aluno/carteira');
 	  
 	}
 	
@@ -244,7 +250,7 @@ class UpdateAluno extends Page{
 	//Método responsavel por listar os Bairros no select option, selecionando o do paciente
 	public static function getSelectBairros($id){
 	    $resultados = '';
-	    $results =  EntityBairro::getBairros(null,'nome asc',null);
+	    $results =  EntityBairro::getBairros('nome != "Não Informado" ','nome asc',null);
 	    //verifica se o id não é nulo e obtém o Procedencia do banco de dados
 	    if (!is_null($id)) {
 	        $selected = '';
@@ -277,7 +283,7 @@ class UpdateAluno extends Page{
 	//Método responsavel por listar as Escolaridades
 	public static function getSelectEscolaridade($id){
 	    $resultados = '';
-	    $results =  EntityEscolaridade::getEscolaridades(null,'nome asc',null);
+	    $results =  EntityEscolaridade::getEscolaridades('nome != "Não Informado" ','nome asc',null);
 	    //verifica se o id não é nulo e obtém a Escolaridade do banco de dados
 	    if (!is_null($id)) {
 	        $selected = '';
@@ -309,7 +315,7 @@ class UpdateAluno extends Page{
 	//Método responsavel por listar os Estados Civis, 
 	public static function getSelectEstadoCivil($id){
 	    $resultados = '';
-	    $results =  EntityEstadoCivil::getEstadoCivils(null,'nome asc',null);
+	    $results =  EntityEstadoCivil::getEstadoCivils('nome != "Não Informado" ','nome asc',null);
 	    //verifica se o id não é nulo e obtém o Estado Civil do banco de dados
 	    if (!is_null($id)) {
 	        $selected = '';

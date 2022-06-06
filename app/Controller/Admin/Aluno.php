@@ -640,6 +640,9 @@ class Aluno extends Page{
 	    if(empty($id)){
 	        //VERIFICA SE O CADASTRO ESTÁ INCOMPLETO 
 	        if(isset($_SESSION['naoCompleto'])) $request->getRouter()->redirect('/aluno');
+	        
+	        if(!isset($_SESSION['idAluno'])) $request->getRouter()->redirect('/aluno');
+	        
 	    }
 	    @$_SESSION['idAluno'] ? $id = $_SESSION['idAluno'] :  $id = $id;
 	    
@@ -698,13 +701,13 @@ class Aluno extends Page{
 	    
 	    //Retorna a página completa
 	   
-	    if(@$_SESSION['idAluno']){
+	 //   unset($_SESSION['idAluno']);
 	       
 	        return parent::getPageCarteira('Carteira do Aluno > Cursinho', $content,'alunos', self::$hidden);
-	    }else{
+	    
 	        
-	        return parent::getPanel('Carteira do Aluno > Cursinho', $content,'alunos', 'hidden');
-	    }
+	       // return parent::getPanel('Carteira do Aluno > Cursinho', $content,'alunos', 'hidden');
+	    
 	}
 	
 	
