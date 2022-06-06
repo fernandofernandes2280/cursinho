@@ -57,10 +57,10 @@ body{
 	</div>
 	<div class="row mb-4 justify-content-md-center" >
 		
-		<div class="col-md-7 bg-warning text-center pt-2 pb-2 title">
+		<div class="col-md-7 bg-warning text-center pt-3 pb-3 title">
 			
 	 		<span class="h2">{{aula}}</span>
-	 		<a href="javascript:history.back()" class="btnVoltar">Voltar</a>
+	 		<a href="javascript:history.back()" class="btnVoltar badge badge-sm bg-gradient-success pt-1">Voltar</a>
 		</div>
 	</div>
 
@@ -459,7 +459,7 @@ body{
             }
         }
         //usa camera frontal
-         return html5qrcode.start({ facingMode: facingMode },{ fps: 10 },onScanSuccess);
+         return html5qrcode.start({ facingMode: facingMode },{ fps: 10, qrbox: 250 },onScanSuccess);
         
         //usar câmera traseira
         // return html5qrcode.start({ facingMode: { exact: "environment"} },{ fps: 10, qrbox: 250 },onScanSuccess);
