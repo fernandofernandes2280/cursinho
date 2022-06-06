@@ -340,6 +340,25 @@ class Page{
 		
 	}
 	
+	//Método resposanvel por renderizar a view do Dashoboard
+	public static function getPanelDashboard($title, $content, $currentModule, $hidden){
+	    
+	    //Renderiza a view do painel
+	    $contentPanel = View::render('admin/panelDashboard',[
+	        'menu' => self::getMenu($currentModule),
+	        'content' => $content,
+	        'navBar'=>View::render('admin/navBar',['hidden' => $hidden]),
+	        'footer'=>View::render('admin/modules/pacientes/footer',[]),
+	        
+	        
+	    ]);
+	    
+	    //Retorna a página renderizada
+	    return self::getPage($title, $contentPanel,$currentModule);
+	    
+	}
+	
+	
 	//Método responsavel por retornar com um link da paginação
 	private static function getPaginationLink($queryParams,$page,$url,$label=null){
 		//Altera a página

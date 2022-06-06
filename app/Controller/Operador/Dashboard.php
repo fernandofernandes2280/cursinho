@@ -48,7 +48,7 @@ class Dashboard extends Page{
             'totalNoite' => $totalNoite
         ]);
         
-        return parent::getPanel('Alunos > Cursinho', $content,'dashboard', self::$hidden);
+        return parent::getPanelDashboard('Dashboard > Cursinho', $content,'dashboard', self::$hidden);
         
     }
     
