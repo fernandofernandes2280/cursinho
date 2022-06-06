@@ -134,7 +134,7 @@ class Frequencia extends Page{
 		//Recebe os parâmetros da requisição
 		$queryParams = $request->getQueryParams();
 		
-		$results = EntityAula::getAulas('status = 1');
+		$results = EntityAula::getAulas('status = 1','data DESC');
 		$resultados = '';
 		//Renderiza
 		while ($obAula = $results -> fetchObject(EntityAula::class)) {
