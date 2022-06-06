@@ -359,7 +359,7 @@ class Aluno extends Page{
 	    $content = View::render('admin/modules/alunos/form',[
 	        'matricula'=>$obAluno->matricula,
 	        'id' => $obAluno->id,
-	        'title' => 'Editar',
+	        'title' => 'Alunos > Editar',
 	        'nome' => $obAluno->nome,
 	        'cep' => $obAluno->cep,
 	        'endereco' => $obAluno->endereco,
