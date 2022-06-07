@@ -133,7 +133,7 @@ class UpdateAluno extends Page{
     	    //FAZ O ULPOAD DA FOTO DO ALUNO
     	    Upload::setUploadImagesUpdateAluno($request);
     	    unset($_SESSION['naoCompleto']);
-    	   // $_SESSION['statusMessage'] = 'updated';
+    	    $_SESSION['updated'] = true;
     	  //  $_SESSION['statusMessage'] = 'ConfirmUpdated';
     	    $request->getRouter()->redirect('/aluno/carteira');
 	  
@@ -145,7 +145,7 @@ class UpdateAluno extends Page{
 	    Funcoes::init();
 	   
 	    unset($_SESSION['idAluno']);
-	    
+	    unset($_SESSION['updated']);
 	 
 	    
 	    $content = View::render('pages/updateAluno/index',[

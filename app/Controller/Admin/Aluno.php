@@ -656,7 +656,14 @@ class Aluno extends Page{
 	        if(!isset($_SESSION['idAluno'])) $request->getRouter()->redirect('/aluno');
 	        
 	    }
-	    @$_SESSION['idAluno'] ? $id = $_SESSION['idAluno'] :  $id = $id;
+	    
+	    @$_SESSION['idAluno'] ? $id = $_SESSION['idAluno'] : $id = $id;
+	    
+	    @$_SESSION['idAluno'] ? $hiddenBtnSairUpdate = '' : $hiddenBtnSairUpdate = 'hidden';
+	    @$_SESSION['idAluno'] ? $hiddenBtnSair = 'hidden' : $hiddenBtnSair = '';
+	    
+	    
+	    @$_SESSION['updated'] ? $hiddenAlterar = '' : $hiddenAlterar = 'hidden';
 	    
 	    //obtém o Aluno do banco de dados
 	    $obAluno = EntityAluno::getAlunoById($id);
@@ -707,6 +714,9 @@ class Aluno extends Page{
 	        'dataCad'=>date('d/m/Y', strtotime($obAluno->dataCad)),
 	        'qrcode' => $name,
 	        'status' => EntityStatus::getStatusById($obAluno->status)->nome,
+	        'hiddenBtnAlterar' => $hiddenAlterar,
+	        'hiddenBtnSairUpdate' => $hiddenBtnSairUpdate,
+	        'hiddenBtnSair' => $hiddenBtnSair,
 	       
 	        
 	    ]);

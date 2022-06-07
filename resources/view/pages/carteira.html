@@ -104,7 +104,27 @@
 				<tr>
 					<td>
 						<input hidden type="submit" rel="tooltip" title="Visualizar Imagem" value="Visualizar" onclick="capture();" />
-						<input type="submit" rel="tooltip" title="Download da Carteira" value="Download" name="imageDown" onclick="captureDown();" />
+						
+							<button type="submit" class="btn btn-facebook btn-round btn-sm " rel="tooltip" title="Download da Carteira" name="imageDown" onclick="captureDown();" />
+								<i class="material-icons" style="font-size: 30px;">download</i><b class="h5">Download</b>
+							</button>
+						
+						<a href="javascript:history.back()" {{hiddenBtnAlterar}}>
+							<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Alterar dados da Carteira">
+								<i class="material-icons" style="font-size: 30px;">reply</i><b class="h5">Alterar Dados</b>
+							</button>
+						</a>
+						<a href="{{URL}}/aluno" {{hiddenBtnSairUpdate}}>
+							<button type="button" class="btn btn-default btn-round btn-sm " rel="tooltip" title="Sair">
+								<i class="material-icons" style="font-size: 30px;">logout</i><b class="h5">Sair</b>
+							</button>
+						</a>
+						<a href="javascript:history.back()" {{hiddenBtnSair}}>
+							<button type="button" class="btn btn-default btn-round btn-sm " rel="tooltip" title="Sair">
+								<i class="material-icons" style="font-size: 30px;">logout</i><b class="h5">Sair</b>
+							</button>
+						</a>
+		
 					</td>
 				</tr>
 			</table>
@@ -113,7 +133,7 @@
 	<tr>
 
 		<td>
-			<div class="col-md-11 mt-2" id="target">
+			<div class="col-md-11 mt-4" id="target">
 		     	<img width=400 class="img-fluid logocursocontainer" alt="FotoCursinho" src="{{URL}}/resources/assets/img/preparasantana.png">
 				<img width="140" class="assinatura" src="{{URL}}/resources/assets/img/assinaturasousa.png">
 				<div class="form-row">
