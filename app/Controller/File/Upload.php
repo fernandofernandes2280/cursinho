@@ -504,10 +504,22 @@ class Upload{
 	    if(!empty($files['imagem'])){
 	        $file = $files['imagem'];
 	        
-	  var_dump($file);exit;
+	  
 	  
 	        //verifica se o arquivo existe e se o tipo é permitido
 	        if(empty($file['type']) || !in_array($file['type'], $upload::isAllowed())  ){
+	            
+	            
+	            if($file['type'] = 'image/webp'){
+	                
+	                // Load the WebP file
+	                $im = imagecreatefromwebp(__DIR__.'files/fotos/example.webp');
+	                
+	                // Convert it to a jpeg file with 100% quality
+	                imagejpeg($im, $obAluno->matricula, str_replace(' ', '',$obAluno->nome), '.png', 100);
+	                imagedestroy($im);
+	                
+	            }
 	            
 	            //$request->getRouter()->redirect('/admin/pacientes');
 	            
