@@ -288,7 +288,7 @@ $('#matricula').bind('keyup', function (event) {
             }
             
             //Quando o campo cep perde o foco.
-            $("#cepxxxx").blur(function() {
+            $("#cep").blur(function() {
 
                 //Nova variável "cep" somente com dígitos.
                 var cep = $(this).val().replace(/\D/g, '');
