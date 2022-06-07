@@ -421,7 +421,7 @@ class Frequencia extends Page{
 	        'matricula' =>  $queryParams['matricula'] ?? '',
 	        'id' =>  $queryParams['id'] ?? '',
 	        'matricula' =>  $queryParams['matricula'] ?? '',
-	        'cpf' =>  $queryParams['cpf'] ?? '',
+	        'cpf' =>  $queryParams['cpfPesq'] ?? '',
 	        'total' => self::$qtdTotal,
 	        'selectedAtivo' =>  $selectedAtivo,
 	        'selectedInativo' =>  $selectedInativo,
