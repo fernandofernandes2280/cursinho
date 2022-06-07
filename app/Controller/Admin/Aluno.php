@@ -109,8 +109,8 @@ class Aluno extends Page{
 		//Obtem os pacientes
 		$results = EntityAluno::getAlunos($where, $order, $obPagination->getLimit());
 		
-				
-		//Renderiza
+			
+				//Renderiza
 		while ($obAluno = $results -> fetchObject(EntityAluno::class)) {
 	 
 		    $reload = rand();

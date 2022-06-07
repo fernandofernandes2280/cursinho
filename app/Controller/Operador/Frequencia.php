@@ -13,6 +13,7 @@ use \App\Model\Entity\Aluno as EntityAluno;
 use \App\Model\Entity\Frequencia as EntityFrequencia;
 use \App\Model\Entity\Status as EntityStatus;
 use \App\Utils\Funcoes;
+use Bissolli\ValidadorCpfCnpj\CPF;
 
 class Frequencia extends Page{
 	
@@ -314,8 +315,20 @@ class Frequencia extends Page{
 	    
 	    $status = $queryParams['status'] ?? '';
 	    
-	    //retira zeros à esquerda
-	    //if($pront != '') $pront += 0;
+	    If(@$queryParams['cpfPesq'] != ''){
+	        
+	        $cpf = $queryParams['cpfPesq'] ?? '';
+	        
+	        //instancia classe pra verificar CPF
+	        $validaCpf = new CPF($cpf);
+	        
+	        //verifica se é válido o cpf
+	        if (!$validaCpf->isValid()){
+	            $request->getRouter()->redirect('/admin/alunos?statusMessage=cpfInvalid');
+	        }
+	        //ARMAZENA O CPF (SOMENTE OS NÚMEROS)
+	        $cpf= $validaCpf->getValue();
+	    }else{$cpf = null;}
 	    
 	    //Condições SQL
 	    $condicoes = [
@@ -325,7 +338,7 @@ class Frequencia extends Page{
 	        strlen($turma) ? 'turma = "'.$turma.'"' : null,
 	        strlen($matricula) ? 'matricula = "'.$matricula.'"' : null,
 	        strlen($status) ? 'status = "'.$status.'" ' : null,
-	        
+	        strlen($cpf) ? 'cpf = "'.$cpf.'" ' : null,
 	    ];
 	    
 	    //Remove posições vazias
@@ -349,6 +362,9 @@ class Frequencia extends Page{
 	    
 	    //Obtem os pacientes
 	    $results = EntityAluno::getAlunos($where, $order, $obPagination->getLimit());
+	    
+	    var_dump($results);exit;
+	    
 	    //Renderiza
 	    while ($obAluno = $results -> fetchObject(EntityAluno::class)) {
 	        
