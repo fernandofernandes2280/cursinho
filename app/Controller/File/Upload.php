@@ -504,7 +504,7 @@ class Upload{
 	    if(!empty($files['imagem'])){
 	        $file = $files['imagem'];
 	        
-	  
+	  var_dump($file);exit;
 	  
 	        //verifica se o arquivo existe e se o tipo é permitido
 	        if(empty($file['type']) || !in_array($file['type'], $upload::isAllowed())  ){
