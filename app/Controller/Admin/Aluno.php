@@ -338,6 +338,15 @@ class Aluno extends Page{
 	//Metodo responsávelpor retornar o formulário de Edição de um Aluno
 	public static function getEditAluno($request,$id){
 	    
+	    Funcoes::init();
+	    if(isset($_SESSION['idAula'])){
+	        $idAula = $_SESSION['idAula'];
+	        $hideBtnFreq = '';
+	    }else{
+	        
+	        $hideBtnFreq = 'hidden';
+	    }
+	    
 	    //Query PArams
 	    $queryParams = $request->getQueryParams();
 
@@ -379,7 +388,10 @@ class Aluno extends Page{
 	        'optionTurma' => EntityTurma::getSelectTurmas($obAluno->turma),
 	        'optionStatus' => EntityStatus::getSelectStatus($obAluno->status),
 	        'foto' => $obAluno->foto.'?var='.$reload,
-	        'ponteiro' => ''
+	        'ponteiro' => '',
+	        'idAula' => @$idAula,
+	        'hideBtnFreq' => $hideBtnFreq,
+	        'idAluno' => $obAluno->id,
 	       
 	    ]);
 	    

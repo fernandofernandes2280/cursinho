@@ -169,6 +169,8 @@ class Frequencia extends Page{
 	   
 	    $obAula = EntityAula::getAulaById($id);
 	    
+	    Funcoes::init();
+	    $_SESSION['idAula'] = $id;
 	    
 	    //Conteúdo da Home
 	    $content = View::render('admin/modules/frequencias/form',[

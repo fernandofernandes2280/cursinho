@@ -169,6 +169,8 @@ class Frequencia extends Page{
 	   
 	    $obAula = EntityAula::getAulaById($id);
 	    
+	    Funcoes::init();
+	    $_SESSION['idAula'] = $id;
 	    
 	    //Conteúdo da Home
 	    $content = View::render('operador/modules/frequencias/form',[
@@ -363,7 +365,7 @@ class Frequencia extends Page{
 	    //Obtem os pacientes
 	    $results = EntityAluno::getAlunos($where, $order, $obPagination->getLimit());
 	    
-	    var_dump($results);exit;
+	    
 	    
 	    //Renderiza
 	    while ($obAluno = $results -> fetchObject(EntityAluno::class)) {

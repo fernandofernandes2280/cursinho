@@ -170,6 +170,8 @@ class Login extends Page{
 		SessionVisitorLogin::logout();
 		SessionAdminLogin::logout();
 		SessionOperadorLogin::logout();
+		//ENCERRA SESSAO ID DA AULA
+		unset($_SESSION['idAula']);
 		//redireciona o usuario para a tela de login
 		$request->getRouter()->redirect('/');
 		
