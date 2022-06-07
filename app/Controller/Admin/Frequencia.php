@@ -239,7 +239,7 @@ class Frequencia extends Page{
 	        'escondeBotaoConfirmar' => '',
 	        'statusMessage' => self::getStatus($request),
 	        'status' =>EntityStatus::getStatusById(EntityAluno::getAlunoById($idAluno)->status)->nome,
-	        'foto' => $obAluno->foto,
+	        'foto' => $obAluno->foto.'?var='.rand(),
 	        'idAula' => $obAula->id
 	        
 	    ]);
@@ -377,7 +377,8 @@ class Frequencia extends Page{
 	            'idAluno' => $obAluno->id,
 	            'matricula' => $obAluno->matricula,
 	            'turma' =>EntityTurma::getTurmaById($obAluno->turma)->nome,
-	            'idAula' => $idAula
+	            'idAula' => $idAula,
+	            'foto' => $obAluno->foto.'?var='.rand(),
 	        ]);
 	        
 	    }

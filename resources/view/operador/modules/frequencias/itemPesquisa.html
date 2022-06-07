@@ -1,6 +1,15 @@
 <tr>
 	<td class="text-center" >{{matricula}}</td>					
-	<td><a href="{{URL}}/operador/alunos/{{idAluno}}/edit" rel="tooltip" title="Visualizar">{{nome}}</a></td>
+	<td>
+		<div class="d-flex px-2 py-1">
+		  <div>
+		    <img style="background-color: #fff; border-radius:10px;" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="avatar avatar-sm me-3 border-radius-lg" alt="foto">
+		  </div>
+		  <div class="d-flex flex-column justify-content-center">
+		    <h7 class="mb-0 text-sm px-2"><a href="{{URL}}/operador/alunos/{{id}}/edit" rel="tooltip" title="Visualizar">{{nome}}</a></h7>
+		  </div>
+		</div>
+	</td>
 	<td class="text-center" ><span>{{turma}}</span></td>
 	<td class="text-center" ><span>{{cpf}}</span></td>
 	<td class="text-center" ><span>{{status}}</span></td>

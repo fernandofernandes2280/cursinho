@@ -377,7 +377,8 @@ class Frequencia extends Page{
 	            'idAluno' => $obAluno->id,
 	            'matricula' => $obAluno->matricula,
 	            'turma' =>EntityTurma::getTurmaById($obAluno->turma)->nome,
-	            'idAula' => $idAula
+	            'idAula' => $idAula,
+	            'foto' => $obAluno->foto.'?var='.rand(),
 	        ]);
 	        
 	    }
