@@ -509,14 +509,15 @@ class Upload{
 	        //verifica se o arquivo existe e se o tipo é permitido
 	        if(empty($file['type']) || !in_array($file['type'], $upload::isAllowed())  ){
 	            
-	            
+	         //   var_dump($file);exit;
 	            if($file['type'] = 'image/webp'){
 	                
 	                // Load the WebP file
-	                $im = imagecreatefromwebp(__DIR__.'files/fotos/example.webp');
+	                $im = imagecreatefromwebp($file['tmp_name']);
 	                
+	                $nome = __DIR__.'/files/fotos/'.$obAluno->matricula.str_replace(' ', '',$obAluno->nome).'.png';
 	                // Convert it to a jpeg file with 100% quality
-	                imagejpeg($im, $obAluno->matricula, str_replace(' ', '',$obAluno->nome), '.png', 100);
+	                imagejpeg($im,$nome,100);
 	                imagedestroy($im);
 	                
 	            }
