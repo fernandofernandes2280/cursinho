@@ -18,7 +18,7 @@ class Image extends Uploader
         "image/jpeg",
         "image/png",
         "image/gif",
-       
+        
     ];
 
     /**

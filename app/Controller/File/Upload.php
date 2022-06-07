@@ -519,6 +519,13 @@ class Upload{
 	                // Convert it to a jpeg file with 100% quality
 	                imagejpeg($im,$nome,100);
 	                imagedestroy($im);
+	                $img = new Resize();
+	                $config = array();
+	                $config['source_image'] = $nome;
+	                $config['width'] = 195;
+	                $config['height'] = 230;
+	                $img->initialize($config);
+	                $img->crop();
 	                
 	            }
 	            
