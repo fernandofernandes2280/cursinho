@@ -509,7 +509,9 @@ class Upload{
 	        //verifica se o arquivo existe e se o tipo é permitido
 	        if(empty($file['type']) || !in_array($file['type'], $upload::isAllowed())  ){
 	            
-	         //   var_dump($file);exit;
+	            
+	            if(!empty($file['type'])){
+	            
 	            if($file['type'] = 'image/webp'){
 	                
 	                // Load the WebP file
@@ -526,8 +528,13 @@ class Upload{
 	                $config['height'] = 230;
 	                $img->initialize($config);
 	                $img->crop();
+	                //salva o nome do arquivo no banco
+	                $obAluno->foto = $obAluno->matricula.str_replace(' ', '',$obAluno->nome).'.png';
+	                $obAluno->Atualizar();
 	                
 	            }
+	           
+	         }
 	            
 	            //$request->getRouter()->redirect('/admin/pacientes');
 	            
