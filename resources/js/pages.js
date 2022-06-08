@@ -277,6 +277,32 @@ $('#matricula').bind('keyup', function (event) {
 	
 	
 
+	//coloca mascará no campo matrícula
+$('.matricula').bind('keyup', function (event) {
+            if (!(event.which > 47 && event.which < 58)) {
+                  
+		var conteudo = $(this).val();
+		
+	
+		function mascara(o,f){
+		    v_obj=o
+		    v_fun=f
+		    setTimeout("execmascara()",1)
+		}
+		function execmascara(){
+		    v_obj.value=v_fun(v_obj.value)
+		}
+		function mtel(v){
+		    v=v.replace(/\D/g,"");             //Remove tudo o que não é dígito
+		//    v=v.replace(/^(\d{2})(\d)/g,"(96) $1$2"); //Coloca (96) no início do número
+		    v=v.replace(/(\d)(\d{1})$/,"$1-$2");    //Coloca hífen entre o quarto e o quinto dígitos
+		    return v;
+		}
+		$(this).val(mtel(conteudo));
+
+                }
+            });
+
 //Busca o CEP via WEBSErvice
             function limpa_formulário_cep() {
                 // Limpa valores do formulário de cep.
