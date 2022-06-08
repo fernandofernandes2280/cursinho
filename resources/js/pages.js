@@ -75,10 +75,10 @@ $( document ).ready(function() {
        $(".mascara-data").mask("99/99/9999");
        $(".mascara-cpf").mask("999.999.999-99");
        $(".mascara-cnpj").mask("99.999.999/9999-99");
-       $(".mascara-telefone").mask("(96)9999-99999");
+       $(".mascara-telefone1").mask("(96)9999-99999");
        $(".mascara-cep").mask("99.999-999");
 
-       $('.mascara-telefone').focusout(function(){
+       $('.mascara-telefone1').focusout(function(){
         var phone, element;
         element = $(this);
         element.unmask();
