@@ -465,6 +465,7 @@ class Aluno extends Page{
 	    $obAluno->estadoCivil = $postVars['estadoCivil'] ?? $obAluno->estadoCivil;
 	    $obAluno->status = $postVars['status'] ?? $obAluno->status;
 	    $obAluno->obs = $postVars['obs'] ?? $obAluno->obs;
+	    $obAluno->sexo = $postVars['sexo'] ?? $obAluno->sexo;
 	    //recebe apenas os números do cpf
 	    $obAluno->cpf = $validaCpf->getValue() ?? $obAluno->cpf;
 	    $obAluno->turma = $postVars['turma'] ?? $obAluno->turma;
