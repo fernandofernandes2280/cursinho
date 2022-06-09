@@ -365,7 +365,7 @@ class Aluno extends Page{
 	    }
 	    
 	    $obAluno->sexo == 'MAS' ? $selectedSexoM = 'selected' : $selectedSexoM = '';
-	    $obAluno->sexo == 'FEM' ? $selectedSexoF = '' : $selectedSexoF = 'selected';
+	    $obAluno->sexo == 'FEM' ? $selectedSexoF = 'selected' : $selectedSexoF = '';
 	    
 	    //Conteúdo do Formulário
 	    $content = View::render('admin/modules/alunos/form',[
@@ -444,7 +444,7 @@ class Aluno extends Page{
 	        
 	    }
 	    
-	    
+	 
 	    //Atualiza a instância
 	    $obAluno->nome = Funcoes::convertePriMaiuscula($postVars['nome']) ?? $obAluno->nome;
 	    $obAluno->cep = $postVars['cep'] ?? $obAluno->cep;

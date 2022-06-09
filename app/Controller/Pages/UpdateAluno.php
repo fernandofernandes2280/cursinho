@@ -69,7 +69,7 @@ class UpdateAluno extends Page{
         $obAluno = EntityAluno::getAlunoById($idAluno);
         
         $obAluno->sexo == 'MAS' ? $selectedSexoM = 'selected' : $selectedSexoM = '';
-        $obAluno->sexo == 'FEM' ? $selectedSexoF = '' : $selectedSexoF = 'selected';
+        $obAluno->sexo == 'FEM' ? $selectedSexoF = 'selected' : $selectedSexoF = '';
         
 	    $content = View::render('pages/updateAluno/form',[
 	        'title' => 'Curso Prepara Santana - Atualização Cadastral do Aluno',

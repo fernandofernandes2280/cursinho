@@ -332,7 +332,10 @@ class Aluno extends Page{
 	    if(!$obAluno instanceof EntityAluno){
 	        $request->getRouter()->redirect('/operador/alunos');
 	    }
-	    $reload = rand();
+	    
+	    $obAluno->sexo == 'MAS' ? $selectedSexoM = 'selected' : $selectedSexoM = '';
+	    $obAluno->sexo == 'FEM' ? $selectedSexoF = 'selected' : $selectedSexoF = '';
+	    
 	    //Conteúdo do Formulário
 	    $content = View::render('operador/modules/alunos/form',[
 	        'matricula'=>$obAluno->matricula,
@@ -356,11 +359,13 @@ class Aluno extends Page{
 	        'dataCad' => date('Y-m-d', strtotime($obAluno->dataCad)),
 	        'optionTurma' => EntityTurma::getSelectTurmas($obAluno->turma),
 	        'optionStatus' => EntityStatus::getSelectStatus($obAluno->status),
-	        'foto' => $obAluno->foto.'?var='.$reload,
+	        'foto' => $obAluno->foto.'?var='.rand(),
 	        'ponteiro' => '',
 	        'idAula' => @$idAula,
 	        'hideBtnFreq' => $hideBtnFreq,
 	        'idAluno' => $obAluno->id,
+	        'selectedSexoM' => $selectedSexoM  ,
+	        'selectedSexoF' => $selectedSexoF
 	       
 	    ]);
 	    
@@ -430,6 +435,7 @@ class Aluno extends Page{
 	    $obAluno->estadoCivil = $postVars['estadoCivil'] ?? $obAluno->estadoCivil;
 	    $obAluno->status = $postVars['status'] ?? $obAluno->status;
 	    $obAluno->obs = $postVars['obs'] ?? $obAluno->obs;
+	    $obAluno->sexo = $postVars['sexo'] ?? $obAluno->sexo;
 	    //recebe apenas os números do cpf
 	    $obAluno->cpf = $validaCpf->getValue() ?? $obAluno->cpf;
 	    $obAluno->turma = $postVars['turma'] ?? $obAluno->turma;
