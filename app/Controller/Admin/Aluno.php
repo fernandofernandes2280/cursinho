@@ -363,7 +363,10 @@ class Aluno extends Page{
 	    if(!$obAluno instanceof EntityAluno){
 	        $request->getRouter()->redirect('/admin/alunos');
 	    }
-	    $reload = rand();
+	    
+	    $obAluno->sexo == 'MAS' ? $selectedSexoM = 'selected' : $selectedSexoM = '';
+	    $obAluno->sexo == 'FEM' ? $selectedSexoF = '' : $selectedSexoF = 'selected';
+	    
 	    //Conteúdo do Formulário
 	    $content = View::render('admin/modules/alunos/form',[
 	        'matricula'=>$obAluno->matricula,
@@ -387,12 +390,13 @@ class Aluno extends Page{
 	        'dataCad' => date('Y-m-d', strtotime($obAluno->dataCad)),
 	        'optionTurma' => EntityTurma::getSelectTurmas($obAluno->turma),
 	        'optionStatus' => EntityStatus::getSelectStatus($obAluno->status),
-	        'foto' => $obAluno->foto.'?var='.$reload,
+	        'foto' => $obAluno->foto.'?var='.rand(),
 	        'ponteiro' => '',
 	        'idAula' => @$idAula,
 	        'hideBtnFreq' => $hideBtnFreq,
 	        'idAluno' => $obAluno->id,
-	       
+	        'selectedSexoM' => $selectedSexoM  ,
+	        'selectedSexoF' => $selectedSexoF
 	    ]);
 	    
 	    //Retorna a página completa
