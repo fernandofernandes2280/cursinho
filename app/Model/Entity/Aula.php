@@ -105,7 +105,10 @@ class Aula {
 		return (new Database('aulas'))->select($where,$order,$limit,$fields);
 	}
 	
-	
+	//Método responsavel por retornar ALUNOS COM FALTAS PRA SEREM INATIVADOS
+	public static function getAulasInativaAluno($where = null, $order = null, $limit = null, $fields = '*',$table) {
+	    return (new Database($table))->select($where,$order,$limit,$fields);
+	}
 	
 	
 	//*****************STATUS DA AULA **********************************
