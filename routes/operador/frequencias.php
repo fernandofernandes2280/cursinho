@@ -100,7 +100,18 @@ $obRouter->post('/operador/frequencias/{id}/edit',[
     }
     ]);
 
-
+//ROTA DE FREQUENCIA GERAL PELO QRCODE NO CELULAR USANDO A CÂMERA TRASEIRA
+$obRouter->get('/operador/frequencias/{id}/edit/mobile',[
+    
+    'middlewares' => [
+        'require-operador-login'
+    ],
+    
+    
+    function ($request,$id){
+        return new Response(200, Operador\Frequencia::getFrequenciaGeralMobile($request,$id));
+    }
+    ]);
 
 
 
