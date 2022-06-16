@@ -67,16 +67,16 @@ class Dashboard extends Page{
         $totalAlunos = EntityAluno::getAlunos(null, 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
         $totalAtivos = EntityAluno::getAlunos('status = 1', 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
         $totalInativos = EntityAluno::getAlunos('status = 2', 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
-        $totalManha = EntityAluno::getAlunos('turma = 1', 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
-        $totalNoite = EntityAluno::getAlunos('turma = 3', 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
+        $totalManha = EntityAluno::getAlunos('turma = 1 AND status = 1', 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
+        $totalNoite = EntityAluno::getAlunos('turma = 3 AND status = 1', 'id DESC',null,'COUNT(*) as qtd')->fetchObject()->qtd;
         
         $content = View::render('pages/dashboard',[
             
             'totalAlunos' => $totalAlunos,
             'totalAtivos' => $totalAtivos,
             'totalInativos' => $totalInativos,
-            'totalManha' => $totalManha,
-            'totalNoite' => $totalNoite
+            'totalManha' => $totalManha, //manha ativos
+            'totalNoite' => $totalNoite //noite ativos
         ]);
         
         return parent::getPanelDashboard('Dashboard > Cursinho', $content,'dashboard', self::$hidden);
