@@ -653,9 +653,10 @@ class Aluno extends Page{
 	public static function getCarteiraAluno($request,$id){
 	 
 	    Funcoes::init();
-	    
+	   
 	    if(empty($id)){
-	        //VERIFICA SE O CADASTRO ESTÁ INCOMPLETO 
+	       
+	            //VERIFICA SE O CADASTRO ESTÁ INCOMPLETO 
 	        if(isset($_SESSION['naoCompleto'])) $request->getRouter()->redirect('/aluno');
 	        
 	        if(!isset($_SESSION['idAluno'])) $request->getRouter()->redirect('/aluno');

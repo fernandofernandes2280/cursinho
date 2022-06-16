@@ -146,7 +146,7 @@ class UpdateAluno extends Page{
 	   
 	    unset($_SESSION['idAluno']);
 	    unset($_SESSION['updated']);
-	 
+	    unset($_SESSION['naoCompleto']);
 	    
 	    $content = View::render('pages/updateAluno/index',[
 	        'title' => 'Curso Prepara Santana',
@@ -173,13 +173,15 @@ class UpdateAluno extends Page{
 	    //busca usuário pelo CPF sem a maskara
 	    $obUser = EntityAluno::getAlunoByCpf($validaCpf->getValue());
 	    
-	    
+	   
 	    //VERIFICA SE O ALUNO EXISTE
 	    if(!$obUser instanceof EntityAluno){
 	        Funcoes::init();
 	        $_SESSION['statusMessage'] = 'unknown';
 	        $request->getRouter()->redirect('/aluno');
 	    }
+	   
+	    
 	    
 	    //VERIFICA SE O ALUNO ESTÁ INATIVO
 	    if($obUser->status == '2'){
@@ -187,8 +189,7 @@ class UpdateAluno extends Page{
 	        $_SESSION['statusMessage'] = 'inactive';
 	        $request->getRouter()->redirect('/aluno');
 	    }
-	    
-	    
+	   
 	  
     	    //VERIFICA SE O ALUNO JÁ COMPLETOU O SEU CADASTRO
     	    if(empty($obUser->mae)){
@@ -199,10 +200,11 @@ class UpdateAluno extends Page{
     	            $_SESSION['naoCompleto'] = true;
     	            $request->getRouter()->redirect('/aluno/update');
     	    }
-	    
+    
 	       //SE JA TIVER ATUALIZADO, REDIRECIONA PARA A CARTEIRA
 	        Funcoes::init();
 	        $_SESSION['idAluno'] = $obUser->id;
+	        	        
 	        $request->getRouter()->redirect('/aluno/carteira');
 	    
 	    
