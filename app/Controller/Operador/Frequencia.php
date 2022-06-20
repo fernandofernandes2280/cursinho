@@ -496,5 +496,31 @@ class Frequencia extends Page{
 	    return parent::getPage('Frêquencias > Cursinho', $content,'frequencias', 'hidden');
 	}
 	
+	//Método RESPONSÁVEL POR REATIVAR O ALUNO NA FREQUÊNCIA
+	public static function setFrequenciaReactiveAluno($request,$id, $idMatricula){
+	    
+	    //BUSCA O ALUNO E O REATIVA
+	    $aluno = EntityAluno::getAlunoByMatricula($idMatricula);
+	    $aluno -> status = 1;
+	    $aluno -> atualizar();
+	    
+	    //GERA NOVAMENTE A FREQUENCIA GERAL DESKTOP
+	    $obAula = EntityAula::getAulaById($id);
+	    
+	    Funcoes::init();
+	    $_SESSION['idAula'] = $id;
+	    $content = View::render('admin/modules/frequencias/geral/index',[
+	        
+	        'title'=> 'Frequência Geral',
+	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
+	        'idAula' => $obAula->id
+	        
+	    ]);
+	    
+	    //Retorna a página completa
+	    return parent::getPage('Frêquencias > Cursinho', $content,'frequencias', 'hidden');
+	}
+	
 }
+
 

@@ -392,30 +392,31 @@ body{
 		
 			<div class="row divMsgPresenca">
 			  <div class="col-md-12 alert alert-danger text-center" >
-				  <h3>Aluno Inativo! Procure a Coordenação.</h3>
+				  <h3>Aluno Inativo!<br>
+				  Deseja reativá-lo?
+				  </h3>
+				  	<a href="" id="meu-link">
+						<button type="button" class="btn btn-success btn-round btn-sm h3 " rel="tooltip" title="Ativar">
+							<h4>SIM</h4>
+						</button>
+					</a>
+					<a href="javascript:location.reload()">
+						<button type="button" class="btn btn-warning btn-round btn-sm h3 " rel="tooltip" title="Ativar">
+							<h4>NÃO</h4>
+						</button>
+					</a>
 				</div>
 			</div>
-			<div class="row justify-content-md-center mt-2">
-			  	<div class="col-md-3 text-center">
-					<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
-				</div>
-			</div>
+			
 		</section>	                            
 	                            
 	                             `;
 	                             
 	                             document.getElementById("divMatricula").innerHTML = data.matricula;
 	                             document.getElementById("divNome").innerHTML = data.nome;
-	                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
 	                             
-	                              //função que aguarda 3sec antes de executar 
-	                             setTimeout(function(){
-	                             		//recarrega a página	
-									 	location.reload();
-									}, vartime);
-								//inicia função contagem regressiva
-								  start();	
-
+	                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
+	                             $("#meu-link").attr("href","{{URL}}/admin/frequencias/{{idAula}}/reactive/"+data.matricula);
 								}
 							
 							
