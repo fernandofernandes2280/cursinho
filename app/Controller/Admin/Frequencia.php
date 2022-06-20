@@ -187,7 +187,7 @@ class Frequencia extends Page{
 	
 	//Método RESPONSÁVEL POR REATIVAR O ALUNO NA FREQUÊNCIA
 	public static function setFrequenciaReactiveAluno($request,$id, $idMatricula){
-	    
+	  
 	    //BUSCA O ALUNO E O REATIVA
 	    $aluno = EntityAluno::getAlunoByMatricula($idMatricula);
 	    $aluno -> status = 1;
