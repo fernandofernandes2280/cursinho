@@ -185,7 +185,7 @@ class Frequencia extends Page{
 	}
 	
 	
-	//Método RESPONSÁVEL POR REATIVAR O ALUNO NA FREQUÊNCIA
+	//Método RESPONSÁVEL POR REATIVAR O ALUNO NA FREQUÊNCIA DESKTOP
 	public static function setFrequenciaReactiveAluno($request,$id, $idMatricula){
 	  
 	    //BUSCA O ALUNO E O REATIVA
@@ -210,6 +210,31 @@ class Frequencia extends Page{
 	    return parent::getPage('Frêquencias > Cursinho', $content,'frequencias', 'hidden');
 	}
 	
+	//Método RESPONSÁVEL POR REATIVAR O ALUNO NA FREQUÊNCIA MOBILE
+	public static function setFrequenciaReactiveMobileAluno($request,$id, $idMatricula){
+	    
+	    //BUSCA O ALUNO E O REATIVA
+	    $aluno = EntityAluno::getAlunoByMatricula($idMatricula);
+	    $aluno -> status = 1;
+	    $aluno -> atualizar();
+	    
+	    //GERA NOVAMENTE A FREQUENCIA GERAL DESKTOP
+	    $obAula = EntityAula::getAulaById($id);
+	    
+	    Funcoes::init();
+	    $_SESSION['idAula'] = $id;
+	    //Conteúdo da Home
+	    $content = View::render('admin/modules/frequencias/geral/indexMobile',[
+	        
+	        'title'=> 'Frequência Geral',
+	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
+	        'idAula' => $obAula->id
+	        
+	    ]);
+	    
+	    //Retorna a página completa
+	    return parent::getPage('Frêquencias > Cursinho', $content,'frequencias', 'hidden');
+	}
 	
 	//Método responsavel por renderizar a view de Nova Aula
 	public static function getFrequenciaEditIndividual($request,$id){

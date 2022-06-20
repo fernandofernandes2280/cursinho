@@ -113,7 +113,7 @@ $obRouter->get('/operador/frequencias/{id}/edit/mobile',[
     }
     ]);
 
-//ROTA de REATIVAÇÃO DO ALUNO NA FREQUÊNCIA
+//ROTA de REATIVAÇÃO DO ALUNO NA FREQUÊNCIA DESKTOP
 $obRouter->get('/operador/frequencias/{id}/reactive/{idMatricula}',[
     
     'middlewares' => [
@@ -126,5 +126,16 @@ $obRouter->get('/operador/frequencias/{id}/reactive/{idMatricula}',[
     }
     ]);
 
-
+//ROTA de REATIVAÇÃO DO ALUNO NA FREQUÊNCIA MOBILE
+$obRouter->get('/operador/frequencias/{id}/reactiveMobile/{idMatricula}',[
+    
+    'middlewares' => [
+        'require-operador-login'
+    ],
+    
+    
+    function ($request,$id,$idMatricula){
+        return new Response(200, Operador\Frequencia::setFrequenciaReactiveMobileAluno($request,$id,$idMatricula));
+    }
+    ]);
 

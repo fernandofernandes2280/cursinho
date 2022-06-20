@@ -116,7 +116,7 @@ $obRouter->get('/admin/frequencias/{id}/edit/mobile',[
     ]);
 
 
-//ROTA de REATIVAÇÃO DO ALUNO NA FREQUÊNCIA
+//ROTA de REATIVAÇÃO DO ALUNO NA FREQUÊNCIA DESKTOP
 $obRouter->get('/admin/frequencias/{id}/reactive/{idMatricula}',[
     
     'middlewares' => [
@@ -129,5 +129,16 @@ $obRouter->get('/admin/frequencias/{id}/reactive/{idMatricula}',[
     }
     ]);
 
-
+//ROTA de REATIVAÇÃO DO ALUNO NA FREQUÊNCIA MOBILE
+$obRouter->get('/admin/frequencias/{id}/reactiveMobile/{idMatricula}',[
+    
+    'middlewares' => [
+        'require-admin-login'
+    ],
+    
+    
+    function ($request,$id,$idMatricula){
+        return new Response(200, Admin\Frequencia::setFrequenciaReactiveMobileAluno($request,$id,$idMatricula));
+    }
+    ]);
 
