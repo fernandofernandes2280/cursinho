@@ -529,7 +529,7 @@ class Frequencia extends Page{
 	    $aluno -> status = 1;
 	    $aluno -> atualizar();
 	    
-	    //GERA NOVAMENTE A FREQUENCIA GERAL DESKTOP
+	    //GERA NOVAMENTE A FREQUENCIA GERAL DESKTOPE
 	    $obAula = EntityAula::getAulaById($id);
 	    
 	    Funcoes::init();
