@@ -135,7 +135,12 @@ class Aula extends Page{
 			    'presencas' => EntityFrequencia::getFrequencias('idAula = '.$obAula->id.' AND status = "P"', null,null,'COUNT(*) as qtd')->fetchObject()->qtd,
 			    'faltas' => EntityFrequencia::getFrequencias('idAula = '.$obAula->id.' AND status = "F"', null,null,'COUNT(*) as qtd')->fetchObject()->qtd,
 			    'cor' => $cor,
-			    'autor' => EntityUser::getUserById($obAula->autor)->nome
+			    'autor' => EntityUser::getUserById($obAula->autor)->nome,
+			    'professor1' => EntityProfessor::getProfessorById($obAula->professor1)->nome,
+			    'disciplina1' => EntityDisciplina::getDisciplinaById($obAula->disciplina1)->nome,
+			    'professor2' => EntityProfessor::getProfessorById($obAula->professor2)->nome,
+			    'disciplina2' => EntityDisciplina::getDisciplinaById($obAula->disciplina2)->nome,
+			    
 			]);
 		}
 		//Retorna as agendas
