@@ -1,0 +1,350 @@
+<style>
+body{
+  overflow: hidden;
+}
+</style>
+<style>
+    #reader {
+        width: 440px;
+        height: 330px;
+    }
+    .colfotoFreqGeral {
+    width: 14%;
+    margin-right: 2%;
+    }
+    .title{
+    position: relative;
+    }
+    .btnVoltar{
+    position: absolute;
+    bottom:0;
+    right:0;
+    padding-top: 1px;
+    }
+    @media(max-width: 576px) {
+        #reader {
+            width: 280px;
+            height: 240px;
+        }
+    
+	    .colfotoFreqGeral {
+		    width: 30%;
+		    margin-left: 2%;
+	    }
+	     .divDados {
+		    width: 60%;
+		    margin-left: 2%;
+	    }
+	      .divMsgPresenca {
+		    width: 90%;
+		    margin-left: 2%;
+	    }
+	   
+	    
+    
+    }
+    
+
+</style>
+
+<br>
+<div class="container">
+	
+	<div class="row mb-4 justify-content-md-center" >
+		
+		<div class="col-md-7 bg-warning text-center pt-1 pb-1 title">
+			
+	 		<span class="h2">{{aula}}</span>
+	 		<a href="javascript:history.back()" class="btnVoltar badge badge-sm bg-gradient-success pt-1">Voltar</a>
+		</div>
+	</div>
+
+
+<div class="row">
+    <div class="col-md-12 text-center">
+        <button id="start" hidden>Start Scanning</button>
+        <div class="empty"></div>
+        <div id="reader" style="display: inline-block;"></div>
+        <div class="empty"></div>
+        <div class="row justify-content-md-center ">
+        	
+        </div>
+    </div>
+</div>
+
+  		
+
+
+
+<div class="text-center" id="scanned-result"></div>
+
+
+
+</div>
+ 
+ 
+
+
+
+
+ 		
+ 		
+
+  <hr>
+  <div class="row text-center">
+  	<div class="col-md-12">
+  		<span class="text-light h3">Aproxime seu QRCODE da câmera.</span>
+  		 <p class="text-xs text-secondary mb-0">Desenvolvido por: Fernando (96)99115-8611</p>
+  	</div>
+  </div>
+  
+
+
+<script>
+
+	var count = new Number();
+	var count = 4;  
+	var numero = Math.random();
+	// variável para o contador
+	var contador;
+	var tempo = document.getElementById("tempo");
+	function start(){
+	  if((count - 1) >= 0){
+	    count = count - 1;
+	     $("#timer").attr("value","Aguarde: "+count);
+	    contador = setTimeout(start,1000);
+	   
+	  }
+	}
+
+
+
+    var scanning = false;
+    var html5qrcode = new Html5Qrcode("reader", true);
+    function docReady(fn) {
+        // see if DOM is already available
+        if (document.readyState === "complete" || document.readyState === "interactive") {
+            // call on next available tick
+            setTimeout(fn, 1);
+        } else {
+            document.addEventListener("DOMContentLoaded", fn);
+        }
+    }
+    function startScanning(facingMode) {
+        console.log(facingMode)
+        var results = document.getElementById('scanned-result');
+        var lastMessage;
+        var codesFound = 0;
+        function onScanSuccess(qrCodeMessage) {
+            if (lastMessage !== qrCodeMessage) {
+                lastMessage = qrCodeMessage;
+                ++codesFound;
+              //  results.innerHTML += `<div>[${codesFound}] - ${qrCodeMessage}</div>`;
+
+
+                var dataString = { send : true , matricula : qrCodeMessage, idAula : {{idAula}} };
+				var vartime = 3000;
+                $.ajax({
+
+                    type: "POST",
+                    url: "{{URL}}/app/Controller/Ajax/authenticateAluno.php",
+                    data: dataString,
+                    dataType: "json",
+                    cache : false,
+                    success: function(data){
+							
+								if(data.successVinculo){
+							
+									//aluno já confirmou sua presença
+										if(data.successPresenca){
+
+												 results.innerHTML += `
+					                            
+											    <section class="sessaoLaranja">
+													<div class="row mb-3">
+													  <div class="colfotoFreqGeral">
+													  	<img style="background-color:#ffff" id="foto" class="img-fluid" alt="Foto" src="">
+													  </div>
+													  <div class="col-md-10 alert alert-warning divDados">
+													  	<p class="h4 text-left" id="divMatricula"></p>
+													  	<p class="h4 text-left" id="divNome"></p>
+													  	
+													  </div>
+													 </div>
+												
+													<div class="row divMsgPresenca">
+													  <div class="col-md-12 alert alert-warning text-center" >
+														  <h3>Presença Já Registrada!</h3>
+														</div>
+													</div>
+													
+													<div class="row justify-content-md-center mt-2">
+													  	<div class="col-md-3 text-center">
+															<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+														</div>
+													</div>
+												</section>
+					                            
+					                            
+					                             `;
+					                             document.getElementById("divMatricula").innerHTML = data.matricula;
+					                             document.getElementById("divNome").innerHTML = data.nome;
+					                             $("#reader").attr("hidden",true);
+					                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
+					                             
+											
+												 //função que aguarda 5sec antes de executar 
+					                             setTimeout(function(){
+					                             		//recarrega a página	
+													 	location.reload();
+													}, vartime);
+												//inicia função contagem regressiva
+												  start();											
+										
+										
+										}else{
+												//CONFIRMA PRESENÇA
+												 results.innerHTML += `
+													<section class="sessaoVerde">
+														<div class="row mb-3">
+														  <div class="colfotoFreqGeral">
+														  	<img style="background-color:#ffff" id="foto" class="img-fluid" alt="Foto" src="">
+														  </div>
+														  <div class="col-md-10 alert alert-success divDados">
+														  	<p class="h4 text-left" id="divMatricula"></p>
+														  	<p class="h4 text-left" id="divNome"></p>
+														  	
+														  </div>
+														 </div>
+													
+														<div class="row divMsgPresenca">
+														  <div class="col-md-12 alert alert-success text-center" >
+															  <h3>Presença Registrada!</h3>
+															</div>
+														</div>
+														
+														<div class="row justify-content-md-center mt-2">
+														  	<div class="col-md-3 text-center">
+																<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+															</div>
+														</div>
+													</section>					                            
+																                            
+					                             `;
+					                            
+					                             document.getElementById("divMatricula").innerHTML = data.matricula;
+					                             document.getElementById("divNome").innerHTML = data.nome;
+					                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
+					                             $("#reader").attr("hidden",true);
+											
+												 //função que aguarda 3sec antes de executar 
+					                             setTimeout(function(){
+					                             		//recarrega a página	
+													 	location.reload();
+													}, vartime);
+												//inicia função contagem regressiva
+												  start();
+										
+										
+										}
+							
+							
+							
+							}else{
+							
+											//CONFIRMA PRESENÇA DE ALUNO QUE NÃO ESTÁ NA FREQUÊNCIA. SE ESTIVER INATIVO, O MESMO É REATIVADO
+												 results.innerHTML += `
+													<section class="sessaoVerde">
+														<div class="row mb-3">
+														  <div class="colfotoFreqGeral">
+														  	<img style="background-color:#ffff" id="foto" class="img-fluid" alt="Foto" src="">
+														  </div>
+														  <div class="col-md-10 alert alert-success divDados">
+														  	<p class="h4 text-left" id="divMatricula"></p>
+														  	<p class="h4 text-left" id="divNome"></p>
+														  	
+														  </div>
+														 </div>
+													
+														<div class="row divMsgPresenca">
+														  <div class="col-md-12 alert alert-success text-center" >
+															  <h3>Presença Registrada!</h3>
+															</div>
+														</div>
+														
+														<div class="row justify-content-md-center mt-2">
+														  	<div class="col-md-3 text-center">
+																<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+															</div>
+														</div>
+													</section>					                            
+																                            
+					                             `;
+					                            
+					                             document.getElementById("divMatricula").innerHTML = data.matricula;
+					                             document.getElementById("divNome").innerHTML = data.nome;
+					                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
+					                             $("#reader").attr("hidden",true);
+											
+												 //função que aguarda 3sec antes de executar 
+					                             setTimeout(function(){
+					                             		//recarrega a página	
+													 	location.reload();
+													}, vartime);
+												//inicia função contagem regressiva
+												  start();
+							
+							}
+
+
+                    } ,error: function(xhr, status, error) {
+                        alert(error);
+                    },
+                });
+
+
+            }
+        }
+        //usa camera frontal
+        // return html5qrcode.start({ facingMode: facingMode },{ fps: 10, qrbox: 250 },onScanSuccess);
+        
+        //usar câmera traseira
+         return html5qrcode.start({ facingMode: { exact: "environment"} },{ fps: 10 },onScanSuccess);
+        
+    	
+    	
+    }
+    function stopScanning() {
+        return html5qrcode.stop();
+    }
+    docReady(function() {
+        var button = document.getElementById('start');
+        var facingModeSelect = 'user';
+        if (!scanning) {
+            startScanning(facingModeSelect)
+                .then(_ => {
+                    scanning = true;
+                    button.innerHTML = "Stop Scanning";
+
+                })
+                .catch(err => {
+                    alert(err);
+                })
+        } else {
+            stopScanning()
+                .then(_ => {
+                    scanning = false;
+                    button.innerHTML = "Start Scanning";
+                })
+                .catch(err => {
+                    alert(err);
+                })
+        }
+    });
+    
+</script> 		
+
+
+
+
+

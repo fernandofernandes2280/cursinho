@@ -498,7 +498,7 @@ class Frequencia extends Page{
 //FREQUENCIA GERAL
 	
 	
-	//Método responsavel por renderizar a view de Nova Aula
+	////MÉTODO RESPONSÁVEL POR RENDERIZAR FREQUENCIA GERAL COM QRCODE NO DESKTOP
 	public static function getFrequenciaGeral($request){
 	    //Post vars
 	    $postVars = $request->getPostVars();
@@ -511,7 +511,7 @@ class Frequencia extends Page{
 	    }
 	    
 			//Conteúdo da Home
-			$content = View::render('admin/modules/frequencias/geral/index',[
+			$content = View::render('/pages/frequenciaqrcode/index',[
 			  
 			   'title'=> 'Frequência Geral',
 			    'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
@@ -536,7 +536,7 @@ class Frequencia extends Page{
 	    }
 	    
 	    //Conteúdo da Home
-	    $content = View::render('admin/modules/frequencias/geral/indexMobile',[
+	    $content = View::render('/pages/frequenciaqrcode/indexMobile',[
 	        
 	        'title'=> 'Frequência Geral',
 	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
