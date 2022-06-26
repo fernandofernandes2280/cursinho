@@ -153,7 +153,33 @@ body{
                     cache : false,
                     success: function(data){
 							
-								if(data.successVinculo){
+							if(!data.successExiste){
+							
+								results.innerHTML += `
+								<section class="sessaoVermelha">
+									<div class="row">
+									  <div class="col-md-12 alert alert-danger text-center divDados">
+									  	<h3>Erro Interno! Tente novamente.</h3>
+									  	
+									  </div>
+									 </div>
+									<div class="row justify-content-md-center mt-2">
+									  	<div class="col-md-3 text-center">
+											<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+										</div>
+									</div>
+								</section>					                             
+					                             
+	                             `;
+								 //função que aguarda 3sec antes de executar 
+	                             setTimeout(function(){
+	                             		//recarrega a página	
+									 	location.reload();
+									}, vartime);
+								//inicia função contagem regressiva
+								  start();	
+							
+							}else if(data.successVinculo){
 							
 									//aluno já confirmou sua presença
 										if(data.successPresenca){
