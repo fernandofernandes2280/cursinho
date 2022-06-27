@@ -129,7 +129,7 @@ class Aula extends Page{
 			$resultados .= View::render('admin/modules/aulas/item',[
 			    
 			    'id' => $obAula->id,
-			    'data' =>  date('d/m/Y', strtotime($obAula->data)).' - '.$obAula->diaSemana,
+			    'data' =>  date('d/m/Y', strtotime($obAula->data)).' ( '.$obAula->diaSemana.' )',
 			    'status' => EntityAula::getStatusAulaById($obAula->status)->nome,
 			    'turma' => EntityTurma::getTurmaById($obAula->turma)->nome,
 			    'presencas' => EntityFrequencia::getFrequencias('idAula = '.$obAula->id.' AND status = "P"', null,null,'COUNT(*) as qtd')->fetchObject()->qtd,
