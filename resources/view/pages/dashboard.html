@@ -7,75 +7,95 @@
             <div class="col-md-12">
             	<div class="row ml-5">
             	 
-			           <div class="col-md-3">
+			           <div class="col-md-5">
 			              <div class="card card-stats">
 			                <div class="card-header card-header-warning card-header-icon">
 			                  <div class="card-icon">
 			                    <i class="material-icons">family_restroom</i>
 			                  </div>
 			              
-			                  <h3 style="margin-top: 60px" class="card-title text-light">{{totalAlunos}}<br>
+			                  <h3 style="margin-top: 60px" class="card-title text-light">
 			                    <small>Alunos</small>
+			                     <div class="table-responsive">
+									  	<table class="table  table-hover mt-3">
+									  		<thead class="text-light text-center">
+									  			<tr >
+									  				<th class="text-light">Ativos</th>
+									  				<th class="text-light">Inativos</th>
+									  				<th class="text-light">Total</th>
+									  			</tr>
+									  		</thead>
+									  		<tbody class="text-center">
+									  			<td class="text-light">{{totalAtivos}}</td>
+									  			<td class="text-light">{{totalInativos}}</td>
+									  			<td class="text-light">{{totalAlunos}}</td>
+									  		</tbody>
+									  	</table>
+									 </div>			 
 			                  </h3>
 			                  
 			                </div>
 			              </div>
 			            </div>
-			            
-						
-			            
-			            <div class="col-md-3">
-			              <div class="card card-stats">
-			                <div class="card-header card-header-info card-header-icon">
-			                  <div class="card-icon">
-			                    <i class="material-icons" style="color:green">star</i>
-			                  </div>
-			                 <h3 style="margin-top: 60px" class="card-title text-light">{{totalAtivos}}<br>
-			                    <small>Ativos</small>
-			                  </h3>
-			                </div>
-			               
-			              </div>
-			            </div>
-			            
-						<div class="col-md-3">
-			              <div class="card card-stats">
-			                <div class="card-header card-header-success card-header-icon">
-			                  <div class="card-icon">
-			                    <i class="material-icons" style="color:red">star</i>
-			                  </div>
-			                  
-			                   <h3 style="margin-top: 60px" class="card-title text-light">{{totalInativos}}<br>
-			                    <small>Inativos</small>
-			                  </h3>
-			                </div>
-			                
-			              </div>
-			            </div>
+
 			         </div>
 			         <div class="row ml-5">   
-						<div class="col-md-3">
+						<div class="col-md-5">
 			              <div class="card card-stats">
 			                <div class="card-header card-header-success card-header-icon">
 			                  <div class="card-icon">
 			                    <i class="material-icons">sunny</i>
 			                  </div>
-			                 <h3 style="margin-top: 60px" class="card-title text-light">{{totalManha}}<br>
+			                 <h3 style="margin-top: 60px" class="card-title text-light">
 			                    <small>Manhã</small>
+									<div class="table-responsive">
+									  	<table class="table  table-hover mt-3">
+									  		<thead class="text-light text-center">
+									  			<tr >
+									  				<th class="text-light">Ativos</th>
+									  				<th class="text-light">Inativos</th>
+									  				<th class="text-light">Total</th>
+									  			</tr>
+									  		</thead>
+									  		<tbody class="text-center">
+									  			<td class="text-light">{{totalManhaAtivos}}</td>
+									  			<td class="text-light">{{totalManhaInativos}}</td>
+									  			<td class="text-light">{{totalManha}}</td>
+									  		</tbody>
+									  	</table>
+									 </div>			                    
+			                    
+			                    
 			                  </h3>
 			                </div>
 			               
 			              </div>
 			            </div>
 			            
-						 <div class="col-md-3">
+						 <div class="col-md-5">
 			              <div class="card card-stats">
 			                <div class="card-header card-header-danger card-header-icon">
 			                  <div class="card-icon">
 			                    <i class="material-icons">dark_mode</i>
 			                  </div>
-			                   <h3 style="margin-top: 60px" class="card-title text-light">{{totalNoite}}<br>
+			                   <h3 style="margin-top: 60px" class="card-title text-light">
 			                    <small>Noite</small>
+			                    <div class="table-responsive">
+									  	<table class="table  table-hover mt-3">
+									  		<thead class="text-light text-center">
+									  			<tr >
+									  				<th class="text-light">Ativos</th>
+									  				<th class="text-light">Inativos</th>
+									  				<th class="text-light">Total</th>
+									  			</tr>
+									  		</thead>
+									  		<tbody class="text-center">
+									  			<td class="text-light">{{totalNoiteAtivos}}</td>
+									  			<td class="text-light">{{totalNoiteInativos}}</td>
+									  			<td class="text-light">{{totalNoite}}</td>
+									  		</tbody>
+									  	</table>
+									 </div>			 
 			                  </h3>
 			                </div>
 			                
