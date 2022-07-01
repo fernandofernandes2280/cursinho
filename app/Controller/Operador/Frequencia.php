@@ -253,11 +253,11 @@ class Frequencia extends Page{
 	//Método responsavel por renderizar a view de Nova Aula
 	public static function getFrequenciaEditIndividualSelectPresenca($request,$id,$idAluno){
 	    
-	    //Verifica se o aluno está inativo
-	    if(EntityAluno::getAlunoById($idAluno)->status == 2){
-	        $request->getRouter()->redirect('/operador/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=errorInativo');
+	    //verifica se a sessao não está ativa
+	    if(session_status() != PHP_SESSION_ACTIVE ){
+	        session_start();
 	    }
-	    
+	    $user = $_SESSION['usuario']['id'];
 	    //obtém a aula
 	    $obAula = EntityAula::getAulaById($id);
 	    //obtem a frequencia
@@ -266,14 +266,14 @@ class Frequencia extends Page{
 	    //REGRA : O aluno pode frequentas as aulas em qualquer dia e turma
 	    
 	        //se nao for, verifica se o aluno é da mesma turma da a aula 
-	        if($obFreq instanceof EntityFrequencia){
-	            if($obFreq->status == 'P'){
-	                $request->getRouter()->redirect('/operador/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=jaconfirmed');
-	            }
-
-	            $obFreq->status = 'P';
-	            $obFreq->autor = 2; //id temporario do usuario logado para testes
-	            $obFreq->atualizar();
+	    if($obFreq instanceof EntityFrequencia){
+	        if($obFreq->status == 'P'){
+	            $request->getRouter()->redirect('/admin/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=jaconfirmed');
+	        }
+	        
+	        $obFreq->status = 'P';
+	        $obFreq->autor = $user; //id temporario do usuario logado para testes
+	        $obFreq->atualizar();
 	        
 	    }else{
 	        //se for sáb ou dom, cria nova instancia de frequencia e registra a presença do aluno
@@ -281,9 +281,17 @@ class Frequencia extends Page{
 	        $frequencia->idAluno = $idAluno;
 	        $frequencia->idAula = $id;
 	        $frequencia->status = 'P';
-	        $frequencia->autor = 3; //id temporario do usuario logado para testes
+	        $frequencia->autor = $user; //id temporario do usuario logado para testes
 	        $frequencia->cadastrar();
+	        
+	        //ATIVA O ALUNO SE ESTIVER INATIVO
+	        $ativaAluno = EntityAluno::getAlunoById($idAluno);
+	        if($ativaAluno->status == 2){
+	            $ativaAluno->status = 1;
+	            $ativaAluno->atualizar();
+	        }
 	    }
+	    
 	    
 	    
 	    

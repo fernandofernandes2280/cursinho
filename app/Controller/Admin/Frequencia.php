@@ -309,6 +309,12 @@ class Frequencia extends Page{
 	 //   if(EntityAluno::getAlunoById($idAluno)->status == 2){
 	  //      $request->getRouter()->redirect('/admin/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=errorInativo');
 	  //  }
+	  
+	    //verifica se a sessao não está ativa
+	    if(session_status() != PHP_SESSION_ACTIVE ){
+	        session_start();
+	    }
+	    $user = $_SESSION['usuario']['id'];
 	    
 	    //obtém a aula
 	    $obAula = EntityAula::getAulaById($id);
@@ -324,7 +330,7 @@ class Frequencia extends Page{
 	            }
 
 	            $obFreq->status = 'P';
-	            $obFreq->autor = 2; //id temporario do usuario logado para testes
+	            $obFreq->autor = $user; //id temporario do usuario logado para testes
 	            $obFreq->atualizar();
 	        
 	    }else{
@@ -333,7 +339,7 @@ class Frequencia extends Page{
 	        $frequencia->idAluno = $idAluno;
 	        $frequencia->idAula = $id;
 	        $frequencia->status = 'P';
-	        $frequencia->autor = 3; //id temporario do usuario logado para testes
+	        $frequencia->autor = $user; //id temporario do usuario logado para testes
 	        $frequencia->cadastrar();
 	        
 	        //ATIVA O ALUNO SE ESTIVER INATIVO
