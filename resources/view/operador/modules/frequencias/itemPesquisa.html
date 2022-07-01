@@ -6,16 +6,16 @@
 		    <img style="background-color: #fff; border-radius:10px;" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="avatar avatar-sm me-3 border-radius-lg" alt="foto">
 		  </div>
 		  <div class="d-flex flex-column justify-content-center">
-		    <h7 class="mb-0 text-sm px-2"><a href="{{URL}}/operador/alunos/{{idAluno}}/edit" rel="tooltip" title="Visualizar">{{nome}}</a></h7>
+		    <h7 class="mb-0 text-sm px-2"><a href="{{URL}}/operador/alunos/{{idAluno}}/edit" rel="tooltip" title="Visualizar"><span class=" badge badge-sm {{cor}} pb-0"><h6>{{nome}}</h6></span></a></h7>
+		  </div>
+		  <div class="d-flex flex-column justify-content-center">
+		    <a href="{{URL}}/operador/frequencias/{{idAula}}/edit/individual/{{idAluno}}" >
+			  <i class="material-icons" style="font-size: 30px;" rel="tooltip" title="Selecionar para Presença">how_to_reg</i>
+		</a>
 		  </div>
 		</div>
+
 	</td>
 	<td class="text-center" ><span>{{turma}}</span></td>
 	<td class="text-center" ><span>{{cpf}}</span></td>
-	<td class="text-center" ><span>{{status}}</span></td>
-	<td class="text-center">
-		<a href="{{URL}}/operador/frequencias/{{idAula}}/edit/individual/{{idAluno}}" >
-			  <i class="material-icons" style="font-size: 30px;" rel="tooltip" title="Selecionar">how_to_reg</i>
-		</a>
-	</td>
 	</tr>

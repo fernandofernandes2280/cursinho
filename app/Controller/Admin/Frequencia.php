@@ -437,6 +437,8 @@ class Frequencia extends Page{
 	        
 	        //View de pacientes
 	        $resultados .= View::render('admin/modules/frequencias/itemPesquisa',[
+	        //muda cor do texto do status para azul(ativo) ou vermelho(inativo)
+	            $obAluno->status == 1 ? $cor = 'bg-gradient-success' : $cor = 'bg-gradient-danger',
 	            
 	            'nome' => $obAluno->nome,
 	            'status' =>EntityStatus::getStatusById($obAluno->status)->nome,
@@ -445,6 +447,7 @@ class Frequencia extends Page{
 	            'matricula' => $obAluno->matricula,
 	            'turma' =>EntityTurma::getTurmaById($obAluno->turma)->nome,
 	            'idAula' => $idAula,
+	            'cor' => $cor,
 	            'foto' => $obAluno->foto.'?var='.rand(),
 	        ]);
 	        
