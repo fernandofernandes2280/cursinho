@@ -157,7 +157,85 @@ body{
                     dataType: "json",
                     cache : false,
                     success: function(data){
-							 
+							
+							
+							if(!data.successExiste){
+							
+								results.innerHTML += `
+								<section class="sessaoVermelha">
+									<div class="row">
+									  <div class="col-md-12 alert alert-danger text-center divDados">
+									  	<h3>ALUNO NÃO ENCONTRADO!</h3>
+									  	
+									  </div>
+									 </div>
+									<div class="row justify-content-md-center mt-2">
+									  	<div class="col-md-3 text-center">
+											<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+										</div>
+									</div>
+								</section>					                             
+					                             
+	                             `;
+	                             $("#reader").attr("hidden",true);
+								 //função que aguarda 3sec antes de executar 
+	                             setTimeout(function(){
+	                             		//recarrega a página	
+									 	location.reload();
+									}, vartime);
+								//inicia função contagem regressiva
+								  start();	
+							
+							}else if(data.successVinculo){
+							
+									//aluno já confirmou sua presença
+										if(data.successPresenca){
+
+												 results.innerHTML += `
+					                            
+											    <section class="sessaoLaranja">
+													<div class="row mb-3">
+													  <div class="colfotoFreqGeral">
+													  	<img style="background-color:#ffff" id="foto" class="img-fluid" alt="Foto" src="">
+													  </div>
+													  <div class="col-md-10 alert alert-warning divDados">
+													  	<p class="h4 text-left" id="divMatricula"></p>
+													  	<p class="h4 text-left" id="divNome"></p>
+													  	
+													  </div>
+													 </div>
+												
+													<div class="row divMsgPresenca">
+													  <div class="col-md-12 alert alert-warning text-center" >
+														  <h3>Presença Já Registrada!</h3>
+														</div>
+													</div>
+													
+													<div class="row justify-content-md-center mt-2">
+													  	<div class="col-md-3 text-center">
+															<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+														</div>
+													</div>
+												</section>
+					                            
+					                            
+					                             `;
+					                             document.getElementById("divMatricula").innerHTML = data.matricula;
+					                             document.getElementById("divNome").innerHTML = data.nome;
+					                             $("#reader").attr("hidden",true);
+					                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
+					                             
+											
+												 //função que aguarda 5sec antes de executar 
+					                             setTimeout(function(){
+					                             		//recarrega a página	
+													 	location.reload();
+													}, vartime);
+												//inicia função contagem regressiva
+												  start();											
+										
+										
+										}else{
 												//CONFIRMA PRESENÇA
 												 results.innerHTML += `
 													<section class="sessaoVerde">
@@ -174,7 +252,7 @@ body{
 													
 														<div class="row divMsgPresenca">
 														  <div class="col-md-12 alert alert-success text-center" >
-															  <p class="h4 text-left" id="divPresenca"></p>
+															  <h3>Presença Registrada!</h3>
 															</div>
 														</div>
 														
@@ -189,8 +267,6 @@ body{
 					                            
 					                             document.getElementById("divMatricula").innerHTML = data.matricula;
 					                             document.getElementById("divNome").innerHTML = data.nome;
-					                             document.getElementById("divPresenca").innerHTML = data.presenca;
-					                            	
 					                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
 					                             $("#reader").attr("hidden",true);
 											
@@ -203,7 +279,57 @@ body{
 												  start();
 										
 										
-										
+										}
+							
+							
+							
+							}else{
+							
+											//CONFIRMA PRESENÇA DE ALUNO QUE NÃO ESTÁ NA FREQUÊNCIA. SE ESTIVER INATIVO, O MESMO É REATIVADO
+												 results.innerHTML += `
+													<section class="sessaoVerde">
+														<div class="row mb-3">
+														  <div class="colfotoFreqGeral">
+														  	<img style="background-color:#ffff" id="foto" class="img-fluid" alt="Foto" src="">
+														  </div>
+														  <div class="col-md-10 alert alert-success divDados">
+														  	<p class="h4 text-left" id="divMatricula"></p>
+														  	<p class="h4 text-left" id="divNome"></p>
+														  	
+														  </div>
+														 </div>
+													
+														<div class="row divMsgPresenca">
+														  <div class="col-md-12 alert alert-success text-center" >
+															  <h3>Presença Registrada!</h3>
+															</div>
+														</div>
+														
+														<div class="row justify-content-md-center mt-2">
+														  	<div class="col-md-3 text-center">
+																<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+															</div>
+														</div>
+													</section>					                            
+																                            
+					                             `;
+					                            
+					                             document.getElementById("divMatricula").innerHTML = data.matricula;
+					                             document.getElementById("divNome").innerHTML = data.nome;
+					                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
+					                             $("#reader").attr("hidden",true);
+											
+												 //função que aguarda 3sec antes de executar 
+					                             setTimeout(function(){
+					                             		//recarrega a página	
+													 	location.reload();
+													}, vartime);
+												//inicia função contagem regressiva
+												  start();
+							
+							}
+
+
 
                     } ,error: function(xhr, status, error) {
                         alert(error);

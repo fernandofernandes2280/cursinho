@@ -306,9 +306,9 @@ class Frequencia extends Page{
 	public static function getFrequenciaEditIndividualSelectPresenca($request,$id,$idAluno){
 	    
 	    //Verifica se o aluno está inativo
-	    if(EntityAluno::getAlunoById($idAluno)->status == 2){
-	        $request->getRouter()->redirect('/admin/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=errorInativo');
-	    }
+	 //   if(EntityAluno::getAlunoById($idAluno)->status == 2){
+	  //      $request->getRouter()->redirect('/admin/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=errorInativo');
+	  //  }
 	    
 	    //obtém a aula
 	    $obAula = EntityAula::getAulaById($id);
@@ -335,6 +335,13 @@ class Frequencia extends Page{
 	        $frequencia->status = 'P';
 	        $frequencia->autor = 3; //id temporario do usuario logado para testes
 	        $frequencia->cadastrar();
+	        
+	        //ATIVA O ALUNO SE ESTIVER INATIVO
+	        $ativaAluno = EntityAluno::getAlunoById($idAluno);
+	        if($ativaAluno->status == 2){
+	            $ativaAluno->status = 1;
+	            $ativaAluno->atualizar();
+	        }
 	    }
 	    
 	    
