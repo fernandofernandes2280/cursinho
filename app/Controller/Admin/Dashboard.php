@@ -35,10 +35,10 @@ class Dashboard extends Page{
         
         //EXECUTA O PROCESSO DE INATIVAR TODO DIA 1
         
-        if($dia == 1){
+        if($dia == 1 || $dia == 15 ){
             
-        $menos15dias = date('Y-m-d',strtotime("-30 day"));
-        $dataAtual = date('Y-m-d');
+        $menos15dias = date('Y-m-d',strtotime("-3 day"));
+        $dataAtual = date('Y-m-d',strtotime("-1 day"));
         
         $where = ' F.status = "F" AND A.data BETWEEN "'.$menos15dias.'" AND "'.$dataAtual.'" GROUP BY F.idAluno ';
         $order = 'F.idAluno';
@@ -46,7 +46,7 @@ class Dashboard extends Page{
         $table = 'aulas AS A INNER JOIN frequencia AS F ON A.id = F.idAula';
         $results = EntityAula::getAulasInativaAluno($where,$order,null,$fields,$table);
            
-                
+           
             while ($obInativo = $results -> fetchObject(EntityAula::class)) {
                 
                 if($obInativo->qtd > 2){ //INATIVA COM MAIS DE DUAS FALTAS NO INTERVALO DE DIAS
