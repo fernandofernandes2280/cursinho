@@ -101,3 +101,15 @@ $obRouter->post('/admin/aulas/{id}/delete',[
     }
     ]);
 
+
+//ROTA de GET de presentes na aula
+$obRouter->get('/admin/aulas/{id}/presentes',[
+    'middlewares' => [
+        'require-admin-login'
+    ],
+    
+    function ($request, $id){
+        return new Response(200, Admin\Aula::getAulaPresentes($request, $id));
+        
+    }
+    ]);

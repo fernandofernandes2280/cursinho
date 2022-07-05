@@ -1,0 +1,69 @@
+
+
+<div class="row">
+	<div class="col-6">
+		<h5>{{title}}</h5>
+		
+	</div>
+	<div class="col-6 text-right">
+		<a href="{{URL}}/admin/aulas">
+		<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
+			<i class="material-icons" style="font-size: 30px;">reply</i>
+		</button>
+</a>
+	</div>
+</div>
+<hr>
+<h5>{{subtitle}}</h5>
+<div class="table-responsive">
+  	<table class="table  table-hover mt-3">
+  		<thead class=" text-light text-center titulo-tabela">
+  			<tr >
+  				<th class="text-light">Matrícula</th>
+  				<th class="text-light">Nome</th>
+  				<th class="text-light">Turma</th>
+  				<th class="text-light">Status</th>
+  				<th class="text-light">Hora</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+  			{{itens}}
+  		</tbody>
+  	</table>
+ </div>
+  <hr>
+  <div class="row " >
+  	<div class="col d-flex justify-content-start">
+  				{{pagination}} 
+  	</div>
+  	<div class="col d-flex justify-content-end">
+  				<span >&nbsp;&nbsp;&nbsp;Total: {{total}}</span>
+  	</div>
+  	
+  </div>
+								  
+								  
+						
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

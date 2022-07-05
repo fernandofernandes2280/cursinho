@@ -396,6 +396,99 @@ class Aula extends Page{
 	}
 	
 
+	//Metodo responsávelpor retornar os alunos presentes na aula
+	public static function getAulaPresentes($request,$id){
+	    
+	    
+	    //obtém o deopimento do banco de dados
+	    $obAula = EntityAula::getAulaById($id);
+	    
+	    //Valida a instancia
+	    if(!$obAula instanceof EntityAula){
+	        $request->getRouter()->redirect('/admin/aulas');
+	    }
+	    
+	    
+	    //Conteúdo do Formulário
+	    $content = View::render('pages/detalheAula/presentes',[
+	        'title' => 'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
+	        'subtitle' => 'Alunos Presentes',  
+	        'itens' => self::getAulasPresentesItems($request,$obPagination,$id),
+	        'pagination' => parent::getPagination($request, $obPagination),
+	        'total' => self::$qtdTotal,
+	        
+	        
+	    ]);
+	    
+	    //Retorna a página completa
+	    return parent::getPanel('Presentes na Aula > Cursinho', $content,'aulas', 'hidden');
+	    
+	}
+	//Método responsavel por obter a rendereizacao os alunos presentes 
+	private static function getAulasPresentesItems($request, &$obPagination, $idAula){
+	    $resultados = '';
+	    
+	    //Pagina Atual
+	    $queryParams = $request->getQueryParams();
+	    $paginaAtual = $queryParams['page'] ?? 1;
+	    
+	    //Filtro Status
+	    $filtroStatus = $queryParams['status'] ?? '';
+	    
+	    if (isset($queryParams['data']) && $queryParams['data'] != '' ){
+	        $filtroData = date('Y-m-d',strtotime($queryParams['data']));
+	    }else{
+	        $filtroData = '';
+	    }
+	    
+	    $turma = @$queryParams['turma'];
+	    
+	    //Condições SQL
+	    $condicoes = [
+	        
+	        strlen($turma) ? 'turma = '.$turma.' ' : null,
+	        strlen($filtroStatus) ? 'status = "'.$filtroStatus.'" ' : null,
+	        strlen($filtroData) ? 'data = "'.$filtroData.'" ' : null
+	    ];
+	    
+	    //Remove posições vazias
+	    $condicoes = array_filter($condicoes);
+	    
+	    //cláusula where
+	    $where = 'idAula = '.$idAula.' AND status = "P" '.implode(' AND ', $condicoes);
+	    
+	    
+	    self::$qtdTotal = EntityFrequencia::getFrequencias($where, 'dataReg', null,'COUNT(*) as qtd')->fetchObject()->qtd;
+	    
+	    //Instancia de paginação
+	    $obPagination = new Pagination(self::$qtdTotal,$paginaAtual,5);
+	    #############################################
+	    $ordem = 0;
+	    
+	    //Obtem os pacientes
+	    $results = EntityFrequencia::getFrequencias($where, 'dataReg', $obPagination->getLimit());
+	    
+	    //Renderiza
+	    while ($obFrequencia = $results -> fetchObject(EntityFrequencia::class)) {
+	        $ordem++;
+	       
+	        $resultados .= View::render('pages/detalheAula/itemPresentes',[
+	            
+	            'ordem' => $ordem,
+	            'matricula' => EntityAluno::getAlunoById($obFrequencia->idAluno)->matricula,
+	            'nome' => EntityAluno::getAlunoById($obFrequencia->idAluno)->nome,
+	            'turma' => EntityTurma::getTurmaById(EntityAluno::getAlunoById($obFrequencia->idAluno)->turma)->nome,
+	            'status' => $obFrequencia->status,
+	            'hora' =>  date('H:i:s', strtotime($obFrequencia->dataReg)),
+	            'foto' => EntityAluno::getAlunoById($obFrequencia->idAluno)->foto.'?var='.rand(),
+	            'idAluno' => $obFrequencia->idAluno
+	        ]);
+	    }
+	    //Retorna as agendas
+	    return $resultados;
+	    
+	}
+	
 
 	
 }
