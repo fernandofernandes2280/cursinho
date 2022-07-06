@@ -1,6 +1,7 @@
 
 <main>
-<form method="get" id="form">
+<section id="pesquisa">
+	<form method="get" id="form">  
       <h4 class="card-title"></h4>
 		<div class="row">
 			<div class="col-sm-4 card-title">
@@ -21,42 +22,37 @@
 		
 		</div>
 		<hr>
-
-<section id="pacientes">
-  	
-<div class="form-row">
- 			<div class="col-lg-2">
- 				<label>Matrícula:</label>
- 				<input type="text" name="matricula" id="matricula" class="form-control-pessoal matricula" value="{{matricula}}" style="color:black" >
+		<div class="form-row">
+	 			<div class="col-lg-2">
+	 				<label>Matrícula:</label>
+	 				<input type="text" name="matricula" id="matricula" class="form-control-pessoal matricula" value="{{matricula}}" style="color:black" >
+			</div>
+		  	<div class="col-lg-4">
+				<label>Nome:</label>
+				<input type="text" name="nome" class="form-control-pessoal" value="{{nome}}" style="color:black">
+		  	</div>
+			<div class="col-lg-2 " >
+				<label>CPF:</label>
+				<input type="text" name="cpfPesq" id="cpfPesq" class="form-control-pessoal mascara-cpf cpfPesquisa" value="{{cpf}}" style="color:black" >
+				
+			</div>
+			 <div class="col-md-2 mb-2">
+			      <label for="turma">Turma</label>
+			       <select class="custom-select" id="turma" name="turma"  >
+			       <option value="" >Todas</option>
+				        {{optionTurma}}
+				   </select>
+			    </div>	  
+			<div class="col-lg-2" >
+				<label>Status:</label>
+				<select name="status" class="custom-select" >
+				    
+					<option style="color:black" value="" {{selectedAtIn}}>Todos</option>
+				{{optionStatus}}
+				</select>
+			</div>
 		</div>
-	  	<div class="col-lg-4">
-			<label>Nome:</label>
-			<input type="text" name="nome" class="form-control-pessoal" value="{{nome}}" style="color:black">
-	  	</div>
-		<div class="col-lg-2 " >
-			<label>CPF:</label>
-			<input type="text" name="cpfPesq" id="cpfPesq" class="form-control-pessoal mascara-cpf cpfPesquisa" value="{{cpf}}" style="color:black" >
-			
-		</div>
-		 <div class="col-md-2 mb-2">
-		      <label for="turma">Turma</label>
-		       <select class="custom-select" id="turma" name="turma"  >
-		       <option value="" >Todas</option>
-			        {{optionTurma}}
-			   </select>
-		    </div>	  
-		<div class="col-lg-2" >
-			<label>Status:</label>
-			<select name="status" class="custom-select" >
-			    
-				<option style="color:black" value="" {{selectedAtIn}}>Todos</option>
-			{{optionStatus}}
-			</select>
-		</div>
-	
-	</div>
   	</form>
-  
   </section>
   
   
