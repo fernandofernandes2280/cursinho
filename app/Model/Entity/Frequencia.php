@@ -65,6 +65,12 @@ class Frequencia{
 		return (new Database('frequencia'))->select($where,$order,$limit,$fields);
 	}
 	
+	
+	//Método responsavel por retornar ALUNOS DA AULA
+	public static function getFrequenciasSQL($where = null, $order = null, $limit = null, $fields = '*',$table) {
+	    return (new Database($table))->select($where,$order,$limit,$fields);
+	}
+	
 	//Método responsavel por listar os disciplinas no select option, selecionando o do paciente
 	public static function getSelectDisciplinas($id){
 		$resultados = '';

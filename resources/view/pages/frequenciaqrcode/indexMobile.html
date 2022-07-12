@@ -131,7 +131,7 @@ body{
         }
     }
     function startScanning(facingMode) {
-        console.log(facingMode)
+       // console.log(facingMode)
         var results = document.getElementById('scanned-result');
         var lastMessage;
         var codesFound = 0;
@@ -152,6 +152,35 @@ body{
                     dataType: "json",
                     cache : false,
                     success: function(data){
+							
+							 if(typeof data.nome === "undefined") { 
+                  			  results.innerHTML += `
+								<section class="sessaoVermelha">
+									<div class="row">
+									  <div class="col-md-12 alert alert-danger text-center divDados">
+									  	<h3>CÓDIGO INVÁLIDO, TENTE NOVAMENTE!</h3>
+									  	
+									  </div>
+									 </div>
+									<div class="row justify-content-md-center mt-2">
+									  	<div class="col-md-3 text-center">
+											<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+										</div>
+									</div>
+								</section>					                             
+					                             
+	                             `;
+	                             $("#reader").attr("hidden",true);
+								 //função que aguarda 3sec antes de executar 
+	                             setTimeout(function(){
+	                             		//recarrega a página	
+									 	location.reload();
+									}, vartime);
+								//inicia função contagem regressiva
+								  start();	
+                    
+                    }else{
+							
 							
 								//CONFIRMA PRESENÇA
 												 results.innerHTML += `
@@ -198,7 +227,7 @@ body{
 												  start();
 										
 							
-									
+							}		
 
 
                     } ,error: function(xhr, status, error) {

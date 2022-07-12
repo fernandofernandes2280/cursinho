@@ -408,6 +408,13 @@ class Aula extends Page{
 	        $request->getRouter()->redirect('/admin/aulas');
 	    }
 	    
+	    //Recebe os parâmetros da requisição
+	    $queryParams = $request->getQueryParams();
+	    
+
+	    $matricula = @$queryParams['matricula'] ?? null;
+	    $nome = @$queryParams['nome'] ?? null;
+	    $cpf = @$queryParams['cpf'] ?? null;
 	    
 	    //Conteúdo do Formulário
 	    $content = View::render('pages/detalheAula/presentes',[
@@ -416,6 +423,10 @@ class Aula extends Page{
 	        'itens' => self::getAulasPresentesItems($request,$obPagination,$id),
 	        'pagination' => parent::getPagination($request, $obPagination),
 	        'total' => self::$qtdTotal,
+	        'matricula' => $matricula,
+	        'nome' => $nome,
+	        'cpf' => $cpf,
+
 	        
 	        
 	    ]);
@@ -433,48 +444,45 @@ class Aula extends Page{
 	    $paginaAtual = $queryParams['page'] ?? 1;
 	    
 	    //Filtro Status
-	    $filtroStatus = $queryParams['status'] ?? '';
-	    
-	    if (isset($queryParams['data']) && $queryParams['data'] != '' ){
-	        $filtroData = date('Y-m-d',strtotime($queryParams['data']));
-	    }else{
-	        $filtroData = '';
-	    }
+	    $matricula = $queryParams['matricula'] ?? '';
 	    
 	    $turma = @$queryParams['turma'];
 	    
 	    //Condições SQL
 	    $condicoes = [
 	        
-	        strlen($turma) ? 'turma = '.$turma.' ' : null,
-	        strlen($filtroStatus) ? 'status = "'.$filtroStatus.'" ' : null,
-	        strlen($filtroData) ? 'data = "'.$filtroData.'" ' : null
+	        strlen($matricula) ? 'matricula = "'.$matricula.'" ' : null,
 	    ];
 	    
 	    //Remove posições vazias
 	    $condicoes = array_filter($condicoes);
 	    
 	    //cláusula where
-	    $where = 'idAula = '.$idAula.' AND status = "P" '.implode(' AND ', $condicoes);
+	    $where = 'idAula = '.$idAula.' AND F.status = "P" '.implode(' AND ', $condicoes);
 	    
+	    $order = 'dataReg';
 	    
-	    self::$qtdTotal = EntityFrequencia::getFrequencias($where, 'dataReg', null,'COUNT(*) as qtd')->fetchObject()->qtd;
+	    self::$qtdTotal = EntityFrequencia::getFrequenciasSQL($where, 'dataReg', null,'COUNT(*) as qtd','frequencia AS F')->fetchObject()->qtd;
 	    
 	    //Instancia de paginação
 	    $obPagination = new Pagination(self::$qtdTotal,$paginaAtual,5);
 	    #############################################
-	    $ordem = 0;
+	   
 	    
-	    //Obtem os pacientes
-	    $results = EntityFrequencia::getFrequencias($where, 'dataReg', $obPagination->getLimit());
 	    
+
+	    $fields = '*';
+	    
+	    $table = 'frequencia AS F INNER JOIN alunos AS A ON A.id = F.idAluno';
+
+	    $results = EntityFrequencia::getFrequenciasSQL($where,$order,$obPagination->getLimit(),$fields,$table);
+	   // var_dump($results);exit;
 	    //Renderiza
 	    while ($obFrequencia = $results -> fetchObject(EntityFrequencia::class)) {
-	        $ordem++;
+	
 	       
 	        $resultados .= View::render('pages/detalheAula/itemPresentes',[
-	            
-	            'ordem' => $ordem,
+
 	            'matricula' => EntityAluno::getAlunoById($obFrequencia->idAluno)->matricula,
 	            'nome' => EntityAluno::getAlunoById($obFrequencia->idAluno)->nome,
 	            'turma' => EntityTurma::getTurmaById(EntityAluno::getAlunoById($obFrequencia->idAluno)->turma)->nome,
