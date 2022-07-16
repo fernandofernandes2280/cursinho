@@ -77,7 +77,12 @@ class Page{
 					'material-icons' => 'assignment',
 					'modal' => ''
 			],
-			
+	    'inativar' =>[
+	        'label' => 'Inativar Aluno',
+	        'link' => URL.'/admin/inativar'  ,
+	        'material-icons' => 'assignment',
+	        'modal' => ''
+	    ],
 			
 	];
 	

@@ -41,5 +41,8 @@ include __DIR__.'/admin/relatorios.php';
 //Inclui as rotas de profissionais
 include __DIR__.'/admin/profissionais.php';
 
+//Inclui as rota de Inativar aluno
+include __DIR__.'/admin/inativar.php';
+
 
 

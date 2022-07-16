@@ -30,33 +30,7 @@ class Dashboard extends Page{
             'December' => 'Dezembro'
         );
         
-        //INATIVA ALUNOS
-        $dia = date('d');
-        
-        //EXECUTA O PROCESSO DE INATIVAR TODO DIA 1
-        
-        if($dia == 1 || $dia == 15 ){
-            
-        $menos15dias = date('Y-m-d',strtotime("-3 day"));
-        $dataAtual = date('Y-m-d',strtotime("-1 day"));
-        
-        $where = ' F.status = "F" AND A.data BETWEEN "'.$menos15dias.'" AND "'.$dataAtual.'" GROUP BY F.idAluno ';
-        $order = 'F.idAluno';
-        $fields = 'F.idAluno As idAluno, COUNT(F.idAluno) AS qtd';
-        $table = 'aulas AS A INNER JOIN frequencia AS F ON A.id = F.idAula';
-        $results = EntityAula::getAulasInativaAluno($where,$order,null,$fields,$table);
-           
-           
-            while ($obInativo = $results -> fetchObject(EntityAula::class)) {
-                
-                if($obInativo->qtd > 2){ //INATIVA COM MAIS DE DUAS FALTAS NO INTERVALO DE DIAS
-                    $obAluno = EntityAluno::getAlunoById($obInativo->idAluno);
-                    $obAluno ->status = 2; //status INATIVO
-                    $obAluno -> atualizar();
-                }
-            }
-        
-        }
+
         
         
       //  $mes = $mes_extenso[date('F',strtotime("-1 month"))] ;
