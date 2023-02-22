@@ -84,7 +84,7 @@ $obRouter->get('/admin/aulas/{id}/delete',[
         'require-admin-login'
     ],
     function ($request,$id){
-        return new Response(200, Admin\Aula::getAulaDelete($request,$id));
+     //   return new Response(200, Admin\Aula::getAulaDelete($request,$id));
         
     }
     ]);
