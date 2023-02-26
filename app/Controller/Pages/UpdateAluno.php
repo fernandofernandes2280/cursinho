@@ -56,6 +56,51 @@ class UpdateAluno extends Page{
     
     
     
+    //Metodo responsável por retornar o formulário de Captura de foto do aluno
+    public static function getUpdateFoto($request,$id){
+        Funcoes::init();
+       
+        //Conteúdo do Formulário
+        $content = View::render('pages/updateAluno/formPhoto',[
+            'id' => $_SESSION['idAluno'],
+            'title' => 'Tire uma selfie',
+            
+        ]);
+        
+        //Retorna a página completa
+        
+        return parent::getPageUpdateAlunoForm('Prepara Santana', $content);
+    }
+    
+    
+    
+    //Metodo responsável por gravar a atualiacao da foto do aluno
+    public static function setUpdateFoto($request){
+        
+        //Post Vars
+        $postVars = $request->getPostVars();
+
+        
+        if ($postVars['image'] != ''){
+            
+            
+            //MÉTODO RESPONSÁVEL POR FAZER O UPLOADO DA IMAGE VINDA DA WEB CAM DO PROFESSOR
+            Upload::setUploadImagesWebCamAluno($request);
+            
+            
+            //Redireciona o aluno para a carteira de estudante
+            $request->getRouter()->redirect('/aluno/carteira');
+        }else{
+            //Redireciona o aluno para o form de foto caso o aluno não tenha tirado a foto
+            $request->getRouter()->redirect('/aluno/update/foto');
+        }
+        
+       // $request->getRouter()->redirect('/admin/alunos/'.$obAluno->id.'/edit?statusMessage=semfoto');
+        
+        
+    }
+    
+    
     
     
 	//retorna o conteudo (view) Para o Aluno atualizar seu cadastro
@@ -73,6 +118,7 @@ class UpdateAluno extends Page{
         
 	    $content = View::render('pages/updateAluno/form',[
 	        'title' => 'Curso Prepara Santana - Atualização Cadastral do Aluno',
+	        'id' => $obAluno->id ?? '',
 	        'nome' => $obAluno->nome ?? '',
 	        'cep' => $obAluno->cep ?? '',
 	        'endereco' => $obAluno->endereco ??'',
@@ -113,6 +159,9 @@ class UpdateAluno extends Page{
 	    
 	    
 	    $postVars = $request->getPostVars();
+	    
+	  
+	    
 	    //Atualiza a instância
 	    $obAluno->nome = Funcoes::convertePriMaiuscula($postVars['nome']);
 	    $obAluno->cep = $postVars['cep'];
@@ -131,11 +180,13 @@ class UpdateAluno extends Page{
 	  
     	    $obAluno->atualizar();
     	    //FAZ O ULPOAD DA FOTO DO ALUNO
-    	    Upload::setUploadImagesUpdateAluno($request);
+    //	    Upload::setUploadImagesUpdateAluno($request);
     	    unset($_SESSION['naoCompleto']);
     	    $_SESSION['updated'] = true;
     	  //  $_SESSION['statusMessage'] = 'ConfirmUpdated';
-    	    $request->getRouter()->redirect('/aluno/carteira');
+    	 
+    	    $request->getRouter()->redirect('/aluno/update/foto');
+    	    //$request->getRouter()->redirect('/aluno/carteira');
 	  
 	}
 	

@@ -45,6 +45,27 @@ $obRouter->post('/aluno/update',[
     }
     ]);
 
+//ROTA GET PARA O ALUNO ATUALIZAR FOTO
+$obRouter->get('/aluno/update/foto',[
+    
+    function ($request,$id){
+        
+        return new Response(200, Pages\UpdateAluno::getUpdateFoto($request,$id));
+        
+    }
+    ]);
+
+//ROTA POST PARA O ALUNO ATUALIZAR FOTO
+$obRouter->post('/aluno/update/foto',[
+    
+    function ($request){
+        
+        return new Response(200, Pages\UpdateAluno::setUpdateFoto($request));
+        
+    }
+    ]);
+
+
 //ROTA GET DE CARTEIRA DE ALUNO
 $obRouter->get('/aluno/carteira',[
    

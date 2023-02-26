@@ -211,7 +211,7 @@ class Aluno extends Page{
 	    //Recebe os parâmetros da requisição
 	    $postVars = $request->getPostVars();
 	    
-	    var_dump($postVars);exit;
+	//    var_dump($postVars);exit;
 	    //obtém o Aluno do banco de dados
 	    $obAluno = EntityAluno::getAlunoById($id);
 	    

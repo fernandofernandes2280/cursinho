@@ -1,0 +1,231 @@
+
+	<div class="row text-center">
+		<div class="col-md-3 " >
+			<h2 style="color: #007bff;">{{title}}</h2>
+			
+		</div>
+ 			
+</div>
+
+
+
+<hr>
+
+<div class="container">
+<style>
+.conteiner{
+	width: 330px;
+	height: 230px;
+	position: relative;
+}
+
+.my_camera{
+position: relative;
+
+}
+
+.my_result{
+position: relative;
+
+}
+
+.topoEsquerda{
+top:0;
+left:0;
+margin-left: 12px;
+height: 100%;
+width: 19%;
+position: absolute;
+background-color: rgba(0,0,0,0.5);
+}
+
+.topoDireita{
+top:0;
+right:0;
+margin-right: 14px;
+height: 100%;
+width: 18%;
+position: absolute;
+background-color: rgba(0,0,0,0.5);
+}
+.centro{
+position: absolute;
+top:0;
+left:22%;
+width: 56%;
+height: 100%;
+transparent;
+border-width: 2px;
+border-style: dashed;
+border-color: #fff;
+}
+
+.topoEsquerda1{
+top:0;
+left:0;
+height: 100%;
+width: 21%;
+position: absolute;
+background-color: #202940;
+}
+.topoDireita1{
+top:0;
+right:0;
+height: 100%;
+width: 21%;
+position: absolute;
+background-color: #202940;
+}
+.centro1{
+position: absolute;
+top:0;
+left:20%;
+width: 59%;
+height: 100%;
+transparent;
+border-width: 2px;
+border-style: dashed;
+border-color: #fff;
+ display : flex;
+ align-items : center;
+ justify-content : center;
+}
+
+</style>
+    <form method="post" enctype="multipart/form-data" >
+        <div class="row">
+            <div class="col-md-6" >
+            <section class="conteiner">
+	                <div class="my_camera" id="my_camera"></div>
+	                <div class="topoEsquerda"></div>
+	                <div class="topoDireita"></div>
+	                <div class="centro"></div>
+	         </section>
+	                <br/>
+	                <input type="hidden" name="image" class="image-tag">
+					<br>
+		            <center><input type="button" class="btn btn-success" value="Capturar" onClick="take_snapshot()"><center>
+		            <br>
+		          
+		             
+		             
+            </div>
+            
+            
+        
+            
+            
+            
+			<input type="text" name="id" hidden value="{{id}}"/>
+            <div class="col-md-6">
+				<section class="conteiner">
+                	<div class="text-center my_result" id="results"></div>
+                	<div class="topoEsquerda1"></div>
+	                <div class="topoDireita1"></div>
+	                <div class="centro1" id="centro1">Sua Foto</div>
+                </section>
+               <img id="photo-preview" draggable="false">
+			 	<input class="file-chooser pt-5" type="file" id="flImage" name="fImage" accept="image/*" hidden >  
+            </div>
+
+            <div class="col-md-12 text-center">
+
+                <br/>
+
+                <button type="submit" class="btn btn-info">Salvar Foto</button>
+
+            </div>
+
+        </div>
+        
+		
+
+    </form>
+
+</div>
+
+
+
+<!-- Configure a few settings and attach camera -->
+
+<script language="JavaScript">
+
+//let photo = document.getElementById('imgPhoto');
+let file = document.getElementById('flImage');
+
+/*photo.addEventListener('click', () => {
+    file.click();
+});
+*/
+file.addEventListener('change', () => {
+
+    if (file.files.length <= 0) {
+        return;
+    }
+
+    let reader = new FileReader();
+
+    reader.onload = () => {
+     //   photo.src = reader.result;
+          document.getElementById('results').innerHTML = '<img class="img-fluid" src="'+reader.result+'"/>';
+         document.getElementById('centro1').style.color = "transparent";
+    }
+
+    reader.readAsDataURL(file.files[0]);
+});
+
+
+
+
+
+
+
+
+
+
+
+//Capitura imagem da camera
+    Webcam.set({
+
+        width: 330,
+
+        height: 230,
+
+        image_format: 'jpeg',
+
+        jpeg_quality: 100
+
+    });
+
+  
+
+    Webcam.attach( '#my_camera' );
+
+  
+
+    function take_snapshot() {
+
+        Webcam.snap( function(data_uri) {
+
+            $(".image-tag").val(data_uri);
+
+            document.getElementById('results').innerHTML = '<img src="'+data_uri+'"/>';
+             //document.getElementById('img').setAttribute("src", data_uri);
+             document.getElementById('centro1').style.color = "transparent";
+             image = new Image()
+           // image.src = event.target.result
+           image.src = data_uri
+            image.onload = onLoadImage
+             
+             
+            //limpa o input file
+			file.value = '';
+        } );
+
+    }
+
+
+</script>
+
+
+ 
