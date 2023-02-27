@@ -159,7 +159,7 @@ class Upload{
 	    $img = new Resize();
 	    $config = array();
 	    $config['source_image'] = $file;
-	    $config['width'] = 200;
+	    $config['width'] = 230;
 	    $config['height'] = 230;
 	    $img->initialize($config);
 	    $img->crop();
