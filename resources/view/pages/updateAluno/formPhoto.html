@@ -2,6 +2,7 @@
 	<div class="row text-center">
 		<div class="col-md-3 " >
 			<h2 style="color: #007bff;">{{title}}</h2>
+			<h7 style="color: #fff;">Posicione o celular na vertical</h7>
 			
 		</div>
  			
@@ -22,7 +23,7 @@
 
 .my_camera{
 position: relative;
-
+left:10%
 }
 
 .my_result{
@@ -32,7 +33,7 @@ position: relative;
 
 .topoEsquerda{
 top:0;
-left:-13%;
+left:5%;
 margin-left: 12px;
 height: 100%;
 width: 19%;
@@ -42,7 +43,7 @@ background-color:#1a2035;
 
 .topoDireita{
 top:0;
-right:12%;
+right:-5%;
 margin-right: 14px;
 height: 100%;
 width: 18%;
@@ -96,7 +97,7 @@ border-color: #fff;
 </style>
     <form method="post" enctype="multipart/form-data" >
         <div class="row text-center">
-            <div class="col-md-6" style="border: 1px solid red">
+            <div class="col-md-6" >
             <section class="conteiner text-center">
 	                <div class="my_camera" id="my_camera"></div>
 	                <div class="topoEsquerda"></div>
@@ -120,7 +121,7 @@ border-color: #fff;
             
 			<input type="text" name="id" hidden value="{{id}}"/>
             <div class="col-md-6">
-				<section class="conteiner" style="border: 1px solid red">
+				<section class="conteiner" >
                 	<div class="text-center my_result" id="results"></div>
                 	<div class="topoEsquerda1"></div>
 	                <div class="topoDireita1"></div>
