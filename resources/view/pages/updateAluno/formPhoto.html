@@ -62,11 +62,11 @@ border-color: #fff;
 
 .topoEsquerda1{
 top:0;
-left:0;
+left:10%;
 height: 100%;
 width: 21%;
 position: absolute;
-background-color: #202940;
+background-color:#1a2035;
 }
 .topoDireita1{
 top:0;
@@ -79,7 +79,7 @@ background-color: #202940;
 .centro1{
 position: absolute;
 top:0;
-left:20%;
+left:30%;
 width: 59%;
 height: 100%;
 transparent;
@@ -167,7 +167,7 @@ file.addEventListener('change', () => {
 
     reader.onload = () => {
      //   photo.src = reader.result;
-          document.getElementById('results').innerHTML = '<img class="img-fluid" src="'+reader.result+'"/>';
+          document.getElementById('results').innerHTML = '<img  class="img-fluid" src="'+reader.result+'"/>';
          document.getElementById('centro1').style.color = "transparent";
     }
 
@@ -209,7 +209,7 @@ file.addEventListener('change', () => {
 
             $(".image-tag").val(data_uri);
 
-            document.getElementById('results').innerHTML = '<img src="'+data_uri+'"/>';
+            document.getElementById('results').innerHTML = '<img style="width:250px" src="'+data_uri+'"/>';
              //document.getElementById('img').setAttribute("src", data_uri);
              document.getElementById('centro1').style.color = "transparent";
              image = new Image()
