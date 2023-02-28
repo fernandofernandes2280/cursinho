@@ -171,8 +171,8 @@
 				    <div class="row">
 					 <div class="colfotoCarteira ml-3">
 				      <img style="background-color: #fff; border-radius: 10%" class="img-fluido" alt="FotoAluno" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}">
-				      <span class="label mt-1" >Status:</span>
-				      <input type="text" class="form-control-pessoal mb-2" id="status" name="status" value="{{status}}" readonly/>
+				      <span hidden class="label mt-1" >Status:</span>
+				      <input hidden type="text" class="form-control-pessoal mb-2" id="status" name="status" value="{{status}}" readonly/>
 				     </div>
 				    
 				     
@@ -188,7 +188,7 @@
 				    		</div>
 				    	</div>
 				        <div class="form-row">
-				        	<div class="col-md-3 mb-5">
+				        	<div class="col-md-3 mb-4">
 				        	    <span class="label">Turma:</span>
 				      			<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{turma}}" readonly/>	
 				        	</div>
@@ -217,7 +217,7 @@
 				    
 				    	
 				   
-				     <div class="mb-2 pl-0 pr-0 colfotoQrcode">
+				     <div class="pl-0 pr-0 colfotoQrcode">
 				        
 				    			<span class="label ">Qr-Code:</span>
 							     <img class="img-fluid " alt="" src="{{URL}}/app/Controller/Admin/carteiras/{{qrcode}}"/>

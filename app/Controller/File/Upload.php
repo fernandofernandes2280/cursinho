@@ -156,11 +156,12 @@ class Upload{
 	    file_put_contents($file, $image_base64);
 	  //  chmod($file, 0777); //Corrige a permissão do arquivo.
 	    
+	    //corta a immagem vinda da foto do aluno
 	    $img = new Resize();
 	    $config = array();
 	    $config['source_image'] = $file;
-	    $config['width'] = 194;
-	    $config['height'] = 252;
+	    $config['width'] = 175; //largura da imagem
+	    $config['height'] = 252; //altura da imagem
 	    $img->initialize($config);
 	    $img->crop();
 	}
