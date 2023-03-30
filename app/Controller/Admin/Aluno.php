@@ -308,6 +308,9 @@ class Aluno extends Page{
 	    if(!empty($fileVars['fImage']['name'] != '')){
 	        $postVars['image'] = '';
 	     
+	      
+	        
+	        
 	        Upload::setUploadImages($request);
 	        //Redireciona o usuário
 	        $request->getRouter()->redirect('/admin/alunos/'.$obAluno->id.'/edit?statusMessage=updated');
@@ -679,8 +682,11 @@ class Aluno extends Page{
 	        $request->getRouter()->redirect('/admin/alunos');
 	    }
 	    
-	    
+	  
+	    //verifica se o aluno enviou a foto. se não enviou volta pro form update de cadastro 
+	    if(isset($_SESSION['idAluno']) && (!isset($_SESSION['usuario'])) && $obAluno->foto == 'profile.png') $request->getRouter()->redirect('/aluno/update');
 	
+	    //gera o qrcode
 	    $oQRC = new \App\Controller\Qrcode\Qrcode(); // Create vCard Object
 	    $oQRC->fullName($obAluno->matricula); // Add Full Name
 	      //  ->finish(); // End vCard
