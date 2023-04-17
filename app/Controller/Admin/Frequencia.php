@@ -526,7 +526,7 @@ class Frequencia extends Page{
 	        $request->getRouter()->redirect('/admin/frequencias');
 	    }
 	    
-			//Conteúdo da Home
+			//Conteúdo da Home ok
 			$content = View::render('/pages/frequenciaqrcode/index',[
 			  
 			   'title'=> 'Frequência Geral',
