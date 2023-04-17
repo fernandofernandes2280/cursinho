@@ -47,7 +47,7 @@ class Page{
 	        
 	    ],
 	    'presencas' =>[
-	        'label' => 'Presenças',
+	        'label' => 'Presença Rápida',
 	        'link' => URL.'/admin/presencas',
 	        'material-icons' => 'checklist_rtl',
 	        'modal' => ''
