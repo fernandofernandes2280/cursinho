@@ -147,18 +147,19 @@ body{
               //  results.innerHTML += `<div>[${codesFound}] - ${qrCodeMessage}</div>`;
 
 
-                var dataString = { send : true , matricula : qrCodeMessage, idAula : {{idAula}} };
+                var dataString = { send : true , matricula : qrCodeMessage};
 				var vartime = 3000;
                 $.ajax({
 
                     type: "POST",
-                    url: "{{URL}}/app/Controller/Ajax/authenticateAluno.php",
+                    url: "{{URL}}/app/Controller/Ajax/presencaAluno.php",
                     data: dataString,
                     dataType: "json",
                     cache : false,
                     success: function(data){
                    
                     
+                                   
                     if(typeof data.nome === "undefined") { 
                   			  results.innerHTML = `
 								<section class="sessaoVermelha">
@@ -231,8 +232,10 @@ body{
 												//inicia função contagem regressiva
 												  start();
 										
-							}			
-										
+							}		
+
+
+
 
                     } ,error: function(xhr, status, error) {
                         alert(error);

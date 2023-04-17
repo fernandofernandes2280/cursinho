@@ -15,6 +15,10 @@ include __DIR__.'/admin/disciplinas.php';
 //Inclui as rotas de Frequencias
 include __DIR__.'/admin/frequencias.php';
 
+//Inclui as rotas de Presenças
+include __DIR__.'/admin/presencas.php';
+
+
 
 //Inclui as rotas de Aulas
 include __DIR__.'/admin/aulas.php';

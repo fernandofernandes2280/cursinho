@@ -232,6 +232,11 @@ class Aula extends Page{
 
 		$obAula->cadastrar();
 		
+		//verifica se a sessao não está ativa
+		if(session_status() != PHP_SESSION_ACTIVE ){
+		    session_start();
+		}
+		$user = $_SESSION['usuario']['id'];
 		
 		//Preenche a Aulas com os alunos da turma correspondente, exceto se a aula for no Sáb ou Dom
 		$diaSemana = array("SÁB", "DOM");
@@ -242,7 +247,7 @@ class Aula extends Page{
     		    $frequencia->idAluno = $obAlunos->id;
     		    $frequencia->idAula = $obAula->id;
     		    $frequencia->status = 'F';
-    		    $frequencia->autor = 1; //id temporario do usuario logado para testes
+    		    $frequencia->autor = $user; //id usuario logado 
     		    $frequencia->cadastrar();
     		}
 		}

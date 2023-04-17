@@ -49,15 +49,10 @@ body{
 
 <br>
 <div class="container">
-	<div class="row mb-2" >
-		<div class="col-md-12 text-center ">
-			<span class="text-light h2">{{title}}</span>
-		</div>
-		
-	</div>
+	
 	<div class="row mb-4 justify-content-md-center" >
 		
-		<div class="col-md-7 bg-warning text-center pt-3 pb-3 title">
+		<div class="col-md-7 bg-warning text-center pt-1 pb-1 title">
 			
 	 		<span class="h2">{{aula}}</span>
 	 		<a href="javascript:history.back()" class="btnVoltar badge badge-sm bg-gradient-success pt-1">Voltar</a>
@@ -66,10 +61,10 @@ body{
 
 
 <div class="row">
-    <div class="col-md-12 text-center ">
+    <div class="col-md-12 text-center">
         <button id="start" hidden>Start Scanning</button>
         <div class="empty"></div>
-        <div id="reader" style="display: inline-block; ></div>
+        <div id="reader" style="display: inline-block;"></div>
         <div class="empty"></div>
         <div class="row justify-content-md-center ">
         	
@@ -95,7 +90,7 @@ body{
  		
  		
 
-  <hr style="margin-top: 100px">
+  <hr>
   <div class="row text-center">
   	<div class="col-md-12">
   		<span class="text-light h3">Aproxime seu QRCODE da câmera.</span>
@@ -136,7 +131,7 @@ body{
         }
     }
     function startScanning(facingMode) {
-      //  console.log(facingMode)
+       // console.log(facingMode)
         var results = document.getElementById('scanned-result');
         var lastMessage;
         var codesFound = 0;
@@ -157,10 +152,9 @@ body{
                     dataType: "json",
                     cache : false,
                     success: function(data){
-                   
-                    
-                    if(typeof data.nome === "undefined") { 
-                  			  results.innerHTML = `
+							
+							 if(typeof data.nome === "undefined") { 
+                  			  results.innerHTML += `
 								<section class="sessaoVermelha">
 									<div class="row">
 									  <div class="col-md-12 alert alert-danger text-center divDados">
@@ -186,9 +180,10 @@ body{
 								  start();	
                     
                     }else{
-							 
-												//CONFIRMA PRESENÇA
-												 results.innerHTML = `
+							
+							
+								//CONFIRMA PRESENÇA
+												 results.innerHTML += `
 													<section class="sessaoVerde">
 														<div class="row mb-3">
 														  <div class="colfotoFreqGeral">
@@ -231,8 +226,9 @@ body{
 												//inicia função contagem regressiva
 												  start();
 										
-							}			
-										
+							
+							}		
+
 
                     } ,error: function(xhr, status, error) {
                         alert(error);
@@ -241,12 +237,12 @@ body{
 
 
             }
-        }       
+        }
         //usa camera frontal
-         return html5qrcode.start({ facingMode: facingMode },{ fps: 20, qrbox: 250 },onScanSuccess);
+         return html5qrcode.start({ facingMode: facingMode },{ fps: 10, qrbox: 250 },onScanSuccess);
         
         //usar câmera traseira
-      //   return html5qrcode.start({ facingMode: { exact: "environment"} },{ fps: 10, qrbox: 250 },onScanSuccess);
+        // return html5qrcode.start({ facingMode: { exact: "environment"} },{ fps: 10 },onScanSuccess);
         
     	
     	
