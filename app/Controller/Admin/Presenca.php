@@ -40,7 +40,7 @@ class Presenca extends Page{
 	    //Conteúdo da Home
 	    $content = View::render('/pages/presencaqrcode/index',[
 	        
-	        'title'=> 'Frequência Geral',
+	        'title'=> 'Presença Rápida',
 	        'aula' =>'Aula do dia: ' .date('d/m/Y'),
 	    //    'idAula' => $obAula->id
 	        
