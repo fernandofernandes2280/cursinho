@@ -114,7 +114,7 @@ $pdo  = new PDO('mysql:host=localhost;dbname=cursinho', 'root', 'fl4m3ng0');
 		        $stmtInsert->bindValue(2, $diasemana[$diasemana_num], PDO::PARAM_STR);
 		        
 		        $stmtInsert->bindValue(3, ((int)$arr['turma']), PDO::PARAM_INT);
-		        $stmtInsert->bindValue(4, 9, PDO::PARAM_INT);//professor nao informado
+		        $stmtInsert->bindValue(4, 91, PDO::PARAM_INT);//professor nao informado
 		        $stmtInsert->bindValue(5, 15, PDO::PARAM_INT);//disciplina não informada
 		        $stmtInsert->bindValue(6, 9, PDO::PARAM_INT);//professor nao informado
 		        $stmtInsert->bindValue(7, 15, PDO::PARAM_INT);//disciplina não informada
