@@ -37,9 +37,9 @@ class Page{
 				'modal' => ''
 		    
 		],
-	    'frequencias' =>[
-	        'label' => 'Frequências',
-	        'link' => URL.'/operador/frequencias',
+	    'presencas' =>[
+	        'label' => 'Presença Rápida',
+	        'link' => URL.'/operador/presencas',
 	        'material-icons' => 'checklist_rtl',
 	        'modal' => ''
 	        

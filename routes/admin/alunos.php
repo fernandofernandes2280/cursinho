@@ -4,6 +4,7 @@ use \App\Http\Response;
 use \App\Controller\Admin;
 use \App\Controller\Pages;
 
+
 //ROTA HOME
 $obRouter->get('',[
     
@@ -39,6 +40,20 @@ $obRouter->post('/admin/alunos',[
     
     function ($request){
         return new Response(200, Admin\Aluno::getAlunos($request));
+    }
+    ]);
+
+
+
+//Rota get para Relatórios em PDF
+$obRouter->get('/admin/alunos/relatorios',[
+    
+    'middlewares' => [
+        'require-admin-login'
+    ],
+    
+    function ($request){
+        return new Response(200, Admin\Aluno::getPdfAluno($request));
     }
     ]);
 

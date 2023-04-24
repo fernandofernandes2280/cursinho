@@ -14,7 +14,8 @@ include __DIR__.'/operador/disciplinas.php';
 
 //Inclui as rotas de Frequencias
 include __DIR__.'/operador/frequencias.php';
-
+//Inclui as rotas de Presenças
+include __DIR__.'/operador/presencas.php';
 
 //Inclui as rotas de Aulas
 include __DIR__.'/operador/aulas.php';
