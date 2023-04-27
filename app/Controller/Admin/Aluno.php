@@ -36,6 +36,8 @@ class Aluno extends Page{
 		
 		//Pagina Atual
 		$queryParams = $request->getQueryParams();
+		
+		
 		$paginaAtual = $queryParams['page'] ?? 1;
 		
 		
@@ -70,7 +72,14 @@ class Aluno extends Page{
 		//retira zeros à esquerda
 		//if($pront != '') $pront += 0;
 		
-		
+		//Incializa as variáveis de sessão para gerar a impressão
+		Funcoes::init();
+		$_SESSION['nome'] = $nome;
+		$_SESSION['turma'] = $turma;
+		$_SESSION['matricula'] = $matricula;
+		$_SESSION['cpf'] = $cpf;
+		$_SESSION['status'] = $status;
+		//Finaliza as variáveis de sessão para gerar a impressão
 		
 		//Condições SQL
 		$condicoes = [
@@ -112,7 +121,8 @@ class Aluno extends Page{
 			
 				//Renderiza
 		while ($obAluno = $results -> fetchObject(EntityAluno::class)) {
-	 
+		    
+		   
 		    $reload = rand();
 			//View de pacientes
 			$resultados .= View::render('admin/modules/alunos/item',[
@@ -135,7 +145,17 @@ class Aluno extends Page{
 			]);
 			
 		}
-	
+		
+		//Armaze o Ids da pesquisa para serem usados na Impressão
+		$idImpressao ='';
+		$resultsImprimessao = EntityAluno::getAlunos($where, $order);
+		while ($obAluno = $resultsImprimessao -> fetchObject(EntityAluno::class)) {
+		    $idImpressao .= $obAluno->id.' ';
+		    
+		}
+		$_SESSION['id'] = str_replace(' ',',', trim($idImpressao));
+		//Fim Armaze o Ids da pesquisa para serem usados na Impressão
+		
 		//Grava o Log do usuário
 	//	if(!empty($queryParams)) Logs::setNewLog('pacientes', 'Pesquisa' , implode(", ", $condicoes));
 
@@ -815,80 +835,7 @@ class Aluno extends Page{
 	}
 	
 	
-	//Método responsavel por gerar o PDF de Relatório de Alunos
-	public static function getPdfAluno($request){
-	    
-	    
-	    //se não clicar na pesquisa rápida, continua daqui
-	    
-	    //instância a classe
-	    $dompdf = new Dompdf(["enable_remote" => true]);
-	    $options = $dompdf->getOptions();
-	    $options->setDefaultFont('Courier');
-	    $dompdf->setOptions($options);
-	    //abre a sessão de cache
-	    //	ob_start();
-	    //caminho do arquivo
-	    //	require '{{URL}}../../resources/view/admin/modules/pacientes/capa.html';
-	    //recebe o conteudo entre as tags ob_start e ob_get_clean
-	    //	$pdf = ob_get_clean();
-	    
-	    //$pdf = self::getAlunos($request);
-	    
-	    //Obtem os pacientes
-	    $results = EntityAluno::getAlunos();
-	   
-	    $resultados = '';
-	    //Renderiza
-	    while ($obAluno = $results -> fetchObject(EntityAluno::class)) {
-	        
-	      
-	        //View de pacientes
-	        $resultados .= View::render('admin/modules/alunos/item',[
-	            
-	            //muda cor do texto do status para azul(ativo) ou vermelho(inativo)
-	            $obAluno->status == 1 ? $cor = 'bg-gradient-success' : $cor = 'bg-gradient-danger',
-	            
-	            'nome' => $obAluno->nome,
-	            'status' =>EntityStatus::getStatusById($obAluno->status)->nome,
-	            'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##') ,
-	            'id' => $obAluno->id,
-	            'matricula' => $obAluno->matricula,
-	            'turma' =>EntityTurma::getTurmaById($obAluno->turma)->nome,
-	            
-	            'cor' => $cor,
-	            'autor' => EntityUser::getUserById($obAluno->autor)->nome
-	            
-	            
-	            
-	        ]);
-	        
-	    }
-	    
-	    
-	    //View de pacientes
-	    $alunos = View::render('pages/relatorios/alunos',[
-	        
-	        
-	        
-	        
-	    ]);
-   
-	    
-	    
-	    //carrega o conteúdo do arquivo .php
-	    $dompdf->loadHtml($alunos);
-	    
-	    
-	    
-	    //Configura o tamanho do papel
-	    $dompdf->setPaper("A4");
-	    
-	    $dompdf->render();
-	    
-	    $dompdf->stream("Lme-Termo.php", ["Attachment" => false]);
-	    
-	}
+
 	
 
 	

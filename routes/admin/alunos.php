@@ -45,18 +45,6 @@ $obRouter->post('/admin/alunos',[
 
 
 
-//Rota get para Relatórios em PDF
-$obRouter->get('/admin/alunos/relatorios',[
-    
-    'middlewares' => [
-        'require-admin-login'
-    ],
-    
-    function ($request){
-        return new Response(200, Admin\Aluno::getPdfAluno($request));
-    }
-    ]);
-
 
 //ROTA de Captura Foto do Aluno
 $obRouter->get('/admin/alunos/photo/{id}',[
