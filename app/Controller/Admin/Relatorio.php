@@ -71,7 +71,7 @@ class Relatorio  extends Page{
                 'sexo' => $obAluno->sexo,
                 'dataNasc' => date('d-m-Y', strtotime($obAluno->dataNasc)),
                 'dataCad' => date('d-m-Y', strtotime($obAluno->dataCad)),
-                'fone' => $obAluno->fone,
+                'fone' => Funcoes::mask($obAluno->fone, '(##) ####-####') ,
                 'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##') ,
                 'turma' =>EntityTurma::getTurmaById($obAluno->turma)->nome,
                 'status' =>EntityStatus::getStatusById($obAluno->status)->nome,
