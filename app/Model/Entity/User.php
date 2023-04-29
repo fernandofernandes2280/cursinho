@@ -28,6 +28,12 @@ class User{
 	//CPF do usuário
 	public $cpf;
 	
+	//Permissao para excluir aluno
+	public $excluirAluno;
+
+	//Permissao para excluir professor
+	public $excluirProfessor;
+	
 	//Método responsavel por cadastrar o usuário no Banco de Dados
 	public function cadastrar(){
         
@@ -41,7 +47,9 @@ class User{
 				'tipo' 		=> $this->tipo,
 				'senha' 	=> $this->senha,
 				'foto' 	=> $this->foto,
-				'cpf' 	=> $this->cpf
+				'cpf' 	=> $this->cpf,
+		        'excluirAluno' 	=> $this->excluirAluno,
+		       'excluirProfessor' 	=> $this->excluirProfessor
 		]);
 		
 		//Sucesso
@@ -56,7 +64,9 @@ class User{
 				'tipo' 	=> $this->tipo,
 				'senha' 	=> $this->senha,
 				'foto' 	=> $this->foto,
-				'cpf' 	=> $this->cpf
+				'cpf' 	=> $this->cpf,
+		         'excluirAluno' 	=> $this->excluirAluno,
+		       'excluirProfessor' 	=> $this->excluirProfessor
 		]);
 		
 		
@@ -109,6 +119,8 @@ class User{
 	        'senha' => $ob['senha'],
 	        'cpf' => $ob['cpf'],
 	        'tipo' => $ob['tipo'],
+	        'excluirAluno' => $ob['excluirAluno'],
+	        'excluirProfessor' => $ob['excluirProfessor'],
 	    ];
 	   
 	    //Sucesso

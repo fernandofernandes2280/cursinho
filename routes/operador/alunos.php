@@ -12,7 +12,7 @@ $obRouter->get('/operador/alunos',[
     ],
     
     function ($request){
-        return new Response(200, Operador\Aluno::getAlunos($request));
+        return new Response(200, Admin\Aluno::getAlunos($request));
     }
     ]);
 

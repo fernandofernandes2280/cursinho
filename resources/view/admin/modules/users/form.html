@@ -37,7 +37,7 @@
 	               <input class="form-control-pessoal cpfUser mascara-cpf" required type="text" id="cpf" value="{{cpf}}" name="cpf" />
 			
 			    </div>
-						  </div>
+			 </div>
 			 <div class="form-row">
 			    <div class="col-md-12 mb-2">
 					<label>Tipo</label>
@@ -74,6 +74,17 @@
 					</script>
 			    </div>
 			</div>
+			<div class="form-row">
+			    <div class="col-md-12 mb-0">
+     	           <label for="cpf">PERMISSÕES:</label></br>
+     	           <label >Excluir Aluno</label>
+	               <input  type="checkbox" {{alunoChecado}} id="checkExcluirAluno" name="checkExcluirAluno" value="1"/></br>
+	               <label >Excluir Professor</label>
+	               <input  type="checkbox" {{professorChecado}} id="checkExcluirProfessor" name="checkExcluirProfessor" value="1"/>
+			    </div>
+
+		  </div>
+			
 
 	</div>
 	<div class="col-md-6">

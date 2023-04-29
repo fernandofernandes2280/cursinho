@@ -126,13 +126,16 @@ class User extends Page{
 	public static function setNewUser($request){
 		//Post vars
 		$postVars = $request->getPostVars();
-	
+		
+		
+		
 		$nome = $postVars['nome'] ?? '';
 		$email = $postVars['email'] ?? '';
 		$senha = $postVars['senha'] ?? '';
 		$cpf = $postVars['cpf'] ?? '';
 		$tipo = $postVars['tipo'] ?? '';
-		
+		$excluirAluno = $postVars['excluirAluno'] ?? '0';
+		$excluirProfessor = $postVars['excluirProfessor'] ?? '0';
 		
 		//Cria sessão com os dados do form
 		EntityUser::getSessaoDados($postVars);
@@ -163,6 +166,8 @@ class User extends Page{
 		$obUser->tipo = $tipo;
 		//$obUser->senha = password_hash($senha,PASSWORD_DEFAULT);
 		$obUser->senha = $senha;
+		$obUser->excluirAluno = $excluirAluno;
+		$obUser->excluirProfessor = $excluirProfessor;
 		$obUser->cadastrar();
 		
 		//encerra sessão com os dados do form
@@ -220,7 +225,8 @@ class User extends Page{
 		$obUser->tipo == 'Admin' ? $selectedAdmin = 'selected' : $selectedAdmin = '' ;
 		$obUser->tipo == 'Visitante' ? $selectedVisitante = 'selected' : $selectedVisitante = '' ;
 		$obUser->tipo == 'Operador' ? $selectedOperador = 'selected' : $selectedOperador = '' ;
-		
+		$obUser->excluirAluno == 1 ? $alunoChecado = 'checked' : $alunoChecado = '';
+		$obUser->excluirProfessor == 1 ? $professorChecado = 'checked' : $professorChecado = '';
 		$reload = rand();
 		//Conteúdo do Formulário
 		$content = View::render('admin/modules/users/form',[
@@ -238,7 +244,10 @@ class User extends Page{
 			 	'footer'=>View::render('admin/modules/pacientes/footer',[]),
 		          'foto' => $obUser->foto.'?var='.$reload,
 		        'required' => '',
-		         'ponteiro' => ''
+		         'ponteiro' => '',
+		    'alunoChecado' => $alunoChecado,
+		    'professorChecado' => $professorChecado
+		         
 				
 				
 		]);
@@ -252,12 +261,16 @@ class User extends Page{
 	public static function setEditUser($request,$id){
 		//Post Vars
 		$postVars = $request->getPostVars();
+		
+		
+		
 		$nome = $postVars['nome'] ?? '';
 		$email = $postVars['email'] ?? '';
 		$senha = $postVars['senha'] ?? '';
 		$tipo = $postVars['tipo'] ?? '';
 		$cpf = $postVars['cpf'] ?? '';
-		
+		$excluirAluno = $postVars['checkExcluirAluno'] ?? '0';
+		$excluirProfessor = $postVars['checkExcluirProfessor'] ?? '0';
 		//obtém o usuário do banco de dados
 		$obUser = EntityUser::getUserById($id);
 		
@@ -292,7 +305,11 @@ class User extends Page{
 		$obUser->tipo = $tipo;
 		$obUser->cpf = $validaCpf->getValue(); //cpf sem formatação
 		$obUser->senha = $senha;
+		$obUser->excluirAluno = $excluirAluno;
+		$obUser->excluirProfessor = $excluirProfessor;
 		$obUser->atualizar();
+		Funcoes::init();
+		$_SESSION['usuario']['excluirAluno'] = $excluirAluno;
 		
 		//Redireciona o usuário
 		$request->getRouter()->redirect('/admin/users/'.$obUser->id.'/edit?statusMessage=updated');

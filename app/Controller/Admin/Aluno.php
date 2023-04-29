@@ -27,6 +27,10 @@ class Aluno extends Page{
 	//esconde busca rápida de prontuário no navBar
 	private static $hidden = '';
 	
+	
+
+	
+	
 	//Método responsavel por obter a rendereizacao dos pacientes para a página
 	private static function getAlunoItems($request, &$obPagination){
 	   
@@ -118,18 +122,19 @@ class Aluno extends Page{
 		//Obtem os pacientes
 		$results = EntityAluno::getAlunos($where, $order, $obPagination->getLimit());
 		
-			
+		
 				//Renderiza
 		while ($obAluno = $results -> fetchObject(EntityAluno::class)) {
 		    
-		   
+		    //recebe os valores das permissões do usuário
+		    $permissao = Funcoes::getPermissoes();
+		    
 		    $reload = rand();
 			//View de pacientes
 			$resultados .= View::render('admin/modules/alunos/item',[
 			    
 			    //muda cor do texto do status para azul(ativo) ou vermelho(inativo)
 			    $obAluno->status == 1 ? $cor = 'bg-gradient-success' : $cor = 'bg-gradient-danger',
-
 			    'nome' => $obAluno->nome,
 			    'status' =>EntityStatus::getStatusById($obAluno->status)->nome,
 			    'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##') ,
@@ -138,7 +143,9 @@ class Aluno extends Page{
 			    'turma' =>EntityTurma::getTurmaById($obAluno->turma)->nome,
 			    'foto' => $obAluno->foto.'?var='.$reload,
 			    'cor' => $cor,
-			    'autor' => EntityUser::getUserById($obAluno->autor)->nome
+			    'autor' => EntityUser::getUserById($obAluno->autor)->nome,
+			    'visivelDelete' => $permissao['excluirAluno'],
+			   
 					
 					
 					

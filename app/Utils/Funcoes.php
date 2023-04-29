@@ -62,6 +62,19 @@ class Funcoes{
 	    return $tel;
 	}
 	
-	
+	public static function getPermissoes(){
+	    
+	    $permissao = array(
+	        'excluirAluno' => '',
+	        'excluirProfessor' => ''
+	    );
+	    
+	    Funcoes::init();
+	    $_SESSION['usuario']['excluirAluno'] == 1 ? $visivelDelete = '' : $visivelDelete = 'hidden';
+	    $permissao['excluirAluno'] = $visivelDelete;
+	    $permissao['excluirProfessor'] = 'hidden';
+	    
+	    return    $permissao;
+	}
 	
 }
