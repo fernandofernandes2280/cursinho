@@ -9,6 +9,8 @@ use Bissolli\ValidadorCpfCnpj\CPF;
 use \App\Utils\Funcoes;
 use \App\Model\Entity\Profissional as EntityProfissional;
 use App\Controller\File\Upload;
+use App\Session\Admin;
+use App\Session\Admin\Login;
 
 class User extends Page{
 	
@@ -134,8 +136,12 @@ class User extends Page{
 		$senha = $postVars['senha'] ?? '';
 		$cpf = $postVars['cpf'] ?? '';
 		$tipo = $postVars['tipo'] ?? '';
-		$excluirAluno = $postVars['excluirAluno'] ?? '0';
-		$excluirProfessor = $postVars['excluirProfessor'] ?? '0';
+		$excluirAluno = $postVars['checkExcluirAluno'] ?? '0';
+		$excluirProfessor = $postVars['checkExcluirProfessor'] ?? '0';
+		$menuAlunos = $postVars['checkMenuAlunos'] ?? '0';
+		$menuProfessores = $postVars['checkMenuProfessores'] ?? '0';
+		$menuAulas = $postVars['checkMenuAulas'] ?? '0';
+		$menuFrequencias = $postVars['checkMenuFrequencias'] ?? '0';
 		
 		//Cria sessão com os dados do form
 		EntityUser::getSessaoDados($postVars);
@@ -166,9 +172,21 @@ class User extends Page{
 		$obUser->tipo = $tipo;
 		//$obUser->senha = password_hash($senha,PASSWORD_DEFAULT);
 		$obUser->senha = $senha;
+		
+		//campos para permissão
 		$obUser->excluirAluno = $excluirAluno;
 		$obUser->excluirProfessor = $excluirProfessor;
+		$obUser->menuAlunos = $menuAlunos;
+		$obUser->menuProfessores = $menuProfessores;
+		$obUser->menuAulas = $menuAulas;
+		$obUser->menuFrequencias = $menuFrequencias;
+		
+		//grava as informações
 		$obUser->cadastrar();
+		
+		//Atualiza a sessão de usuário
+		Login::login($obUser);
+		
 		
 		//encerra sessão com os dados do form
 		EntityUser::getFinalizaSessaoDados();
@@ -227,6 +245,11 @@ class User extends Page{
 		$obUser->tipo == 'Operador' ? $selectedOperador = 'selected' : $selectedOperador = '' ;
 		$obUser->excluirAluno == 1 ? $alunoChecado = 'checked' : $alunoChecado = '';
 		$obUser->excluirProfessor == 1 ? $professorChecado = 'checked' : $professorChecado = '';
+		$obUser->menuAlunos == 1 ? $menuAlunoChecado = 'checked' : $menuAlunoChecado = '';
+		$obUser->menuProfessores == 1 ? $menuProfessorChecado = 'checked' : $menuProfessorChecado = '';
+		$obUser->menuAulas == 1 ? $menuAulasChecado = 'checked' : $menuAulasChecado = '';
+		$obUser->menuFrequencias == 1 ? $menuFrequenciasChecado = 'checked' : $menuFrequenciasChecado = '';
+		
 		$reload = rand();
 		//Conteúdo do Formulário
 		$content = View::render('admin/modules/users/form',[
@@ -246,7 +269,11 @@ class User extends Page{
 		        'required' => '',
 		         'ponteiro' => '',
 		    'alunoChecado' => $alunoChecado,
-		    'professorChecado' => $professorChecado
+		    'professorChecado' => $professorChecado,
+		    'menuAlunosChecado' => $menuAlunoChecado,
+		    'menuProfessorChecado' => $menuProfessorChecado,
+		    'menuAulasChecado' => $menuAulasChecado,
+		    'menuFrequenciasChecado' => $menuFrequenciasChecado,
 		         
 				
 				
@@ -262,16 +289,21 @@ class User extends Page{
 		//Post Vars
 		$postVars = $request->getPostVars();
 		
-		
-		
+				
 		$nome = $postVars['nome'] ?? '';
 		$email = $postVars['email'] ?? '';
 		$senha = $postVars['senha'] ?? '';
 		$tipo = $postVars['tipo'] ?? '';
 		$cpf = $postVars['cpf'] ?? '';
+		//campos para permissão
 		$excluirAluno = $postVars['checkExcluirAluno'] ?? '0';
 		$excluirProfessor = $postVars['checkExcluirProfessor'] ?? '0';
-		//obtém o usuário do banco de dados
+		$menuAlunos = $postVars['checkMenuAlunos'] ?? '0';
+		$menuProfessores = $postVars['checkMenuProfessores'] ?? '0';
+		$menuAulas = $postVars['checkMenuAulas'] ?? '0';
+		$menuFrequencias = $postVars['checkMenuFrequencias'] ?? '0';
+		
+				//obtém o usuário do banco de dados
 		$obUser = EntityUser::getUserById($id);
 		
 		//Valida a instancia
@@ -305,11 +337,20 @@ class User extends Page{
 		$obUser->tipo = $tipo;
 		$obUser->cpf = $validaCpf->getValue(); //cpf sem formatação
 		$obUser->senha = $senha;
+		
+		//campos para permissão
 		$obUser->excluirAluno = $excluirAluno;
 		$obUser->excluirProfessor = $excluirProfessor;
+		$obUser->menuAlunos = $menuAlunos;
+		$obUser->menuProfessores = $menuProfessores;
+		$obUser->menuAulas = $menuAulas;
+		$obUser->menuFrequencias = $menuFrequencias;
+		
+		//grava as informações
 		$obUser->atualizar();
-		Funcoes::init();
-		$_SESSION['usuario']['excluirAluno'] = $excluirAluno;
+		
+		//Atualiza a sessão de usuário
+		Login::login($obUser);
 		
 		//Redireciona o usuário
 		$request->getRouter()->redirect('/admin/users/'.$obUser->id.'/edit?statusMessage=updated');

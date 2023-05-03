@@ -144,7 +144,7 @@ class Aluno extends Page{
 			    'foto' => $obAluno->foto.'?var='.$reload,
 			    'cor' => $cor,
 			    'autor' => EntityUser::getUserById($obAluno->autor)->nome,
-			    'visivelDelete' => $permissao['excluirAluno'],
+			    'visivelDeleteAluno' => $permissao['excluirAluno'],
 			   
 					
 					

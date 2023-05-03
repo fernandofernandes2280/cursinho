@@ -30,7 +30,9 @@ class Login{
 		    'nome' => $obUser->nome,
 		    'email' => $obUser->email,
 		    'tipo' => $obUser->tipo,
-		    'foto' => $obUser->foto
+		    'foto' => $obUser->foto,
+		    'excluirAluno' => $obUser->excluirAluno,
+		    'excluirProfessor' => $obUser->excluirProfessor
 		];
 		
 		//Sucesso

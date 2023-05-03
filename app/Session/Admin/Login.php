@@ -33,7 +33,11 @@ class Login{
 		    'tipo' => $obUser->tipo,
 		    'foto' => $obUser->foto,
 		    'excluirAluno' => $obUser->excluirAluno,
-		    'excluirProfessor' => $obUser->excluirProfessor
+		    'excluirProfessor' => $obUser->excluirProfessor,
+		    'menuAlunos' => $obUser->menuAlunos,
+		    'menuProfessores' => $obUser->menuProfessores,
+		    'menuAulas' => $obUser->menuAulas,
+		    'menuFrequencias' => $obUser->menuFrequencias,
 		];
 		
 		//Sucesso
@@ -58,6 +62,7 @@ class Login{
 		
 		//desloga usuário
 		unset($_SESSION['admin']['usuario']);
+		unset($_SESSION['usuario']);
 		
 		//sucesso
 		return true;

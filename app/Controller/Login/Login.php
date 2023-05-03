@@ -146,6 +146,11 @@ class Login extends Page{
 			return self::getLogin($request,'Senha inválida');
 		}
 		
+		SessionAdminLogin::login($obUser);
+		//redireciona o usuario Admin
+		$request->getRouter()->redirect('/admin/dashboard');
+		
+		/*
 		if($obUser->tipo == 'Admin'){
 			//Cria a sessão de Login de Admin
 			SessionAdminLogin::login($obUser);
@@ -159,7 +164,7 @@ class Login extends Page{
 			$request->getRouter()->redirect('/operador/dashboard');
 			
 		}
-		
+		*/
 		
 		
 	}

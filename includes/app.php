@@ -7,7 +7,7 @@ use \App\Utils\View;
 use \WilliamCosta\DotEnv\Environment;
 use \WilliamCosta\DatabaseManager\Database;
 use \App\Http\Middleware\Queue as MiddlewareQueue;
-
+use \App\Utils\Funcoes;
 //Carrega variáveis de ambiente
 Environment::load(__DIR__.'/../');
 
@@ -23,6 +23,18 @@ Database::config(
 
 //Define a constante de URL do projeto
 define('URL',getenv('URL'));
+
+//recebe os valores das permissões do usuário para serem usadas no Menu
+$permissao = Funcoes::getPermissoes();
+$permissaoMenuAlunos = $permissao['menuAlunos'];
+define('permissaoMenuAlunos', $permissaoMenuAlunos);
+$permissaoMenuProfessores = $permissao['menuProfessores'];
+define('permissaoMenuProfessores', $permissaoMenuProfessores);
+$permissaoMenuAulas = $permissao['menuAulas'];
+define('permissaoMenuAulas', $permissaoMenuAulas);
+$permissaoMenuFrequencias = $permissao['menuFrequencias'];
+define('permissaoMenuFrequencias', $permissaoMenuFrequencias);
+
 
 //Define o valor padrão das variáveis
 View::init([

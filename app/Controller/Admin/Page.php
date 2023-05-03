@@ -4,53 +4,67 @@ namespace App\Controller\Admin;
 
 use App\Utils\View;
 use \App\Model\Entity\User as EntityUser;
+use \App\Utils\Funcoes;
 
 class Page{
 
-	private static $teste = 'Usuários';
-	
+    public static function  teste(){
+      $texto = 'Olá Mundo'; 
+
+      return $texto;
+    } 
+    
 	
 	//Módulos disponíveis no painel
 	private static $modules = [
+	    
+	//recebe os valores das permissões do usuário
+	    
 	    
 	    'dashboard' =>[
 	        'label' => 'Dashboard',
 	        'link' => URL.'/admin/dashboard',
 	        'material-icons' => 'dashboard',
-	        'modal' => ''
+	        'modal' => '',
+	        'visivel' => ''
 	    ],
 		
 		'alunos' =>[
-					'label' => 'Alunos',
-					'link' => URL.'/admin/alunos',
+				'label' => 'Alunos',
+				'link' => URL.'/admin/alunos',
 				'material-icons' => 'family_restroom',
-				'modal' => ''
+				'modal' => '',
+		        'visivel' => permissaoMenuAlunos
 		],
 		'professores' =>[
 					'label' => 'Professores',
 				'link' => URL.'/admin/professores',
 				'material-icons' => 'school',
-				'modal' => ''
+		    'modal' => '',
+		    'visivel' => permissaoMenuProfessores
 			],
 		'aulas' =>[
 				'label' => 'Aulas',
 				'link' => URL.'/admin/aulas',
 				'material-icons' => 'connect_without_contact',
-				'modal' => ''
+		    'modal' => '',
+		    'visivel' => permissaoMenuAulas
 		    
 		],
 	    'frequencias' =>[
 	        'label' => 'Frequências',
 	        'link' => URL.'/admin/frequencias',
 	        'material-icons' => 'checklist_rtl',
-	        'modal' => ''
+	        'modal' => '',
+	        'visivel' => permissaoMenuFrequencias
 	        
 	    ],
 	    'presencas' =>[
 	        'label' => 'Presença Rápida',
 	        'link' => URL.'/admin/presencas',
 	        'material-icons' => 'checklist_rtl',
-	        'modal' => ''
+	        'modal' => '',
+	        'visivel' => ''
 	        
 	    ],
 	    
@@ -58,37 +72,43 @@ class Page{
 	        'label' => 'Disciplinas',
 	        'link' => URL.'/admin/disciplinas',
 	        'material-icons' => 'clear_all',
-	        'modal' => ''
+	        'modal' => '',
+	        'visivel' => ''
 	    ],
 			'users' =>[
 					'label' => 'Usuários',
 					'link' => URL.'/admin/users',
 					'material-icons' => 'people',
-					'modal' => ''
+			    'modal' => '',
+			    'visivel' => ''
 			],
 			'logs' =>[
 					'label' => 'Logs',
 					'link' => URL.'/admin/logs',
 					'material-icons' => 'people',
-					'modal' => ''
+			    'modal' => '',
+			    'visivel' => ''
 			],
 			'relatorios' =>[
 					'label' => 'Relatórios',
 					'link' => '#',
 					'material-icons' => 'people',
-					'modal' => 'data-toggle="modal" data-target="#relatorioModal"'
+			    'modal' => 'data-toggle="modal" data-target="#relatorioModal"',
+			    'visivel' => ''
 			],
 			'trocarSenha' =>[
 					'label' => 'Trocar Senha',
 					'link' => URL.'/admin/trocarSenha'  ,
 					'material-icons' => 'assignment',
-					'modal' => ''
+			    'modal' => '',
+			    'visivel' => ''
 			],
 	    'inativar' =>[
 	        'label' => 'Inativar Aluno',
 	        'link' => URL.'/admin/inativar'  ,
 	        'material-icons' => 'assignment',
-	        'modal' => ''
+	        'modal' => '',
+	        'visivel' => ''
 	    ],
 			
 	];
@@ -278,13 +298,15 @@ class Page{
 	//		if($module['label'] == 'Usuários' && $_SESSION['admin']['usuario']['tipo'] == 'Operador') $module['modal'] = 'hidden';
 	//		if($module['label'] == 'Logs' && $_SESSION['admin']['usuario']['tipo'] == 'Operador') $module['modal'] = 'hidden';
 			
-			
+		    
+		    
 			$links .= View::render('admin/menu/link',[
 					'label' => $module['label'],
 					'link' => $module['link'],
 					'current' => $hash == $currentModule ? 'active' : '',
 					'material-icons'=> $module['material-icons'],
-					'modal'=> $module['modal']
+					'modal'=> $module['modal'],
+			        'visivelMenu' => $module['visivel']
  					
 			]);
 			

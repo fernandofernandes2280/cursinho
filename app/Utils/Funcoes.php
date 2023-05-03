@@ -70,9 +70,18 @@ class Funcoes{
 	    );
 	    
 	    Funcoes::init();
-	    $_SESSION['usuario']['excluirAluno'] == 1 ? $visivelDelete = '' : $visivelDelete = 'hidden';
-	    $permissao['excluirAluno'] = $visivelDelete;
-	    $permissao['excluirProfessor'] = 'hidden';
+	    @$_SESSION['usuario']['excluirAluno'] == 1 ? $visivelDeleteAluno = '' : $visivelDeleteAluno = 'hidden';
+	    @$_SESSION['usuario']['excluirProfessor'] == 1 ? $visivelDeleteProfessor = '' : $visivelDeleteProfessor = 'hidden';
+	    @$_SESSION['usuario']['menuAlunos'] == 1 ? $visivelMenuAlunos = '' : $visivelMenuAlunos = 'hidden';
+	    @$_SESSION['usuario']['menuProfessores'] == 1 ? $visivelMenuProfessores = '' : $visivelMenuProfessores = 'hidden';
+	    @$_SESSION['usuario']['menuAulas'] == 1 ? $visivelMenuAulas = '' : $visivelMenuAulas = 'hidden';
+	    @$_SESSION['usuario']['menuFrequencias'] == 1 ? $visivelMenuFrequencias = '' : $visivelMenuFrequencias = 'hidden';
+	    $permissao['excluirAluno'] = $visivelDeleteAluno;
+	    $permissao['excluirProfessor'] = $visivelDeleteProfessor;
+	    $permissao['menuAlunos'] = $visivelMenuAlunos;
+	    $permissao['menuProfessores'] = $visivelMenuProfessores;
+	    $permissao['menuAulas'] = $visivelMenuAulas;
+	    $permissao['menuFrequencias'] = $visivelMenuFrequencias;
 	    
 	    return    $permissao;
 	}

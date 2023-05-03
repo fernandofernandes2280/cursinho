@@ -34,6 +34,19 @@ class User{
 	//Permissao para excluir professor
 	public $excluirProfessor;
 	
+	//Permissao para acessar Menu Aluno
+	public $menuAlunos;
+	
+	//Permissao para acessar Menu Professor
+	public $menuProfessores;
+	
+	//Permissao para acessar Menu Aulas
+	public $menuAulas;
+	
+	//Permissao para acessar Menu Frequencias
+	public $menuFrequencias;
+	
+	
 	//Método responsavel por cadastrar o usuário no Banco de Dados
 	public function cadastrar(){
         
@@ -49,7 +62,11 @@ class User{
 				'foto' 	=> $this->foto,
 				'cpf' 	=> $this->cpf,
 		        'excluirAluno' 	=> $this->excluirAluno,
-		       'excluirProfessor' 	=> $this->excluirProfessor
+		       'excluirProfessor' 	=> $this->excluirProfessor,
+		    'menuAlunos' 	=> $this->menuAlunos,
+		    'menuProfessores' 	=> $this->menuProfessores,
+		    'menuAulas' 	=> $this->menuAulas,
+		    'menuFrequencias' 	=> $this->menuFrequencias,
 		]);
 		
 		//Sucesso
@@ -66,7 +83,11 @@ class User{
 				'foto' 	=> $this->foto,
 				'cpf' 	=> $this->cpf,
 		         'excluirAluno' 	=> $this->excluirAluno,
-		       'excluirProfessor' 	=> $this->excluirProfessor
+		       'excluirProfessor' 	=> $this->excluirProfessor,
+		    'menuAlunos' 	=> $this->menuAlunos,
+		    'menuProfessores' 	=> $this->menuProfessores,
+		    'menuAulas' 	=> $this->menuAulas,
+		    'menuFrequencias' 	=> $this->menuFrequencias,
 		]);
 		
 		
@@ -121,6 +142,10 @@ class User{
 	        'tipo' => $ob['tipo'],
 	        'excluirAluno' => $ob['excluirAluno'],
 	        'excluirProfessor' => $ob['excluirProfessor'],
+	        'menuAlunos' 	=> $ob['menuAlunos'],
+	        'menuProfessores' 	=> $ob['menuProfessores'],
+	        'menuAulas' 	=> $ob['menuAulas'],
+	        'menuFrequencias' 	=> $ob['menuFrequencias'],
 	    ];
 	   
 	    //Sucesso
