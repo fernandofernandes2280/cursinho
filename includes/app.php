@@ -42,7 +42,7 @@ define('permissaoBtnNovoUsuario', $permissao['btnNovoUsuario']);
 define('permissaoMenuPresenca', $permissao['menuPresenca']);
 
 define('permissaoMenuDisciplinas', $permissao['menuDisciplinas']);
-//var_dump($_SESSION['admin']['tipo']);exit;
+
 //habilita o campo CPF e TIPO apenas para o Admin
 if($_SESSION['admin']['tipo'] == 'Admin'){
     define('habilitaCPFTIPO', '');
