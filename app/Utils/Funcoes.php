@@ -62,11 +62,34 @@ class Funcoes{
 	    return $tel;
 	}
 	
-	//Método responsável por retornar as permissões do usuário
-	public static function getPermissoes(){
-	    
+
+	public static function getSessaoPermissoes($obUser){
 	    Funcoes::init();
 	    
+	    if($_SESSION['admin']['tipo'] == $obUser->tipo){
+	    $_SESSION['usuario'] = [
+	        'id' => $obUser->id,
+	        'nome' => $obUser->nome,
+	        'email' => $obUser->email,
+	        'tipo' => $obUser->tipo,
+	        'foto' => $obUser->foto,
+	        'excluirAluno' => $obUser->excluirAluno,
+	        'excluirProfessor' => $obUser->excluirProfessor,
+	        'menuAlunos' => $obUser->menuAlunos,
+	        'menuProfessores' => $obUser->menuProfessores,
+	        'menuAulas' => $obUser->menuAulas,
+	        'menuFrequencias' => $obUser->menuFrequencias,
+	        'btnNovoUsuario' => $obUser->btnNovoUsuario,
+	        'menuPresenca' => $obUser->menuPresenca,
+	        'menuDisciplinas' => $obUser->menuDisciplinas,
+	    ];
+	    }
+	}
+	
+	
+	//Método responsável por retornar as permissões do usuário
+	public static function getPermissoes(){
+	    Funcoes::init();
 	    @$_SESSION['usuario']['tipo'] == 'Admin' ? $visivelPermissoes = '' : $visivelPermissoes = 'hidden';
 	    @$_SESSION['usuario']['excluirAluno'] == 1 ? $visivelDeleteAluno = '' : $visivelDeleteAluno = 'hidden';
 	    @$_SESSION['usuario']['excluirProfessor'] == 1 ? $visivelDeleteProfessor = '' : $visivelDeleteProfessor = 'hidden';

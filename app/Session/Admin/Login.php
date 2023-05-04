@@ -18,34 +18,43 @@ class Login{
 		self::init();
 		
 		//Define a sessao do usuario
-		$_SESSION['admin']['usuario'] = [
-				'id' => $obUser->id,
-				'nome' => $obUser->nome,
-				'email' => $obUser->email,
-				'tipo' => $obUser->tipo,
-				'cpf' => $obUser->cpf,
+		
+		
+		    
+		    $_SESSION['admin']['usuario'] = [
+		        'id' => $obUser->id,
+		        'nome' => $obUser->nome,
+		        'email' => $obUser->email,
+		        'tipo' => $obUser->tipo,
+		        'cpf' => $obUser->cpf,
 		        'foto'=>$obUser->foto
-		];
-		$_SESSION['usuario'] = [
-		    'id' => $obUser->id,
-		    'nome' => $obUser->nome,
-		    'email' => $obUser->email,
-		    'tipo' => $obUser->tipo,
-		    'foto' => $obUser->foto,
-		    'excluirAluno' => $obUser->excluirAluno,
-		    'excluirProfessor' => $obUser->excluirProfessor,
-		    'menuAlunos' => $obUser->menuAlunos,
-		    'menuProfessores' => $obUser->menuProfessores,
-		    'menuAulas' => $obUser->menuAulas,
-		    'menuFrequencias' => $obUser->menuFrequencias,
-		    'btnNovoUsuario' => $obUser->btnNovoUsuario,
-		    'menuPresenca' => $obUser->menuPresenca,
-		    'menuDisciplinas' => $obUser->menuDisciplinas,
-		];
+		    ];
+		    
+		    $_SESSION['usuario'] = [
+		        'id' => $obUser->id,
+		        'nome' => $obUser->nome,
+		        'email' => $obUser->email,
+		        'tipo' => $obUser->tipo,
+		        'foto' => $obUser->foto,
+		        'excluirAluno' => $obUser->excluirAluno,
+		        'excluirProfessor' => $obUser->excluirProfessor,
+		        'menuAlunos' => $obUser->menuAlunos,
+		        'menuProfessores' => $obUser->menuProfessores,
+		        'menuAulas' => $obUser->menuAulas,
+		        'menuFrequencias' => $obUser->menuFrequencias,
+		        'btnNovoUsuario' => $obUser->btnNovoUsuario,
+		        'menuPresenca' => $obUser->menuPresenca,
+		        'menuDisciplinas' => $obUser->menuDisciplinas,
+		    ];
+		    
+		
 		
 		//Sucesso
 		return true;
 	}
+	
+	
+	
 	
 	//Método responsavel por veririfcar se o ususario está logado
 	public static function isLogged() {

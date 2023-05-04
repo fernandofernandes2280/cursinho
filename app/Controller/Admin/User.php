@@ -378,8 +378,9 @@ class User extends Page{
 		//grava as informações
 		$obUser->atualizar();
 		
+		
 		//Atualiza a sessão de usuário
-	//	Login::login($obUser);
+		Funcoes::getSessaoPermissoes($obUser);
 		
 		//Redireciona o usuário
 		$request->getRouter()->redirect('/admin/users/'.$obUser->id.'/edit?statusMessage=updated');

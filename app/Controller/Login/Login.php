@@ -11,6 +11,7 @@ use \App\Controller\Admin\Alert;
 use \App\Controller\Admin\Page;
 use Bissolli\ValidadorCpfCnpj\CPF;
 use \App\Controller\Comunication\Email;
+use App\Utils\Funcoes;
 
 
 class Login extends Page{
@@ -145,6 +146,10 @@ class Login extends Page{
 		if($senha != $obUser->senha){
 			return self::getLogin($request,'Senha inválida');
 		}
+		
+		
+		Funcoes::init();
+		$_SESSION['admin']['tipo'] = $obUser->tipo;
 		
 		SessionAdminLogin::login($obUser);
 		//redireciona o usuario Admin
