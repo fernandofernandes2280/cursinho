@@ -267,7 +267,7 @@ class User extends Page{
 		$obUser->btnNovoUsuario == 1 ? $btnNovoUsuarioChecado = 'checked' : $btnNovoUsuarioChecado = '';
 		$obUser->menuPresenca == 1 ? $menuPresencaChecado = 'checked' : $menuPresencaChecado = '';
 		$obUser->menuDisciplinas == 1 ? $menuDisciplinasChecado = 'checked' : $menuDisciplinasChecado = '';
-		
+
 		$reload = rand();
 		//Conteúdo do Formulário
 		$content = View::render('admin/modules/users/form',[
@@ -297,6 +297,7 @@ class User extends Page{
 		    'menuPresencaChecado' => $menuPresencaChecado,
 		    'menuDisciplinasChecado' => $menuDisciplinasChecado,
 		    'permissoesVisivel' => permissoes,
+		    'habilitado' => habilitaCPFTIPO
 		         
 				
 				
