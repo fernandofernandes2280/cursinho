@@ -47,7 +47,8 @@ define('permissaoMenuDisciplinas', $permissao['menuDisciplinas']);
 if($_SESSION['admin']['tipo'] == 'Admin')
 {
     define('habilitaCPFTIPO', '');
-}else{
+}else
+{
     define('habilitaCPFTIPO', 'disabled');
 }
 
