@@ -122,6 +122,7 @@ class UpdateAluno extends Page{
 	        'nome' => $obAluno->nome ?? '',
 	        'cep' => $obAluno->cep ?? '',
 	        'endereco' => $obAluno->endereco ??'',
+	        'numero' => $obAluno->numero ??'',
 	        'naturalidade' => $obAluno->naturalidade ?? '',
 	        'fone' => $obAluno->fone ?? '',
 	        'mae' => $obAluno->mae ?? '',
@@ -166,6 +167,7 @@ class UpdateAluno extends Page{
 	    $obAluno->nome = Funcoes::convertePriMaiuscula($postVars['nome']);
 	    $obAluno->cep = $postVars['cep'];
 	    $obAluno->endereco = Funcoes::convertePriMaiuscula($postVars['endereco']);
+	    $obAluno->numero =  $postVars['numero'];
 	    $obAluno->bairro =  $postVars['bairro'];
 	    $obAluno->dataNasc = implode("-",array_reverse(explode("/",$postVars['dataNasc'])));
 	    $obAluno->sexo = $postVars['sexo'] ?? $obAluno->sexo;

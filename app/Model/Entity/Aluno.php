@@ -7,6 +7,8 @@ use App\Utils\Funcoes;
 class Aluno extends Generica{
 	
 	public $endereco;
+
+	public $numero;
 	
 	//bairro do aluno
 	public $bairro;
@@ -114,6 +116,7 @@ class Aluno extends Generica{
 		$this->id = (new Database('alunos'))->insert([
 				'nome' => $this->nome,
 				'endereco'=>$this->endereco,
+		    'numero'=>$this->numero,
 				'bairro'=>$this->bairro,
 				'cidade'=>$this->cidade,
 				'uf'=>$this->uf,
@@ -146,6 +149,7 @@ class Aluno extends Generica{
 		return (new Database('alunos'))->update('id = '.$this->id,[
 				'nome' => $this->nome,
 				'endereco'=>$this->endereco,
+		    'numero'=>$this->numero,
 				'bairro'=>$this->bairro,
 				'cidade'=>$this->cidade,
 				'uf'=>$this->uf,
@@ -211,6 +215,7 @@ class Aluno extends Generica{
 	        'nome' => $ob['nome'],
 	        'cep' => $ob['cep'],
 	        'endereco' => $ob['endereco'],
+	        'numero' => $ob['numero'],
 	        'bairro' => $ob['bairro'],
 	        'cidade' => $ob['cidade'],
 	        'uf' => $ob['uf'],

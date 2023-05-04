@@ -43,32 +43,45 @@
 </div>
 
 <div class="form-row">
-    <div class="colfoto mb-2 mr-2 text-center">
+    <div class="colfoto mb-0 mr-2 text-center">
     	<a href="{{URL}}/admin/alunos/photo/{{id}}" style="{{ponteiro}}">
 			<img style="background-color: #fff; border-radius: 10%" title="Carregar nova foto" class="img-fluid" alt="Foto" rel="tooltip" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" style="cursor:pointer">
 		</a>
 		
     </div>
     
-     <div class="col-md-10  mb-2">
+     <div class="col-md-10" style="margin-top: 50px;">
       <label class="h5">Matrícula: </label><span class="text-light h5"> {{matricula}}</span>
         <div class="form-row">
-    		<div class="col-md-9 mb-2">
+    		<div class="col-md-9">
       		<label for="nome">Nome</label>
       		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required />
     		</div>
-    		<div class="col-md-2 mb-2">
+    		<div class="col-md-3 mb-2">
 			      <label for="cep">Cep</label>
 			      <input type="text" class="form-control-pessoal" data-action="{{URL}}/admin/delete" data-id="3" id="cep" name="cep" value="{{cep}}">
       		
     		</div>
     	</div>
-    	<div class="form-row">
-		    <div class="col-md-6 mb-2">
+    	
+      
+      
+    </div>
+    
+   
+    
+  </div>
+
+<div class="form-row">
+		    <div class="col-md-5 mb-2">
 		      <label for="endereco">Endereço</label>
-		      <small class="text-muted"> logradouro (rua, avenida, ..) + número</small>
+		      <small class="text-muted"> logradouro (rua, avenida, ..)</small>
 		      <input type="text" class="form-control-pessoal" id="endereco" name="endereco" value="{{endereco}}"  >
 		    </div>   
+		    <div class="col-md-1 mb-2">
+		      <label for="endereco">Nº</label>
+				<input type="text" class="form-control-pessoal" id="numero" name="numero" value="{{numero}}"  >			      
+		    </div>
 		    
 		    <div class="col-md-3">
 		      <label for="bairro">Bairro</label>
@@ -85,14 +98,6 @@
 					<input type="text" class="form-control-pessoal" id="uf" name="uf" value="{{uf}}" >   
 				</div>  
     	</div>
-      
-      
-    </div>
-    
-   
-    
-  </div>
-
   
   <div class="form-row">
     

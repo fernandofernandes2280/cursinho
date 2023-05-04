@@ -405,6 +405,7 @@ class Aluno extends Page{
 	        'nome' => $obAluno->nome,
 	        'cep' => $obAluno->cep,
 	        'endereco' => $obAluno->endereco,
+	        'numero' => $obAluno->numero,
 	        'statusMessage' => self::getStatus($request),
 	        'naturalidade' => $obAluno->naturalidade,
 	        'fone' =>$obAluno->fone ,
@@ -479,6 +480,7 @@ class Aluno extends Page{
 	    $obAluno->nome = Funcoes::convertePriMaiuscula($postVars['nome']) ?? $obAluno->nome;
 	    $obAluno->cep = $postVars['cep'] ?? $obAluno->cep;
 	    $obAluno->endereco = Funcoes::convertePriMaiuscula($postVars['endereco']) ?? $obAluno->endereco;
+	    $obAluno->numero =  $postVars['numero'] ?? $obAluno->numero;
 	    $obAluno->bairro =  $postVars['bairro'] ?? $obAluno->bairro;
 	    $obAluno->cidade = $postVars['cidade'] ?? $obAluno->cidade;
 	    $obAluno->uf = Funcoes::convertePriMaiuscula($postVars['uf']) ?? $obAluno->uf;
@@ -543,6 +545,7 @@ class Aluno extends Page{
 	        'nome' => @$_SESSION['aluno']['novo']['nome'] ?? '',
 	        'cep' => @$_SESSION['aluno']['novo']['cep'] ?? '',
 	        'endereco' => @$_SESSION['aluno']['novo']['endereco'] ?? '',
+	        'numero' => @$_SESSION['aluno']['novo']['numero'] ?? '',
 	        'naturalidade' => @$_SESSION['aluno']['novo']['naturalidade'] ?? '',
 	        'fone' => @$_SESSION['aluno']['novo']['fone'] ?? '',
 	        'mae' => @$_SESSION['aluno']['novo']['mae'] ?? '',
@@ -598,6 +601,7 @@ class Aluno extends Page{
 	    $obAluno->nome = Funcoes::convertePriMaiuscula($postVars['nome']);
 	    $obAluno->cep = $postVars['cep'];
 	    $obAluno->endereco = Funcoes::convertePriMaiuscula($postVars['endereco']);
+	    $obAluno->numero =  $postVars['numero'];
 	    $obAluno->bairro =  $postVars['bairro'];
 	    $obAluno->cidade = $postVars['cidade'];
 	    $obAluno->uf = Funcoes::convertePriMaiuscula($postVars['uf']);
