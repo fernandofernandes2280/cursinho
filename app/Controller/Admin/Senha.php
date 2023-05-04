@@ -43,7 +43,7 @@ class Senha extends Page{
 		]);
 		
 		//Retorna a página completa
-		return parent::getPanel('Pacientes > SISCAPS', $content,'trocarSenha', 'hidden');
+		return parent::getPanel('Pacientes > SISCAPS', $content,'users', 'hidden');
 		
 	}
 	

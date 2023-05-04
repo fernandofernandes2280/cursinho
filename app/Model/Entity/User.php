@@ -45,7 +45,15 @@ class User{
 	
 	//Permissao para acessar Menu Frequencias
 	public $menuFrequencias;
+
+	//Permissao para acessar Botão Novo Usuário
+	public $btnNovoUsuario;
+
+	//Permissao para acessar Menu Presença
+	public $menuPresenca;
 	
+	//Permissao para acessar Menu Disciplinas
+	public $menuDisciplinas;
 	
 	//Método responsavel por cadastrar o usuário no Banco de Dados
 	public function cadastrar(){
@@ -67,6 +75,9 @@ class User{
 		    'menuProfessores' 	=> $this->menuProfessores,
 		    'menuAulas' 	=> $this->menuAulas,
 		    'menuFrequencias' 	=> $this->menuFrequencias,
+		    'btnNovoUsuario' 	=> $this->btnNovoUsuario,
+		    'menuPresenca' 	=> $this->menuPresenca,
+		    'menuDisciplinas' 	=> $this->menuDisciplinas,
 		]);
 		
 		//Sucesso
@@ -88,6 +99,9 @@ class User{
 		    'menuProfessores' 	=> $this->menuProfessores,
 		    'menuAulas' 	=> $this->menuAulas,
 		    'menuFrequencias' 	=> $this->menuFrequencias,
+		    'btnNovoUsuario' 	=> $this->btnNovoUsuario,
+		    'menuPresenca' 	=> $this->menuPresenca,
+		    'menuDisciplinas' 	=> $this->menuDisciplinas,
 		]);
 		
 		
@@ -146,6 +160,9 @@ class User{
 	        'menuProfessores' 	=> $ob['menuProfessores'],
 	        'menuAulas' 	=> $ob['menuAulas'],
 	        'menuFrequencias' 	=> $ob['menuFrequencias'],
+	        'btnNovoUsuario' 	=> $ob['btnNovoUsuario'],
+	        'menuPresenca' 	=> $ob['menuPresenca'],
+	        'menuDisciplinas' 	=> $ob['menuDisciplinas'],
 	    ];
 	   
 	    //Sucesso

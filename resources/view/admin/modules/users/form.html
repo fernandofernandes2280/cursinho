@@ -16,6 +16,9 @@
 </div>
 
 <div class="row">
+	<div class="col-md-12">
+
+<div class="row">
 	<div class="col-md-6">
 		<form method="post">
 			<div class="form-row">
@@ -49,7 +52,7 @@
 			    </div>
 						  </div>
 			 <div class="form-row">
-			    <div class="col-md-12 mb-2">
+			    <div class="col-md-10 mb-2">
 					<label>Senha</label>
 					<input type="password" name="senha"  id="senha" class="form-control-pessoal" {{required}} value="{{senha}}">
 					<span class="lnr lnr-eye h2 text-dark" rel="tooltip" title="ver senha"></span>
@@ -73,36 +76,24 @@
 						});
 					</script>
 			    </div>
-			</div>
-			<div class="form-row">
-			    <div class="col-md-12 mb-0">
-     	           <label for="cpf">PERMISSÕES:</label></br>
-     	           
-	               <input  type="checkbox" {{alunoChecado}} id="checkExcluirAluno" name="checkExcluirAluno" value="1"/>
-	               <label >Excluir Aluno</label> &emsp;
-	               
-	               <input  type="checkbox" {{professorChecado}} id="checkExcluirProfessor" name="checkExcluirProfessor" value="1"/>
-	               <label >Excluir Professor</label> &emsp;
-	               
-	               <input  type="checkbox" {{menuAlunosChecado}} id="checkMenuAlunos" name="checkMenuAlunos" value="1"/>
-	               <label >Menu Alunos</label></br>
-	               
-	               <input  type="checkbox" {{menuProfessorChecado}} id="checkMenuProfessores" name="checkMenuProfessores" value="1"/>
-	               <label >Menu Professor</label>
-					
-					<input  type="checkbox" {{menuAulasChecado}} id="checkMenuAulas" name="checkMenuAulas" value="1"/>
-	               <label >Menu Aulas</label>  &emsp;
-
-					<input  type="checkbox" {{menuFrequenciasChecado}} id="checkMenuFrequencias" name="checkMenuFrequencias" value="1"/>
-	               <label >Menu Frequências</label>
-
-
+			    
+			    <div class="col-md-2 mt-4">
+			    
+			    <a href=" {{URL}}/admin/trocarSenha">
+					<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Trocar Senha">
+						<i class="material-icons" style="font-size: 30px;">edit_note</i>
+					</button>
+				</a>
+			    
 			    </div>
-
-		  </div>
+			    
+			    
+			</div>
+			
 			
 
 	</div>
+	
 	<div class="col-md-6">
 		<div class="form-row">
 			<div class="col-md-6 mb-2">
@@ -119,13 +110,50 @@
 	    		<i class="material-icons" style="font-size: 30px;">save</i>
 		    </button>
 						 <!-- Aciona modal novoCPF -->
-			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfUser">
+			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" {{btnNovoUsuarioVisivel}} title="Novo" data-toggle="modal" data-target="#modalNovoCpfUser">
 			  <i class="material-icons" style="font-size: 30px;">person_add</i>
 			</button>
 		</div>
 	</div>
+		</div>
+	</div>
+	
+	</div>
+	<div class="row" {{permissoesVisivel}}>
+	<div class="col-md-12" style="border:1px solid #fff">
+     	           <label for="cpf">PERMISSÕES:</label></br>
+     	           
+	               <input  type="checkbox" {{alunoChecado}} id="checkExcluirAluno" name="checkExcluirAluno" value="1"/>
+	               <label >Excluir Aluno</label> &emsp;
+	               
+	               <input  type="checkbox" {{professorChecado}} id="checkExcluirProfessor" name="checkExcluirProfessor" value="1"/>
+	               <label >Excluir Professor</label> &emsp;
+	               
+	               <input  type="checkbox" {{menuAlunosChecado}} id="checkMenuAlunos" name="checkMenuAlunos" value="1"/>
+	               <label >Menu Alunos</label>&emsp;
+	               
+	               <input  type="checkbox" {{menuProfessorChecado}} id="checkMenuProfessores" name="checkMenuProfessores" value="1"/>
+	               <label >Menu Professores</label>&emsp;
+					
+					<input  type="checkbox" {{menuAulasChecado}} id="checkMenuAulas" name="checkMenuAulas" value="1"/>
+	               <label >Menu Aulas</label>  &emsp;
+
+					<input  type="checkbox" {{menuFrequenciasChecado}} id="checkMenuFrequencias" name="checkMenuFrequencias" value="1"/>
+	               <label >Menu Frequências</label>&emsp;
+
+					<input  type="checkbox" {{btnNovoUsuarioChecado}} id="checkBtnNovoUsuario" name="checkBtnNovoUsuario" value="1"/>
+	               <label >Botão Novo Usuário</label>&emsp;
+
+					<input  type="checkbox" {{menuPresencaChecado}} id="checkMenuPresenca" name="checkMenuPresenca" value="1"/>
+	               <label >Menu Presença</label> &emsp; 
+
+					<input  type="checkbox" {{menuDisciplinasChecado}} id="checkMenuDisciplinas" name="checkMenuDisciplinas" value="1"/>
+	               <label >Menu Disciplinas</label> &emsp; 
+	
+	</div>
+	</div>
    </form>
-</div>
+
 
 
 							

@@ -32,8 +32,17 @@ class User extends Page{
 		//Instancia de paginacao
 		$obPagination = new Pagination($quantidadetotal,$paginaAtual,5);
 		
+		//Mostra todos os usuarios para o Admin e apenas o Operador para ele mesmo
+		if($_SESSION['usuario']['tipo'] == 'Admin'){
+		    $where = null;
+		    $paginacao = $obPagination->getLimit();
+		}else{
+		    $where = 'id = '.$_SESSION['usuario']['id'];
+		    $paginacao = 1;
+		} 
+		
 		//Resultados da Página
-		$results = EntityUser::getUsers(null, 'id DESC',$obPagination->getLimit());
+		$results = EntityUser::getUsers($where, 'id DESC',$paginacao);
 		
 		$reload = rand();
 		//Renderiza o item
@@ -142,6 +151,9 @@ class User extends Page{
 		$menuProfessores = $postVars['checkMenuProfessores'] ?? '0';
 		$menuAulas = $postVars['checkMenuAulas'] ?? '0';
 		$menuFrequencias = $postVars['checkMenuFrequencias'] ?? '0';
+		$btnNovoUsuario = $postVars['checkBtnNovoUsuario'] ?? '0';
+		$menuPresenca = $postVars['checkMenuPresenca'] ?? '0';
+		$menuDisciplinas = $postVars['checkMenuDisciplinas'] ?? '0';
 		
 		//Cria sessão com os dados do form
 		EntityUser::getSessaoDados($postVars);
@@ -180,6 +192,9 @@ class User extends Page{
 		$obUser->menuProfessores = $menuProfessores;
 		$obUser->menuAulas = $menuAulas;
 		$obUser->menuFrequencias = $menuFrequencias;
+		$obUser->btnNovoUsuario = $btnNovoUsuario;
+		$obUser->menuPresenca = $menuPresenca;
+		$obUser->menuDisciplinas = $menuDisciplinas;
 		
 		//grava as informações
 		$obUser->cadastrar();
@@ -249,6 +264,9 @@ class User extends Page{
 		$obUser->menuProfessores == 1 ? $menuProfessorChecado = 'checked' : $menuProfessorChecado = '';
 		$obUser->menuAulas == 1 ? $menuAulasChecado = 'checked' : $menuAulasChecado = '';
 		$obUser->menuFrequencias == 1 ? $menuFrequenciasChecado = 'checked' : $menuFrequenciasChecado = '';
+		$obUser->btnNovoUsuario == 1 ? $btnNovoUsuarioChecado = 'checked' : $btnNovoUsuarioChecado = '';
+		$obUser->menuPresenca == 1 ? $menuPresencaChecado = 'checked' : $menuPresencaChecado = '';
+		$obUser->menuDisciplinas == 1 ? $menuDisciplinasChecado = 'checked' : $menuDisciplinasChecado = '';
 		
 		$reload = rand();
 		//Conteúdo do Formulário
@@ -274,6 +292,11 @@ class User extends Page{
 		    'menuProfessorChecado' => $menuProfessorChecado,
 		    'menuAulasChecado' => $menuAulasChecado,
 		    'menuFrequenciasChecado' => $menuFrequenciasChecado,
+		    'btnNovoUsuarioChecado' => $btnNovoUsuarioChecado,
+		    'btnNovoUsuarioVisivel' => permissaoBtnNovoUsuario,
+		    'menuPresencaChecado' => $menuPresencaChecado,
+		    'menuDisciplinasChecado' => $menuDisciplinasChecado,
+		    'permissoesVisivel' => permissoes,
 		         
 				
 				
@@ -302,6 +325,9 @@ class User extends Page{
 		$menuProfessores = $postVars['checkMenuProfessores'] ?? '0';
 		$menuAulas = $postVars['checkMenuAulas'] ?? '0';
 		$menuFrequencias = $postVars['checkMenuFrequencias'] ?? '0';
+		$btnNovoUsuario = $postVars['checkBtnNovoUsuario'] ?? '0';
+		$menuPresenca = $postVars['checkMenuPresenca'] ?? '0';
+		$menuDisciplinas = $postVars['checkMenuDisciplinas'] ?? '0';
 		
 				//obtém o usuário do banco de dados
 		$obUser = EntityUser::getUserById($id);
@@ -345,6 +371,9 @@ class User extends Page{
 		$obUser->menuProfessores = $menuProfessores;
 		$obUser->menuAulas = $menuAulas;
 		$obUser->menuFrequencias = $menuFrequencias;
+		$obUser->btnNovoUsuario = $btnNovoUsuario;
+		$obUser->menuPresenca = $menuPresenca;
+		$obUser->menuDisciplinas = $menuDisciplinas;
 		
 		//grava as informações
 		$obUser->atualizar();

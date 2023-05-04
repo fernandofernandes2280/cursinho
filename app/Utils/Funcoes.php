@@ -62,26 +62,31 @@ class Funcoes{
 	    return $tel;
 	}
 	
+	//Método responsável por retornar as permissões do usuário
 	public static function getPermissoes(){
 	    
-	    $permissao = array(
-	        'excluirAluno' => '',
-	        'excluirProfessor' => ''
-	    );
-	    
 	    Funcoes::init();
+	    
+	    @$_SESSION['usuario']['tipo'] == 'Admin' ? $visivelPermissoes = '' : $visivelPermissoes = 'hidden';
 	    @$_SESSION['usuario']['excluirAluno'] == 1 ? $visivelDeleteAluno = '' : $visivelDeleteAluno = 'hidden';
 	    @$_SESSION['usuario']['excluirProfessor'] == 1 ? $visivelDeleteProfessor = '' : $visivelDeleteProfessor = 'hidden';
 	    @$_SESSION['usuario']['menuAlunos'] == 1 ? $visivelMenuAlunos = '' : $visivelMenuAlunos = 'hidden';
 	    @$_SESSION['usuario']['menuProfessores'] == 1 ? $visivelMenuProfessores = '' : $visivelMenuProfessores = 'hidden';
 	    @$_SESSION['usuario']['menuAulas'] == 1 ? $visivelMenuAulas = '' : $visivelMenuAulas = 'hidden';
 	    @$_SESSION['usuario']['menuFrequencias'] == 1 ? $visivelMenuFrequencias = '' : $visivelMenuFrequencias = 'hidden';
+	    @$_SESSION['usuario']['btnNovoUsuario'] == 1 ? $visivelBtnNovoUsuario = '' : $visivelBtnNovoUsuario = 'hidden';
+	    @$_SESSION['usuario']['menuPresenca'] == 1 ? $visivelMenuPresenca = '' : $visivelMenuPresenca = 'hidden';
+	    @$_SESSION['usuario']['menuDisciplinas'] == 1 ? $visivelMenuDisciplinas = '' : $visivelMenuDisciplinas = 'hidden';
 	    $permissao['excluirAluno'] = $visivelDeleteAluno;
 	    $permissao['excluirProfessor'] = $visivelDeleteProfessor;
 	    $permissao['menuAlunos'] = $visivelMenuAlunos;
 	    $permissao['menuProfessores'] = $visivelMenuProfessores;
 	    $permissao['menuAulas'] = $visivelMenuAulas;
 	    $permissao['menuFrequencias'] = $visivelMenuFrequencias;
+	    $permissao['btnNovoUsuario'] = $visivelBtnNovoUsuario;
+	    $permissao['menuPresenca'] = $visivelMenuPresenca;
+	    $permissao['menuDisciplinas'] = $visivelMenuDisciplinas;
+	    $permissao['permissoes'] = $visivelPermissoes;
 	    
 	    return    $permissao;
 	}

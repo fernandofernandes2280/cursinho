@@ -38,6 +38,9 @@ class Login{
 		    'menuProfessores' => $obUser->menuProfessores,
 		    'menuAulas' => $obUser->menuAulas,
 		    'menuFrequencias' => $obUser->menuFrequencias,
+		    'btnNovoUsuario' => $obUser->btnNovoUsuario,
+		    'menuPresenca' => $obUser->menuPresenca,
+		    'menuDisciplinas' => $obUser->menuDisciplinas,
 		];
 		
 		//Sucesso

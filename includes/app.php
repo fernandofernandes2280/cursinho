@@ -26,14 +26,23 @@ define('URL',getenv('URL'));
 
 //recebe os valores das permissões do usuário para serem usadas no Menu
 $permissao = Funcoes::getPermissoes();
-$permissaoMenuAlunos = $permissao['menuAlunos'];
-define('permissaoMenuAlunos', $permissaoMenuAlunos);
-$permissaoMenuProfessores = $permissao['menuProfessores'];
-define('permissaoMenuProfessores', $permissaoMenuProfessores);
-$permissaoMenuAulas = $permissao['menuAulas'];
-define('permissaoMenuAulas', $permissaoMenuAulas);
-$permissaoMenuFrequencias = $permissao['menuFrequencias'];
-define('permissaoMenuFrequencias', $permissaoMenuFrequencias);
+
+define('permissoes', $permissao['permissoes']);
+
+define('permissaoMenuAlunos', $permissao['menuAlunos']);
+
+define('permissaoMenuProfessores', $permissao['menuProfessores']);
+
+define('permissaoMenuAulas', $permissao['menuAulas']);
+
+define('permissaoMenuFrequencias', $permissao['menuFrequencias']);
+
+define('permissaoBtnNovoUsuario', $permissao['btnNovoUsuario']);
+
+define('permissaoMenuPresenca', $permissao['menuPresenca']);
+
+define('permissaoMenuDisciplinas', $permissao['menuDisciplinas']);
+
 
 
 //Define o valor padrão das variáveis

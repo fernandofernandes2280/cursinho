@@ -60,11 +60,11 @@ class Page{
 	        
 	    ],
 	    'presencas' =>[
-	        'label' => 'Presença Rápida',
+	        'label' => 'Presença',
 	        'link' => URL.'/admin/presencas',
 	        'material-icons' => 'checklist_rtl',
 	        'modal' => '',
-	        'visivel' => ''
+	        'visivel' => permissaoMenuPresenca
 	        
 	    ],
 	    
@@ -73,7 +73,7 @@ class Page{
 	        'link' => URL.'/admin/disciplinas',
 	        'material-icons' => 'clear_all',
 	        'modal' => '',
-	        'visivel' => ''
+	        'visivel' => permissaoMenuDisciplinas
 	    ],
 			'users' =>[
 					'label' => 'Usuários',
@@ -87,28 +87,22 @@ class Page{
 					'link' => URL.'/admin/logs',
 					'material-icons' => 'people',
 			    'modal' => '',
-			    'visivel' => ''
+			    'visivel' => 'hidden'
 			],
 			'relatorios' =>[
 					'label' => 'Relatórios',
 					'link' => '#',
 					'material-icons' => 'people',
 			    'modal' => 'data-toggle="modal" data-target="#relatorioModal"',
-			    'visivel' => ''
+			    'visivel' => 'hidden'
 			],
-			'trocarSenha' =>[
-					'label' => 'Trocar Senha',
-					'link' => URL.'/admin/trocarSenha'  ,
-					'material-icons' => 'assignment',
-			    'modal' => '',
-			    'visivel' => ''
-			],
+			
 	    'inativar' =>[
 	        'label' => 'Inativar Aluno',
 	        'link' => URL.'/admin/inativar'  ,
 	        'material-icons' => 'assignment',
 	        'modal' => '',
-	        'visivel' => ''
+	        'visivel' => 'hidden'
 	    ],
 			
 	];
@@ -119,7 +113,8 @@ class Page{
 			
 			'Producao' =>[
 					'label' => 'Produção',
-					'link' => ''
+					'link' => '',
+			    'visivel' => 'hidden'
 			],
 			
 	];
@@ -165,7 +160,8 @@ class Page{
 			
 			'manutencao' =>[
 					'label' => 'Manutenção',
-					'link' => ''
+					'link' => '',
+			    'visivel' => 'hidden'
 			],
 			
 	];
@@ -320,7 +316,8 @@ class Page{
 					'label' => $module['label'],
 					'itensDropDown' => self::getDropdownItemsProducao(),
 					'current' => $hash == $currentModule ? 'active' : '',
-					'material-icons'=>'description'
+					'material-icons'=>'description',
+			         'visivelMenu' => $module['visivel']
 			]);
 			
 		}
@@ -332,7 +329,8 @@ class Page{
 					'label' => $module['label'],
 					'itensDropDown' => self::getDropdownItemsManutencao(),
 					'current' => $hash == $currentModule ? 'active' : '',
-					'material-icons'=>'description'
+					'material-icons'=>'description',
+			    'visivelMenu' => $module['visivel']
 			]);
 			
 		}
