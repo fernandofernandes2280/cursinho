@@ -13,6 +13,7 @@ use \App\Model\Entity\Aluno as EntityAluno;
 use \App\Model\Entity\Frequencia as EntityFrequencia;
 use \App\Model\Entity\StatusAula as EntityStatusAula;
 use \App\Model\Entity\User as EntityUser;
+use App\Utils\Funcoes;
 
 class Aula extends Page{
 	
@@ -21,56 +22,6 @@ class Aula extends Page{
 	private static $totalGeralBpac = 0;
 	//esconde busca rápida de prontuário no navBar
 	private static $hidden = '';
-	
-	
-	//Método responsavel por retornar a mensagem de status
-	private static function getStatus($request){
-	    //Query PArams
-	    $queryParams = $request->getQueryParams();
-	    
-	    //Status
-	    if(!isset($queryParams['statusMessage'])) return '';
-	    
-	    //Mensagens de status
-	    switch ($queryParams['statusMessage']) {
-	        case 'created':
-	            return Alert::getSuccess('Aula criada com sucesso!');
-	            break;
-	        case 'updated':
-	            return Alert::getSuccess('Aula atualizada com sucesso!');
-	            break;
-	        case 'deleted':
-	            return Alert::getSuccess('Aula excluída com sucesso!');
-	            break;
-	        case 'duplicad':
-	            return Alert::getError('Aula já Cadastrada!');
-	            break;
-	        case 'notFound':
-	            return Alert::getError('Aula não encontrada!');
-	            break;
-	        case 'add':
-	            return Alert::getSuccess('Paciente adicionado com sucesso!');
-	            break;
-	        case 'removed':
-	            return Alert::getSuccess('Paciente removido com sucesso!');
-	            break;
-	        case 'alter':
-	            return Alert::getSuccess('Alterações realizadas com sucesso!');
-	            break;
-	        case 'alterDuplo':
-	            return Alert::getSuccess('Alterações realizadas com sucesso, exceto registros com mesmo atendimento!');
-	            break;
-	        case 'errorDate':
-	            return Alert::getError('Aula não pode ser transferida para a mesma data!');
-	            break;
-	        case 'transfer':
-	            return Alert::getSuccess('Aula transferida com sucesso!');
-	            break;
-	        case 'deletedfail':
-	            return Alert::getError('Você não tem permissão para Excluir! Contate o administrador.');
-	            break;
-	    }
-	}
 	
 	
 	
@@ -165,7 +116,7 @@ class Aula extends Page{
 				'itens' => self::getAulasItems($request,$obPagination),
 				'pagination' => parent::getPagination($request, $obPagination),
 				'totalAtendimentos' => self::$qtdTotal,
-				'statusMessage' => self::getStatus($request),
+				'statusMessage' => Funcoes::getStatus($request),
 		        'optionTurma' => EntityTurma::getSelectTurmas($idTurma),
 		        'optionStatus' => EntityStatusAula::getSelectStatusAula($status),
 				'acao' => 'Pesquisa',
@@ -184,7 +135,7 @@ class Aula extends Page{
 			//Conteúdo da Home
 			$content = View::render('admin/modules/aulas/form',[
 			         'title' => 'Aula > Nova',
-					'statusMessage' => self::getStatus($request),
+					'statusMessage' => Funcoes::getStatus($request),
 					'optionTurmas' => EntityTurma::getSelectTurmas(null),
 			        'optionProfessores1' => EntityProfessor::getSelectProfessores(null),
 			        'optionProfessores2' => EntityProfessor::getSelectProfessores(null),
@@ -272,7 +223,7 @@ class Aula extends Page{
 				//Renderiza o conteúdo
 				$content = View::render('admin/modules/aulas/form',[
 				    'title' => 'Aula > Editar',
-					'statusMessage' => self::getStatus($request),
+					'statusMessage' => Funcoes::getStatus($request),
 				    'data' => date('Y-m-d',strtotime($obAula->data)),
 				    'optionTurmas' => EntityTurma::getSelectTurmas($obAula->turma),
 				    'optionProfessores1' => EntityProfessor::getSelectProfessores($obAula->professor1),

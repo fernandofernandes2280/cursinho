@@ -206,7 +206,7 @@ class Aluno extends Page{
 				'title' => 'Alunos > Pesquisa ',
 				'itens' => self::getAlunoItems($request,$obPagination),
 				'pagination' => parent::getPagination($request, $obPagination),
-				'statusMessage' => self::getStatus($request),
+				'statusMessage' => Funcoes::getStatus($request),
 				'nome' =>  $queryParams['nome'] ?? '',
 				'matricula' =>  $queryParams['matricula'] ?? '',
 		        'id' =>  $queryParams['id'] ?? '',
@@ -263,43 +263,6 @@ class Aluno extends Page{
 	    return parent::getPanel('Cortar Foto > Cursinho', $content,'alunos', self::$hidden);
 	    
 	}
-	
-	//Método responsavel por retornar a mensagem de status
-	private static function getStatus($request){
-	    //Query PArams
-	    $queryParams = $request->getQueryParams();
-	    
-	    //Status
-	    if(!isset($queryParams['statusMessage'])) return '';
-	    
-	    //Mensagens de status
-	    switch ($queryParams['statusMessage']) {
-	        case 'created':
-	            return Alert::getSuccess('Aluno criado com sucesso!');
-	            break;
-	        case 'updated':
-	            return Alert::getSuccess('Aluno atualizado com sucesso!');
-	            break;
-	        case 'deleted':
-	            return Alert::getSuccess('Aluno excluído com sucesso!');
-	            break;
-	        case 'duplicad':
-	            return Alert::getError('Aluno Já cadastrado!');
-	            break;
-	        case 'deletedfail':
-	            return Alert::getError('Você não tem permissão para Excluir! Contate o administrador.');
-	            break;
-	        case 'semfoto':
-	            return Alert::getError('Nenhuma foto foi enviada!');
-	            break;
-	        case 'cpfInvalid':
-	            return Alert::getError('CPF Inválido!');
-	            break;
-	    }
-	}
-	
-	
-	
 	
 	
 	//Metodo responsávelpor retornar o formulário de Captura de foto do aluno
@@ -403,7 +366,7 @@ class Aluno extends Page{
 	        'cep' => $obAluno->cep,
 	        'endereco' => $obAluno->endereco,
 	        'numero' => $obAluno->numero,
-	        'statusMessage' => self::getStatus($request),
+	        'statusMessage' => Funcoes::getStatus($request),
 	        'naturalidade' => $obAluno->naturalidade,
 	        'fone' =>$obAluno->fone ,
 	        'mae' => $obAluno->mae,

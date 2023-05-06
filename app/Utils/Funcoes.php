@@ -2,7 +2,49 @@
 
 namespace App\Utils;
 
+use App\Controller\Admin\Alert;
 class Funcoes{
+    
+    
+    //Método responsavel por retornar a mensagem de status
+    public  static function getStatus($request){
+        //Query PArams
+        $queryParams = $request->getQueryParams();
+        
+        //Status
+        if(!isset($queryParams['statusMessage'])) return '';
+        
+        //Mensagens de status
+        switch ($queryParams['statusMessage']) {
+            case 'created':
+                return Alert::getSuccess('Dados gravado(s) com sucesso!');
+                break;
+            case 'updated':
+                return Alert::getSuccess('Dados atualizado(s) com sucesso!');
+                break;
+            case 'deleted':
+                return Alert::getSuccess('Dados excluído(s) com sucesso!');
+                break;
+            case 'duplicad':
+                return Alert::getError('Dados Já cadastrado!');
+                break;
+            case 'deletedfail':
+                return Alert::getError('Você não tem permissão para Excluir! Contate o administrador.');
+                break;
+            case 'semfoto':
+                return Alert::getError('Nenhuma foto foi enviada!');
+                break;
+            case 'cpfInvalid':
+                return Alert::getError('CPF Inválido!');
+                break;
+            case 'cpfDuplicated':
+                return Alert::getError('CPF já está sendo utilizado por outro usuário!');
+                break;
+            case 'emailDuplicated':
+                return Alert::getError('E-mail já está sendo utilizado!');
+                break;
+        }
+    }
     
     //Método responsavel por Inicializar Sessão
     public static function init(){

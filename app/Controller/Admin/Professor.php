@@ -149,7 +149,7 @@ class Professor extends Page{
 				'title' => 'Professores > Pesquisa',
 				'itens' => self::getProfessoresItems($request,$obPagination),
 				'pagination' => parent::getPagination($request, $obPagination),
-				'statusMessage' => self::getStatus($request),
+				'statusMessage' => Funcoes::getStatus($request),
 				'nome' =>  $queryParams['nome'] ?? '',
 				'pront' =>  $queryParams['pront'] ?? '',
 				'totalPacientes' => self::$qtdTotal,
@@ -203,7 +203,7 @@ class Professor extends Page{
 	        'nome' => @$_SESSION['professor']['novo']['nome'] ?? '',
 	        'cep' => @$_SESSION['professor']['novo']['cep'] ??'',
 	        'endereco' => @$_SESSION['professor']['novo']['endereco'] ?? '',
-	        'statusMessage' => self::getStatus($request),
+	        'statusMessage' => Funcoes::getStatus($request),
 	        'fone' => @$_SESSION['professor']['novo']['fone'] ??'',
 	        'cidade' => @$_SESSION['professor']['novo']['cidade'] ??'Santana',
 	        'uf' => @$_SESSION['professor']['novo']['uf'] ??'AP',
@@ -295,7 +295,7 @@ class Professor extends Page{
 	        'nome' => $obProfessor->nome,
 	        'cep' => $obProfessor->cep,
 	        'endereco' => $obProfessor->endereco,
-	        'statusMessage' => self::getStatus($request),
+	        'statusMessage' => Funcoes::getStatus($request),
 	        'fone' => $obProfessor->fone,
 	        'cidade' => $obProfessor->cidade,
 	        'uf' => $obProfessor->uf,
@@ -424,42 +424,6 @@ class Professor extends Page{
 	    return $resultados;
 	}
 	
-
-	
-	
-	//Método responsavel por retornar a mensagem de status
-	private static function getStatus($request){
-		//Query PArams
-		$queryParams = $request->getQueryParams();
-		
-		//Status
-		if(!isset($queryParams['statusMessage'])) return '';
-		
-		//Mensagens de status
-		switch ($queryParams['statusMessage']) {
-			case 'created':
-				return Alert::getSuccess('Professor criado com sucesso!');
-				break;
-			case 'updated':
-				return Alert::getSuccess('Professor atualizado com sucesso!');
-				break;
-			case 'deleted':
-				return Alert::getSuccess('Professor excluído com sucesso!');
-				break;
-			case 'duplicad':
-				return Alert::getError('Professor Já cadastrado!');
-				break;
-			case 'cpfDuplicated':
-			    return Alert::getError('CPF já está sendo utilizado por outro usuário!');
-			    break;
-			case 'cpfInvalid':
-			    return Alert::getError('CPF Inválido!');
-			    break;
-			case 'emailDuplicated':
-			    return Alert::getError('E-mail já está sendo utilizado!');
-			    break;
-		}
-	}
 	
 	
 	//Metodo responsávelpor retornar o formulário de Exclusão de um Paciente
