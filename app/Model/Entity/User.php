@@ -34,6 +34,10 @@ class User{
 	//Permissao para excluir professor
 	public $excluirProfessor;
 	
+	//Permissao para excluir Disciplina
+	public $excluirDisciplina;
+	
+	
 	//Permissao para acessar Menu Aluno
 	public $menuAlunos;
 	
@@ -71,6 +75,7 @@ class User{
 				'cpf' 	=> $this->cpf,
 		        'excluirAluno' 	=> $this->excluirAluno,
 		       'excluirProfessor' 	=> $this->excluirProfessor,
+		    'excluirDisciplina' 	=> $this->excluirDisciplina,
 		    'menuAlunos' 	=> $this->menuAlunos,
 		    'menuProfessores' 	=> $this->menuProfessores,
 		    'menuAulas' 	=> $this->menuAulas,
@@ -78,6 +83,7 @@ class User{
 		    'btnNovoUsuario' 	=> $this->btnNovoUsuario,
 		    'menuPresenca' 	=> $this->menuPresenca,
 		    'menuDisciplinas' 	=> $this->menuDisciplinas,
+		    
 		]);
 		
 		//Sucesso
@@ -95,6 +101,7 @@ class User{
 				'cpf' 	=> $this->cpf,
 		         'excluirAluno' 	=> $this->excluirAluno,
 		       'excluirProfessor' 	=> $this->excluirProfessor,
+		    'excluirDisciplina' 	=> $this->excluirDisciplina,
 		    'menuAlunos' 	=> $this->menuAlunos,
 		    'menuProfessores' 	=> $this->menuProfessores,
 		    'menuAulas' 	=> $this->menuAulas,
@@ -102,6 +109,8 @@ class User{
 		    'btnNovoUsuario' 	=> $this->btnNovoUsuario,
 		    'menuPresenca' 	=> $this->menuPresenca,
 		    'menuDisciplinas' 	=> $this->menuDisciplinas,
+		    
+		    
 		]);
 		
 		
@@ -156,6 +165,7 @@ class User{
 	        'tipo' => $ob['tipo'],
 	        'excluirAluno' => $ob['excluirAluno'],
 	        'excluirProfessor' => $ob['excluirProfessor'],
+	        'excluirDisciplina' => $ob['excluirDisciplina'],
 	        'menuAlunos' 	=> $ob['menuAlunos'],
 	        'menuProfessores' 	=> $ob['menuProfessores'],
 	        'menuAulas' 	=> $ob['menuAulas'],

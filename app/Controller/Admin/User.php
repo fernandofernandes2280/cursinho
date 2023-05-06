@@ -147,6 +147,7 @@ class User extends Page{
 		$tipo = $postVars['tipo'] ?? '';
 		$excluirAluno = $postVars['checkExcluirAluno'] ?? '0';
 		$excluirProfessor = $postVars['checkExcluirProfessor'] ?? '0';
+		$excluirDisciplina = $postVars['checkDisciplina'] ?? '0';
 		$menuAlunos = $postVars['checkMenuAlunos'] ?? '0';
 		$menuProfessores = $postVars['checkMenuProfessores'] ?? '0';
 		$menuAulas = $postVars['checkMenuAulas'] ?? '0';
@@ -188,6 +189,7 @@ class User extends Page{
 		//campos para permissão
 		$obUser->excluirAluno = $excluirAluno;
 		$obUser->excluirProfessor = $excluirProfessor;
+		$obUser->excluirDisciplina = $excluirDisciplina;
 		$obUser->menuAlunos = $menuAlunos;
 		$obUser->menuProfessores = $menuProfessores;
 		$obUser->menuAulas = $menuAulas;
@@ -267,6 +269,7 @@ class User extends Page{
 		$obUser->btnNovoUsuario == 1 ? $btnNovoUsuarioChecado = 'checked' : $btnNovoUsuarioChecado = '';
 		$obUser->menuPresenca == 1 ? $menuPresencaChecado = 'checked' : $menuPresencaChecado = '';
 		$obUser->menuDisciplinas == 1 ? $menuDisciplinasChecado = 'checked' : $menuDisciplinasChecado = '';
+		$obUser->excluirDisciplina == 1 ? $excluirDisciplinaChecado = 'checked' : $excluirDisciplinaChecado = '';
 
 		$reload = rand();
 		//Conteúdo do Formulário
@@ -297,7 +300,8 @@ class User extends Page{
 		    'menuPresencaChecado' => $menuPresencaChecado,
 		    'menuDisciplinasChecado' => $menuDisciplinasChecado,
 		    'permissoesVisivel' => permissoes,
-		    'habilitado' => habilitaCPFTIPO
+		    'habilitado' => habilitaCPFTIPO,
+		    'excluirDisciplinaChecado' => $excluirDisciplinaChecado,
 		         
 				
 				
@@ -322,6 +326,7 @@ class User extends Page{
 		//campos para permissão
 		$excluirAluno = $postVars['checkExcluirAluno'] ?? '0';
 		$excluirProfessor = $postVars['checkExcluirProfessor'] ?? '0';
+		$excluirDisciplina = $postVars['checkDisciplina'] ?? '0';
 		$menuAlunos = $postVars['checkMenuAlunos'] ?? '0';
 		$menuProfessores = $postVars['checkMenuProfessores'] ?? '0';
 		$menuAulas = $postVars['checkMenuAulas'] ?? '0';
@@ -368,6 +373,7 @@ class User extends Page{
 		//campos para permissão
 		$obUser->excluirAluno = $excluirAluno;
 		$obUser->excluirProfessor = $excluirProfessor;
+		$obUser->excluirDisciplina = $excluirDisciplina;
 		$obUser->menuAlunos = $menuAlunos;
 		$obUser->menuProfessores = $menuProfessores;
 		$obUser->menuAulas = $menuAulas;

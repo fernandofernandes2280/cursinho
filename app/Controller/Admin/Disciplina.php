@@ -37,6 +37,7 @@ class Disciplina extends Page{
 			$itens.= View::render('admin/modules/disciplinas/item',[
 					'id' => $ob->id,
 					'nome' => $ob->nome,
+			       'excluirDisciplinaVisivel' => permissaoExcluirDisciplinas,
 					
 			]);
 		}

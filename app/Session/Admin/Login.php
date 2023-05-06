@@ -45,6 +45,7 @@ class Login{
 		        'btnNovoUsuario' => $obUser->btnNovoUsuario,
 		        'menuPresenca' => $obUser->menuPresenca,
 		        'menuDisciplinas' => $obUser->menuDisciplinas,
+		        'excluirDisciplina' => $obUser->excluirDisciplina,
 		    ];
 		    
 		
