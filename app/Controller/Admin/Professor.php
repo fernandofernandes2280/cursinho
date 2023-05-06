@@ -81,9 +81,6 @@ class Professor extends Page{
 		//Renderiza
 		while ($obProfessor = $results -> fetchObject(EntityProfessor::class)) {
 		    
-		    //recebe os valores das permissões do usuário
-		    $permissao = Funcoes::getPermissoes();
-		   
 		    $resultsDisciplina = EntityDisciplinaProfessor::getDisciplinasProfessor('idProfessor = '.$obProfessor->id);
 		    while ($obDisciplina = $resultsDisciplina -> fetchObject(EntityDisciplinaProfessor::class)) {
 		        $resultadoDisciplinas .= ''.@EntityDisciplina::getDisciplinaById($obDisciplina->idDisciplina)->nome.', ';
@@ -104,7 +101,7 @@ class Professor extends Page{
 			    'email' => $obProfessor->email,
 			    'foto' => $obProfessor->foto.'?var='.$reload,
 			    'disciplinas' => rtrim($resultadoDisciplinas,', '),
-			    'visivelDeleteProfessor' => $permissao['excluirProfessor'],
+			    'visivelDeleteProfessor' => permissaoExcluirProfessor,
 			]);
 			$resultadoDisciplinas = '';
 		}

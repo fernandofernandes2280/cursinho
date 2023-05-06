@@ -45,6 +45,10 @@ define('permissaoMenuDisciplinas', $permissao['menuDisciplinas']);
 
 define('permissaoExcluirDisciplinas', $permissao['excluirDisciplina']);
 
+define('permissaoExcluirProfessor', $permissao['excluirProfessor']);
+
+define('permissaoExcluirAluno', $permissao['excluirAluno']);
+
 //habilita o campo CPF e TIPO apenas para o Admin
 if(@$_SESSION['admin']['tipo'] == 'Admin')
 {

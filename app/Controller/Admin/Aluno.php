@@ -126,9 +126,6 @@ class Aluno extends Page{
 				//Renderiza
 		while ($obAluno = $results -> fetchObject(EntityAluno::class)) {
 		    
-		    //recebe os valores das permissões do usuário
-		    $permissao = Funcoes::getPermissoes();
-		    
 		    $reload = rand();
 			//View de pacientes
 			$resultados .= View::render('admin/modules/alunos/item',[
@@ -144,7 +141,7 @@ class Aluno extends Page{
 			    'foto' => $obAluno->foto.'?var='.$reload,
 			    'cor' => $cor,
 			    'autor' => EntityUser::getUserById($obAluno->autor)->nome,
-			    'visivelDeleteAluno' => $permissao['excluirAluno'],
+			    'visivelDeleteAluno' => permissaoExcluirAluno,
 			   
 					
 					
