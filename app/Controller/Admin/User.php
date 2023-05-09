@@ -56,6 +56,7 @@ class User extends Page{
 					'cpf' => Funcoes::mask($obUser->cpf, '###.###.###-##') ,
 					'tipo' => $obUser->tipo,
     			    'foto' => $obUser->foto.'?var='.$reload,
+			    'excluirUsuarioVisivel' => permissaoExcluirUsuario
 			]);
 		}
 		
@@ -73,7 +74,7 @@ class User extends Page{
 		$content = View::render('admin/modules/users/index',[
 				'itens' => self::getUserItems($request, $obPagination),
 				'pagination' => parent::getPagination($request, $obPagination),
-				'statusMessage' => self::getStatus($request),
+				'statusMessage' => Funcoes::getStatus($request),
 				'navBar'=>View::render('admin/navBar',[]),
 				'footer'=>View::render('admin/modules/pacientes/footer',[]),
 				
@@ -119,7 +120,7 @@ class User extends Page{
 		         'email' => @$_SESSION['usuario']['novo']['email'] ?? '',
 		    'cpf' => @$_SESSION['usuario']['novo']['cpf'] ?? @$validaCpf->getValue(),
 		         'senha' => @$_SESSION['usuario']['novo']['senha'] ?? '',
-				'statusMessage' => self::getStatus($request),
+				'statusMessage' => Funcoes::getStatus($request),
 		        'selectedVisitante'=> 'selected',
 		        'foto' => 'profile.png',  
 		        'required' => 'required',
@@ -148,6 +149,7 @@ class User extends Page{
 		$excluirAluno = $postVars['checkExcluirAluno'] ?? '0';
 		$excluirProfessor = $postVars['checkExcluirProfessor'] ?? '0';
 		$excluirDisciplina = $postVars['checkDisciplina'] ?? '0';
+		$excluirUsuario = $postVars['checkExcluirUsuario'] ?? '0';
 		$menuAlunos = $postVars['checkMenuAlunos'] ?? '0';
 		$menuProfessores = $postVars['checkMenuProfessores'] ?? '0';
 		$menuAulas = $postVars['checkMenuAulas'] ?? '0';
@@ -190,6 +192,7 @@ class User extends Page{
 		$obUser->excluirAluno = $excluirAluno;
 		$obUser->excluirProfessor = $excluirProfessor;
 		$obUser->excluirDisciplina = $excluirDisciplina;
+		$obUser->excluirUsuario = $excluirUsuario;
 		$obUser->menuAlunos = $menuAlunos;
 		$obUser->menuProfessores = $menuProfessores;
 		$obUser->menuAulas = $menuAulas;
@@ -213,36 +216,7 @@ class User extends Page{
 		
 	}
 	
-	//Método responsavel por retornar a mensagem de status
-	private static function getStatus($request){
-		//Query PArams
-		$queryParams = $request->getQueryParams();
-		
-		//Status
-		if(!isset($queryParams['statusMessage'])) return '';
-		
-		//Mensagens de status
-		switch ($queryParams['statusMessage']) {
-			case 'created':
-				return Alert::getSuccess('Usuário criado com sucesso!');
-			break;
-			case 'updated':
-				return Alert::getSuccess('Usuário atualizado com sucesso!');
-				break;
-			case 'deleted':
-				return Alert::getSuccess('Usuário excluído com sucesso!');
-				break;
-			case 'duplicated':
-			    return Alert::getError('Usuário já cadastrado!');
-				break;
-			case 'cpfInvalid':
-				return Alert::getError('CPF Inválido!');
-				break;
-			case 'emailDuplicated':
-				return Alert::getError('E-mail já está sendo utilizado!');
-				break;
-		}
-	}
+
 	
 	
 	//Metodo responsávelpor retornar o formulário de Edição de um Usuário
@@ -262,6 +236,7 @@ class User extends Page{
 		$obUser->tipo == 'Operador' ? $selectedOperador = 'selected' : $selectedOperador = '' ;
 		$obUser->excluirAluno == 1 ? $alunoChecado = 'checked' : $alunoChecado = '';
 		$obUser->excluirProfessor == 1 ? $professorChecado = 'checked' : $professorChecado = '';
+		$obUser->excluirUsuario == 1 ? $excluirUsuarioChecado = 'checked' : $excluirUsuarioChecado = '';
 		$obUser->menuAlunos == 1 ? $menuAlunoChecado = 'checked' : $menuAlunoChecado = '';
 		$obUser->menuProfessores == 1 ? $menuProfessorChecado = 'checked' : $menuProfessorChecado = '';
 		$obUser->menuAulas == 1 ? $menuAulasChecado = 'checked' : $menuAulasChecado = '';
@@ -283,7 +258,7 @@ class User extends Page{
 				'selectedAdmin'=> $selectedAdmin,
 				'selectedVisitante'=> $selectedVisitante,
 				'selectedOperador'=> $selectedOperador,
-				'statusMessage' => self::getStatus($request),
+				'statusMessage' => Funcoes::getStatus($request),
 				'navBar'=>View::render('admin/navBar',[]),
 			 	'footer'=>View::render('admin/modules/pacientes/footer',[]),
 		          'foto' => $obUser->foto.'?var='.$reload,
@@ -302,6 +277,7 @@ class User extends Page{
 		    'permissoesVisivel' => permissoes,
 		    'habilitado' => habilitaCPFTIPO,
 		    'excluirDisciplinaChecado' => $excluirDisciplinaChecado,
+		    'excluirUsuarioChecado' => $excluirUsuarioChecado,
 		         
 				
 				
@@ -327,6 +303,7 @@ class User extends Page{
 		$excluirAluno = $postVars['checkExcluirAluno'] ?? '0';
 		$excluirProfessor = $postVars['checkExcluirProfessor'] ?? '0';
 		$excluirDisciplina = $postVars['checkDisciplina'] ?? '0';
+		$excluirUsuario = $postVars['checkExcluirUsuario'] ?? '0';
 		$menuAlunos = $postVars['checkMenuAlunos'] ?? '0';
 		$menuProfessores = $postVars['checkMenuProfessores'] ?? '0';
 		$menuAulas = $postVars['checkMenuAulas'] ?? '0';
@@ -374,6 +351,7 @@ class User extends Page{
 		$obUser->excluirAluno = $excluirAluno;
 		$obUser->excluirProfessor = $excluirProfessor;
 		$obUser->excluirDisciplina = $excluirDisciplina;
+		$obUser->excluirUsuario = $excluirUsuario;
 		$obUser->menuAlunos = $menuAlunos;
 		$obUser->menuProfessores = $menuProfessores;
 		$obUser->menuAulas = $menuAulas;

@@ -49,6 +49,8 @@ define('permissaoExcluirProfessor', $permissao['excluirProfessor']);
 
 define('permissaoExcluirAluno', $permissao['excluirAluno']);
 
+define('permissaoExcluirUsuario', $permissao['excluirUsuario']);
+
 //habilita o campo CPF e TIPO apenas para o Admin
 if(@$_SESSION['admin']['tipo'] == 'Admin')
 {

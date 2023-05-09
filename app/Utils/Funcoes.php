@@ -117,6 +117,7 @@ class Funcoes{
 	        'foto' => $obUser->foto,
 	        'excluirAluno' => $obUser->excluirAluno,
 	        'excluirProfessor' => $obUser->excluirProfessor,
+	        'excluirUsuario' => $obUser->excluirUsuario,
 	        'menuAlunos' => $obUser->menuAlunos,
 	        'menuProfessores' => $obUser->menuProfessores,
 	        'menuAulas' => $obUser->menuAulas,
@@ -137,6 +138,7 @@ class Funcoes{
 	    @$_SESSION['usuario']['excluirAluno'] == 1 ? $visivelDeleteAluno = '' : $visivelDeleteAluno = 'hidden';
 	    @$_SESSION['usuario']['excluirProfessor'] == 1 ? $visivelDeleteProfessor = '' : $visivelDeleteProfessor = 'hidden';
 	    @$_SESSION['usuario']['excluirDisciplina'] == 1 ? $visivelDeleteDisciplina = '' : $visivelDeleteDisciplina = 'hidden';
+	    @$_SESSION['usuario']['excluirUsuario'] == 1 ? $visivelDeleteUsuario = '' : $visivelDeleteUsuario = 'hidden';
 	    @$_SESSION['usuario']['menuAlunos'] == 1 ? $visivelMenuAlunos = '' : $visivelMenuAlunos = 'hidden';
 	    @$_SESSION['usuario']['menuProfessores'] == 1 ? $visivelMenuProfessores = '' : $visivelMenuProfessores = 'hidden';
 	    @$_SESSION['usuario']['menuAulas'] == 1 ? $visivelMenuAulas = '' : $visivelMenuAulas = 'hidden';
@@ -147,6 +149,7 @@ class Funcoes{
 	    $permissao['excluirAluno'] = $visivelDeleteAluno;
 	    $permissao['excluirProfessor'] = $visivelDeleteProfessor;
 	    $permissao['excluirDisciplina'] = $visivelDeleteDisciplina;
+	    $permissao['excluirUsuario'] = $visivelDeleteUsuario;
 	    $permissao['menuAlunos'] = $visivelMenuAlunos;
 	    $permissao['menuProfessores'] = $visivelMenuProfessores;
 	    $permissao['menuAulas'] = $visivelMenuAulas;
