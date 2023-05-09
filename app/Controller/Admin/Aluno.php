@@ -513,7 +513,7 @@ class Aluno extends Page{
 	        'cpf' => @$_SESSION['aluno']['novo']['cpf'] ?? @$validaCpf->getValue(),
 	        'dataNasc' => @$_SESSION['aluno']['novo']['dataNasc'] ??'',
 	        'dataCad' => @$_SESSION['aluno']['novo']['dataCad'] ??'',
-	        'statusMessage' => self::getStatus($request),
+	        'statusMessage' => Funcoes::getStatus($request),
 	        'optionBairros' => @$_SESSION['aluno'] ? EntityBairro::getSelectBairros($_SESSION['aluno']['novo']['bairro']) : EntityBairro::getSelectBairros(null),
 	        'optionEscolaridade' =>@$_SESSION['aluno'] ? EntityEscolaridade::getSelectEscolaridade($_SESSION['aluno']['novo']['escolaridade']) : EntityEscolaridade::getSelectEscolaridade(null),
 	        'optionEstadoCivil' => @$_SESSION['aluno'] ? EntityEstadoCivil::getSelectEstadoCivil($_SESSION['aluno']['novo']['estadoCivil']) : EntityEstadoCivil::getSelectEstadoCivil(null),
