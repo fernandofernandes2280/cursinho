@@ -56,7 +56,7 @@ class User extends Page{
 					'cpf' => Funcoes::mask($obUser->cpf, '###.###.###-##') ,
 					'tipo' => $obUser->tipo,
     			    'foto' => $obUser->foto.'?var='.$reload,
-			    'excluirUsuarioVisivel' => permissaoExcluirUsuario
+			    'excluirUsuarioChecado' => permissaoExcluirUsuario
 			]);
 		}
 		
@@ -245,7 +245,7 @@ class User extends Page{
 		$obUser->menuPresenca == 1 ? $menuPresencaChecado = 'checked' : $menuPresencaChecado = '';
 		$obUser->menuDisciplinas == 1 ? $menuDisciplinasChecado = 'checked' : $menuDisciplinasChecado = '';
 		$obUser->excluirDisciplina == 1 ? $excluirDisciplinaChecado = 'checked' : $excluirDisciplinaChecado = '';
-
+		
 		$reload = rand();
 		//Conteúdo do Formulário
 		$content = View::render('admin/modules/users/form',[
