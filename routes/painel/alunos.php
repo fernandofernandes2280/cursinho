@@ -13,7 +13,7 @@ $obRouter->get('',[
     ],
     
     function ($request){
-        return new Response(200, Painel\Aluno::getAlunos($request));
+        return new Response(200, Painel\Dashboard::getDashboard());
     }
     ]);
 

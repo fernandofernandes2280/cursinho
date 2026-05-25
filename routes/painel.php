@@ -35,18 +35,10 @@ include __DIR__.'/painel/escolaridades.php';
 //Inclui as rotas de Usuários
 include __DIR__.'/painel/users.php';
 
-//Inclui as rotas de logs
-include __DIR__.'/painel/logs.php';
-
 //Inclui as rotas de Relatorios
 include __DIR__.'/painel/relatorios.php';
 
-
-//Inclui as rotas de profissionais
-include __DIR__.'/painel/profissionais.php';
-
 //Inclui as rota de Inativar aluno
 include __DIR__.'/painel/inativar.php';
-
 
 

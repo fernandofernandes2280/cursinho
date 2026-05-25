@@ -3,6 +3,8 @@
 namespace App\Utils;
 
 use App\Controller\Painel\Alert;
+use App\Session\User\Login as SessionUserLogin;
+
 class Funcoes{
     
     
@@ -109,24 +111,7 @@ class Funcoes{
 	    Funcoes::init();
 	    
 	    if((int)($_SESSION['usuario']['id'] ?? 0) == (int)$obUser->id){
-	    $_SESSION['usuario'] = [
-	        'id' => $obUser->id,
-	        'nome' => $obUser->nome,
-	        'email' => $obUser->email,
-	        'tipo' => $obUser->tipo,
-	        'foto' => $obUser->foto,
-	        'excluirAluno' => $obUser->excluirAluno,
-	        'excluirProfessor' => $obUser->excluirProfessor,
-	        'excluirUsuario' => $obUser->excluirUsuario,
-	        'menuAlunos' => $obUser->menuAlunos,
-	        'menuProfessores' => $obUser->menuProfessores,
-	        'menuAulas' => $obUser->menuAulas,
-	        'menuFrequencias' => $obUser->menuFrequencias,
-	        'btnNovoUsuario' => $obUser->btnNovoUsuario,
-	        'menuPresenca' => $obUser->menuPresenca,
-	        'menuDisciplinas' => $obUser->menuDisciplinas,
-	        'excluirDisciplina' => $obUser->excluirDisciplina,
-	    ];
+	    	SessionUserLogin::login($obUser);
 	    }
 	}
 	
@@ -134,19 +119,18 @@ class Funcoes{
 	//Método responsável por retornar as permissões do usuário
 	public static function getPermissoes(){
 	    Funcoes::init();
-	    $isAdmin = @$_SESSION['usuario']['tipo'] == 'Admin';
-	    $visivelPermissoes = $isAdmin ? '' : 'hidden';
-	    $visivelDeleteAluno = $isAdmin || @$_SESSION['usuario']['excluirAluno'] == 1 ? '' : 'hidden';
-	    $visivelDeleteProfessor = $isAdmin || @$_SESSION['usuario']['excluirProfessor'] == 1 ? '' : 'hidden';
-	    $visivelDeleteDisciplina = $isAdmin || @$_SESSION['usuario']['excluirDisciplina'] == 1 ? '' : 'hidden';
-	    $visivelDeleteUsuario = $isAdmin || @$_SESSION['usuario']['excluirUsuario'] == 1 ? '' : 'hidden';
-	    $visivelMenuAlunos = $isAdmin || @$_SESSION['usuario']['menuAlunos'] == 1 ? '' : 'hidden';
-	    $visivelMenuProfessores = $isAdmin || @$_SESSION['usuario']['menuProfessores'] == 1 ? '' : 'hidden';
-	    $visivelMenuAulas = $isAdmin || @$_SESSION['usuario']['menuAulas'] == 1 ? '' : 'hidden';
-	    $visivelMenuFrequencias = $isAdmin || @$_SESSION['usuario']['menuFrequencias'] == 1 ? '' : 'hidden';
-	    $visivelBtnNovoUsuario = $isAdmin || @$_SESSION['usuario']['btnNovoUsuario'] == 1 ? '' : 'hidden';
-	    $visivelMenuPresenca = $isAdmin || @$_SESSION['usuario']['menuPresenca'] == 1 ? '' : 'hidden';
-	    $visivelMenuDisciplinas = $isAdmin || @$_SESSION['usuario']['menuDisciplinas'] == 1 ? '' : 'hidden';
+	    $visivelPermissoes = SessionUserLogin::isAdmin() ? '' : 'hidden';
+	    $visivelDeleteAluno = SessionUserLogin::can('excluirAluno') ? '' : 'hidden';
+	    $visivelDeleteProfessor = SessionUserLogin::can('excluirProfessor') ? '' : 'hidden';
+	    $visivelDeleteDisciplina = SessionUserLogin::can('excluirDisciplina') ? '' : 'hidden';
+	    $visivelDeleteUsuario = SessionUserLogin::can('excluirUsuario') ? '' : 'hidden';
+	    $visivelMenuAlunos = SessionUserLogin::can('menuAlunos') ? '' : 'hidden';
+	    $visivelMenuProfessores = SessionUserLogin::can('menuProfessores') ? '' : 'hidden';
+	    $visivelMenuAulas = SessionUserLogin::can('menuAulas') ? '' : 'hidden';
+	    $visivelMenuFrequencias = SessionUserLogin::can('menuFrequencias') ? '' : 'hidden';
+	    $visivelBtnNovoUsuario = SessionUserLogin::can('btnNovoUsuario') ? '' : 'hidden';
+	    $visivelMenuPresenca = SessionUserLogin::can('menuPresenca') ? '' : 'hidden';
+	    $visivelMenuDisciplinas = SessionUserLogin::can('menuDisciplinas') ? '' : 'hidden';
 	    $permissao['excluirAluno'] = $visivelDeleteAluno;
 	    $permissao['excluirProfessor'] = $visivelDeleteProfessor;
 	    $permissao['excluirDisciplina'] = $visivelDeleteDisciplina;

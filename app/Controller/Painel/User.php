@@ -7,7 +7,6 @@ use \App\Model\Entity\User as EntityUser;
 use \WilliamCosta\DatabaseManager\Pagination;
 use Bissolli\ValidadorCpfCnpj\CPF;
 use \App\Utils\Funcoes;
-use \App\Model\Entity\Profissional as EntityProfissional;
 use App\Controller\File\Upload;
 use App\Session\User\Login;
 
@@ -15,6 +14,20 @@ class User extends Page{
 	
 	//esconde busca rápida de prontuário no navBar
 	private static $hidden = 'hidden';
+
+	private static function canManageUsers(){
+		return Login::can('btnNovoUsuario') || Login::can('excluirUsuario');
+	}
+
+	private static function checkUserAccess($request, $id){
+		$loggedUserId = (int)($_SESSION['usuario']['id'] ?? 0);
+
+		if(self::canManageUsers() || $loggedUserId == (int)$id){
+			return;
+		}
+
+		$request->getRouter()->redirect('/users');
+	}
 	
 	//Método responsavel por obter a renderização dos itens de usuários para a página
 	private static function getUserItems($request, &$obPagination){
@@ -31,8 +44,8 @@ class User extends Page{
 		//Instancia de paginacao
 		$obPagination = new Pagination($quantidadetotal,$paginaAtual,5);
 		
-		//Mostra todos os usuarios para o Admin e apenas o Operador para ele mesmo
-		if($_SESSION['usuario']['tipo'] == 'Admin'){
+		//Mostra todos os usuários para quem pode gerenciar usuários e apenas o próprio cadastro para os demais.
+		if(self::canManageUsers()){
 		    $where = null;
 		    $paginacao = $obPagination->getLimit();
 		}else{
@@ -221,6 +234,8 @@ class User extends Page{
 	//Metodo responsávelpor retornar o formulário de Edição de um Usuário
 	public static function getEditUser($request,$id){
 		
+		self::checkUserAccess($request, $id);
+		
 				
 		//obtém o usuário do banco de dados
 		$obUser = EntityUser::getUserById($id);
@@ -289,6 +304,8 @@ class User extends Page{
 	
 	//Metodo responsável por gravar a atualizacao de um usuário
 	public static function setEditUser($request,$id){
+		self::checkUserAccess($request, $id);
+
 		//Post Vars
 		$postVars = $request->getPostVars();
 		
@@ -421,6 +438,7 @@ class User extends Page{
 	
 	//Metodo responsávelpor retornar o formulário de Captura de foto do User
 	public static function getPhoto($request,$id){
+	    self::checkUserAccess($request, $id);
 	    
 	    $obUser = EntityUser::getUserById($id);
 	    
@@ -443,6 +461,8 @@ class User extends Page{
 	    //Post Vars
 	    $postVars = $request->getPostVars();
 	    $fileVars = $request->getFileVars();
+
+	    self::checkUserAccess($request, $postVars['id'] ?? 0);
 	    
 	    
 	    $obUser = EntityUser::getUserById($postVars['id']);

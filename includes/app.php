@@ -8,6 +8,7 @@ use \WilliamCosta\DotEnv\Environment;
 use \WilliamCosta\DatabaseManager\Database;
 use \App\Http\Middleware\Queue as MiddlewareQueue;
 use \App\Utils\Funcoes;
+use \App\Session\User\Login as SessionUserLogin;
 //Carrega variáveis de ambiente
 Environment::load(__DIR__.'/../');
 
@@ -52,7 +53,7 @@ define('permissaoExcluirAluno', $permissao['excluirAluno']);
 define('permissaoExcluirUsuario', $permissao['excluirUsuario']);
 
 //habilita o campo CPF e TIPO apenas para o Admin
-if(@$_SESSION['usuario']['tipo'] == 'Admin')
+if(SessionUserLogin::isAdmin())
 {
     define('habilitaCPFTIPO', '');
 }else
@@ -80,6 +81,5 @@ MiddlewareQueue::setMap([
 MiddlewareQueue::setDefault([
 		'maintenance'
 ]);
-
 
 

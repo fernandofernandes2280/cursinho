@@ -3,7 +3,6 @@
 namespace App\Model\Entity;
 
 use \WilliamCosta\DatabaseManager\Database;
-use App\Controller\Painel\Logs;
 use App\Utils\View;
 
 class Aula {

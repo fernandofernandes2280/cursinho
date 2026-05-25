@@ -119,7 +119,7 @@ class Upload{
 	    
 	}
 	//método responsável por mover o arquivo de upload
-	public function uploadFotoAluno($dir, $overwrite = true,$nomeArquivo ){
+		public function uploadFotoAluno($dir, $overwrite, $nomeArquivo ){
 	        
 	    //verificar erro
 	    if($this->error != 0) return false;

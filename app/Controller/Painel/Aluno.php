@@ -195,12 +195,7 @@ class Aluno extends Page{
 		
 		//esconde busca rápida de prontuário no navBar
 		$hidden = '';
-		
-		
-		
-		//oculta o botão excluir para usuário Operador
-	//	($_SESSION['usuario']['tipo'] == 'Operador' ? $botãoExcluir = 'hidden' : $botãoExcluir =  '' );
-		//Conteúdo da Home
+			//Conteúdo da Home
 		$content = View::render('painel/modules/alunos/index',[
 				'title' => 'Alunos > Pesquisa ',
 				'itens' => self::getAlunoItems($request,$obPagination),
@@ -250,9 +245,7 @@ class Aluno extends Page{
 	    
 	    
 	    
-	    //oculta o botão excluir para usuário Operador
-	    //	($_SESSION['usuario']['tipo'] == 'Operador' ? $botãoExcluir = 'hidden' : $botãoExcluir =  '' );
-	    //Conteúdo da Home
+		    //Conteúdo da Home
 	    $content = View::render('painel/modules/alunos/formCortarPhoto',[
 	        'foto' => $src
 	        

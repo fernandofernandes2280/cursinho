@@ -82,13 +82,6 @@ class Page{
 			    'modal' => '',
 			    'visivel' => ''
 			],
-			'logs' =>[
-					'label' => 'Logs',
-					'link' => URL.'/logs',
-					'material-icons' => 'people',
-			    'modal' => '',
-			    'visivel' => 'hidden'
-			],
 			'relatorios' =>[
 					'label' => 'Relatórios',
 					'link' => '#',
@@ -188,11 +181,6 @@ class Page{
 					'idBotao' => 'btnSubstancias',
 					'link' => URL.'/substancias',
 			],
-    	    'profissionais' =>[
-    	        'label' => 'Profissionais',
-    	        'idBotao' => 'btnProfissionais',
-    	        'link' => URL.'/profissionais',
-    	    ]
 			
 	];
 	//método que renderiza os itens do dropdown Manutenção
@@ -290,12 +278,6 @@ class Page{
 		//Itera os módulos Menu simples
 		foreach (self::$modules as $hash=>$module){
 			
-			//desabilita módulo usuários e Logs para Operador
-	//		if($module['label'] == 'Usuários' && $_SESSION['usuario']['tipo'] == 'Operador') $module['modal'] = 'hidden';
-	//		if($module['label'] == 'Logs' && $_SESSION['usuario']['tipo'] == 'Operador') $module['modal'] = 'hidden';
-			
-		    
-		    
 			$links .= View::render('painel/menu/link',[
 					'label' => $module['label'],
 					'link' => $module['link'],
@@ -352,7 +334,6 @@ class Page{
 		//Retorna a renderização do menu
 		return View::render('painel/menu/box',[
 				'links' => $links,
-				'logout'=>'admin',
 				'dropdownProducao' => $linksDropProducao,
 				'dropdownRelatorio' => $linksDropRelatorio,
 				'dropdownManutencao' => $linksDropManutencao,

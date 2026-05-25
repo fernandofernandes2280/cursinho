@@ -477,12 +477,7 @@ class Frequencia extends Page{
 	    
 	    //esconde busca rápida de prontuário no navBar
 	    $hidden = '';
-	    
-	    
-	    
-	    //oculta o botão excluir para usuário Operador
-	    //	($_SESSION['usuario']['tipo'] == 'Operador' ? $botãoExcluir = 'hidden' : $botãoExcluir =  '' );
-	    //Conteúdo da Home
+		    //Conteúdo da Home
 	    $content = View::render('painel/modules/frequencias/indexPesquisa',[
 	        'title' => 'Alunos > Pesquisa ',
 	        'itens' => self::getAlunoItems($request,$obPagination,$idAula),
