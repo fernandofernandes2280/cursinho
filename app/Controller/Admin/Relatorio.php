@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controller\Admin;
 
 use \App\Utils\View;
@@ -13,8 +12,6 @@ use \App\Utils\Funcoes;
 use \App\Controller\File\Upload as Upload;
 use \App\Controller\Operador;
 use \App\Model\Entity\User as EntityUser;
-
-use \WilliamCosta\DatabaseManager\Pagination;
 use Dompdf\Dompdf;
 use Bissolli\ValidadorCpfCnpj\CPF;
 use WilliamCosta\DatabaseManager\Database;
@@ -93,8 +90,6 @@ class Relatorio  extends Page{
         
         //carrega o conteúdo do arquivo .php
         $dompdf->loadHtml($alunos);
-        
-        
         
         //Configura o tamanho do papel
         
