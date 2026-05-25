@@ -80,7 +80,7 @@ class Page{
 					'link' => URL.'/users',
 					'material-icons' => 'people',
 			    'modal' => '',
-			    'visivel' => ''
+			    'visivel' => permissaoMenuUsuarios
 			],
 			'relatorios' =>[
 					'label' => 'Relatórios',
@@ -337,6 +337,7 @@ class Page{
 				'dropdownProducao' => $linksDropProducao,
 				'dropdownRelatorio' => $linksDropRelatorio,
 				'dropdownManutencao' => $linksDropManutencao,
+		         'perfilLink' => URL.'/users/'.($_SESSION['usuario']['id'] ?? '').'/edit',
 		         'usuarioLogado' => $_SESSION['usuario']['nome'] ?? '',
 		         'tipoUsuario' => $_SESSION['usuario']['tipo'] ?? '',
 		         'foto' => $_SESSION['usuario']['foto'].'?var='.$reload,

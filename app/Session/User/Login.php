@@ -4,10 +4,55 @@ namespace App\Session\User;
 
 class Login{
 
+	private const OPERADOR_DEFAULT_PERMISSIONS = [
+		'menuAlunos',
+		'menuProfessores',
+		'menuAulas',
+		'menuFrequencias',
+		'menuPresenca',
+		'menuDisciplinas',
+	];
+
+	private const OPERADOR_BLOCKED_PERMISSIONS = [
+		'menuUsuarios',
+		'btnNovoUsuario',
+		'excluirUsuario',
+	];
+
 	private static function init(){
 		if(session_status() != PHP_SESSION_ACTIVE ){
 			session_start();
 		}
+	}
+
+	private static function isAdminType($tipo){
+		return $tipo == 'Admin';
+	}
+
+	private static function isOperadorType($tipo){
+		return $tipo == 'Operador';
+	}
+
+	public static function hasDefaultPermissionForType($tipo, $permission){
+		return self::isOperadorType($tipo) && in_array($permission, self::OPERADOR_DEFAULT_PERMISSIONS, true);
+	}
+
+	public static function isPermissionBlockedForType($tipo, $permission){
+		return self::isOperadorType($tipo) && in_array($permission, self::OPERADOR_BLOCKED_PERMISSIONS, true);
+	}
+
+	public static function getPermissionValueForUser($obUser, $permission){
+		$tipo = $obUser->tipo ?? '';
+
+		if(self::isPermissionBlockedForType($tipo, $permission)){
+			return 0;
+		}
+
+		if(self::isAdminType($tipo) || self::hasDefaultPermissionForType($tipo, $permission)){
+			return 1;
+		}
+
+		return (int)($obUser->{$permission} ?? 0);
 	}
 
 	private static function getUsuarioArray($obUser){
@@ -18,17 +63,17 @@ class Login{
 			'tipo' => $obUser->tipo,
 			'cpf' => $obUser->cpf ?? '',
 			'foto' => $obUser->foto,
-			'excluirAluno' => $obUser->excluirAluno ?? 0,
-			'excluirProfessor' => $obUser->excluirProfessor ?? 0,
-			'excluirDisciplina' => $obUser->excluirDisciplina ?? 0,
-			'excluirUsuario' => $obUser->excluirUsuario ?? 0,
-			'menuAlunos' => $obUser->menuAlunos ?? 0,
-			'menuProfessores' => $obUser->menuProfessores ?? 0,
-			'menuAulas' => $obUser->menuAulas ?? 0,
-			'menuFrequencias' => $obUser->menuFrequencias ?? 0,
-			'btnNovoUsuario' => $obUser->btnNovoUsuario ?? 0,
-			'menuPresenca' => $obUser->menuPresenca ?? 0,
-			'menuDisciplinas' => $obUser->menuDisciplinas ?? 0,
+			'excluirAluno' => self::getPermissionValueForUser($obUser, 'excluirAluno'),
+			'excluirProfessor' => self::getPermissionValueForUser($obUser, 'excluirProfessor'),
+			'excluirDisciplina' => self::getPermissionValueForUser($obUser, 'excluirDisciplina'),
+			'excluirUsuario' => self::getPermissionValueForUser($obUser, 'excluirUsuario'),
+			'menuAlunos' => self::getPermissionValueForUser($obUser, 'menuAlunos'),
+			'menuProfessores' => self::getPermissionValueForUser($obUser, 'menuProfessores'),
+			'menuAulas' => self::getPermissionValueForUser($obUser, 'menuAulas'),
+			'menuFrequencias' => self::getPermissionValueForUser($obUser, 'menuFrequencias'),
+			'btnNovoUsuario' => self::getPermissionValueForUser($obUser, 'btnNovoUsuario'),
+			'menuPresenca' => self::getPermissionValueForUser($obUser, 'menuPresenca'),
+			'menuDisciplinas' => self::getPermissionValueForUser($obUser, 'menuDisciplinas'),
 		];
 	}
 
@@ -58,12 +103,18 @@ class Login{
 	public static function isAdmin(){
 		self::init();
 
-		return ($_SESSION['usuario']['tipo'] ?? '') == 'Admin';
+		return self::isAdminType($_SESSION['usuario']['tipo'] ?? '');
 	}
 
 	public static function can($permission){
 		self::init();
 
-		return self::isAdmin() || (int)($_SESSION['usuario'][$permission] ?? 0) == 1;
+		$tipo = $_SESSION['usuario']['tipo'] ?? '';
+
+		if(self::isPermissionBlockedForType($tipo, $permission)){
+			return false;
+		}
+
+		return self::isAdmin() || self::hasDefaultPermissionForType($tipo, $permission) || (int)($_SESSION['usuario'][$permission] ?? 0) == 1;
 	}
 }

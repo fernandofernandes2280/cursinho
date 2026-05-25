@@ -131,6 +131,7 @@ class Funcoes{
 	    $visivelBtnNovoUsuario = SessionUserLogin::can('btnNovoUsuario') ? '' : 'hidden';
 	    $visivelMenuPresenca = SessionUserLogin::can('menuPresenca') ? '' : 'hidden';
 	    $visivelMenuDisciplinas = SessionUserLogin::can('menuDisciplinas') ? '' : 'hidden';
+	    $visivelMenuUsuarios = SessionUserLogin::can('menuUsuarios') ? '' : 'hidden';
 	    $permissao['excluirAluno'] = $visivelDeleteAluno;
 	    $permissao['excluirProfessor'] = $visivelDeleteProfessor;
 	    $permissao['excluirDisciplina'] = $visivelDeleteDisciplina;
@@ -142,6 +143,7 @@ class Funcoes{
 	    $permissao['btnNovoUsuario'] = $visivelBtnNovoUsuario;
 	    $permissao['menuPresenca'] = $visivelMenuPresenca;
 	    $permissao['menuDisciplinas'] = $visivelMenuDisciplinas;
+	    $permissao['menuUsuarios'] = $visivelMenuUsuarios;
 	    $permissao['permissoes'] = $visivelPermissoes;
 	    
 	    return    $permissao;

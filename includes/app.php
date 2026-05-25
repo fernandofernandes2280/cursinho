@@ -44,6 +44,8 @@ define('permissaoMenuPresenca', $permissao['menuPresenca']);
 
 define('permissaoMenuDisciplinas', $permissao['menuDisciplinas']);
 
+define('permissaoMenuUsuarios', $permissao['menuUsuarios']);
+
 define('permissaoExcluirDisciplinas', $permissao['excluirDisciplina']);
 
 define('permissaoExcluirProfessor', $permissao['excluirProfessor']);
@@ -81,5 +83,4 @@ MiddlewareQueue::setMap([
 MiddlewareQueue::setDefault([
 		'maintenance'
 ]);
-
 

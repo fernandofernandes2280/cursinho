@@ -16,7 +16,7 @@ class User extends Page{
 	private static $hidden = 'hidden';
 
 	private static function canManageUsers(){
-		return Login::can('btnNovoUsuario') || Login::can('excluirUsuario');
+		return Login::isAdmin();
 	}
 
 	private static function checkUserAccess($request, $id){
@@ -27,6 +27,43 @@ class User extends Page{
 		}
 
 		$request->getRouter()->redirect('/users');
+	}
+
+	private static function checkedPermission($obUser, $permission){
+		return Login::getPermissionValueForUser($obUser, $permission) == 1 ? 'checked' : '';
+	}
+
+	private static function applyRolePermissions(
+		$tipo,
+		&$excluirUsuario,
+		&$menuAlunos,
+		&$menuProfessores,
+		&$menuAulas,
+		&$menuFrequencias,
+		&$btnNovoUsuario,
+		&$menuPresenca,
+		&$menuDisciplinas
+	){
+		foreach ([
+			'menuAlunos' => &$menuAlunos,
+			'menuProfessores' => &$menuProfessores,
+			'menuAulas' => &$menuAulas,
+			'menuFrequencias' => &$menuFrequencias,
+			'menuPresenca' => &$menuPresenca,
+			'menuDisciplinas' => &$menuDisciplinas,
+		] as $permission => &$value) {
+			if(Login::hasDefaultPermissionForType($tipo, $permission)){
+				$value = '1';
+			}
+		}
+
+		if(Login::isPermissionBlockedForType($tipo, 'btnNovoUsuario')){
+			$btnNovoUsuario = '0';
+		}
+
+		if(Login::isPermissionBlockedForType($tipo, 'excluirUsuario')){
+			$excluirUsuario = '0';
+		}
 	}
 	
 	//Método responsavel por obter a renderização dos itens de usuários para a página
@@ -169,6 +206,18 @@ class User extends Page{
 		$btnNovoUsuario = $postVars['checkBtnNovoUsuario'] ?? '0';
 		$menuPresenca = $postVars['checkMenuPresenca'] ?? '0';
 		$menuDisciplinas = $postVars['checkMenuDisciplinas'] ?? '0';
+
+		self::applyRolePermissions(
+			$tipo,
+			$excluirUsuario,
+			$menuAlunos,
+			$menuProfessores,
+			$menuAulas,
+			$menuFrequencias,
+			$btnNovoUsuario,
+			$menuPresenca,
+			$menuDisciplinas
+		);
 		
 		//Cria sessão com os dados do form
 		EntityUser::getSessaoDados($postVars);
@@ -248,17 +297,17 @@ class User extends Page{
 		$obUser->tipo == 'Admin' ? $selectedAdmin = 'selected' : $selectedAdmin = '' ;
 		$obUser->tipo == 'Visitante' ? $selectedVisitante = 'selected' : $selectedVisitante = '' ;
 		$obUser->tipo == 'Operador' ? $selectedOperador = 'selected' : $selectedOperador = '' ;
-		$obUser->excluirAluno == 1 ? $alunoChecado = 'checked' : $alunoChecado = '';
-		$obUser->excluirProfessor == 1 ? $professorChecado = 'checked' : $professorChecado = '';
-		$obUser->excluirUsuario == 1 ? $excluirUsuarioChecado = 'checked' : $excluirUsuarioChecado = '';
-		$obUser->menuAlunos == 1 ? $menuAlunoChecado = 'checked' : $menuAlunoChecado = '';
-		$obUser->menuProfessores == 1 ? $menuProfessorChecado = 'checked' : $menuProfessorChecado = '';
-		$obUser->menuAulas == 1 ? $menuAulasChecado = 'checked' : $menuAulasChecado = '';
-		$obUser->menuFrequencias == 1 ? $menuFrequenciasChecado = 'checked' : $menuFrequenciasChecado = '';
-		$obUser->btnNovoUsuario == 1 ? $btnNovoUsuarioChecado = 'checked' : $btnNovoUsuarioChecado = '';
-		$obUser->menuPresenca == 1 ? $menuPresencaChecado = 'checked' : $menuPresencaChecado = '';
-		$obUser->menuDisciplinas == 1 ? $menuDisciplinasChecado = 'checked' : $menuDisciplinasChecado = '';
-		$obUser->excluirDisciplina == 1 ? $excluirDisciplinaChecado = 'checked' : $excluirDisciplinaChecado = '';
+		$alunoChecado = self::checkedPermission($obUser, 'excluirAluno');
+		$professorChecado = self::checkedPermission($obUser, 'excluirProfessor');
+		$excluirUsuarioChecado = self::checkedPermission($obUser, 'excluirUsuario');
+		$menuAlunoChecado = self::checkedPermission($obUser, 'menuAlunos');
+		$menuProfessorChecado = self::checkedPermission($obUser, 'menuProfessores');
+		$menuAulasChecado = self::checkedPermission($obUser, 'menuAulas');
+		$menuFrequenciasChecado = self::checkedPermission($obUser, 'menuFrequencias');
+		$btnNovoUsuarioChecado = self::checkedPermission($obUser, 'btnNovoUsuario');
+		$menuPresencaChecado = self::checkedPermission($obUser, 'menuPresenca');
+		$menuDisciplinasChecado = self::checkedPermission($obUser, 'menuDisciplinas');
+		$excluirDisciplinaChecado = self::checkedPermission($obUser, 'excluirDisciplina');
 		
 		$reload = rand();
 		//Conteúdo do Formulário
@@ -335,6 +384,34 @@ class User extends Page{
 		if(!$obUser instanceof EntityUser){
 			$request->getRouter()->redirect('/users');
 		}
+
+		if(!self::canManageUsers()){
+			$tipo = $obUser->tipo;
+			$cpf = $obUser->cpf;
+			$excluirAluno = $obUser->excluirAluno ?? '0';
+			$excluirProfessor = $obUser->excluirProfessor ?? '0';
+			$excluirDisciplina = $obUser->excluirDisciplina ?? '0';
+			$excluirUsuario = $obUser->excluirUsuario ?? '0';
+			$menuAlunos = $obUser->menuAlunos ?? '0';
+			$menuProfessores = $obUser->menuProfessores ?? '0';
+			$menuAulas = $obUser->menuAulas ?? '0';
+			$menuFrequencias = $obUser->menuFrequencias ?? '0';
+			$btnNovoUsuario = $obUser->btnNovoUsuario ?? '0';
+			$menuPresenca = $obUser->menuPresenca ?? '0';
+			$menuDisciplinas = $obUser->menuDisciplinas ?? '0';
+		}
+
+		self::applyRolePermissions(
+			$tipo,
+			$excluirUsuario,
+			$menuAlunos,
+			$menuProfessores,
+			$menuAulas,
+			$menuFrequencias,
+			$btnNovoUsuario,
+			$menuPresenca,
+			$menuDisciplinas
+		);
 		
 		//instancia classe pra verificar CPF
 		$validaCpf = new CPF($cpf);
