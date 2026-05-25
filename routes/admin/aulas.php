@@ -7,7 +7,7 @@ use \App\Controller\Admin;
 $obRouter->get('/admin/aulas',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
                 function ($request){
 					return new Response(200, Admin\Aula::getAulas($request));
@@ -19,7 +19,7 @@ $obRouter->get('/admin/aulas',[
 $obRouter->post('/admin/agendas',[
 	
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
 		function ($request){
 		    return new Response(200, Admin\Aula::setAgendas($request));
@@ -31,7 +31,7 @@ $obRouter->post('/admin/agendas',[
 //ROTA de get de nova Aula
 $obRouter->get('/admin/aulas/new',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request){
@@ -43,7 +43,7 @@ $obRouter->get('/admin/aulas/new',[
 //ROTA de POST de nova Aula
 $obRouter->post('/admin/aulas/new',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request){
@@ -57,7 +57,7 @@ $obRouter->post('/admin/aulas/new',[
 $obRouter->get('/admin/aulas/{id}/edit',[
 	
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
 		function ($request,$id){
 		    return new Response(200, Admin\Aula::getAulaEdit($request,$id));
@@ -68,7 +68,7 @@ $obRouter->get('/admin/aulas/{id}/edit',[
 //ROTA de Post de Edição de Aulas
 $obRouter->post('/admin/aulas/{id}/edit',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
 		function ($request, $id){
@@ -81,7 +81,7 @@ $obRouter->post('/admin/aulas/{id}/edit',[
 $obRouter->get('/admin/aulas/{id}/delete',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     function ($request,$id){
      //   return new Response(200, Admin\Aula::getAulaDelete($request,$id));
@@ -92,7 +92,7 @@ $obRouter->get('/admin/aulas/{id}/delete',[
 //ROTA de Post de EXCLUSÃO de Aulas
 $obRouter->post('/admin/aulas/{id}/delete',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request, $id){
@@ -105,7 +105,7 @@ $obRouter->post('/admin/aulas/{id}/delete',[
 //ROTA de GET de presentes na aula
 $obRouter->get('/admin/aulas/{id}/presentes',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request, $id){

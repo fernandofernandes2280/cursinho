@@ -100,7 +100,7 @@ class Disciplina extends Page{
 		$ob->cadastrar();
 		
 		//Redireciona o usuário
-		$request->getRouter()->redirect('/admin/disciplinas/'.$ob->id.'/edit?status=created');
+		$request->getRouter()->redirect('/disciplinas/'.$ob->id.'/edit?status=created');
 		
 	}
 	
@@ -135,7 +135,7 @@ class Disciplina extends Page{
 		
 		//Valida a instancia
 		if(!$ob instanceof EntityDisciplina){
-			$request->getRouter()->redirect('/admin/disciplinas');
+			$request->getRouter()->redirect('/disciplinas');
 		}
 		
 		//Conteúdo do Formulário
@@ -160,7 +160,7 @@ class Disciplina extends Page{
 		
 		//Valida a instancia
 		if(!$ob instanceof EntityDisciplina){
-			$request->getRouter()->redirect('/admin/disciplinas');
+			$request->getRouter()->redirect('/disciplinas');
 		}
 		
 		
@@ -173,7 +173,7 @@ class Disciplina extends Page{
 		$ob->atualizar();
 		
 		//Redireciona o usuário
-		$request->getRouter()->redirect('/admin/disciplinas/'.$ob->id.'/edit?status=updated');
+		$request->getRouter()->redirect('/disciplinas/'.$ob->id.'/edit?status=updated');
 		
 		
 	}
@@ -186,7 +186,7 @@ class Disciplina extends Page{
 		
 		//Valida a instancia
 	    if(!$ob instanceof EntityDisciplina){
-			$request->getRouter()->redirect('/admin/disciplinas');
+			$request->getRouter()->redirect('/disciplinas');
 		}
 		
 		
@@ -212,7 +212,7 @@ class Disciplina extends Page{
 		
 		//Valida a instancia
 	    if(!$ob instanceof EntityDisciplina){
-			$request->getRouter()->redirect('/admin/disciplinas');
+			$request->getRouter()->redirect('/disciplinas');
 		}
 		
 			
@@ -220,7 +220,7 @@ class Disciplina extends Page{
 		$ob->excluir($id);
 		
 		//Redireciona o usuário
-		$request->getRouter()->redirect('/admin/disciplinas?statusMessage=deleted');
+		$request->getRouter()->redirect('/disciplinas?statusMessage=deleted');
 		
 		
 	}

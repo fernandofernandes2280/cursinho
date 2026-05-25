@@ -184,7 +184,7 @@ class Professor extends Page{
 	    //verifica se é válido o cpf
 	    if (!$validaCpf->isValid()){
 	        
-	        $request->getRouter()->redirect('/admin/professores/?statusMessage=cpfInvalid');
+	        $request->getRouter()->redirect('/professores/?statusMessage=cpfInvalid');
 	    }
 	    
 	    
@@ -192,7 +192,7 @@ class Professor extends Page{
 	    $ob = EntityProfessor::getProfessorByCPF($validaCpf->getValue());
 	    //verifica se o cpf já está cadastrado
 	    if($ob instanceof EntityProfessor){
-	        $request->getRouter()->redirect('/admin/professores?statusMessage=duplicad');
+	        $request->getRouter()->redirect('/professores?statusMessage=duplicad');
 	    }
 	    
 
@@ -242,7 +242,7 @@ class Professor extends Page{
 	    $obProfessor = EntityProfessor::getProfessorByCPF($validaCpf->getValue());
 	    
 	    if($obProfessor instanceof EntityProfessor){
-	        $request->getRouter()->redirect('/admin/professores/new?statusMessage=cpfDuplicated');
+	        $request->getRouter()->redirect('/professores/new?statusMessage=cpfDuplicated');
 	    }
 	    
 	    
@@ -268,7 +268,7 @@ class Professor extends Page{
 	    //	Logs::setNewLog($request);
 	    
 	    //Redireciona o usuário
-	    $request->getRouter()->redirect('/admin/professores/'.$obProfessor->id.'/edit?statusMessage=created');
+	    $request->getRouter()->redirect('/professores/'.$obProfessor->id.'/edit?statusMessage=created');
 	    
 	}
 	
@@ -280,7 +280,7 @@ class Professor extends Page{
 	    
 	    //Valida a instancia
 	    if(!$obProfessor instanceof EntityProfessor){
-	        $request->getRouter()->redirect('/admin/professores');
+	        $request->getRouter()->redirect('/professores');
 	    }
 	    
 	    self::setDisciplinaAdd($request,$id);
@@ -330,7 +330,7 @@ class Professor extends Page{
 	    
 	    //Valida a instancia
 	    if(!$obProfessor instanceof EntityProfessor){
-	        $request->getRouter()->redirect('/admin/professores');
+	        $request->getRouter()->redirect('/professores');
 	    }
 	    
 	    //Post Vars
@@ -344,7 +344,7 @@ class Professor extends Page{
 	    
 	    //verifica se o CPF já está sendo usado por outro PRofessor
 	    if($obProfessorCPF instanceof EntityProfessor && $obProfessorCPF->id != $id){
-	        $request->getRouter()->redirect('/admin/professores/'.$id.'/edit?statusMessage=cpfDuplicated');
+	        $request->getRouter()->redirect('/professores/'.$id.'/edit?statusMessage=cpfDuplicated');
 	    }
 	    
 	    //Valida o email do usuário
@@ -353,7 +353,7 @@ class Professor extends Page{
 	    
 	    //verifica se o E-MAIL já está sendo usado por outro usuário
 	    if($obProfessorEmail instanceof EntityProfessor && $obProfessorEmail->id != $id){
-	        $request->getRouter()->redirect('/admin/professores/'.$id.'/edit?statusMessage=emailDuplicated');
+	        $request->getRouter()->redirect('/professores/'.$id.'/edit?statusMessage=emailDuplicated');
 	    }
 	    
 	    
@@ -376,7 +376,7 @@ class Professor extends Page{
 	    //	Logs::setNewLog($request);
 	    
 	    //Redireciona o usuário
-	    $request->getRouter()->redirect('/admin/professores/'.$obProfessor->id.'/edit?statusMessage=updated');
+	    $request->getRouter()->redirect('/professores/'.$obProfessor->id.'/edit?statusMessage=updated');
 	    
 	}
 	
@@ -434,7 +434,7 @@ class Professor extends Page{
 		
 		//Valida a instancia
 		if(!$obProfessor instanceof EntityProfessor){
-			$request->getRouter()->redirect('/admin/professores');
+			$request->getRouter()->redirect('/professores');
 		}
 		
 		
@@ -459,14 +459,14 @@ class Professor extends Page{
 		
 		//Valida a instancia
 	    if(!$obProfessor instanceof EntityProfessor){
-			$request->getRouter()->redirect('/admin/professores');
+			$request->getRouter()->redirect('/professores');
 		}
 		
 		//Exclui o professor
 		$obProfessor->excluir();
 		
 		//Redireciona o usuário
-		$request->getRouter()->redirect('/admin/professores?statusMessage=deleted');
+		$request->getRouter()->redirect('/professores?statusMessage=deleted');
 		
 		
 	}
@@ -506,7 +506,7 @@ class Professor extends Page{
 	        
 	        Upload::setUploadImagesProfessor($request);
 	        //Redireciona o usuário
-	        $request->getRouter()->redirect('/admin/professores/'.$obProfessor->id.'/edit?statusMessage=updated');
+	        $request->getRouter()->redirect('/professores/'.$obProfessor->id.'/edit?statusMessage=updated');
 	    }
 	    
 	    if ($postVars['image'] != ''){
@@ -539,10 +539,10 @@ class Professor extends Page{
 	        
 	        
 	        //Redireciona o usuário
-	        $request->getRouter()->redirect('/admin/professores/'.$obProfessor->id.'/edit?statusMessage=updated');
+	        $request->getRouter()->redirect('/professores/'.$obProfessor->id.'/edit?statusMessage=updated');
 	    }
 	    
-	    $request->getRouter()->redirect('/admin/professores/'.$obProfessor->id.'/edit?statusMessage=semfoto');
+	    $request->getRouter()->redirect('/professores/'.$obProfessor->id.'/edit?statusMessage=semfoto');
 	    
 	    
 	}
@@ -562,7 +562,7 @@ class Professor extends Page{
 	    $obDisciplinaProfessor->idProfessor = $id;
 	    $obDisciplinaProfessor->idDisciplina = $obDisciplina->id;
 	    $obDisciplinaProfessor->cadastrar();
-	    $request->getRouter()->redirect('/admin/professores/'.$id.'/edit');
+	    $request->getRouter()->redirect('/professores/'.$id.'/edit');
 	}
 	
 	//Método responsavel por remover disciplina do professor
@@ -576,7 +576,7 @@ class Professor extends Page{
 	    //obtém o Disciplina do banco de dados
 	    $obDisciplinaProfessor = EntityDisciplinaProfessor::getDisciplinaProfessorById($queryParams['removeDisciplina']);
 	    $obDisciplinaProfessor->excluir();
-	    $request->getRouter()->redirect('/admin/professores/'.$id.'/edit');
+	    $request->getRouter()->redirect('/professores/'.$id.'/edit');
 	}
 	
 }

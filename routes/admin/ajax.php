@@ -8,7 +8,7 @@ use App\Http\Request;
 //ROTA de Listage de Cid10
 $obRouter->post('/admin/delete',[
 		'middlewares' => [
-				'require-admin-login'
+				'require-user-login'
 		],
 		
 		

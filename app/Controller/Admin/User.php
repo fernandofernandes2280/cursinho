@@ -101,7 +101,7 @@ class User extends Page{
 	    //verifica se é válido o cpf
 	    if (!$validaCpf->isValid()){
 	        
-	        $request->getRouter()->redirect('/admin/users?statusMessage=cpfInvalid');
+	        $request->getRouter()->redirect('/users?statusMessage=cpfInvalid');
 	    }
 	    
 	    
@@ -109,7 +109,7 @@ class User extends Page{
 	    $ob = EntityUser::getUserByCPF($validaCpf->getValue());
 	    //verifica se o cpf já está cadastrado
 	    if($ob instanceof EntityUser){
-	        $request->getRouter()->redirect('/admin/users?statusMessage=duplicated');
+	        $request->getRouter()->redirect('/users?statusMessage=duplicated');
 	    }
 	    
 	    
@@ -169,14 +169,14 @@ class User extends Page{
 		
 		if($obUser instanceof EntityUser){
 		 
-		        $request->getRouter()->redirect('/admin/users/new?statusMessage=cpfDuplicated');
+		        $request->getRouter()->redirect('/users/new?statusMessage=cpfDuplicated');
 		}
 		
 		//Valida o email do usuário
 		$obUserEmail = EntityUser::getUserByEmail($email);
 		
 		if($obUserEmail instanceof EntityUser ){
-		    $request->getRouter()->redirect('/admin/users/new?statusMessage=emailDuplicated');
+		    $request->getRouter()->redirect('/users/new?statusMessage=emailDuplicated');
 		}
 				
 		//Nova instancia de Usuário
@@ -212,7 +212,7 @@ class User extends Page{
 		EntityUser::getFinalizaSessaoDados();
 		
 		//Redireciona o usuário
-		$request->getRouter()->redirect('/admin/users/'.$obUser->id.'/edit?statusMessage=created');
+		$request->getRouter()->redirect('/users/'.$obUser->id.'/edit?statusMessage=created');
 		
 	}
 	
@@ -228,7 +228,7 @@ class User extends Page{
 		
 		//Valida a instancia
 		if(!$obUser instanceof EntityUser){
-			$request->getRouter()->redirect('/admin/users');
+			$request->getRouter()->redirect('/users');
 		}
 		
 		$obUser->tipo == 'Admin' ? $selectedAdmin = 'selected' : $selectedAdmin = '' ;
@@ -317,7 +317,7 @@ class User extends Page{
 		
 		//Valida a instancia
 		if(!$obUser instanceof EntityUser){
-			$request->getRouter()->redirect('/admin/users');
+			$request->getRouter()->redirect('/users');
 		}
 		
 		//instancia classe pra verificar CPF
@@ -328,7 +328,7 @@ class User extends Page{
 
 		//verifica se o CPF já está sendo usado por outro usuário
 		if($obUserCPF instanceof EntityUser && $obUserCPF->id != $id){
-			$request->getRouter()->redirect('/admin/users/'.$id.'/edit?statusMessage=cpfDuplicated');
+			$request->getRouter()->redirect('/users/'.$id.'/edit?statusMessage=cpfDuplicated');
 		}
 		
 		
@@ -337,7 +337,7 @@ class User extends Page{
 		
 		//verifica se o E-MAIL já está sendo usado por outro usuário
 		if($obUserEmail instanceof EntityUser && $obUserEmail->id != $id){
-			$request->getRouter()->redirect('/admin/users/'.$id.'/edit?statusMessage=emailDuplicated');
+			$request->getRouter()->redirect('/users/'.$id.'/edit?statusMessage=emailDuplicated');
 		}
 		
 		//Atualiza a instância
@@ -368,7 +368,7 @@ class User extends Page{
 		Funcoes::getSessaoPermissoes($obUser);
 		
 		//Redireciona o usuário
-		$request->getRouter()->redirect('/admin/users/'.$obUser->id.'/edit?statusMessage=updated');
+		$request->getRouter()->redirect('/users/'.$obUser->id.'/edit?statusMessage=updated');
 		
 		
 	}
@@ -381,7 +381,7 @@ class User extends Page{
 		
 		//Valida a instancia
 		if(!$obUser instanceof EntityUser){
-			$request->getRouter()->redirect('/admin/users');
+			$request->getRouter()->redirect('/users');
 		}
 		
 		
@@ -406,7 +406,7 @@ class User extends Page{
 		
 		//Valida a instancia
 		if(!$obUser instanceof EntityUser){
-			$request->getRouter()->redirect('/admin/users');
+			$request->getRouter()->redirect('/users');
 		}
 		
 			
@@ -414,7 +414,7 @@ class User extends Page{
 		$obUser->excluir($id);
 		
 		//Redireciona o usuário
-		$request->getRouter()->redirect('/admin/users?statusMessage=deleted');
+		$request->getRouter()->redirect('/users?statusMessage=deleted');
 		
 		
 	}
@@ -453,7 +453,7 @@ class User extends Page{
 	        
 	        Upload::setUploadImagesUser($request);
 	        //Redireciona o usuário
-	        $request->getRouter()->redirect('/admin/users/'.$obUser->id.'/edit?statusMessage=updated');
+	        $request->getRouter()->redirect('/users/'.$obUser->id.'/edit?statusMessage=updated');
 	    }
 	    
 	    if ($postVars['image'] != ''){
@@ -462,10 +462,10 @@ class User extends Page{
 	        Upload::setUploadImagesWebCamUser($request);
 	        
 	        //Redireciona o usuário
-	        $request->getRouter()->redirect('/admin/users/'.$obUser->id.'/edit?statusMessage=updated');
+	        $request->getRouter()->redirect('/users/'.$obUser->id.'/edit?statusMessage=updated');
 	    }
 	    
-	    $request->getRouter()->redirect('/admin/users/'.$obUser->id.'/edit?statusMessage=semfoto');
+	    $request->getRouter()->redirect('/users/'.$obUser->id.'/edit?statusMessage=semfoto');
 	    
 	    
 	}

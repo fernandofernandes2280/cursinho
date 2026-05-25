@@ -491,7 +491,7 @@ class Upload{
 	                //salva o nome do arquivo no banco
 	                $obUser->foto = $nameFile;
 	                $obUser->Atualizar();
-	                $_SESSION['admin']['usuario']['foto'] = $nameFile;
+	                $_SESSION['usuario']['foto'] = $nameFile;
 	            }
 	        }
 	    }

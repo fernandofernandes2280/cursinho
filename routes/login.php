@@ -83,7 +83,7 @@ $obRouter->get('/visitor/logout',[
 //ROTA Login
 $obRouter->get('/admin',[
     'middlewares' => [
-        'require-admin-logout'
+        'require-user-logout'
     ],
     
     
@@ -96,7 +96,7 @@ $obRouter->get('/admin',[
 //ROTA Login POst
 $obRouter->post('/admin',[
     'middlewares' => [
-        'require-admin-logout'
+        'require-user-logout'
     ],
     
     function ($request){
@@ -108,7 +108,7 @@ $obRouter->post('/admin',[
 //ROTA Login
 $obRouter->get('/admin/login',[
     'middlewares' => [
-        'require-admin-logout'
+        'require-user-logout'
     ],
     
     
@@ -121,7 +121,7 @@ $obRouter->get('/admin/login',[
 //ROTA Login POst
 $obRouter->post('/admin/login',[
     'middlewares' => [
-        'require-admin-logout'
+        'require-user-logout'
     ],
     
     function ($request){
@@ -134,7 +134,7 @@ $obRouter->post('/admin/login',[
 //ROTA Logout
 $obRouter->get('/admin/logout',[
 		'middlewares' => [
-				'require-admin-login'
+				'require-user-login'
 		],
 		
 		function ($request){
@@ -150,7 +150,7 @@ $obRouter->get('/admin/logout',[
 //ROTA Login
 $obRouter->get('/operador',[
     'middlewares' => [
-        'require-operador-logout'
+        'require-user-logout'
     ],
     function ($request){
         return new Response(200, Login\Login::getLogin($request));
@@ -161,7 +161,7 @@ $obRouter->get('/operador',[
 //ROTA Login POst
 $obRouter->post('/operador',[
     'middlewares' => [
-        'require-operador-logout'
+        'require-user-logout'
     ],
     
     function ($request){
@@ -173,7 +173,7 @@ $obRouter->post('/operador',[
 //ROTA Login
 $obRouter->get('/operador/login',[
     'middlewares' => [
-        'require-operador-logout'
+        'require-user-logout'
     ],
     function ($request){
         return new Response(200, Login\Login::getLogin($request));
@@ -184,7 +184,7 @@ $obRouter->get('/operador/login',[
 //ROTA Login POst
 $obRouter->post('/operador/login',[
     'middlewares' => [
-        'require-operador-logout'
+        'require-user-logout'
     ],
     
     function ($request){
@@ -199,6 +199,9 @@ $obRouter->post('/operador/login',[
 
 //ROTA Login
 $obRouter->get('/login',[
+    'middlewares' => [
+        'require-user-logout'
+    ],
 
     function ($request){
         return new Response(200, Login\Login::getLogin($request));
@@ -207,10 +210,12 @@ $obRouter->get('/login',[
 
 //ROTA Login POst
 $obRouter->post('/login',[
+    'middlewares' => [
+        'require-user-logout'
+    ],
     
     function ($request){
         
         return new Response(200, Login\Login::setLogin($request));
     }
     ]);
-

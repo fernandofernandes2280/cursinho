@@ -271,13 +271,13 @@ class Frequencia extends Page{
 	    $obAula = EntityAula::getAulaById($id);
 	    if(!$obAula instanceof EntityAula){
 	        //Redireciona
-	        $request->getRouter()->redirect('/admin/frequencias');
+	        $request->getRouter()->redirect('/frequencias');
 	    }
 
 	    $obAluno = EntityAluno::getAlunoById($idAluno);
 	    if(!$obAluno instanceof EntityAluno){
 	        //Redireciona
-	        $request->getRouter()->redirect('/admin/frequencias');
+	        $request->getRouter()->redirect('/frequencias');
 	    }
 	    
 	    
@@ -307,7 +307,7 @@ class Frequencia extends Page{
 	    
 	    //Verifica se o aluno está inativo
 	 //   if(EntityAluno::getAlunoById($idAluno)->status == 2){
-	  //      $request->getRouter()->redirect('/admin/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=errorInativo');
+	  //      $request->getRouter()->redirect('/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=errorInativo');
 	  //  }
 	  
 	    //verifica se a sessao não está ativa
@@ -326,7 +326,7 @@ class Frequencia extends Page{
 	        //se nao for, verifica se o aluno é da mesma turma da a aula 
 	        if($obFreq instanceof EntityFrequencia){
 	            if($obFreq->status == 'P'){
-	                $request->getRouter()->redirect('/admin/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=jaconfirmed');
+	                $request->getRouter()->redirect('/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=jaconfirmed');
 	            }
 
 	            $obFreq->status = 'P';
@@ -352,7 +352,7 @@ class Frequencia extends Page{
 	    
 	    
 	    
-	    $request->getRouter()->redirect('/admin/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=confirmed');
+	    $request->getRouter()->redirect('/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=confirmed');
 	    
 	   
 	}
@@ -391,7 +391,7 @@ class Frequencia extends Page{
 	        
 	        //verifica se é válido o cpf
 	        if (!$validaCpf->isValid()){
-	            $request->getRouter()->redirect('/admin/alunos?statusMessage=cpfInvalid');
+	            $request->getRouter()->redirect('/alunos?statusMessage=cpfInvalid');
 	        }
 	        //ARMAZENA O CPF (SOMENTE OS NÚMEROS)
 	        $cpf= $validaCpf->getValue();
@@ -481,7 +481,7 @@ class Frequencia extends Page{
 	    
 	    
 	    //oculta o botão excluir para usuário Operador
-	    //	($_SESSION['admin']['usuario']['tipo'] == 'Operador' ? $botãoExcluir = 'hidden' : $botãoExcluir =  '' );
+	    //	($_SESSION['usuario']['tipo'] == 'Operador' ? $botãoExcluir = 'hidden' : $botãoExcluir =  '' );
 	    //Conteúdo da Home
 	    $content = View::render('admin/modules/frequencias/indexPesquisa',[
 	        'title' => 'Alunos > Pesquisa ',
@@ -523,7 +523,7 @@ class Frequencia extends Page{
 	    $obAula = EntityAula::getAulaById($postVars['idAula']);
 	    if(!$obAula instanceof EntityAula){
 	        //Redireciona
-	        $request->getRouter()->redirect('/admin/frequencias');
+	        $request->getRouter()->redirect('/frequencias');
 	    }
 	    
 			//Conteúdo da Home ok
@@ -548,7 +548,7 @@ class Frequencia extends Page{
 	    $obAula = EntityAula::getAulaById($id);
 	    if(!$obAula instanceof EntityAula){
 	        //Redireciona
-	        $request->getRouter()->redirect('/admin/frequencias');
+	        $request->getRouter()->redirect('/frequencias');
 	    }
 	    
 	    //Conteúdo da Home

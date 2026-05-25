@@ -52,7 +52,7 @@ define('permissaoExcluirAluno', $permissao['excluirAluno']);
 define('permissaoExcluirUsuario', $permissao['excluirUsuario']);
 
 //habilita o campo CPF e TIPO apenas para o Admin
-if(@$_SESSION['admin']['tipo'] == 'Admin')
+if(@$_SESSION['usuario']['tipo'] == 'Admin')
 {
     define('habilitaCPFTIPO', '');
 }else
@@ -69,6 +69,8 @@ View::init([
 //Define o mapeamento de Middleware
 MiddlewareQueue::setMap([
 		'maintenance' => \App\Http\Middleware\Maintenance::class,
+		'require-user-logout' => \App\Http\Middleware\RequireUserLogout::class,
+		'require-user-login' => \App\Http\Middleware\RequireUserLogin::class,
 		'require-admin-logout' => \App\Http\Middleware\RequireAdminLogout::class,
 		'require-admin-login' => \App\Http\Middleware\RequireAdminLogin::class,
 		'require-visitor-logout' => \App\Http\Middleware\RequireVisitorLogout::class,
@@ -83,7 +85,6 @@ MiddlewareQueue::setMap([
 MiddlewareQueue::setDefault([
 		'maintenance'
 ]);
-
 
 
 

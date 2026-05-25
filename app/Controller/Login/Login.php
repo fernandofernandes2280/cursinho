@@ -5,13 +5,11 @@ namespace App\Controller\Login;
 use \App\Utils\View;
 use \App\Model\Entity\User;
 use \App\Session\Visitor\Login as SessionVisitorLogin;
-use \App\Session\Admin\Login as SessionAdminLogin;
-use \App\Session\Operador\Login as SessionOperadorLogin;
+use \App\Session\User\Login as SessionUserLogin;
 use \App\Controller\Admin\Alert;
 use \App\Controller\Admin\Page;
 use Bissolli\ValidadorCpfCnpj\CPF;
 use \App\Controller\Comunication\Email;
-use App\Utils\Funcoes;
 
 
 class Login extends Page{
@@ -148,38 +146,15 @@ class Login extends Page{
 		}
 		
 		
-		Funcoes::init();
-		$_SESSION['admin']['tipo'] = $obUser->tipo;
-		
-		SessionAdminLogin::login($obUser);
-		//redireciona o usuario Admin
-		$request->getRouter()->redirect('/admin/dashboard');
-		
-		/*
-		if($obUser->tipo == 'Admin'){
-			//Cria a sessão de Login de Admin
-			SessionAdminLogin::login($obUser);
-			//redireciona o usuario Admin
-			$request->getRouter()->redirect('/admin/dashboard');
-		}else{
-			
-			//Cria a sessão de Login de Visitante
-			SessionOperadorLogin::login($obUser);
-			//redireciona o usuario Visitante
-			$request->getRouter()->redirect('/operador/dashboard');
-			
-		}
-		*/
-		
-		
+		SessionUserLogin::login($obUser);
+		$request->getRouter()->redirect('/dashboard');
 	}
 	
 	//Método responsavel por deslogar o usuario
 	public static function setLogout($request){
 		//Destroi a sessões de Login
 		SessionVisitorLogin::logout();
-		SessionAdminLogin::logout();
-		SessionOperadorLogin::logout();
+		SessionUserLogin::logout();
 		//ENCERRA SESSAO ID DA AULA
 		unset($_SESSION['idAula']);
 		//redireciona o usuario para a tela de login

@@ -8,7 +8,7 @@ use \App\Controller\Admin;
 $obRouter->get('/admin/frequencias',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -22,7 +22,7 @@ $obRouter->get('/admin/frequencias',[
 $obRouter->get('/admin/frequencias/{id}/edit',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -36,7 +36,7 @@ $obRouter->get('/admin/frequencias/{id}/edit',[
 $obRouter->get('/admin/frequencias/{id}/edit/individual',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -50,7 +50,7 @@ $obRouter->get('/admin/frequencias/{id}/edit/individual',[
 $obRouter->get('/admin/frequencias/{idAula}/edit/pesqAluno',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -65,7 +65,7 @@ $obRouter->get('/admin/frequencias/{idAula}/edit/pesqAluno',[
 $obRouter->get('/admin/frequencias/{id}/edit/individual/{idAluno}',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -78,7 +78,7 @@ $obRouter->get('/admin/frequencias/{id}/edit/individual/{idAluno}',[
 $obRouter->post('/admin/frequencias/{id}/edit/individual/{idAluno}',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -92,7 +92,7 @@ $obRouter->post('/admin/frequencias/{id}/edit/individual/{idAluno}',[
 $obRouter->post('/admin/frequencias/{id}/edit',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -106,7 +106,7 @@ $obRouter->post('/admin/frequencias/{id}/edit',[
 $obRouter->get('/admin/frequencias/{id}/edit/mobile',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -120,7 +120,7 @@ $obRouter->get('/admin/frequencias/{id}/edit/mobile',[
 $obRouter->get('/admin/frequencias/{id}/reactive/{idMatricula}',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -133,7 +133,7 @@ $obRouter->get('/admin/frequencias/{id}/reactive/{idMatricula}',[
 $obRouter->get('/admin/frequencias/{id}/reactiveMobile/{idMatricula}',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     

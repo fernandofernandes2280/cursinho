@@ -98,7 +98,7 @@ class Escolaridade extends Page{
 		$ob->cadastrar();
 		
 		//Redireciona o usuário
-		$request->getRouter()->redirect('/admin/escolaridades/'.$ob->id.'/edit?status=created');
+		$request->getRouter()->redirect('/escolaridades/'.$ob->id.'/edit?status=created');
 		
 	}
 	
@@ -133,7 +133,7 @@ class Escolaridade extends Page{
 		
 		//Valida a instancia
 		if(!$ob instanceof EntityEscolaridade){
-			$request->getRouter()->redirect('/admin/escolaridades');
+			$request->getRouter()->redirect('/escolaridades');
 		}
 		
 		//Conteúdo do Formulário
@@ -157,7 +157,7 @@ class Escolaridade extends Page{
 		
 		//Valida a instancia
 		if(!$ob instanceof EntityEscolaridade){
-			$request->getRouter()->redirect('/admin/escolaridades');
+			$request->getRouter()->redirect('/escolaridades');
 		}
 		
 		
@@ -171,7 +171,7 @@ class Escolaridade extends Page{
 		$ob->atualizar();
 		
 		//Redireciona o usuário
-		$request->getRouter()->redirect('/admin/escolaridades/'.$ob->id.'/edit?status=updated');
+		$request->getRouter()->redirect('/escolaridades/'.$ob->id.'/edit?status=updated');
 		
 		
 	}
@@ -184,7 +184,7 @@ class Escolaridade extends Page{
 		
 		//Valida a instancia
 		if(!$ob instanceof EntityEscolaridade){
-			$request->getRouter()->redirect('/admin/escolaridades');
+			$request->getRouter()->redirect('/escolaridades');
 		}
 		
 		
@@ -209,7 +209,7 @@ class Escolaridade extends Page{
 		
 		//Valida a instancia
 		if(!$ob instanceof EntityEscolaridade){
-			$request->getRouter()->redirect('/admin/escolaridades');
+			$request->getRouter()->redirect('/escolaridades');
 		}
 		
 			
@@ -221,7 +221,7 @@ class Escolaridade extends Page{
 		
 		
 		//Redireciona o usuário
-		$request->getRouter()->redirect('/admin/escolaridades?status=deleted');
+		$request->getRouter()->redirect('/escolaridades?status=deleted');
 		
 		
 	}

@@ -20,7 +20,7 @@
 			  <i class="material-icons" style="font-size: 30px;">person_add</i>
 			</button>
 		
-		<a href="{{URL}}/admin/professores">
+		<a href="{{URL}}/professores">
 			<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
 				<i class="material-icons" style="font-size: 30px;">reply</i>
 			</button>
@@ -33,7 +33,7 @@
 
 		<div class="form-row  ">
 		    <div class="colfoto mb-1 mr-2 pt-fotoProf text-center ">
-		    	<a href="{{URL}}/admin/professores/photo/{{id}}" style="{{ponteiro}}">
+		    	<a href="{{URL}}/professores/photo/{{id}}" style="{{ponteiro}}">
 					<img style="background-color: #fff;; border-radius: 10%" {{hiddenFoto}} title="Carregar nova foto" class="img-fluid" alt="Foto" rel="tooltip" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" style="cursor:pointer">
 				</a>
 		    </div>
@@ -48,7 +48,7 @@
     		</div>
     		<div class="col-cep mb-2">
 			      <label for="cep">Cep</label>
-			      <input type="text" class="form-control-pessoal" data-action="{{URL}}/admin/delete" data-id="3" id="cep" name="cep" value="{{cep}}">
+			      <input type="text" class="form-control-pessoal" data-action="{{URL}}/delete" data-id="3" id="cep" name="cep" value="{{cep}}">
       		
     		</div>
     	</div>

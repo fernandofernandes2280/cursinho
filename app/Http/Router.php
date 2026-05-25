@@ -62,24 +62,31 @@ class Router{
 		$params['middlewares'] = $params['middlewares']  ?? [];
 		
 		
-		//Variáveis da Rota
-		$params['variables'] = [];
-
-		//Padrao de Validação dsa Variáveis das Rotas
-		$patternVariable = '/{(.*?)}/';
-		if(preg_match_all($patternVariable, $route, $matches)){
-
-			$route = preg_replace($patternVariable, '(.*?)', $route);
-			$params['variables'] = $matches[1];
+		$routes = [$route];
+		if(strpos($route, '/admin/') === 0){
+			$routes[] = substr($route, 6);
 		}
 
-		//Padrão de validação da url
-		$patternRoute = '/^'.str_replace('/','\/' , $route).'$/';
+		foreach (array_unique($routes) as $routeItem) {
+			$paramsRoute = $params;
 
+			//Variáveis da Rota
+			$paramsRoute['variables'] = [];
 
+			//Padrao de Validação dsa Variáveis das Rotas
+			$patternVariable = '/{(.*?)}/';
+			if(preg_match_all($patternVariable, $routeItem, $matches)){
 
-		//Adciona a rota dentro da classe
-		$this->routes[$patternRoute][$method] = $params;
+				$routeItem = preg_replace($patternVariable, '(.*?)', $routeItem);
+				$paramsRoute['variables'] = $matches[1];
+			}
+
+			//Padrão de validação da url
+			$patternRoute = '/^'.str_replace('/','\/' , $routeItem).'$/';
+
+			//Adciona a rota dentro da classe
+			$this->routes[$patternRoute][$method] = $paramsRoute;
+		}
 
 	}
 

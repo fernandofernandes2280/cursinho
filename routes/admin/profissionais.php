@@ -6,7 +6,7 @@ use \App\Controller\Admin;
 //ROTA DE LISTAGEM DE PROFISSIONAL
 $obRouter->get('/admin/profissionais',[
 		'middlewares' => [
-				'require-admin-login'
+				'require-user-login'
 		],
 		
 		
@@ -20,7 +20,7 @@ $obRouter->get('/admin/profissionais',[
 //ROTA GET DE EDIT DE PROFISSIONAL
 $obRouter->get('/admin/profissionais/{id}/edit',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -33,7 +33,7 @@ $obRouter->get('/admin/profissionais/{id}/edit',[
 //ROTA DE POST DE EDIT PROFISSIONAL
 $obRouter->post('/admin/profissionais/{id}/edit',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -46,7 +46,7 @@ $obRouter->post('/admin/profissionais/{id}/edit',[
 //ROTA GET DE ACESSO AO SISTEMA PELO PROFISSIONAL
 $obRouter->get('/admin/profissionais/{id}/acesso',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -59,7 +59,7 @@ $obRouter->get('/admin/profissionais/{id}/acesso',[
 //ROTA POST DE ACESSO AO SISTEMA PELO PROFISSIONAL
 $obRouter->post('/admin/profissionais/{id}/acesso',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -72,7 +72,7 @@ $obRouter->post('/admin/profissionais/{id}/acesso',[
 //ROTA GET DE NOVO PROFISSIONAL
 $obRouter->get('/admin/profissionais/new',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -85,7 +85,7 @@ $obRouter->get('/admin/profissionais/new',[
 //ROTA POST DE NOVO PROFISSIONAL
 $obRouter->post('/admin/profissionais/new',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -99,13 +99,13 @@ $obRouter->post('/admin/profissionais/new',[
 //ROTA GET DE EXCLUIR PROFISSIONAL
 $obRouter->get('/admin/profissionais/{id}/delete',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
     function ($request, $id){
         //apenas administrador pode excluir paciente
-        if($_SESSION['admin']['usuario']['tipo'] == 'Admin')
+        if($_SESSION['usuario']['tipo'] == 'Admin')
                 return new Response(200, Admin\Profissional::getDeleteProfissional($request, $id));
             else
                 return new Response(200, 'Você não tem permissão. Contate o Administrador! <a href="javascript:history.back()">Voltar</a>');
@@ -115,7 +115,7 @@ $obRouter->get('/admin/profissionais/{id}/delete',[
 //ROTA POST DE EXCLUIR PROFISSIONAL
 $obRouter->post('/admin/profissionais/{id}/delete',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     

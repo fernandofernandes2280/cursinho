@@ -67,7 +67,7 @@ class Inativar extends Page{
         }
     }
     
-    $request->getRouter()->redirect('/admin/inativar?statusMessage=success&cont='.$cont.'');
+    $request->getRouter()->redirect('/inativar?statusMessage=success&cont='.$cont.'');
 
 	    
 	    

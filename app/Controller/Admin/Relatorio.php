@@ -10,7 +10,6 @@ use \App\Model\Entity\Turma as EntityTurma;
 use \App\Model\Entity\Status as EntityStatus;
 use \App\Utils\Funcoes;
 use \App\Controller\File\Upload as Upload;
-use \App\Controller\Operador;
 use \App\Model\Entity\User as EntityUser;
 use Dompdf\Dompdf;
 use Bissolli\ValidadorCpfCnpj\CPF;
@@ -40,7 +39,7 @@ class Relatorio  extends Page{
         //abre a sessão de cache
         //	ob_start();
         //caminho do arquivo
-        //	require '{{URL}}../../resources/view/admin/modules/pacientes/capa.html';
+        //	require '{{URL}}../../resources/view/modules/pacientes/capa.html';
         //recebe o conteudo entre as tags ob_start e ob_get_clean
         //	$pdf = ob_get_clean();
         

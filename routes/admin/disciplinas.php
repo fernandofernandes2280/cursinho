@@ -8,7 +8,7 @@ use \App\Controller\Admin;
 $obRouter->get('/admin/disciplinas',[
 		
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
 		function ($request){
 			return new Response(200, Admin\Disciplina::getDisciplina($request));
@@ -20,7 +20,7 @@ $obRouter->get('/admin/disciplinas',[
 $obRouter->get('/admin/disciplinas/new',[
 		
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
 		
 		function ($request){
@@ -31,7 +31,7 @@ $obRouter->get('/admin/disciplinas/new',[
 //ROTA de Cadastro de um Novo de Disciplina (POST)
 $obRouter->post('/admin/disciplinas/new',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
 		function ($request){
 		    return new Response(200, Admin\Disciplina::setDisciplinaNew($request));
@@ -41,7 +41,7 @@ $obRouter->post('/admin/disciplinas/new',[
 //ROTA de Edição de um de Disciplina
 $obRouter->get('/admin/disciplinas/{id}/edit',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
 		
 		function ($request,$id){
@@ -52,7 +52,7 @@ $obRouter->get('/admin/disciplinas/{id}/edit',[
 //ROTA de Edição de um de Disciplina (POST)
 $obRouter->post('/admin/disciplinas/{id}/edit',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
 		
 		
@@ -64,7 +64,7 @@ $obRouter->post('/admin/disciplinas/{id}/edit',[
 //ROTA de Exclusão de um de Disciplina
 $obRouter->get('/admin/disciplinas/{id}/delete',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
 		
 		
@@ -75,7 +75,7 @@ $obRouter->get('/admin/disciplinas/{id}/delete',[
 //ROTA de Exclusão de um de Disciplina (POST)
 $obRouter->post('/admin/disciplinas/{id}/delete',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
 		
 		function ($request,$id){

@@ -9,7 +9,7 @@ use \App\Controller\Pages;
 $obRouter->get('',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request){
@@ -22,7 +22,7 @@ $obRouter->get('',[
 $obRouter->get('/admin/alunos',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request){
@@ -34,7 +34,7 @@ $obRouter->get('/admin/alunos',[
 $obRouter->post('/admin/alunos',[
 
  'middlewares' => [
-    'require-admin-login'
+    'require-user-login'
  ],
  
     
@@ -50,7 +50,7 @@ $obRouter->post('/admin/alunos',[
 $obRouter->get('/admin/alunos/photo/{id}',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request,$id){
@@ -62,7 +62,7 @@ $obRouter->get('/admin/alunos/photo/{id}',[
 $obRouter->post('/admin/alunos/photo/{id}',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request){
@@ -76,7 +76,7 @@ $obRouter->post('/admin/alunos/photo/{id}',[
 $obRouter->get('/admin/alunos/{id}/edit',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request,$id){
@@ -88,7 +88,7 @@ $obRouter->get('/admin/alunos/{id}/edit',[
 $obRouter->post('/admin/alunos/{id}/edit',[
    
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request,$id){
@@ -101,7 +101,7 @@ $obRouter->post('/admin/alunos/{id}/edit',[
 $obRouter->get('/admin/alunos/new',[
 
  'middlewares' => [
-    'require-admin-login'
+    'require-user-login'
  ],
 
     
@@ -114,7 +114,7 @@ $obRouter->get('/admin/alunos/new',[
 $obRouter->post('/admin/alunos/new',[
     
  'middlewares' => [
-    'require-admin-login'
+    'require-user-login'
  ],
     
     function ($request){
@@ -127,7 +127,7 @@ $obRouter->post('/admin/alunos/new',[
 $obRouter->get('/admin/alunos/{id}/delete',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request,$id){
@@ -139,7 +139,7 @@ $obRouter->get('/admin/alunos/{id}/delete',[
 $obRouter->post('/admin/alunos/{id}/delete',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request,$id){
@@ -151,7 +151,7 @@ $obRouter->post('/admin/alunos/{id}/delete',[
 $obRouter->get('/admin/alunos/{id}/carteira',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request,$id){
@@ -163,7 +163,7 @@ $obRouter->get('/admin/alunos/{id}/carteira',[
 $obRouter->post('/admin/alunos/{id}/carteira',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request,$id){

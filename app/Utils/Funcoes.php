@@ -108,7 +108,7 @@ class Funcoes{
 	public static function getSessaoPermissoes($obUser){
 	    Funcoes::init();
 	    
-	    if($_SESSION['admin']['tipo'] == $obUser->tipo){
+	    if((int)($_SESSION['usuario']['id'] ?? 0) == (int)$obUser->id){
 	    $_SESSION['usuario'] = [
 	        'id' => $obUser->id,
 	        'nome' => $obUser->nome,

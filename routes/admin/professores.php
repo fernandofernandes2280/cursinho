@@ -7,7 +7,7 @@ use \App\Controller\Admin;
 $obRouter->get('/admin/professores',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -20,7 +20,7 @@ $obRouter->get('/admin/professores',[
 $obRouter->post('/admin/professores',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -34,7 +34,7 @@ $obRouter->post('/admin/professores',[
 $obRouter->get('/admin/professores/{id}/edit',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -47,7 +47,7 @@ $obRouter->get('/admin/professores/{id}/edit',[
 $obRouter->post('/admin/professores/{id}/edit',[
    
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -61,7 +61,7 @@ $obRouter->post('/admin/professores/{id}/edit',[
 $obRouter->get('/admin/professores/new',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -74,7 +74,7 @@ $obRouter->get('/admin/professores/new',[
 $obRouter->post('/admin/professores/new',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -88,7 +88,7 @@ $obRouter->post('/admin/professores/new',[
 $obRouter->get('/admin/professores/{id}/delete',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -101,7 +101,7 @@ $obRouter->get('/admin/professores/{id}/delete',[
 $obRouter->post('/admin/professores/{id}/delete',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -114,7 +114,7 @@ $obRouter->post('/admin/professores/{id}/delete',[
 $obRouter->get('/admin/professores/photo/{id}',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     
@@ -127,7 +127,7 @@ $obRouter->get('/admin/professores/photo/{id}',[
 $obRouter->post('/admin/professores/photo/{id}',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     

@@ -178,7 +178,7 @@ class Aula extends Page{
 		
 		if($duplicado instanceof EntityAula){
 			//Redireciona o usuário em caso de existir
-			$request->getRouter()->redirect('/admin/aulas?statusMessage=duplicad');
+			$request->getRouter()->redirect('/aulas?statusMessage=duplicad');
 		}
 
 		$obAula->cadastrar();
@@ -204,7 +204,7 @@ class Aula extends Page{
 		}
 
 		//Redireciona o usuário
-		$request->getRouter()->redirect('/admin/aulas?statusMessage=created');
+		$request->getRouter()->redirect('/aulas?statusMessage=created');
 	}
 	
 	
@@ -217,7 +217,7 @@ class Aula extends Page{
 		
 		//Valida a instancia
 		if(!$obAula instanceof EntityAula){
-				$request->getRouter()->redirect('/admin/aulas');
+				$request->getRouter()->redirect('/aulas');
 		}
 				
 				//Renderiza o conteúdo
@@ -259,7 +259,7 @@ class Aula extends Page{
 	    
 	    //Valida a instancia
 	    if(!$obAula instanceof EntityAula){
-	        $request->getRouter()->redirect('/admin/aulas');
+	        $request->getRouter()->redirect('/aulas');
 	    }
 	    
 	
@@ -269,7 +269,7 @@ class Aula extends Page{
 	    if($obVerifica instanceof EntityAula){
 	        //verifica se a aula encontrada é a mesma da aula que está sendo editada
 	        if($obVerifica->id != $id){
-	            $request->getRouter()->redirect('/admin/aulas/'.$obAula->id.'/edit?statusMessage=duplicad');
+	            $request->getRouter()->redirect('/aulas/'.$obAula->id.'/edit?statusMessage=duplicad');
 	        }
 	    }
 	    
@@ -289,7 +289,7 @@ class Aula extends Page{
 			$obAula->atualizar();
 			
 			//Redireciona o usuário
-			$request->getRouter()->redirect('/admin/aulas/'.$obAula->id.'/edit?statusMessage=updated');
+			$request->getRouter()->redirect('/aulas/'.$obAula->id.'/edit?statusMessage=updated');
 		
 		
 		
@@ -313,7 +313,7 @@ class Aula extends Page{
 		
 		//Valida a instancia
 		if(!$obAula instanceof EntityAula){
-			$request->getRouter()->redirect('/admin/aulas');
+			$request->getRouter()->redirect('/aulas');
 		}
 		
 		
@@ -339,14 +339,14 @@ class Aula extends Page{
 		
 		//Valida a instancia
 		if(!$obAula instanceof EntityAula){
-			$request->getRouter()->redirect('/admin/aulas');
+			$request->getRouter()->redirect('/aulas');
 		}
 		
 		//Exclui o depoimento
 		$obAula->excluir();
 		
 		//Redireciona o usuário
-		$request->getRouter()->redirect('/admin/aulas?statusMessage=deleted');
+		$request->getRouter()->redirect('/aulas?statusMessage=deleted');
 		
 		
 	}
@@ -361,7 +361,7 @@ class Aula extends Page{
 	    
 	    //Valida a instancia
 	    if(!$obAula instanceof EntityAula){
-	        $request->getRouter()->redirect('/admin/aulas');
+	        $request->getRouter()->redirect('/aulas');
 	    }
 	    
 	    //Recebe os parâmetros da requisição

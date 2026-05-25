@@ -8,7 +8,7 @@ use \App\Controller\Admin;
 $obRouter->get('/admin/presencas',[
 
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     

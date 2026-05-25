@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use \App\Session\Operador\Login as SessionOperadorLogin;
+use \App\Session\User\Login as SessionUserLogin;
 
 
 class RequireOperadorLogout{
@@ -12,8 +12,8 @@ class RequireOperadorLogout{
 		
 		
 		//Verifica se o usuario está logado
-	    if(SessionOperadorLogin::isLogged()){
-			$request->getRouter()->redirect('/operador');
+	    if(SessionUserLogin::isLogged()){
+			$request->getRouter()->redirect('/dashboard');
 		}
 		
 		

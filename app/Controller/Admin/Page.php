@@ -23,7 +23,7 @@ class Page{
 	    
 	    'dashboard' =>[
 	        'label' => 'Dashboard',
-	        'link' => URL.'/admin/dashboard',
+	        'link' => URL.'/dashboard',
 	        'material-icons' => 'dashboard',
 	        'modal' => '',
 	        'visivel' => ''
@@ -31,21 +31,21 @@ class Page{
 		
 		'alunos' =>[
 				'label' => 'Alunos',
-				'link' => URL.'/admin/alunos',
+				'link' => URL.'/alunos',
 				'material-icons' => 'family_restroom',
 				'modal' => '',
 		        'visivel' => permissaoMenuAlunos
 		],
 		'professores' =>[
 					'label' => 'Professores',
-				'link' => URL.'/admin/professores',
+				'link' => URL.'/professores',
 				'material-icons' => 'school',
 		    'modal' => '',
 		    'visivel' => permissaoMenuProfessores
 			],
 		'aulas' =>[
 				'label' => 'Aulas',
-				'link' => URL.'/admin/aulas',
+				'link' => URL.'/aulas',
 				'material-icons' => 'connect_without_contact',
 		    'modal' => '',
 		    'visivel' => permissaoMenuAulas
@@ -53,7 +53,7 @@ class Page{
 		],
 	    'frequencias' =>[
 	        'label' => 'Frequências',
-	        'link' => URL.'/admin/frequencias',
+	        'link' => URL.'/frequencias',
 	        'material-icons' => 'checklist_rtl',
 	        'modal' => '',
 	        'visivel' => permissaoMenuFrequencias
@@ -61,7 +61,7 @@ class Page{
 	    ],
 	    'presencas' =>[
 	        'label' => 'Presença',
-	        'link' => URL.'/admin/presencas',
+	        'link' => URL.'/presencas',
 	        'material-icons' => 'checklist_rtl',
 	        'modal' => '',
 	        'visivel' => permissaoMenuPresenca
@@ -70,21 +70,21 @@ class Page{
 	    
 	    'disciplinas' =>[
 	        'label' => 'Disciplinas',
-	        'link' => URL.'/admin/disciplinas',
+	        'link' => URL.'/disciplinas',
 	        'material-icons' => 'clear_all',
 	        'modal' => '',
 	        'visivel' => permissaoMenuDisciplinas
 	    ],
 			'users' =>[
 					'label' => 'Usuários',
-					'link' => URL.'/admin/users',
+					'link' => URL.'/users',
 					'material-icons' => 'people',
 			    'modal' => '',
 			    'visivel' => ''
 			],
 			'logs' =>[
 					'label' => 'Logs',
-					'link' => URL.'/admin/logs',
+					'link' => URL.'/logs',
 					'material-icons' => 'people',
 			    'modal' => '',
 			    'visivel' => 'hidden'
@@ -99,7 +99,7 @@ class Page{
 			
 	    'inativar' =>[
 	        'label' => 'Inativar Aluno',
-	        'link' => URL.'/admin/inativar'  ,
+	        'link' => URL.'/inativar'  ,
 	        'material-icons' => 'assignment',
 	        'modal' => '',
 	        'visivel' => 'hidden'
@@ -171,27 +171,27 @@ class Page{
 			'disciplinas' =>[
 					'label' => 'Disciplinas',
 					'idBotao' => 'btnDisciplina',
-					'link' => URL.'/admin/disciplinas',
+					'link' => URL.'/disciplinas',
 			],
 			'procedimentos' =>[
 					'label' => 'Procedimentos',
 					'idBotao' => 'btnProcedimentos',
-					'link' => URL.'/admin/procedimentos',
+					'link' => URL.'/procedimentos',
 			],
 			'escolaridade' =>[
 					'label' => 'Escolaridades',
 					'idBotao' => 'btnEscolaridade',
-					'link' => URL.'/admin/escolaridades',
+					'link' => URL.'/escolaridades',
 			],
 			'substancias' =>[
 					'label' => 'Substâncias',
 					'idBotao' => 'btnSubstancias',
-					'link' => URL.'/admin/substancias',
+					'link' => URL.'/substancias',
 			],
     	    'profissionais' =>[
     	        'label' => 'Profissionais',
     	        'idBotao' => 'btnProfissionais',
-    	        'link' => URL.'/admin/profissionais',
+    	        'link' => URL.'/profissionais',
     	    ]
 			
 	];
@@ -291,8 +291,8 @@ class Page{
 		foreach (self::$modules as $hash=>$module){
 			
 			//desabilita módulo usuários e Logs para Operador
-	//		if($module['label'] == 'Usuários' && $_SESSION['admin']['usuario']['tipo'] == 'Operador') $module['modal'] = 'hidden';
-	//		if($module['label'] == 'Logs' && $_SESSION['admin']['usuario']['tipo'] == 'Operador') $module['modal'] = 'hidden';
+	//		if($module['label'] == 'Usuários' && $_SESSION['usuario']['tipo'] == 'Operador') $module['modal'] = 'hidden';
+	//		if($module['label'] == 'Logs' && $_SESSION['usuario']['tipo'] == 'Operador') $module['modal'] = 'hidden';
 			
 		    
 		    
@@ -369,7 +369,7 @@ class Page{
 		return View::render('admin/page',[
 				'title' => $title,
 				'content' => $content,
-				'relatorio' =>'/admin/relatorios'
+				'relatorio' =>'/relatorios'
 		]);
 	}
 	

@@ -11,7 +11,6 @@ use \App\Model\Entity\Turma as EntityTurma;
 use \App\Model\Entity\Status as EntityStatus;
 use \App\Utils\Funcoes;
 use \App\Controller\File\Upload as Upload;
-use \App\Controller\Operador;
 use \App\Model\Entity\User as EntityUser;
 
 use \WilliamCosta\DatabaseManager\Pagination;
@@ -62,7 +61,7 @@ class Aluno extends Page{
     		
     		//verifica se é válido o cpf
     		if (!$validaCpf->isValid()){
-    		    $request->getRouter()->redirect('/admin/alunos?statusMessage=cpfInvalid');
+    		    $request->getRouter()->redirect('/alunos?statusMessage=cpfInvalid');
     		}
             //ARMAZENA O CPF (SOMENTE OS NÚMEROS)		
     		$cpf= $validaCpf->getValue();
@@ -200,7 +199,7 @@ class Aluno extends Page{
 		
 		
 		//oculta o botão excluir para usuário Operador
-	//	($_SESSION['admin']['usuario']['tipo'] == 'Operador' ? $botãoExcluir = 'hidden' : $botãoExcluir =  '' );
+	//	($_SESSION['usuario']['tipo'] == 'Operador' ? $botãoExcluir = 'hidden' : $botãoExcluir =  '' );
 		//Conteúdo da Home
 		$content = View::render('admin/modules/alunos/index',[
 				'title' => 'Alunos > Pesquisa ',
@@ -241,7 +240,7 @@ class Aluno extends Page{
 	    
 	    //Valida a instancia
 	    if(!$obAluno instanceof EntityAluno){
-	        $request->getRouter()->redirect('/admin/alunos');
+	        $request->getRouter()->redirect('/alunos');
 	    }
 	    
 	    $src = $obAluno->getFoto(false);
@@ -252,7 +251,7 @@ class Aluno extends Page{
 	    
 	    
 	    //oculta o botão excluir para usuário Operador
-	    //	($_SESSION['admin']['usuario']['tipo'] == 'Operador' ? $botãoExcluir = 'hidden' : $botãoExcluir =  '' );
+	    //	($_SESSION['usuario']['tipo'] == 'Operador' ? $botãoExcluir = 'hidden' : $botãoExcluir =  '' );
 	    //Conteúdo da Home
 	    $content = View::render('admin/modules/alunos/formCortarPhoto',[
 	        'foto' => $src
@@ -300,7 +299,7 @@ class Aluno extends Page{
 	        
 	        Upload::setUploadImages($request);
 	        //Redireciona o usuário
-	        $request->getRouter()->redirect('/admin/alunos/'.$obAluno->id.'/edit?statusMessage=updated');
+	        $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=updated');
 	    }
 	    
 	    if ($postVars['image'] != ''){
@@ -314,10 +313,10 @@ class Aluno extends Page{
     	    
     	    
     	    //Redireciona o usuário
-    	    $request->getRouter()->redirect('/admin/alunos/'.$obAluno->id.'/edit?statusMessage=updated');
+    	    $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=updated');
 	    }
 	    
-	    $request->getRouter()->redirect('/admin/alunos/'.$obAluno->id.'/edit?statusMessage=semfoto');
+	    $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=semfoto');
 	   
 	    
 	}
@@ -343,7 +342,7 @@ class Aluno extends Page{
 	    //busca o aluno pela matrícula
 	    if(@$queryParams['matricula']){
 	        $obAluno = EntityAluno::getAlunoByMatricula($queryParams['matricula']);
-	        $request->getRouter()->redirect('/admin/alunos/'.$obAluno->id.'/edit');
+	        $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit');
 	    }
 	    
 	    //obtém o Aluno do banco de dados
@@ -351,7 +350,7 @@ class Aluno extends Page{
 	    
 	    //Valida a instancia
 	    if(!$obAluno instanceof EntityAluno){
-	        $request->getRouter()->redirect('/admin/alunos');
+	        $request->getRouter()->redirect('/alunos');
 	    }
 	    
 	    $obAluno->sexo == 'MAS' ? $selectedSexoM = 'selected' : $selectedSexoM = '';
@@ -416,14 +415,14 @@ class Aluno extends Page{
 	        $ob = EntityAluno::getAlunoByCpf($validaCpf->getValue());
 	        //verifica se cpf informado já está cadastrado
 	        if(($ob instanceof EntityAluno)){
-	            $request->getRouter()->redirect('/admin/alunos/'.$ob->id.'/edit?statusMessage=cpfduplicated');
+	            $request->getRouter()->redirect('/alunos/'.$ob->id.'/edit?statusMessage=cpfduplicated');
 	        }
 	    }
 	    
 	    
 	    //Valida a instancia
 	    if(!$obAluno instanceof EntityAluno){
-	        $request->getRouter()->redirect('/admin/alunos');
+	        $request->getRouter()->redirect('/alunos');
 	    }
 	    
 	    //redireciona caso seja feita busca rápida pela Matrícula
@@ -431,7 +430,7 @@ class Aluno extends Page{
 	        //obtém o Aluno do banco de dados
 	        $obAlunoMatricula = EntityAluno::getAlunoByMatricula($postVars['matricula']);
 	        //redireciona para os dados do aluno 
-	        $request->getRouter()->redirect('/admin/alunos/'.$obAlunoMatricula->id.'/edit');
+	        $request->getRouter()->redirect('/alunos/'.$obAlunoMatricula->id.'/edit');
 	        
 	    }
 	    
@@ -467,7 +466,7 @@ class Aluno extends Page{
 	    //	Logs::setNewLog($request);
 	    
 	    //Redireciona o usuário
-	    $request->getRouter()->redirect('/admin/alunos/'.$obAluno->id.'/edit?statusMessage=updated');
+	    $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=updated');
 	    
 	}
 	
@@ -486,7 +485,7 @@ class Aluno extends Page{
 	    //verifica se é válido o cpf
 	    if (!$validaCpf->isValid()){
 	        
-	        $request->getRouter()->redirect('/admin/alunos/?statusMessage=cpfInvalid');
+	        $request->getRouter()->redirect('/alunos/?statusMessage=cpfInvalid');
 	    }
 	    
 	    
@@ -494,7 +493,7 @@ class Aluno extends Page{
 	    $ob = EntityAluno::getAlunoByCpf($validaCpf->getValue());
 	    //verifica se o cpf já está cadastrado
 	    if($ob instanceof EntityAluno){
-	        $request->getRouter()->redirect('/admin/alunos?statusMessage=duplicad');
+	        $request->getRouter()->redirect('/alunos?statusMessage=duplicad');
 	    }
 	    
 	    
@@ -549,7 +548,7 @@ class Aluno extends Page{
 	    $ob = EntityAluno::getAlunoByCpf($validaCpf->getValue());
 	    //verifica se o cpf já está cadastrado
 	    if($ob instanceof EntityAluno){
-	        $request->getRouter()->redirect('/admin/alunos/new?statusMessage=cpfduplicated');
+	        $request->getRouter()->redirect('/alunos/new?statusMessage=cpfduplicated');
 	    }
 	    
 	    
@@ -594,7 +593,7 @@ class Aluno extends Page{
 	    //	Logs::setNewLog($request);
 	    
 	    //Redireciona o usuário
-	    $request->getRouter()->redirect('/admin/alunos/'.$obAluno->id.'/edit?statusMessage=created');
+	    $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=created');
 	    
 	}
 	
@@ -605,7 +604,7 @@ class Aluno extends Page{
 	    
 	    //Valida a instancia
 	    if(!$obAluno instanceof EntityAluno){
-	        $request->getRouter()->redirect('/admin/alunos');
+	        $request->getRouter()->redirect('/alunos');
 	    }
 	    
 	    
@@ -631,14 +630,14 @@ class Aluno extends Page{
 	    
 	    //Valida a instancia
 	    if(!$obAluno instanceof EntityAluno){
-	        $request->getRouter()->redirect('/admin/alunos');
+	        $request->getRouter()->redirect('/alunos');
 	    }
 	    
 	    //Exclui o depoimento
 	    $obAluno->excluir();
 	    
 	    //Redireciona o usuário
-	    $request->getRouter()->redirect('/admin/alunos?statusMessage=deleted');
+	    $request->getRouter()->redirect('/alunos?statusMessage=deleted');
 	    
 	    
 	}
@@ -670,7 +669,7 @@ class Aluno extends Page{
 	    
 	    //Valida a instancia
 	    if(!$obAluno instanceof EntityAluno){
-	        $request->getRouter()->redirect('/admin/alunos');
+	        $request->getRouter()->redirect('/alunos');
 	    }
 	    
 	  

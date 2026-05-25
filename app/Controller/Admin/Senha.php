@@ -60,7 +60,7 @@ class Senha extends Page{
 		$novaSenha = $postVars['novaSenha'] ?? '';
 		$confirmeNovaSenha = $postVars['confirmeNovaSenha'] ?? '';
 		
-		$id = ($_SESSION['admin']['usuario']['id']);
+		$id = $_SESSION['usuario']['id'];
 		
 		//busca usuário pelo e-mail
 		$obUser = User::getUserById($id);

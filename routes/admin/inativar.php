@@ -7,7 +7,7 @@ use \App\Controller\Admin;
 //ROTA de get para Inativar Aluno
 $obRouter->get('/admin/inativar',[
 		'middlewares' => [
-				'require-admin-login'
+				'require-user-login'
 		],
 		
 		
@@ -20,7 +20,7 @@ $obRouter->get('/admin/inativar',[
 //ROTA post para Inativar Aluno
 $obRouter->post('/admin/inativar',[
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     

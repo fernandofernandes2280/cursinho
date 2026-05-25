@@ -34,7 +34,7 @@ class Presenca extends Page{
 	  //  $obAula = EntityAula::getAulaById($id);
 	  //  if(!$obAula instanceof EntityAula){
 	        //Redireciona
-	//        $request->getRouter()->redirect('/admin/frequencias');
+	//        $request->getRouter()->redirect('/frequencias');
 	//    }
 	    
 	    //Conteúdo da Home

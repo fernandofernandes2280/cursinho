@@ -2,14 +2,13 @@
 
 use \App\Http\Response;
 use App\Controller\Admin;
-use App\Controller\Operador;
 
 
 
 //ROTA GET DE DASHBOARD DO ADMIN
 $obRouter->get('/admin/dashboard',[
 		'middlewares' => [
-				'require-admin-login'
+				'require-user-login'
 		],
 		
 		
@@ -20,16 +19,14 @@ $obRouter->get('/admin/dashboard',[
 		]);
 		
 
-//ROTA GET DE DASHBOARD DO OPERADOR
+//Compatibilidade com URLs antigas de operador.
 $obRouter->get('/operador/dashboard',[
     'middlewares' => [
-        'require-operador-login'
+        'require-user-login'
     ],
     
     
     function ($request){
-        return new Response(200, Operador\Dashboard::getDashboard($request));
-       
-        
+        $request->getRouter()->redirect('/dashboard');
     }
     ]);

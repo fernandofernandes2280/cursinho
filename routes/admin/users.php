@@ -9,7 +9,7 @@ use \App\Controller\Visitor;
 $obRouter->get('/admin/users',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
 		
 		function ($request){
@@ -23,7 +23,7 @@ $obRouter->get('/admin/users/new',[
 		
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
 		
 		function ($request,$id){
@@ -35,7 +35,7 @@ $obRouter->get('/admin/users/new',[
 $obRouter->post('/admin/users/new',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
 		
 		
@@ -49,7 +49,7 @@ $obRouter->get('/admin/users/{id}/edit',[
 		
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
 		
 		function ($request,$id){
@@ -62,7 +62,7 @@ $obRouter->post('/admin/users/{id}/edit',[
 		
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
 		
 		function ($request,$id){
@@ -73,7 +73,7 @@ $obRouter->post('/admin/users/{id}/edit',[
 //ROTA de Exclusão de um de Usuário
 $obRouter->get('/admin/users/{id}/delete',[
 		'middlewares' => [
-				'require-admin-login'
+				'require-user-login'
 		],
 		
 		
@@ -84,7 +84,7 @@ $obRouter->get('/admin/users/{id}/delete',[
 //ROTA de Exclusão de um de Usuário (POST)
 $obRouter->post('/admin/users/{id}/delete',[
 		'middlewares' => [
-				'require-admin-login'
+				'require-user-login'
 		],
 		
 		
@@ -96,7 +96,7 @@ $obRouter->post('/admin/users/{id}/delete',[
 //ROTA get para alterar senha
 $obRouter->get('/admin/trocarSenha',[
 		'middlewares' => [
-				'require-admin-login'
+				'require-user-login'
 		],
 		function ($request){
 			return new Response(200, Admin\Senha::getTrocarSenha($request));
@@ -107,7 +107,7 @@ $obRouter->get('/admin/trocarSenha',[
 
 $obRouter->post('/admin/trocarSenha',[
 		'middlewares' => [
-				'require-admin-login'
+				'require-user-login'
 		],
 		function ($request){
 			return new Response(200, Admin\Senha::setTrocarSenha($request));
@@ -119,7 +119,7 @@ $obRouter->post('/admin/trocarSenha',[
 $obRouter->get('/admin/users/photo/{id}',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request,$id){
@@ -131,7 +131,7 @@ $obRouter->get('/admin/users/photo/{id}',[
 $obRouter->post('/admin/users/photo/{id}',[
     
     'middlewares' => [
-        'require-admin-login'
+        'require-user-login'
     ],
     
     function ($request){
