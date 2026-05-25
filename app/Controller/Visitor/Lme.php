@@ -25,11 +25,11 @@ class Lme  extends Page{
 		
 		//Valida a instancia
 		if(!$obPaciente instanceof EntityPaciente){
-			$request->getRouter()->redirect('/admin/pacientes');
+			$request->getRouter()->redirect('/pacientes');
 		}
 		
 		//Conteúdo da Home
-		$content = View::render('admin/modules/lme/form',[
+		$content = View::render('painel/modules/lme/form',[
 				'title' => 'Laudo de Solicitação de Medicamento LME',
 				'codPronto' => $obPaciente->codPronto,
 				'tipo' => $obPaciente->tipo,
@@ -68,7 +68,7 @@ class Lme  extends Page{
 		
 		//Valida a instancia
 		if(!$obPaciente instanceof EntityPaciente){
-			$request->getRouter()->redirect('/admin/pacientes');
+			$request->getRouter()->redirect('/pacientes');
 		}
 		
 		
@@ -91,7 +91,7 @@ class Lme  extends Page{
 		
 		
 		//Renderização do Laudo de solicitação de medicamento
-		$content = View::render('admin/modules/lme/lme',[
+		$content = View::render('painel/modules/lme/lme',[
 				
 				'nome' => $obPaciente->nome,
 				'mae' => $obPaciente->mae,
@@ -149,7 +149,7 @@ class Lme  extends Page{
 		
 		
 		//Rendereização do Termo de consentimento
-		$content .= View::render('admin/modules/lme/termo',[
+		$content .= View::render('painel/modules/lme/termo',[
 				
 				'nome' => $obPaciente->nome,
 				'sexo' => $obPaciente->sexo,
@@ -164,7 +164,7 @@ class Lme  extends Page{
 		]); 
 		
 		//Rendereização da Escala BPRS
-		$content .= View::render('admin/modules/lme/escalaBPRS',[
+		$content .= View::render('painel/modules/lme/escalaBPRS',[
 				
 				'nome' => $obPaciente->nome,
 				'sexo' => $obPaciente->sexo,
@@ -195,7 +195,7 @@ class Lme  extends Page{
 		$uri = str_replace('/caps','',$uri);
 		
 		if(isset($pront)){
-			$request->getRouter()->redirect('/admin/pacientes/'.$pront.'/lme');
+			$request->getRouter()->redirect('/pacientes/'.$pront.'/lme');
 		}
 		
 		
@@ -210,7 +210,7 @@ class Lme  extends Page{
 		//abre a sessão de cache
 		//	ob_start();
 		//caminho do arquivo
-		//	require '{{URL}}../../resources/view/admin/modules/pacientes/capa.html';
+		//	require '{{URL}}../../resources/view/painel/modules/pacientes/capa.html';
 		//recebe o conteudo entre as tags ob_start e ob_get_clean
 		//	$pdf = ob_get_clean();
 		

@@ -74,7 +74,7 @@ class DisciplinaProfessor{
 	            $obDisciplina->id == $idDisciplina ? $selected = 'selected' : $selected = '';
 
 	            //RENDEREIZA A VIEW DE ITENS DO SELECT
-	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	            $resultados .= View::render('painel/modules/selectOption/itemSelect',[
 	                'id' => $obDisciplina ->id,
 	                'nome' => $obDisciplina->nome,
 	                'selecionado' => $selected

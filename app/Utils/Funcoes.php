@@ -2,7 +2,7 @@
 
 namespace App\Utils;
 
-use App\Controller\Admin\Alert;
+use App\Controller\Painel\Alert;
 class Funcoes{
     
     

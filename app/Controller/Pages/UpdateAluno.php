@@ -3,7 +3,7 @@
 namespace App\Controller\Pages;
 
 use \App\Utils\View;
-use App\Controller\Admin;
+use App\Controller\Painel;
 use \App\Model\Entity\Aluno as EntityAluno;
 use \App\Model\Entity\Bairro as EntityBairro;
 use \App\Model\Entity\Escolaridade as EntityEscolaridade;
@@ -11,11 +11,11 @@ use \App\Model\Entity\EstadoCivil as EntityEstadoCivil;
 use \App\Model\Entity\Turma as EntityTurma;
 use \App\Model\Entity\Status as EntityStatus;
 use Bissolli\ValidadorCpfCnpj\CPF;
-use App\Controller\Admin\Alert;
+use App\Controller\Painel\Alert;
 use App\Utils\Funcoes;
 use CoffeeCode\Uploader\Image;
 use App\Controller\File\Upload;
-use App\Controller\Admin\Resize;
+use App\Controller\Painel\Resize;
 
 class UpdateAluno extends Page{
 	
@@ -95,7 +95,7 @@ class UpdateAluno extends Page{
             $request->getRouter()->redirect('/aluno/update/foto');
         }
         
-       // $request->getRouter()->redirect('/admin/alunos/'.$obAluno->id.'/edit?statusMessage=semfoto');
+       // $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=semfoto');
         
         
     }
@@ -313,7 +313,7 @@ class UpdateAluno extends Page{
 	            //seleciona o Procedencia do paciente
 	            $ob->id == $id ? $selected = 'selected' : $selected = '';
 	            //View de Procedencia
-	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	            $resultados .= View::render('painel/modules/selectOption/itemSelect',[
 	                'id' => $ob ->id,
 	                'nome' => $ob->nome,
 	                'selecionado' => $selected
@@ -324,7 +324,7 @@ class UpdateAluno extends Page{
 	    }else{ //se for nulo, lista todos e seleciona um em branco
 	        while ($ob = $results -> fetchObject(self::class)) {
 	           
-	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	            $resultados .= View::render('painel/modules/selectOption/itemSelect',[
 	                'id' => $ob ->id,
 	                'nome' => $ob->nome,
 	               
@@ -346,7 +346,7 @@ class UpdateAluno extends Page{
 	            //seleciona as Escolaridades do paciente
 	            $obEscolaridade->id == $id ? $selected = 'selected' : $selected = '';
 	            //View de as Escolaridades
-	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	            $resultados .= View::render('painel/modules/selectOption/itemSelect',[
 	                'id' => $obEscolaridade ->id,
 	                'nome' => $obEscolaridade->nome,
 	                'selecionado' => $selected
@@ -356,7 +356,7 @@ class UpdateAluno extends Page{
 	        return $resultados;
 	    }else{ //se as Escolaridades for nulo, lista todos e seleciona um em branco
 	        while ($obEscolaridade = $results -> fetchObject(self::class)) {
-	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	            $resultados .= View::render('painel/modules/selectOption/itemSelect',[
 	                'id' => $obEscolaridade ->id,
 	                'nome' => $obEscolaridade->nome,
 	            ]);
@@ -378,7 +378,7 @@ class UpdateAluno extends Page{
 	            //seleciona o Estado Civil do paciente
 	            $obEstadoCivil->id == $id ? $selected = 'selected' : $selected = '';
 	            //View de Estados Civil
-	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	            $resultados .= View::render('painel/modules/selectOption/itemSelect',[
 	                'id' => $obEstadoCivil ->id,
 	                'nome' => $obEstadoCivil->nome,
 	                'selecionado' => $selected
@@ -389,7 +389,7 @@ class UpdateAluno extends Page{
 	    }else{ //se for nulo, lista todos e seleciona um em branco
 	        while ($obEstadoCivil = $results -> fetchObject(self::class)) {
 	            
-	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	            $resultados .= View::render('painel/modules/selectOption/itemSelect',[
 	                'id' => $obEstadoCivil ->id,
 	                'nome' => $obEstadoCivil->nome,
 	            
@@ -411,7 +411,7 @@ class UpdateAluno extends Page{
 	            //seleciona a Turma do aluno
 	            $ob->id == $id ? $selected = 'selected' : $selected = '';
 	            //View de Turmas
-	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	            $resultados .= View::render('painel/modules/selectOption/itemSelect',[
 	                'id' => $ob ->id,
 	                'nome' => $ob->nome,
 	                'selecionado' => $selected
@@ -422,7 +422,7 @@ class UpdateAluno extends Page{
 	    }else{ //se for nulo, lista todos e seleciona um em branco
 	        while ($ob = $results -> fetchObject(self::class)) {
 	           
-	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	            $resultados .= View::render('painel/modules/selectOption/itemSelect',[
 	                'id' => $ob ->id,
 	                'nome' => $ob->nome,
 	           

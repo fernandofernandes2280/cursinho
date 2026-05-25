@@ -60,7 +60,7 @@ class Escolaridade extends Generica {
 				//seleciona as Escolaridades do paciente
 				$obEscolaridade->id == $id ? $selected = 'selected' : $selected = '';
 				//View de as Escolaridades
-				$resultados .= View::render('admin/modules/selectOption/itemSelect',[
+				$resultados .= View::render('painel/modules/selectOption/itemSelect',[
 						'id' => $obEscolaridade ->id,
 						'nome' => $obEscolaridade->nome,
 						'selecionado' => $selected
@@ -71,7 +71,7 @@ class Escolaridade extends Generica {
 		}else{ //se as Escolaridades for nulo, lista todos e seleciona um em branco
 			while ($obEscolaridade = $results -> fetchObject(self::class)) {
 				$obEscolaridade->nome == 'Não Informado' ? $selected = 'selected' : $selected = '';
-				$resultados .= View::render('admin/modules/selectOption/itemSelect',[
+				$resultados .= View::render('painel/modules/selectOption/itemSelect',[
 						'id' => $obEscolaridade ->id,
 						'nome' => $obEscolaridade->nome,
 						'selecionado' => $selected

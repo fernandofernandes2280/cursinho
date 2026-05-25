@@ -107,7 +107,7 @@ class Page{
 		$linksDropItems='';
 		//Itera os módulos
 		foreach (self::$modulesDropdownSubItems as $hash=>$module){
-			$linksDropItems .= View::render('admin/menu/linkDropdown',[
+			$linksDropItems .= View::render('painel/menu/linkDropdown',[
 					'label' => $module['label'],
 					'idBotao' => $module['idBotao'],
 			]);
@@ -120,7 +120,7 @@ class Page{
 		$linksDropItems='';
 		//Itera os módulos
 		foreach (self::$modulesDropdownItemsProducao as $hash=>$module){
-			$linksDropItems .= View::render('admin/menu/linkDropdown',[
+			$linksDropItems .= View::render('painel/menu/linkDropdown',[
 					'label' => $module['label'],
 					'idBotao' => $module['idBotao'],
 					'material-icons'=>'navigate_next',
@@ -136,7 +136,7 @@ class Page{
 		$linksDropItems='';
 		//Itera os módulos
 		foreach (self::$modulesDropdownItemsRelatorios as $hash=>$module){
-			$linksDropItems .= View::render('admin/menu/linkDropdownSub',[
+			$linksDropItems .= View::render('painel/menu/linkDropdownSub',[
 					'label' => $module['label'],
 					'idBotao' => $module['idBotao'],
 					'itensSub' => self::getDropdownSubItems(),
@@ -159,7 +159,7 @@ class Page{
 		$linksDropRelatorio='';
 		//Itera os módulos Menu simples
 		foreach (self::$modules as $hash=>$module){
-			$links .= View::render('admin/menu/link',[
+			$links .= View::render('painel/menu/link',[
 					'label' => $module['label'],
 					'link' => $module['link'],
 					'current' => $hash == $currentModule ? 'active' : '',
@@ -173,7 +173,7 @@ class Page{
 		
 		//Itera os módulos Menu dropdown Produção
 		foreach (self::$modulesDropdownProducao as $hash=>$module){
-			$linksDropProducao .= View::render('admin/menu/dropdown',[
+			$linksDropProducao .= View::render('painel/menu/dropdown',[
 					'label' => $module['label'],
 					'itensDropDown' => self::getDropdownItemsProducao(),
 					'current' => $hash == $currentModule ? 'active' : '',
@@ -184,7 +184,7 @@ class Page{
 		
 		//Itera os módulos Menu dropdown Relatórios
 		foreach (self::$modulesDropdownRelatorio as $hash=>$module){
-			$linksDropRelatorio .= View::render('admin/menu/dropdown',[
+			$linksDropRelatorio .= View::render('painel/menu/dropdown',[
 					'label' => $module['label'],
 					'itensDropDown' => self::getDropdownItemsRelatorios(),
 					'current' => $hash == $currentModule ? 'active' : '',
@@ -198,7 +198,7 @@ class Page{
 		is_null($obUser->foto) ? $imagem = '/resources/imagens/profile.png' : $imagem = '/app/File/files/images/'.$obUser->foto;  
 		
 		//Retorna a renderização do menu
-		return View::render('admin/menu/box',[
+		return View::render('painel/menu/box',[
 				'links' => $links,
 				'logout'=>'visitor',
 				'dropdownProducao' => $linksDropProducao,
@@ -212,7 +212,7 @@ class Page{
 	
 	//Método responsavel por retornar o conteudo (view) da estrutura generica de página do painel
 	public static function getPage($title,$content){
-		return View::render('admin/page',[
+		return View::render('painel/page',[
 				'title' => $title,
 				'content' => $content,
 				'relatorio' =>'/visitor/relatorios'
@@ -224,11 +224,11 @@ class Page{
 	public static function getPanel($title, $content, $currentModule, $hidden){
 		
 		//Renderiza a view do painel
-		$contentPanel = View::render('admin/panel',[
+		$contentPanel = View::render('painel/panel',[
 				'menu' => self::getMenu($currentModule),
 				'content' => $content,
-				'navBar'=>View::render('admin/navBar',['hidden' => $hidden]),
-				'footer'=>View::render('admin/modules/pacientes/footer',[]),
+				'navBar'=>View::render('painel/navBar',['hidden' => $hidden]),
+				'footer'=>View::render('painel/modules/pacientes/footer',[]),
 
 
 		]);

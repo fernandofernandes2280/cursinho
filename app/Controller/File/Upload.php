@@ -9,7 +9,7 @@ use \App\Model\Entity\User as EntityUser;
 use \App\Model\Entity\Aluno as EntityAluno;
 use \App\Model\Entity\Professor as EntityProfessor;
 
-use \App\Controller\Admin\Resize;
+use \App\Controller\Painel\Resize;
 use App\Utils\Funcoes;
 
 class Upload{
@@ -245,7 +245,7 @@ class Upload{
 			//verifica se o arquivo existe e se o tipo é permitido
 			if(empty($file['type']) || !in_array($file['type'], $upload::isAllowed())  ){
 				
-			    //$request->getRouter()->redirect('/admin/pacientes'); 
+			    //$request->getRouter()->redirect('/pacientes'); 
 				
 			}else{
 				//faz o upload da imagem
@@ -406,7 +406,7 @@ class Upload{
 	        //verifica se o arquivo existe e se o tipo é permitido
 	        if(empty($file['type']) || !in_array($file['type'], $upload::isAllowed())  ){
 	            
-	            //$request->getRouter()->redirect('/admin/pacientes');
+	            //$request->getRouter()->redirect('/pacientes');
 	            
 	        }else{
 	            //faz o upload da imagem
@@ -461,7 +461,7 @@ class Upload{
 	        //verifica se o arquivo existe e se o tipo é permitido
 	        if(empty($file['type']) || !in_array($file['type'], $upload::isAllowed())  ){
 	            
-	            //$request->getRouter()->redirect('/admin/pacientes');
+	            //$request->getRouter()->redirect('/pacientes');
 	            
 	        }else{
 	            //faz o upload da imagem
@@ -549,7 +549,7 @@ class Upload{
 	           
 	         }
 	            
-	            //$request->getRouter()->redirect('/admin/pacientes');
+	            //$request->getRouter()->redirect('/pacientes');
 	            
 	        }else{
 	            //faz o upload da imagem

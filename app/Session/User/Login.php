@@ -38,11 +38,6 @@ class Login{
 		$usuario = self::getUsuarioArray($obUser);
 		$_SESSION['usuario'] = $usuario;
 
-		// Compatibilidade temporaria enquanto rotas/controllers antigos ainda existem.
-		$_SESSION['admin']['tipo'] = $usuario['tipo'];
-		$_SESSION['admin']['usuario'] = $usuario;
-		$_SESSION['operador']['usuario'] = $usuario;
-
 		return true;
 	}
 
@@ -56,8 +51,6 @@ class Login{
 		self::init();
 
 		unset($_SESSION['usuario']);
-		unset($_SESSION['admin']);
-		unset($_SESSION['operador']);
 
 		return true;
 	}

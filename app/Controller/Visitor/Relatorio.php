@@ -121,7 +121,7 @@ class Relatorio  extends Page{
 		$dataInicio = $postVars['dataInicial'];
 		$dataFim = $postVars['dataFinal'];
 		
-		$content = View::render('admin/modules/relatorios/index',[
+		$content = View::render('painel/modules/relatorios/index',[
 				'title' => 'Relatórios de Atendimentos do Período: '.date('d/m/Y', strtotime($dataInicio)) .' à '.date('d/m/Y', strtotime($dataFim)),
 				'procedimentos' => self::getRelPorAtendimento($request,$dataInicio,$dataFim),
 				'profissional' => self::getRelPorProfissional($request, $dataInicio, $dataFim)

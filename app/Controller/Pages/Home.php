@@ -3,7 +3,7 @@
 namespace App\Controller\Pages;
 
 use \App\Utils\View;
-use App\Controller\Admin;
+use App\Controller\Painel;
 use \App\Model\Entity\Aluno as EntityAluno;
 
 class Home extends Page{

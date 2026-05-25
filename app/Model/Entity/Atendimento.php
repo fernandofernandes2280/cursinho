@@ -3,7 +3,7 @@
 namespace App\Model\Entity;
 
 use \WilliamCosta\DatabaseManager\Database;
-use App\Controller\Admin\Logs;
+use App\Controller\Painel\Logs;
 
 class Atendimento {
 	

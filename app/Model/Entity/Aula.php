@@ -3,7 +3,7 @@
 namespace App\Model\Entity;
 
 use \WilliamCosta\DatabaseManager\Database;
-use App\Controller\Admin\Logs;
+use App\Controller\Painel\Logs;
 use App\Utils\View;
 
 class Aula {
@@ -135,7 +135,7 @@ class Aula {
 	            //seleciona a Turma do aluno
 	            $ob->id == $id ? $selected = 'selected' : $selected = '';
 	            //View de Turmas
-	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	            $resultados .= View::render('painel/modules/selectOption/itemSelect',[
 	                'id' => $ob ->id,
 	                'nome' => $ob->nome,
 	                'selecionado' => $selected
@@ -146,7 +146,7 @@ class Aula {
 	    }else{ //se for nulo, lista todos e seleciona um em branco
 	        while ($ob = $results -> fetchObject(self::class)) {
 	            $selected = '';
-	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	            $resultados .= View::render('painel/modules/selectOption/itemSelect',[
 	                'id' => $ob ->id,
 	                'nome' => $ob->nome,
 	                'selecionado' => $selected

@@ -11,7 +11,7 @@ $obRouter = new Router(URL);
 //include __DIR__.'/routes/pages.php';
 
 //Inclui as rotas do Painel
-include __DIR__.'/routes/admin.php';
+include __DIR__.'/routes/painel.php';
 
 
 //Inclui as rotas de Atualizcao Cadastral do aluno

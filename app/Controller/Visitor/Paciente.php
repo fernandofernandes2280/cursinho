@@ -13,10 +13,10 @@ use \App\Model\Entity\Procedencia as EntityProcedencia;
 use \App\Model\Entity\MotivoInativo as EntityMotivoInativo;
 use \App\Model\Entity\Cid10 as Entitycid10;
 use \App\Model\Entity\Substancia as EntitySubstancia;
-use \App\Controller\Admin\Alert;
+use \App\Controller\Painel\Alert;
 
 use \WilliamCosta\DatabaseManager\Pagination;
-use App\Controller\Admin\Logs;
+use App\Controller\Painel\Logs;
 
 
 class Paciente extends Page{

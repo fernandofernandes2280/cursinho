@@ -4,13 +4,13 @@
 
 use \App\Http\Response;
 use \App\Controller\Pages;
-use \App\Controller\Admin;
+use \App\Controller\Painel;
 
 //ROTA HOME
 $obRouter->get('',[
 		
 		function (){
-			return new Response(200, Admin::getHome());
+			return new Response(200, Painel\Home::getHome());
 		}
 		]);
 
@@ -28,7 +28,6 @@ $obRouter->get('/pagina/{idPagina}',[
 			return new Response(200, 'Página '.$idPagina);
 		}
 		]);
-
 
 
 

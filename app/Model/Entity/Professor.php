@@ -182,7 +182,7 @@ class Professor extends Generica {
 	            //seleciona a Turma do aluno
 	            $ob->id == $id ? $selected = 'selected' : $selected = '';
 	            //View de Turmas
-	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	            $resultados .= View::render('painel/modules/selectOption/itemSelect',[
 	                'id' => $ob ->id,
 	                'nome' => $ob->nome,
 	                'selecionado' => $selected
@@ -193,7 +193,7 @@ class Professor extends Generica {
 	    }else{ //se for nulo, lista todos e seleciona um em branco
 	        while ($ob = $results -> fetchObject(self::class)) {
 	            $selected = '';
-	            $resultados .= View::render('admin/modules/selectOption/itemSelect',[
+	            $resultados .= View::render('painel/modules/selectOption/itemSelect',[
 	                'id' => $ob ->id,
 	                'nome' => $ob->nome,
 	                'selecionado' => $selected

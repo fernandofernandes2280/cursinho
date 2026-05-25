@@ -2,7 +2,7 @@
 
 use \App\Http\Response;
 use \App\Controller\Pages;
-use \App\Controller\Admin;
+use \App\Controller\Painel;
 
 
 //ROTA PARA VERIFICAÇÃO DO CPF
@@ -71,7 +71,7 @@ $obRouter->get('/aluno/carteira',[
    
     
     function ($request,$id){
-        return new Response(200, Admin\Aluno::getCarteiraAluno($request,$id));
+        return new Response(200, Painel\Aluno::getCarteiraAluno($request,$id));
     }
     ]);
 
@@ -81,6 +81,6 @@ $obRouter->post('/aluno/carteira',[
     
     
     function ($request,$id){
-        return new Response(200, Admin\Aluno::setCarteiraAluno($request,$id));
+        return new Response(200, Painel\Aluno::setCarteiraAluno($request,$id));
     }
     ]);

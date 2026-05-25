@@ -3,9 +3,9 @@
 namespace App\Controller\Dashboard;
 
 use \App\Utils\View;
-use App\Controller\Admin;
+use App\Controller\Painel;
 use \App\Model\Entity\Aluno as EntityAluno;
-use App\Controller\Admin\Page;
+use App\Controller\Painel\Page;
 
 
 class Dashboard extends Page{

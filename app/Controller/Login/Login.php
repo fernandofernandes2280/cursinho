@@ -6,8 +6,8 @@ use \App\Utils\View;
 use \App\Model\Entity\User;
 use \App\Session\Visitor\Login as SessionVisitorLogin;
 use \App\Session\User\Login as SessionUserLogin;
-use \App\Controller\Admin\Alert;
-use \App\Controller\Admin\Page;
+use \App\Controller\Painel\Alert;
+use \App\Controller\Painel\Page;
 use Bissolli\ValidadorCpfCnpj\CPF;
 use \App\Controller\Comunication\Email;
 
@@ -39,7 +39,7 @@ class Login extends Page{
 		//Status
 		$status = !is_null($errorMessage) ? Alert::getError($errorMessage)  : '';
 		//COnteúdo da página de login
-		$content = View::render('admin/recuperarSenha',[
+		$content = View::render('painel/recuperarSenha',[
 				'status' => $status
 				
 		]);
@@ -83,7 +83,7 @@ class Login extends Page{
 		}
 		
 		//COnteúdo da página de login
-		$content = View::render('admin/recuperarSenha',[
+		$content = View::render('painel/recuperarSenha',[
 				'status' => $statusEmail,
 				
 		]);

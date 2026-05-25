@@ -3,7 +3,7 @@
 namespace App\Controller\Visitor;
 
 use \App\Utils\View;
-use \App\Controller\Admin\Alert;
+use \App\Controller\Painel\Alert;
 use  \App\Model\Entity\User;
 
 class Senha extends Page{
