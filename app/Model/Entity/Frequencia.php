@@ -67,7 +67,7 @@ class Frequencia{
 	
 	
 	//Método responsavel por retornar ALUNOS DA AULA
-	public static function getFrequenciasSQL($where = null, $order = null, $limit = null, $fields = '*',$table) {
+	public static function getFrequenciasSQL($where = null, $order = null, $limit = null, $fields = '*', $table = null) {
 	    return (new Database($table))->select($where,$order,$limit,$fields);
 	}
 	

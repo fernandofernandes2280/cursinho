@@ -148,9 +148,9 @@ class Database{
    */
   public function select($where = null, $order = null, $limit = null, $fields = '*'){
     //DADOS DA QUERY
-    $where = strlen($where) ? 'WHERE '.$where : '';
-    $order = strlen($order) ? 'ORDER BY '.$order : '';
-    $limit = strlen($limit) ? 'LIMIT '.$limit : '';
+    $where = strlen((string)$where) ? 'WHERE '.$where : '';
+    $order = strlen((string)$order) ? 'ORDER BY '.$order : '';
+    $limit = strlen((string)$limit) ? 'LIMIT '.$limit : '';
 
     //MONTA A QUERY
     $query = 'SELECT '.$fields.' FROM '.$this->table.' '.$where.' '.$order.' '.$limit;
@@ -162,11 +162,11 @@ class Database{
 
   public function select2($where = null, $group = null, $having = null, $order = null, $limit = null, $fields = '*'){
   	//DADOS DA QUERY
-  	$where = strlen($where) ? 'WHERE '.$where : '';
-  	$group = strlen($group) ? 'GROUP BY '.$group : '';
-  	$having = strlen($having) ? 'HAVING '.$having : '';
-  	$order = strlen($order) ? 'ORDER BY '.$order : '';
-  	$limit = strlen($limit) ? 'LIMIT '.$limit : '';
+	  $where = strlen((string)$where) ? 'WHERE '.$where : '';
+	  $group = strlen((string)$group) ? 'GROUP BY '.$group : '';
+	  $having = strlen((string)$having) ? 'HAVING '.$having : '';
+	  $order = strlen((string)$order) ? 'ORDER BY '.$order : '';
+	  $limit = strlen((string)$limit) ? 'LIMIT '.$limit : '';
   	
   	//MONTA A QUERY
   	$query = 'SELECT '.$fields.' FROM '.$this->table.' '.$where.' '.$group.' '.$having.' '.$order.' '.$limit;

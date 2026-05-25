@@ -5,6 +5,10 @@ namespace App\Model\Entity;
 use \WilliamCosta\DatabaseManager\Database;
 
 class Cidade {
+
+	public $id;
+
+	public $nome;
 		
 	//Método responsavel por cadastrar um bairro no banco de dados
 	public function cadastrar(){

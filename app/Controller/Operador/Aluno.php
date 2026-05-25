@@ -75,12 +75,12 @@ class Aluno extends Page{
 		//Condições SQL
 		$condicoes = [
 				
-				strlen($nome) ? 'nome LIKE "%'.str_replace(' ', '%', $nome).'%"' : null,
-				strlen($id) ? 'id = "'.$id.'"' : null,
-		        strlen($turma) ? 'turma = "'.$turma.'"' : null,
-		        strlen($matricula) ? 'matricula = "'.$matricula.'"' : null,
-		        strlen($status) ? 'status = "'.$status.'" ' : null,
-		        strlen($cpf) ? 'cpf = "'.$cpf.'" ' : null,
+				strlen((string)$nome) ? 'nome LIKE "%'.str_replace(' ', '%', $nome).'%"' : null,
+				strlen((string)$id) ? 'id = "'.$id.'"' : null,
+		        strlen((string)$turma) ? 'turma = "'.$turma.'"' : null,
+		        strlen((string)$matricula) ? 'matricula = "'.$matricula.'"' : null,
+		        strlen((string)$status) ? 'status = "'.$status.'" ' : null,
+		        strlen((string)$cpf) ? 'cpf = "'.$cpf.'" ' : null,
 				
 		];
 		
@@ -127,7 +127,7 @@ class Aluno extends Page{
 			    'id' => $obAluno->id,
 			    'matricula' => $obAluno->matricula,
 			    'turma' =>EntityTurma::getTurmaById($obAluno->turma)->nome,
-			    'foto' => $obAluno->foto.'?var='.$reload,
+			    'foto' => $obAluno->getFoto(),
 			    'cor' => $cor,
 			    'autor' => EntityUser::getUserById($obAluno->autor)->nome
 					
@@ -359,7 +359,7 @@ class Aluno extends Page{
 	        'dataCad' => date('Y-m-d', strtotime($obAluno->dataCad)),
 	        'optionTurma' => EntityTurma::getSelectTurmas($obAluno->turma),
 	        'optionStatus' => EntityStatus::getSelectStatus($obAluno->status),
-	        'foto' => $obAluno->foto.'?var='.rand(),
+	        'foto' => $obAluno->getFoto(),
 	        'ponteiro' => '',
 	        'idAula' => @$idAula,
 	        'hideBtnFreq' => $hideBtnFreq,
@@ -498,7 +498,7 @@ class Aluno extends Page{
 	        'uf' => @$_SESSION['aluno']['novo']['uf'] ?? 'Ap',
 	        'optionTurma' =>  @$_SESSION['aluno'] ? EntityTurma::getSelectTurmas($_SESSION['aluno']['novo']['turma']) : EntityTurma::getSelectTurmas(null),
 	        'optionStatus' => @$_SESSION['aluno'] ? EntityStatus::getSelectStatus($_SESSION['aluno']['novo']['status']) : EntityStatus::getSelectStatus(null),
-	        'foto' => 'profile.png',
+	        'foto' => EntityAluno::FOTO_PADRAO,
 	        'ponteiro' => 'pointer-events: none;'
 	        
 	    ]);
@@ -655,16 +655,10 @@ class Aluno extends Page{
 	    //  ->finish(); // End vCard
 	    
 	    
-	    $path = $oQRC->get(300);
-	    header('Content-Type: image/png');
-	    //  header('Content-Disposition: attachment; filename="chart.png"');
-	    $image = file_get_contents($path);
-	    //  header('Content-Length: ' . strlen($image));
-	    //  header("Content-Disposition: attachment; filename=\"$basename\"");
-	    //  readfile($file);
 	    $dir = __DIR__.'/carteiras/';
 	    $name = $obAluno->matricula.'.png';
-	    file_put_contents($dir.$name, $image);
+	    if(!is_dir($dir)) mkdir($dir, 0777, true);
+	    $oQRC->savePng($dir.$name, 300);
 	    
 	    //     $type = pathinfo($path, PATHINFO_EXTENSION);
 	    //    $data = file_get_contents($path);
@@ -679,7 +673,7 @@ class Aluno extends Page{
 	    
 	    $content = View::render('pages/carteira',[
 	        'title'=>'Alunos > Carteira de Estudante',
-	        'foto' => $obAluno->foto.'?var='.$reload,
+	        'foto' => $obAluno->getFoto(),
 	        'matricula'=> $obAluno->matricula,
 	        'nome' => strtoupper($obAluno->nome),
 	        'turma' => strtoupper(EntityTurma::getTurmaById($obAluno->turma)->nome),
@@ -688,6 +682,7 @@ class Aluno extends Page{
 	        'dataNasc' => date('d/m/Y', strtotime($obAluno->dataNasc)),
 	        'dataCad'=>date('d/m/Y', strtotime($obAluno->dataCad)),
 	        'qrcode' => $name,
+	        'qrcodePath' => 'app/Controller/Operador/carteiras/'.$name,
 	        'status' => EntityStatus::getStatusById($obAluno->status)->nome,
 	        'hiddenBtnAlterar' => $hiddenAlterar,
 	        'hiddenBtnSairUpdate' => $hiddenBtnSairUpdate,

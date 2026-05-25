@@ -132,9 +132,8 @@ class UpdateAluno extends Page{
 	        'optionEscolaridade' => self::getSelectEscolaridade($obAluno->escolaridade),
 	        'optionEstadoCivil' => self::getSelectEstadoCivil($obAluno->estadoCivil),
 	        'optionTurma' => self::getSelectTurmas($obAluno->turma),
-	        'foto' => 'profile.png',
 	        'ponteiro' => 'pointer-events: none;',
-	        'foto' => $obAluno->foto.'?var='.rand(),
+	        'foto' => $obAluno->getFoto(),
 	        'selectedSexoM' => $selectedSexoM  ,
 	        'selectedSexoF' => $selectedSexoF
 

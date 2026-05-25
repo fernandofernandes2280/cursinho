@@ -6,8 +6,11 @@ use \WilliamCosta\DatabaseManager\Database;
 use \App\Utils\View;
 
 class Bairro {
-	
-		
+
+	public $id;
+
+	public $nome;
+
 	//Método responsavel por cadastrar um bairro no banco de dados
 	public function cadastrar(){
 		

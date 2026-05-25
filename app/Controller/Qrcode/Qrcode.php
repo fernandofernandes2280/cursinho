@@ -11,8 +11,8 @@
 namespace App\Controller\Qrcode;
 class Qrcode
 {
-    const API_URL = 'https://chart.googleapis.com/chart?chs=';
     const DEFAULT_QR_SIZE = 150;
+    const ALPHANUMERIC_CHARSET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:';
 
     private $sData;
 
@@ -334,7 +334,252 @@ class Qrcode
      */
     public function get($iSize = self::DEFAULT_QR_SIZE, $sECLevel = 'L', $iMargin = 1)
     {
-        return self::API_URL . $iSize . 'x' . $iSize . '&cht=qr&chld=' . $sECLevel . '|' . $iMargin . '&chl=' . $this->sData;
+        return 'data:image/png;base64,'.base64_encode($this->png($iSize, $iMargin));
+    }
+
+    public function png($iSize = self::DEFAULT_QR_SIZE, $iMargin = 4)
+    {
+        $payload = urldecode($this->sData);
+        $matrix = self::generateVersionOneMatrix($payload);
+        $moduleCount = count($matrix);
+        $scale = max(1, (int)floor($iSize / ($moduleCount + ($iMargin * 2))));
+        $imageSize = $iSize;
+        $qrSize = ($moduleCount + ($iMargin * 2)) * $scale;
+        $offset = (int)floor(($imageSize - $qrSize) / 2);
+
+        $image = imagecreatetruecolor($imageSize, $imageSize);
+        $white = imagecolorallocate($image, 255, 255, 255);
+        $black = imagecolorallocate($image, 0, 0, 0);
+        imagefilledrectangle($image, 0, 0, $imageSize, $imageSize, $white);
+
+        for($y = 0; $y < $moduleCount; $y++){
+            for($x = 0; $x < $moduleCount; $x++){
+                if(!$matrix[$y][$x]) continue;
+                $left = $offset + (($x + $iMargin) * $scale);
+                $top = $offset + (($y + $iMargin) * $scale);
+                imagefilledrectangle($image, $left, $top, $left + $scale - 1, $top + $scale - 1, $black);
+            }
+        }
+
+        ob_start();
+        imagepng($image);
+        imagedestroy($image);
+        return ob_get_clean();
+    }
+
+    public function savePng($path, $iSize = self::DEFAULT_QR_SIZE, $iMargin = 4)
+    {
+        return file_put_contents($path, $this->png($iSize, $iMargin));
+    }
+
+    private static function generateVersionOneMatrix($payload)
+    {
+        $payload = strtoupper($payload);
+        $bits = self::encodeAlphanumeric($payload);
+        $dataCodewords = self::bitsToCodewords($bits, 19);
+        $ecCodewords = self::reedSolomonComputeRemainder($dataCodewords, self::reedSolomonComputeDivisor(7));
+        $codewords = array_merge($dataCodewords, $ecCodewords);
+
+        $size = 21;
+        $modules = array_fill(0, $size, array_fill(0, $size, false));
+        $isFunction = array_fill(0, $size, array_fill(0, $size, false));
+
+        self::drawFunctionPatterns($modules, $isFunction, $size);
+        // Reserve format modules before data placement so the QR bit stream stays aligned.
+        self::drawFormatBits($modules, $isFunction, $size, 0);
+        self::drawCodewords($modules, $isFunction, $size, $codewords, 0);
+
+        return $modules;
+    }
+
+    private static function encodeAlphanumeric($payload)
+    {
+        $bits = [];
+        self::appendBits($bits, 0x2, 4);
+        self::appendBits($bits, strlen($payload), 9);
+
+        for($i = 0; $i < strlen($payload); $i += 2){
+            $first = strpos(self::ALPHANUMERIC_CHARSET, $payload[$i]);
+            if($first === false) throw new \InvalidArgumentException('Unsupported QR character: '.$payload[$i]);
+
+            if($i + 1 < strlen($payload)){
+                $second = strpos(self::ALPHANUMERIC_CHARSET, $payload[$i + 1]);
+                if($second === false) throw new \InvalidArgumentException('Unsupported QR character: '.$payload[$i + 1]);
+                self::appendBits($bits, ($first * 45) + $second, 11);
+            }else{
+                self::appendBits($bits, $first, 6);
+            }
+        }
+
+        return $bits;
+    }
+
+    private static function bitsToCodewords($bits, $dataCodewordCount)
+    {
+        $capacity = $dataCodewordCount * 8;
+        self::appendBits($bits, 0, min(4, $capacity - count($bits)));
+        while(count($bits) % 8 !== 0) $bits[] = 0;
+
+        $padBytes = [0xEC, 0x11];
+        $padIndex = 0;
+        while(count($bits) < $capacity){
+            self::appendBits($bits, $padBytes[$padIndex], 8);
+            $padIndex = 1 - $padIndex;
+        }
+
+        $codewords = [];
+        for($i = 0; $i < count($bits); $i += 8){
+            $byte = 0;
+            for($j = 0; $j < 8; $j++) $byte = ($byte << 1) | $bits[$i + $j];
+            $codewords[] = $byte;
+        }
+
+        return $codewords;
+    }
+
+    private static function appendBits(&$bits, $value, $length)
+    {
+        for($i = $length - 1; $i >= 0; $i--) $bits[] = ($value >> $i) & 1;
+    }
+
+    private static function drawFunctionPatterns(&$modules, &$isFunction, $size)
+    {
+        self::drawFinderPattern($modules, $isFunction, 3, 3, $size);
+        self::drawFinderPattern($modules, $isFunction, $size - 4, 3, $size);
+        self::drawFinderPattern($modules, $isFunction, 3, $size - 4, $size);
+
+        for($i = 8; $i < $size - 8; $i++){
+            $dark = $i % 2 === 0;
+            self::setFunctionModule($modules, $isFunction, 6, $i, $dark);
+            self::setFunctionModule($modules, $isFunction, $i, 6, $dark);
+        }
+
+        self::setFunctionModule($modules, $isFunction, 8, $size - 8, true);
+    }
+
+    private static function drawFinderPattern(&$modules, &$isFunction, $centerX, $centerY, $size)
+    {
+        for($dy = -4; $dy <= 4; $dy++){
+            for($dx = -4; $dx <= 4; $dx++){
+                $x = $centerX + $dx;
+                $y = $centerY + $dy;
+                if($x < 0 || $x >= $size || $y < 0 || $y >= $size) continue;
+                $distance = max(abs($dx), abs($dy));
+                self::setFunctionModule($modules, $isFunction, $x, $y, $distance !== 2 && $distance !== 4);
+            }
+        }
+    }
+
+    private static function drawCodewords(&$modules, $isFunction, $size, $codewords, $mask)
+    {
+        $bits = [];
+        foreach($codewords as $codeword) self::appendBits($bits, $codeword, 8);
+
+        $bitIndex = 0;
+        $upward = true;
+        for($right = $size - 1; $right >= 1; $right -= 2){
+            if($right === 6) $right--;
+
+            for($vert = 0; $vert < $size; $vert++){
+                $y = $upward ? $size - 1 - $vert : $vert;
+                for($j = 0; $j < 2; $j++){
+                    $x = $right - $j;
+                    if($isFunction[$y][$x]) continue;
+
+                    $dark = $bitIndex < count($bits) ? (bool)$bits[$bitIndex] : false;
+                    $bitIndex++;
+                    if(self::mask($mask, $x, $y)) $dark = !$dark;
+                    $modules[$y][$x] = $dark;
+                }
+            }
+
+            $upward = !$upward;
+        }
+    }
+
+    private static function drawFormatBits(&$modules, &$isFunction, $size, $mask)
+    {
+        $formatBits = self::getFormatBits($mask);
+
+        for($i = 0; $i <= 5; $i++) self::setFunctionModule($modules, $isFunction, 8, $i, self::getBit($formatBits, $i));
+        self::setFunctionModule($modules, $isFunction, 8, 7, self::getBit($formatBits, 6));
+        self::setFunctionModule($modules, $isFunction, 8, 8, self::getBit($formatBits, 7));
+        self::setFunctionModule($modules, $isFunction, 7, 8, self::getBit($formatBits, 8));
+        for($i = 9; $i < 15; $i++) self::setFunctionModule($modules, $isFunction, 14 - $i, 8, self::getBit($formatBits, $i));
+
+        for($i = 0; $i < 8; $i++) self::setFunctionModule($modules, $isFunction, $size - 1 - $i, 8, self::getBit($formatBits, $i));
+        for($i = 8; $i < 15; $i++) self::setFunctionModule($modules, $isFunction, 8, $size - 15 + $i, self::getBit($formatBits, $i));
+        self::setFunctionModule($modules, $isFunction, 8, $size - 8, true);
+    }
+
+    private static function getFormatBits($mask)
+    {
+        $data = (1 << 3) | $mask;
+        $remainder = $data << 10;
+        for($i = 14; $i >= 10; $i--){
+            if((($remainder >> $i) & 1) !== 0) $remainder ^= 0x537 << ($i - 10);
+        }
+        return (($data << 10) | $remainder) ^ 0x5412;
+    }
+
+    private static function getBit($value, $index)
+    {
+        return (($value >> $index) & 1) !== 0;
+    }
+
+    private static function setFunctionModule(&$modules, &$isFunction, $x, $y, $dark)
+    {
+        $modules[$y][$x] = $dark;
+        $isFunction[$y][$x] = true;
+    }
+
+    private static function mask($mask, $x, $y)
+    {
+        return ($x + $y) % 2 === 0;
+    }
+
+    private static function reedSolomonComputeDivisor($degree)
+    {
+        $result = array_fill(0, $degree, 0);
+        $result[$degree - 1] = 1;
+        $root = 1;
+
+        for($i = 0; $i < $degree; $i++){
+            for($j = 0; $j < $degree; $j++){
+                $result[$j] = self::reedSolomonMultiply($result[$j], $root);
+                if($j + 1 < $degree) $result[$j] ^= $result[$j + 1];
+            }
+            $root = self::reedSolomonMultiply($root, 0x02);
+        }
+
+        return $result;
+    }
+
+    private static function reedSolomonComputeRemainder($data, $divisor)
+    {
+        $result = array_fill(0, count($divisor), 0);
+
+        foreach($data as $byte){
+            $factor = $byte ^ $result[0];
+            array_shift($result);
+            $result[] = 0;
+
+            for($i = 0; $i < count($result); $i++){
+                $result[$i] ^= self::reedSolomonMultiply($divisor[$i], $factor);
+            }
+        }
+
+        return $result;
+    }
+
+    private static function reedSolomonMultiply($x, $y)
+    {
+        $z = 0;
+        for($i = 7; $i >= 0; $i--){
+            $z = ($z << 1) ^ (($z >> 7) * 0x11D);
+            $z ^= (($y >> $i) & 1) * $x;
+        }
+        return $z & 0xFF;
     }
 
     /**

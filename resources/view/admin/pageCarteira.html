@@ -45,7 +45,7 @@
   <script src="{{URL}}/resources/js/qrcode/html5-qrcode.min.js"></script>
 </head>
 
-<body class="dark-edition" >
+<body class="light-edition" >
 
   <div class="wrapper">
   	
@@ -384,6 +384,39 @@ $('#modalNovoCpfUser').on('shown.bs.modal', function(event) {
       // Javascript method's body can be found in assets/js/demos.js
       //md.initDashboardPageCharts();
 
+    });
+  </script>
+  <script>
+    $(document).ready(function() {
+      var storageKey = 'adminSidebarCollapsed';
+      var $body = $('body');
+      var $toggle = $('#sidebarToggle');
+
+      function updateSidebarToggle(collapsed) {
+        $body.toggleClass('sidebar-collapsed', collapsed);
+        $toggle
+          .attr('aria-expanded', collapsed ? 'false' : 'true')
+          .attr('title', collapsed ? 'Exibir painel lateral' : 'Ocultar painel lateral')
+          .find('.material-icons')
+          .text(collapsed ? 'menu' : 'menu_open');
+
+        window.dispatchEvent(new Event('resize'));
+      }
+
+      try {
+        updateSidebarToggle(localStorage.getItem(storageKey) === '1');
+      } catch (e) {
+        updateSidebarToggle(false);
+      }
+
+      $toggle.on('click', function() {
+        var collapsed = !$body.hasClass('sidebar-collapsed');
+        updateSidebarToggle(collapsed);
+
+        try {
+          localStorage.setItem(storageKey, collapsed ? '1' : '0');
+        } catch (e) {}
+      });
     });
   </script>
   

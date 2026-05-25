@@ -79,9 +79,9 @@ class Frequencia extends Page{
 		//Condições SQL
 		$condicoes = [
 				
-		//		strlen($profissional) ? 'idProfissional = '.$profissional.' ' : null,
-				strlen($filtroStatus) ? 'status = "'.$filtroStatus.'" ' : null,
-				strlen($filtroData) ? 'data = "'.$filtroData.'" ' : null
+		//		strlen((string)$profissional) ? 'idProfissional = '.$profissional.' ' : null,
+				strlen((string)$filtroStatus) ? 'status = "'.$filtroStatus.'" ' : null,
+				strlen((string)$filtroData) ? 'data = "'.$filtroData.'" ' : null
 		];
 		
 		//Remove posições vazias
@@ -257,7 +257,7 @@ class Frequencia extends Page{
 	        'status' =>'',
 	        'idAula' => $obAula->id,
 	        'statusMessage'=> '',
-	        'foto' => 'profile.png'
+	        'foto' => EntityAluno::FOTO_PADRAO
 	        
 	    ]);
 	    
@@ -293,7 +293,7 @@ class Frequencia extends Page{
 	        'escondeBotaoConfirmar' => '',
 	        'statusMessage' => self::getStatus($request),
 	        'status' =>EntityStatus::getStatusById(EntityAluno::getAlunoById($idAluno)->status)->nome,
-	        'foto' => $obAluno->foto.'?var='.rand(),
+	        'foto' => $obAluno->getFoto(),
 	        'idAula' => $obAula->id
 	        
 	    ]);
@@ -403,12 +403,12 @@ class Frequencia extends Page{
 	    //Condições SQL
 	    $condicoes = [
 	        
-	        strlen($nome) ? 'nome LIKE "%'.str_replace(' ', '%', $nome).'%"' : null,
-	        strlen($id) ? 'id = "'.$id.'"' : null,
-	        strlen($turma) ? 'turma = "'.$turma.'"' : null,
-	        strlen($matricula) ? 'matricula = "'.$matricula.'"' : null,
-	        strlen($status) ? 'status = "'.$status.'" ' : null,
-	        strlen($cpf) ? 'cpf = "'.$cpf.'" ' : null,
+	        strlen((string)$nome) ? 'nome LIKE "%'.str_replace(' ', '%', $nome).'%"' : null,
+	        strlen((string)$id) ? 'id = "'.$id.'"' : null,
+	        strlen((string)$turma) ? 'turma = "'.$turma.'"' : null,
+	        strlen((string)$matricula) ? 'matricula = "'.$matricula.'"' : null,
+	        strlen((string)$status) ? 'status = "'.$status.'" ' : null,
+	        strlen((string)$cpf) ? 'cpf = "'.$cpf.'" ' : null,
 	    ];
 	    
 	    //Remove posições vazias
@@ -448,7 +448,7 @@ class Frequencia extends Page{
 	            'turma' =>EntityTurma::getTurmaById($obAluno->turma)->nome,
 	            'idAula' => $idAula,
 	            'cor' => $cor,
-	            'foto' => $obAluno->foto.'?var='.rand(),
+	            'foto' => $obAluno->getFoto(),
 	        ]);
 	        
 	    }
@@ -565,4 +565,3 @@ class Frequencia extends Page{
 	}
 	
 }
-

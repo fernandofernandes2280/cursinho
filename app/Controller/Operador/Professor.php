@@ -46,8 +46,8 @@ class Professor extends Page{
 		//Condições SQL
 		$condicoes = [
 				
-				strlen($nome) ? 'nome LIKE "%'.str_replace(' ', '%', $nome).'%"' : null,
-				strlen($filtroStatus) ? 'status = "'.$filtroStatus.'" ' : null,
+				strlen((string)$nome) ? 'nome LIKE "%'.str_replace(' ', '%', $nome).'%"' : null,
+				strlen((string)$filtroStatus) ? 'status = "'.$filtroStatus.'" ' : null,
 		];
 		
 		//Remove posições vazias

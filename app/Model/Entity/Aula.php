@@ -7,9 +7,9 @@ use App\Controller\Admin\Logs;
 use App\Utils\View;
 
 class Aula {
-	
-	
+
 	public $id;
+	public $nome;
 	public $data;
 	public $turma;
 	public $professor1;
@@ -106,7 +106,7 @@ class Aula {
 	}
 	
 	//Método responsavel por retornar ALUNOS COM FALTAS PRA SEREM INATIVADOS
-	public static function getAulasInativaAluno($where = null, $order = null, $limit = null, $fields = '*',$table) {
+	public static function getAulasInativaAluno($where = null, $order = null, $limit = null, $fields = '*', $table = null) {
 	    return (new Database($table))->select($where,$order,$limit,$fields);
 	}
 	

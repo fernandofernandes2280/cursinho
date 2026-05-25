@@ -134,18 +134,19 @@ class Funcoes{
 	//Método responsável por retornar as permissões do usuário
 	public static function getPermissoes(){
 	    Funcoes::init();
-	    @$_SESSION['usuario']['tipo'] == 'Admin' ? $visivelPermissoes = '' : $visivelPermissoes = 'hidden';
-	    @$_SESSION['usuario']['excluirAluno'] == 1 ? $visivelDeleteAluno = '' : $visivelDeleteAluno = 'hidden';
-	    @$_SESSION['usuario']['excluirProfessor'] == 1 ? $visivelDeleteProfessor = '' : $visivelDeleteProfessor = 'hidden';
-	    @$_SESSION['usuario']['excluirDisciplina'] == 1 ? $visivelDeleteDisciplina = '' : $visivelDeleteDisciplina = 'hidden';
-	    @$_SESSION['usuario']['excluirUsuario'] == 1 ? $visivelDeleteUsuario = '' : $visivelDeleteUsuario = 'hidden';
-	    @$_SESSION['usuario']['menuAlunos'] == 1 ? $visivelMenuAlunos = '' : $visivelMenuAlunos = 'hidden';
-	    @$_SESSION['usuario']['menuProfessores'] == 1 ? $visivelMenuProfessores = '' : $visivelMenuProfessores = 'hidden';
-	    @$_SESSION['usuario']['menuAulas'] == 1 ? $visivelMenuAulas = '' : $visivelMenuAulas = 'hidden';
-	    @$_SESSION['usuario']['menuFrequencias'] == 1 ? $visivelMenuFrequencias = '' : $visivelMenuFrequencias = 'hidden';
-	    @$_SESSION['usuario']['btnNovoUsuario'] == 1 ? $visivelBtnNovoUsuario = '' : $visivelBtnNovoUsuario = 'hidden';
-	    @$_SESSION['usuario']['menuPresenca'] == 1 ? $visivelMenuPresenca = '' : $visivelMenuPresenca = 'hidden';
-	    @$_SESSION['usuario']['menuDisciplinas'] == 1 ? $visivelMenuDisciplinas = '' : $visivelMenuDisciplinas = 'hidden';
+	    $isAdmin = @$_SESSION['usuario']['tipo'] == 'Admin';
+	    $visivelPermissoes = $isAdmin ? '' : 'hidden';
+	    $visivelDeleteAluno = $isAdmin || @$_SESSION['usuario']['excluirAluno'] == 1 ? '' : 'hidden';
+	    $visivelDeleteProfessor = $isAdmin || @$_SESSION['usuario']['excluirProfessor'] == 1 ? '' : 'hidden';
+	    $visivelDeleteDisciplina = $isAdmin || @$_SESSION['usuario']['excluirDisciplina'] == 1 ? '' : 'hidden';
+	    $visivelDeleteUsuario = $isAdmin || @$_SESSION['usuario']['excluirUsuario'] == 1 ? '' : 'hidden';
+	    $visivelMenuAlunos = $isAdmin || @$_SESSION['usuario']['menuAlunos'] == 1 ? '' : 'hidden';
+	    $visivelMenuProfessores = $isAdmin || @$_SESSION['usuario']['menuProfessores'] == 1 ? '' : 'hidden';
+	    $visivelMenuAulas = $isAdmin || @$_SESSION['usuario']['menuAulas'] == 1 ? '' : 'hidden';
+	    $visivelMenuFrequencias = $isAdmin || @$_SESSION['usuario']['menuFrequencias'] == 1 ? '' : 'hidden';
+	    $visivelBtnNovoUsuario = $isAdmin || @$_SESSION['usuario']['btnNovoUsuario'] == 1 ? '' : 'hidden';
+	    $visivelMenuPresenca = $isAdmin || @$_SESSION['usuario']['menuPresenca'] == 1 ? '' : 'hidden';
+	    $visivelMenuDisciplinas = $isAdmin || @$_SESSION['usuario']['menuDisciplinas'] == 1 ? '' : 'hidden';
 	    $permissao['excluirAluno'] = $visivelDeleteAluno;
 	    $permissao['excluirProfessor'] = $visivelDeleteProfessor;
 	    $permissao['excluirDisciplina'] = $visivelDeleteDisciplina;

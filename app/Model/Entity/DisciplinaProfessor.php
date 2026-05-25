@@ -8,6 +8,10 @@ use \App\Model\Entity\Disciplina as EntityDisciplina;
 use \App\Model\Entity\Aula as EntityAula;
 
 class DisciplinaProfessor{
+
+    public $id;
+
+    public $nome;
 	
     //id do professor
     public $idProfessor;

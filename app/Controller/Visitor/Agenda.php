@@ -42,9 +42,9 @@ class Agenda extends Page{
 		//Condições SQL
 		$condicoes = [
 				
-				strlen($busca) ? 'codPronto "'.$id.'" ' : null,
-			//	strlen($filtroStatus) ? 'status = "'.$filtroStatus.'" ' : null,
-			//	strlen($filtroTipo) ? 'tipo = "'.$filtroTipo.'" ' : null
+				strlen((string)$busca) ? 'codPronto "'.$id.'" ' : null,
+			//	strlen((string)$filtroStatus) ? 'status = "'.$filtroStatus.'" ' : null,
+			//	strlen((string)$filtroTipo) ? 'tipo = "'.$filtroTipo.'" ' : null
 		];
 		
 		//Remove posições vazias

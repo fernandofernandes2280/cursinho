@@ -5,7 +5,9 @@ namespace App\Model\Entity;
 use \WilliamCosta\DatabaseManager\Database;
 use App\Utils\Funcoes;
 class Aluno extends Generica{
-	
+
+	const FOTO_PADRAO = 'profile.png';
+
 	public $endereco;
 
 	public $numero;
@@ -66,8 +68,25 @@ class Aluno extends Generica{
 	
 	//Autor do cadastrio
 	public $autor;
-	
-	
+
+	public function getFoto($cache = true){
+	    $foto = trim((string)$this->foto);
+	    $path = parse_url($foto, PHP_URL_PATH);
+	    $foto = basename($path ?: $foto);
+	    $diretorioFotos = dirname(__DIR__, 2).'/Controller/File/files/fotos/';
+
+	    if($foto === '' || strtolower($foto) === 'null' || !is_file($diretorioFotos.$foto)){
+	        $foto = self::FOTO_PADRAO;
+	    }
+
+	    return $cache ? $foto.'?var='.rand() : $foto;
+	}
+
+	public function semFoto(){
+	    return $this->getFoto(false) === self::FOTO_PADRAO;
+	}
+
+
 	public static function geraMatricula($id){
 	   
 	    $nossoNumero = date('Y').$id;
@@ -106,7 +125,7 @@ class Aluno extends Generica{
 	//Método responsavel por cadastrar um aluno no banco de dados
 	public function cadastrar(){
 	    
-	    $this->foto = 'profile.png';
+	    $this->foto = self::FOTO_PADRAO;
 	    
 		//define a data
 		$this->dataCad = date('Y-m-d H:i:s');

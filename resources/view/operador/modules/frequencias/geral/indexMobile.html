@@ -456,11 +456,12 @@ body{
 
             }
         }
-        //usa camera frontal
-        // return html5qrcode.start({ facingMode: facingMode },{ fps: 10, qrbox: 250 },onScanSuccess);
-        
-        //usar câmera traseira
-         return html5qrcode.start({ facingMode: { exact: "environment"} },{ fps: 10},onScanSuccess);
+        // Tenta a câmera traseira; se não existir, usa a câmera padrão/frontal.
+        var cameraConfig = { fps: 10 };
+        return html5qrcode.start({ facingMode: { ideal: "environment" } }, cameraConfig, onScanSuccess)
+            .catch(function() {
+                return html5qrcode.start({ facingMode: facingMode }, cameraConfig, onScanSuccess);
+            });
         
     	
     	
@@ -494,8 +495,6 @@ body{
     });
     
 </script> 		
-
-
 
 
 

@@ -1,9 +1,7 @@
 <style>
-body{
-  overflow: hidden;
-}
-</style>
-<style>
+    body{
+    overflow: hidden;
+    }
     #reader {
         width: 440px;
         height: 330px;
@@ -43,12 +41,9 @@ body{
 	    
     
     }
-    
-
 </style>
 
-<br>
-<div class="container">
+<div class="container pt-4">
 	<div class="row mb-2" >
 		<div class="col-md-12 text-center ">
 			<span class="text-light h2">{{title}}</span>
@@ -64,12 +59,11 @@ body{
 		</div>
 	</div>
 
-
 <div class="row">
     <div class="col-md-12 text-center ">
         <button id="start" hidden>Start Scanning</button>
         <div class="empty"></div>
-        <div id="reader" style="display: inline-block; ></div>
+        <div id="reader" style="display: inline-block;"></div>
         <div class="empty"></div>
         <div class="row justify-content-md-center ">
         	
@@ -77,34 +71,18 @@ body{
     </div>
 </div>
 
-  		
-
-
-
 <div class="text-center" id="scanned-result"></div>
-
-
 
 </div>
  
- 
-
-
-
-
- 		
- 		
-
   <hr style="margin-top: 100px">
   <div class="row text-center">
   	<div class="col-md-12">
   		<span class="text-light h3">Aproxime seu QRCODE da câmera.</span>
-  		 <p class="text-xs text-secondary mb-0">Desenvolvido por: Fernando (96)99115-8611</p>
+  		 <p class="text-xs text-secondary mb-0">Desenvolvido por: Fernando Xavier (96)99115-8611</p>
   	</div>
   </div>
   
-
-
 <script>
 
 	var count = new Number();
@@ -121,8 +99,6 @@ body{
 	   
 	  }
 	}
-
-
 
     var scanning = false;
     var html5qrcode = new Html5Qrcode("reader", true);
@@ -145,98 +121,94 @@ body{
                 lastMessage = qrCodeMessage;
                 ++codesFound;
               //  results.innerHTML += `<div>[${codesFound}] - ${qrCodeMessage}</div>`;
-
-
-                var dataString = { send : true , matricula : qrCodeMessage, idAula : {{idAula}} };
-				var vartime = 3000;
+				var dataString = {
+                    send: true,
+                    matricula: qrCodeMessage,
+                    idAula: Number("{{idAula}}")
+                };
+                var vartime = 3000;
                 $.ajax({
-
                     type: "POST",
                     url: "{{URL}}/app/Controller/Ajax/authenticateAluno.php",
                     data: dataString,
                     dataType: "json",
                     cache : false,
                     success: function(data){
-                   
+                        if(typeof data.nome === "undefined") { 
+                            results.innerHTML = `
+                            <section class="sessaoVermelha">
+                                <div class="row">
+                                    <div class="col-md-12 alert alert-danger text-center divDados">
+                                    <h3>CÓDIGO INVÁLIDO, TENTE NOVAMENTE!</h3>
+                                    
+                                    </div>
+                                    </div>
+                                <div class="row justify-content-md-center mt-2">
+                                    <div class="col-md-3 text-center">
+                                        <input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+                                    </div>
+                                </div>
+                            </section>					                             
+                                                
+                                `;
+                                $("#reader").attr("hidden",true);
+                                //função que aguarda 3sec antes de executar 
+                                setTimeout(function(){
+                                    //recarrega a página	
+                                    location.reload();
+                                }, vartime);
+                            //inicia função contagem regressiva
+                                start();	
+                        }else{
+                                
+                            //CONFIRMA PRESENÇA
+                            results.innerHTML = `
+                            <section class="sessaoVerde">
+                                <div class="row mb-3">
+                                    <div class="colfotoFreqGeral">
+                                    <img style="background-color:#ffff" id="foto" class="img-fluid" alt="Foto" src="">
+                                    </div>
+                                    <div class="col-md-10 alert alert-success divDados">
+                                    <p class="h4 text-left" id="divMatricula"></p>
+                                    <p class="h4 text-left" id="divNome"></p>
+                                    
+                                    </div>
+                                    </div>
+                            
+                                <div class="row divMsgPresenca">
+                                    <div class="col-md-12 alert alert-success text-center" >
+                                        <p class="h4 text-left" id="divPresenca"></p>
+                                    </div>
+                                </div>
+                                
+                                <div class="row justify-content-md-center mt-2">
+                                    <div class="col-md-3 text-center">
+                                        <input class="form-control h3" id="timer" value="Aguarde 5" realony/>
+                                    </div>
+                                </div>
+                            </section>					                            
+                                                                    
+                            `;
+                        
+                            document.getElementById("divMatricula").innerHTML = data.matricula;
+                            document.getElementById("divNome").innerHTML = data.nome;
+                            document.getElementById("divPresenca").innerHTML = data.mensagem;
+                            
+                            $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
+                            $("#reader").attr("hidden",true);
                     
-                    if(typeof data.nome === "undefined") { 
-                  			  results.innerHTML = `
-								<section class="sessaoVermelha">
-									<div class="row">
-									  <div class="col-md-12 alert alert-danger text-center divDados">
-									  	<h3>CÓDIGO INVÁLIDO, TENTE NOVAMENTE!</h3>
-									  	
-									  </div>
-									 </div>
-									<div class="row justify-content-md-center mt-2">
-									  	<div class="col-md-3 text-center">
-											<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
-										</div>
-									</div>
-								</section>					                             
-					                             
-	                             `;
-	                             $("#reader").attr("hidden",true);
-								 //função que aguarda 3sec antes de executar 
-	                             setTimeout(function(){
-	                             		//recarrega a página	
-									 	location.reload();
-									}, vartime);
-								//inicia função contagem regressiva
-								  start();	
-                    
-                    }else{
-							 
-												//CONFIRMA PRESENÇA
-												 results.innerHTML = `
-													<section class="sessaoVerde">
-														<div class="row mb-3">
-														  <div class="colfotoFreqGeral">
-														  	<img style="background-color:#ffff" id="foto" class="img-fluid" alt="Foto" src="">
-														  </div>
-														  <div class="col-md-10 alert alert-success divDados">
-														  	<p class="h4 text-left" id="divMatricula"></p>
-														  	<p class="h4 text-left" id="divNome"></p>
-														  	
-														  </div>
-														 </div>
-													
-														<div class="row divMsgPresenca">
-														  <div class="col-md-12 alert alert-success text-center" >
-															  <p class="h4 text-left" id="divPresenca"></p>
-															</div>
-														</div>
-														
-														<div class="row justify-content-md-center mt-2">
-														  	<div class="col-md-3 text-center">
-																<input class="form-control h3" id="timer" value="Aguarde 5" realony/>
-															</div>
-														</div>
-													</section>					                            
-																                            
-					                             `;
-					                            
-					                             document.getElementById("divMatricula").innerHTML = data.matricula;
-					                             document.getElementById("divNome").innerHTML = data.nome;
-					                             document.getElementById("divPresenca").innerHTML = data.presenca;
-					                            	
-					                             $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
-					                             $("#reader").attr("hidden",true);
-											
-												 //função que aguarda 3sec antes de executar 
-					                             setTimeout(function(){
-					                             		//recarrega a página	
-													 	location.reload();
-													}, vartime);
-												//inicia função contagem regressiva
-												  start();
-										
-							}			
-										
-
+                            //função que aguarda 3sec antes de executar 
+                            setTimeout(function(){
+                                //recarrega a página	
+                                location.reload();
+                            }, vartime);
+                            //inicia função contagem regressiva
+                            start();
+                                            
+                        }			
                     } ,error: function(xhr, status, error) {
                         alert(error);
-                    },
+                        },
                 });
 
 
@@ -248,12 +220,10 @@ body{
         //usar câmera traseira
       //   return html5qrcode.start({ facingMode: { exact: "environment"} },{ fps: 10, qrbox: 250 },onScanSuccess);
         
-    	
-    	
     }
     function stopScanning() {
         return html5qrcode.stop();
-    }
+        }
     docReady(function() {
         var button = document.getElementById('start');
         var facingModeSelect = 'user';
@@ -280,7 +250,6 @@ body{
     });
     
 </script> 		
-
 
 
 

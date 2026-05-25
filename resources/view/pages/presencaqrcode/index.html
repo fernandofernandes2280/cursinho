@@ -69,7 +69,7 @@ body{
     <div class="col-md-12 text-center ">
         <button id="start" hidden>Start Scanning</button>
         <div class="empty"></div>
-        <div id="reader" style="display: inline-block; ></div>
+        <div id="reader" style="display: inline-block;"></div>
         <div class="empty"></div>
         <div class="row justify-content-md-center ">
         	
@@ -245,11 +245,12 @@ body{
 
             }
         }       
-        //usa camera frontal
-       //  return html5qrcode.start({ facingMode: facingMode },{ fps: 20, qrbox: 250 },onScanSuccess);
-        
-        //usar câmera traseira
-         return html5qrcode.start({ facingMode: { exact: "environment"} },{ fps: 10, qrbox: 250 },onScanSuccess);
+        // Tenta a câmera traseira; em notebooks, cai para a câmera padrão/frontal.
+        var cameraConfig = { fps: 10, qrbox: 250 };
+        return html5qrcode.start({ facingMode: { ideal: "environment" } }, cameraConfig, onScanSuccess)
+            .catch(function() {
+                return html5qrcode.start({ facingMode: facingMode }, cameraConfig, onScanSuccess);
+            });
         
     	
     	
@@ -283,8 +284,5 @@ body{
     });
     
 </script> 		
-
-
-
 
 

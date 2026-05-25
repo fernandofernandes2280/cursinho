@@ -95,9 +95,9 @@ class Aula extends Page{
 		//Condições SQL
 		$condicoes = [
 				
-				strlen($turma) ? 'turma = '.$turma.' ' : null,
-				strlen($filtroStatus) ? 'status = "'.$filtroStatus.'" ' : null,
-				strlen($filtroData) ? 'data = "'.$filtroData.'" ' : null
+				strlen((string)$turma) ? 'turma = '.$turma.' ' : null,
+				strlen((string)$filtroStatus) ? 'status = "'.$filtroStatus.'" ' : null,
+				strlen((string)$filtroData) ? 'data = "'.$filtroData.'" ' : null
 		];
 		
 		//Remove posições vazias

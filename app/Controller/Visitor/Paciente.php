@@ -53,10 +53,10 @@ class Paciente extends Page{
 		//Condições SQL
 		$condicoes = [
 				
-				strlen($nome) ? 'nome LIKE "%'.str_replace(' ', '%', $nome).'%"' : null,
-				strlen($pront) ? 'codPronto LIKE "'.$pront.'%"' : null,
-				strlen($filtroStatus) ? 'status = "'.$filtroStatus.'" ' : null,
-				strlen($filtroTipo) ? 'tipo = "'.$filtroTipo.'" ' : null
+				strlen((string)$nome) ? 'nome LIKE "%'.str_replace(' ', '%', $nome).'%"' : null,
+				strlen((string)$pront) ? 'codPronto LIKE "'.$pront.'%"' : null,
+				strlen((string)$filtroStatus) ? 'status = "'.$filtroStatus.'" ' : null,
+				strlen((string)$filtroTipo) ? 'tipo = "'.$filtroTipo.'" ' : null
 		];
 		
 		//Remove posições vazias
