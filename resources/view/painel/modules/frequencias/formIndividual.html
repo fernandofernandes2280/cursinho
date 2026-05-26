@@ -7,11 +7,9 @@
  		
 	
 
-	<div class="col-md-2 text-right">
-		<a href="{{URL}}/frequencias/{{idAula}}/edit">
-			<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
-				<i class="material-icons" style="font-size: 30px;">reply</i>
-			</button>
+	<div class="col-md-2 text-right form-actions">
+		<a href="{{URL}}/frequencias/{{idAula}}/edit" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
+			<i class="material-icons">reply</i>
 		</a>
 	</div>
 </div>
@@ -27,11 +25,11 @@
             <p class="card-category text-light mt-5">Lançar Frequência:</p>
            
             
-            <a href="{{URL}}/frequencias/{{idAula}}/edit/individual">
-			<button type="button" class="btn btn-facebook btn-round btn-sm" rel="tooltip" title="Frequência Individual">
-				<i class="material-icons" style="font-size: 30px;">person</i><strong class="h6">Individual</strong>
-			</button>
+            <div class="form-actions form-actions-start">
+            <a href="{{URL}}/frequencias/{{idAula}}/edit/individual" class="btn btn-facebook btn-round btn-just-icon" rel="tooltip" title="Frequência Individual">
+				<i class="material-icons">person</i>
 		    </a>
+            </div>
 		
             
             
@@ -50,12 +48,10 @@
 			<form method="post">
 			<div class="row">
 					
-				<div class="col-md-4">
-					<a href="{{URL}}/frequencias/{{id}}/edit/pesqAluno">
-					<button type="button" class="btn btn-facebook btn-round btn-sm " rel="tooltip" title="Pesquisar aluno">
-						<i class="material-icons" style="font-size: 30px;">search</i><strong class="h6">Pesquisar Aluno</strong>
-					</button><br><br>
-				    </a>
+				<div class="col-md-4 form-actions form-actions-start">
+					<a href="{{URL}}/frequencias/{{id}}/edit/pesqAluno" class="btn btn-facebook btn-round btn-just-icon" rel="tooltip" title="Pesquisar aluno">
+						<i class="material-icons">search</i>
+					</a>
 				</div>
 				<div class="col-md-8" >
 						{{statusMessage}}
@@ -73,8 +69,8 @@
 				     	    <label class="h5">Aluno: <span class="text-light">{{nome}}</span></label><br>
 						    <label class="h5">Turma: <span class="text-light">{{turma}}</span></label><br>
 						    <label class="h5">Status: <span class="text-light">{{status}}</span></label><br>
-						    <button {{escondeBotaoConfirmar}} type="submit" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Clique para Confirmar">
-								<strong class="h6">Confirmar Presença?</strong>
+						    <button {{escondeBotaoConfirmar}} type="submit" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Clique para Confirmar Presença">
+								<i class="material-icons">check</i>
 							</button>
 					    </div>
 				    </div>
@@ -82,7 +78,6 @@
 			</form>
 		</div>
 	</div>					
-
 
 
 

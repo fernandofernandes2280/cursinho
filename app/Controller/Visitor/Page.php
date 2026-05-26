@@ -52,7 +52,8 @@ class Page{
 		
 			'Relatorios' =>[
 					'label' => 'Relatórios',
-					'link' => ''
+					'link' => '',
+			        'visivel' => 'hidden'
 			]
 	];
 	
@@ -110,6 +111,9 @@ class Page{
 			$linksDropItems .= View::render('painel/menu/linkDropdown',[
 					'label' => $module['label'],
 					'idBotao' => $module['idBotao'],
+					'material-icons'=>'arrow_right',
+					'modal' => '',
+					'link' => '#',
 			]);
 		}
 		return  $linksDropItems;
@@ -164,7 +168,8 @@ class Page{
 					'link' => $module['link'],
 					'current' => $hash == $currentModule ? 'active' : '',
 					'material-icons'=> $module['material-icons'],
-					'modal'=> $module['modal']
+					'modal'=> $module['modal'],
+			        'visivelMenu' => ''
  					
 			]);
 			
@@ -177,7 +182,8 @@ class Page{
 					'label' => $module['label'],
 					'itensDropDown' => self::getDropdownItemsProducao(),
 					'current' => $hash == $currentModule ? 'active' : '',
-					'material-icons'=>'description'
+					'material-icons'=>'description',
+			        'visivelMenu' => ''
 			]);
 			
 		}
@@ -188,7 +194,8 @@ class Page{
 					'label' => $module['label'],
 					'itensDropDown' => self::getDropdownItemsRelatorios(),
 					'current' => $hash == $currentModule ? 'active' : '',
-					'material-icons'=>'family_restroom'
+					'material-icons'=>'description',
+			        'visivelMenu' => $module['visivel']
 			]);
 			
 		}
@@ -203,9 +210,11 @@ class Page{
 				'logout'=>'visitor',
 				'dropdownProducao' => $linksDropProducao,
 				'dropdownRelatorio' => $linksDropRelatorio,
+				'dropdownManutencao' => '',
+				'perfilLink' => URL.'/visitor/trocarSenha',
 				'usuarioLogado' => $_SESSION['visitor']['usuario']['nome'] ?? '',
 				'tipoUsuario' => $_SESSION['visitor']['usuario']['tipo'] ?? '',
-				'imagem' => $imagem
+				'foto' => basename($imagem)
 		]);
 		
 	}
@@ -215,7 +224,8 @@ class Page{
 		return View::render('painel/page',[
 				'title' => $title,
 				'content' => $content,
-				'relatorio' =>'/visitor/relatorios'
+				'relatorio' =>'/visitor/relatorios',
+				'readonly' => ''
 		]);
 	}
 	

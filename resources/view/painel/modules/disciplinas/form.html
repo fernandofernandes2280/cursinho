@@ -3,21 +3,17 @@
 		<div class="col-5 " >
 			<h5>{{title}}</h5>
 		</div>
- 		<div class="col-4 " >
+		<div class="col-4 " >
 			{{statusMessage}}
-		</div>	
-	
+		</div>
 
-	<div class="col-3 text-right pl-0 ">
-	<a href="{{URL}}/disciplinas/new">
-			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo">
-				<i class="material-icons" style="font-size: 30px;">add</i>
-			</button>
+
+	<div class="col-3 text-right pl-0 form-actions">
+	<a href="{{URL}}/disciplinas/new" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Novo">
+			<i class="material-icons">add</i>
 	</a>
-		<a href="{{URL}}/disciplinas">
-			<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
-				<i class="material-icons" style="font-size: 30px;">reply</i>
-			</button>
+		<a href="{{URL}}/disciplinas" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
+			<i class="material-icons">reply</i>
 		</a>
 	</div>
 </div>
@@ -27,13 +23,12 @@
 		<label>Nome da disciplina</label>
 		<input type="text"name="nome" class="form-control-pessoal" value="{{nome}}" required>
 	</div>
-	
-	<div class="form-group">
-		<button class="btn btn-facebook btn-sm btn-round" type="submit" rel="tooltip" title="Salvar">
-	     	<i class="material-icons" style="font-size: 30px;">save</i>
+
+	<div class="form-group form-actions">
+		<button class="btn btn-facebook btn-round btn-just-icon" type="submit" rel="tooltip" title="Salvar">
+		<i class="material-icons">save</i>
 	     </button>
 	</div>
 
 </form>
-
 

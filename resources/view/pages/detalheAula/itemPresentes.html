@@ -1,18 +1,13 @@
 <tr>					
-	<td class="text-center text-light">{{matricula}}</td>
+	<td class="text-center">{{matricula}}</td>
 	<td>
-		<div class="d-flex px-2 py-1">
-		  <div>
-		    <img style="background-color: #fff; border-radius:10px;" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="avatar avatar-sm me-3 border-radius-lg" alt="foto">
-		  </div>
-		  <div class="d-flex flex-column justify-content-center">
-		    <h4 class="mb-0 text-sm px-2"><a class="font-weight-bold text-dark" href="{{URL}}/alunos/{{idAluno}}/edit" rel="tooltip" title="Visualizar">{{nome}}</a></h4>
-		  </div>
+		<div class="student-cell">
+		  <img src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="student-avatar" alt="foto">
+		  <a class="font-weight-bold" href="{{URL}}/alunos/{{idAluno}}/edit" rel="tooltip" title="Visualizar">{{nome}}</a>
 		</div>
 	</td>
-	<td class="text-center text-light">{{turma}}</td>
-	<td class="text-center text-light">{{status}}</td>
-	<td class="text-center text-light">{{hora}}</td>
+	<td class="text-center">{{turma}}</td>
+	<td class="text-center">{{status}}</td>
+	<td class="text-center">{{hora}}</td>
 	
 </tr>
-

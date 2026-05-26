@@ -1,25 +1,22 @@
-<tr >
-	<td class="text-center text-light" >{{matricula}}</td>					
-	<td>
-		<div class="d-flex px-2 py-1">
-		  <div>
-		    <img style="background-color: #fff; border-radius:10px;" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="avatar avatar-sm me-3 border-radius-lg" alt="foto">
-		  </div>
-		  <div class="d-flex flex-column justify-content-center">
-		    <h4 class="mb-0 text-sm px-2"><a href="{{URL}}/alunos/{{id}}/edit" rel="tooltip" title="Visualizar"><span class=" badge badge-sm {{cor}} pb-0"><h6>{{nome}}</h6></span></a></h4>
-		  </div>
-		</div>
-	</td>
-	<td class="text-center text-light" ><span>{{turma}}</span></td>
-	<td class="text-center text-light" ><span>{{cpf}}</span></td>
-	<td class="text-center text-light" ><span>{{autor}}</span></td>
-	<td class="text-center">
-		<a href="{{URL}}/alunos/{{id}}/edit" >
-			  <i class="material-icons" style="font-size: 30px;" rel="tooltip" title="Visualizar">visibility</i>
-		</a>
-		<a href="{{URL}}/alunos/{{id}}/delete" >
-                <i class="material-icons" style="font-size: 30px;" rel="tooltip" title="Excluir" {{visivelDeleteAluno}} >delete</i>
-		</a>
-		
-	</td>
-	</tr>
+<tr>
+  <td class="alunos-matricula">{{matricula}}</td>
+  <td>
+    <a href="{{URL}}/alunos/{{id}}/edit" class="student-cell" rel="tooltip" title="Visualizar">
+      <img src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="student-avatar" alt="foto">
+      <span class="student-name-pill {{cor}}">{{nome}}</span>
+    </a>
+  </td>
+  <td class="text-center"><span>{{turma}}</span></td>
+  <td class="text-center"><span>{{cpf}}</span></td>
+  <td class="text-center"><span>{{autor}}</span></td>
+  <td>
+    <div class="row-actions">
+      <a href="{{URL}}/alunos/{{id}}/edit" class="table-action" rel="tooltip" title="Visualizar">
+        <i class="material-icons">visibility</i>
+      </a>
+      <a href="{{URL}}/alunos/{{id}}/delete" class="table-action table-action-danger" rel="tooltip" title="Excluir" {{visivelDeleteAluno}}>
+        <i class="material-icons">delete</i>
+      </a>
+    </div>
+  </td>
+</tr>

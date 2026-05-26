@@ -1,124 +1,82 @@
-        
-        <div class="container">
-       
-          <div class="row " style="position:relative; height: 450px">
-          <!-- <img style="position:absolute; width:100%; opacity:10%" src="{{URL}}/resources/assets/img/preparasantana.png">  -->
-            
-            <div class="col-md-12">
-            	<div class="row ml-5">
-            	 
-			           <div class="col-md-5">
-			              <div class="card card-stats">
-			                <div class="card-header card-header-warning card-header-icon">
-			                  <div class="card-icon">
-			                    <i class="material-icons">family_restroom</i>
-			                  </div>
-			              
-			                  <h3  class="card-title text-light">
-			                    <small>Alunos</small>
-			                     <div class="table-responsive">
-									  	<table class="table  table-hover mt-3">
-									  		<thead class="text-light text-center">
-									  			<tr >
-									  				<th class="text-light">Ativos</th>
-									  				<th class="text-light">Inativos</th>
-									  				<th class="text-light">Total</th>
-									  			</tr>
-									  		</thead>
-									  		<tbody class="text-center">
-									  			<td class="text-light">{{totalAtivos}}</td>
-									  			<td class="text-light">{{totalInativos}}</td>
-									  			<td class="text-light">{{totalAlunos}}</td>
-									  		</tbody>
-									  	</table>
-									 </div>			 
-			                  </h3>
-			                  
-			                </div>
-			              </div>
-			            </div>
+<section class="dashboard-grid">
+  <article class="dashboard-stat-card dashboard-stat-warning">
+    <div class="dashboard-stat-icon">
+      <i class="material-icons">family_restroom</i>
+    </div>
+    <div class="dashboard-stat-content">
+      <h3>Alunos</h3>
+      <div class="table-responsive">
+        <table class="table dashboard-stat-table">
+          <thead>
+            <tr>
+              <th>Ativos</th>
+              <th>Inativos</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{totalAtivos}}</td>
+              <td>{{totalInativos}}</td>
+              <td>{{totalAlunos}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </article>
 
-			         </div>
-			         <div class="row ml-5">   
-						<div class="col-md-5">
-			              <div class="card card-stats">
-			                <div class="card-header card-header-success card-header-icon">
-			                  <div class="card-icon">
-			                    <i class="material-icons">sunny</i>
-			                  </div>
-			                 <h3 class="card-title text-light">
-			                    <small>Manhã</small>
-									<div class="table-responsive">
-									  	<table class="table  table-hover mt-3">
-									  		<thead class="text-light text-center">
-									  			<tr >
-									  				<th class="text-light">Ativos</th>
-									  				<th class="text-light">Inativos</th>
-									  				<th class="text-light">Total</th>
-									  			</tr>
-									  		</thead>
-									  		<tbody class="text-center">
-									  			<td class="text-light">{{totalManhaAtivos}}</td>
-									  			<td class="text-light">{{totalManhaInativos}}</td>
-									  			<td class="text-light">{{totalManha}}</td>
-									  		</tbody>
-									  	</table>
-									 </div>			                    
-			                    
-			                    
-			                  </h3>
-			                </div>
-			               
-			              </div>
-			            </div>
-			            
-						 <div class="col-md-5">
-			              <div class="card card-stats">
-			                <div class="card-header card-header-danger card-header-icon">
-			                  <div class="card-icon">
-			                    <i class="material-icons">dark_mode</i>
-			                  </div>
-			                   <h3 class="card-title text-light">
-			                    <small>Noite</small>
-			                    <div class="table-responsive">
-									  	<table class="table  table-hover mt-3">
-									  		<thead class="text-light text-center">
-									  			<tr >
-									  				<th class="text-light">Ativos</th>
-									  				<th class="text-light">Inativos</th>
-									  				<th class="text-light">Total</th>
-									  			</tr>
-									  		</thead>
-									  		<tbody class="text-center">
-									  			<td class="text-light">{{totalNoiteAtivos}}</td>
-									  			<td class="text-light">{{totalNoiteInativos}}</td>
-									  			<td class="text-light">{{totalNoite}}</td>
-									  		</tbody>
-									  	</table>
-									 </div>			 
-			                  </h3>
-			                </div>
-			                
-			              </div>
-			            </div>
-			            
-			             
-            	
-            	
-            	</div>
-            
-            
-            </div>
-            
-			
-            
-           
-            
-           
-            
-          </div>
-        
+  <article class="dashboard-stat-card dashboard-stat-success">
+    <div class="dashboard-stat-icon">
+      <i class="material-icons">sunny</i>
+    </div>
+    <div class="dashboard-stat-content">
+      <h3>Manhã</h3>
+      <div class="table-responsive">
+        <table class="table dashboard-stat-table">
+          <thead>
+            <tr>
+              <th>Ativos</th>
+              <th>Inativos</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{totalManhaAtivos}}</td>
+              <td>{{totalManhaInativos}}</td>
+              <td>{{totalManha}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </article>
 
-            
-
-          
+  <article class="dashboard-stat-card dashboard-stat-danger">
+    <div class="dashboard-stat-icon">
+      <i class="material-icons">dark_mode</i>
+    </div>
+    <div class="dashboard-stat-content">
+      <h3>Noite</h3>
+      <div class="table-responsive">
+        <table class="table dashboard-stat-table">
+          <thead>
+            <tr>
+              <th>Ativos</th>
+              <th>Inativos</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{totalNoiteAtivos}}</td>
+              <td>{{totalNoiteInativos}}</td>
+              <td>{{totalNoite}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </article>
+</section>

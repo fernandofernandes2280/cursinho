@@ -204,7 +204,8 @@ class Page{
 		
 			'Relatorios' =>[
 					'label' => 'Relatórios',
-					'link' => ''
+					'link' => '',
+			        'visivel' => 'hidden'
 			]
 	];
 	//Módulos de itens do Menu dropdown Relatórios
@@ -240,6 +241,9 @@ class Page{
 			$linksDropItems .= View::render('painel/menu/linkDropdown',[
 					'label' => $module['label'],
 					'idBotao' => $module['idBotao'],
+					'material-icons'=>'arrow_right',
+					'modal' => '',
+					'link' => '#',
 			]);
 		}
 		return  $linksDropItems;
@@ -324,7 +328,8 @@ class Page{
 					'label' => $module['label'],
 					'itensDropDown' => self::getDropdownItemsRelatorios(),
 					'current' => $hash == $currentModule ? 'active' : '',
-					'material-icons'=>'descriptions'
+					'material-icons'=>'description',
+			        'visivelMenu' => $module['visivel']
 			]);
 			
 		}
@@ -351,7 +356,8 @@ class Page{
 		return View::render('painel/page',[
 				'title' => $title,
 				'content' => $content,
-				'relatorio' =>'/relatorios'
+				'relatorio' =>'/relatorios',
+				'readonly' => ''
 		]);
 	}
 	
@@ -360,6 +366,7 @@ class Page{
 	    return View::render('painel/pageCarteira',[
 	        'title' => $title,
 	        'content' => $content,
+	        'readonly' => ''
 	        
 	    ]);
 	}

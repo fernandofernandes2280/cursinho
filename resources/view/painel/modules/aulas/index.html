@@ -1,90 +1,70 @@
-							<form method="get" id="form">
-								<div class="row">
-									<div class="col-md-4 card-title">
-										<h5>{{title}}</h5>
-									</div>
-									<div class="col-md-5">
-										{{statusMessage}}
-									</div>
-									<div class="col-md-3 align-self-end text-right">
-										<button type="submit" class="btn  btn-facebook btn-round btn-sm mr-2" rel="tooltip" title="Pesquisar">
-											 <i class="material-icons" style="font-size: 30px;">search</i>
-										</button>
-								     	<a href="{{URL}}/aulas/new">
-								     		<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Nova">
-											<i class="material-icons" style="font-size: 30px;">add_circle_outline</i>
-											</button>
-										</a>
-									</div>
-								</div>
+<main class="list-page">
+  <section class="list-panel">
+    <form method="get" id="form">
+      <div class="list-toolbar">
+        <div class="list-title">
+          <h5>{{title}}</h5>
+        </div>
+        <div class="list-status">
+          {{statusMessage}}
+        </div>
+        <div class="list-actions">
+          <button type="submit" class="btn btn-facebook btn-round btn-just-icon" rel="tooltip" title="Pesquisar">
+            <i class="material-icons">search</i>
+          </button>
+          <a href="{{URL}}/aulas/new" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Nova">
+            <i class="material-icons">add_circle_outline</i>
+          </a>
+        </div>
+      </div>
 
-									<div>
-										
-										  <div class="form-row">
-										    <div class="col-md-3 mb-2">
-										      <label for="data">Data da Aula</label>
-										      <input type="date" max="9999-12-31" class="form-control-pessoal" id="data" name="data" value="{{data}}"   >
-										    </div>
-										    
-										    <div class="col-md-4 mb-2">
-									       		<label for="profissional">Turma</label>
-											       <select class="custom-select" id="turma" name="turma" >
-											       <option></option>
-												        {{optionTurma}}
-											   </select>
-										    </div>
-										      <div class="col-md-4 mb-2">
-									       		<label for="profissional">Status</label>
-											       <select class="custom-select" id="status" name="status" >
-											       <option></option>
-												        {{optionStatus}}
-											   </select>
-										    </div>
-		
-						
-										  </div>
-										</form>
-									
-									</div>
-									<div class="table-responsive">
-									  	<table class="table  table-hover mt-3">
-									  		<thead class=" text-light text-center titulo-tabela">
-									  			<tr >
-									  				<th class="text-light">Data</th>
-									  				<th class="text-light">Professores</th>
-									  				<th class="text-light">Turma</th>
-									  				<th class="text-light">Presenças</th>
-									  				<th class="text-light">Faltas</th>
-									  				<th class="text-light">Status</th>
-									  				<th class="text-light">Autor</th>
-									  				<th  class="text-light" style="width:13%">Ações</th>
-									  			</tr>
-									  		</thead>
-									  		<tbody>
-									  			{{itens}}
-									  		</tbody>
-									  	</table>
-									 </div>
-									    <div class="row" >
-										  	<div class="col-12 pt-0 ">
-										  		<span>{{pagination}}</span>
-										  	</div>
-										   	<div class="col-12 text-right pt-3">
-										   		<span>Total: {{totalAtendimentos}}</span>
-										  	</div>
-									  </div> 
+      <div class="list-filters">
+        <div class="list-field list-field-sm">
+          <label for="data">Data da Aula</label>
+          <input type="date" max="9999-12-31" class="form-control-pessoal" id="data" name="data" value="{{data}}">
+        </div>
+        <div class="list-field">
+          <label for="turma">Turma</label>
+          <select class="custom-select" id="turma" name="turma">
+            <option></option>
+            {{optionTurma}}
+          </select>
+        </div>
+        <div class="list-field">
+          <label for="status">Status</label>
+          <select class="custom-select" id="status" name="status">
+            <option></option>
+            {{optionStatus}}
+          </select>
+        </div>
+      </div>
+    </form>
+  </section>
 
-							
+  <div class="table-responsive list-table-wrap">
+    <table class="table table-hover list-table">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Professores</th>
+          <th>Turma</th>
+          <th>Presenças</th>
+          <th>Faltas</th>
+          <th>Status</th>
+          <th>Autor</th>
+          <th style="width:13%">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{itens}}
+      </tbody>
+    </table>
+  </div>
 
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
+  <div class="list-footer">
+    <div class="list-pagination">
+      {{pagination}}
+    </div>
+    <span class="list-total">Total: {{totalAtendimentos}}</span>
+  </div>
+</main>

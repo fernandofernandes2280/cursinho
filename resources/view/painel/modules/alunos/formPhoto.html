@@ -3,18 +3,16 @@
 	<div class="col-9 " >
 		<h5>{{title}}</h5><br>
 		{{aluno}}
-		
+
 	</div>
-	<div class="col-3 text-right">
-		<a href="javascript:history.back()">
-			<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
-				<i class="material-icons" style="font-size: 30px;">reply</i>
-			</button>
+	<div class="col-3 text-right form-actions">
+		<a href="javascript:history.back()" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
+			<i class="material-icons">reply</i>
 		</a>
-	
+
 	</div>
-	
-</div>	
+
+</div>
 
 <hr>
 
@@ -111,23 +109,23 @@ border-color: #fff;
 	                <br/>
 	                <input type="hidden" name="image" class="image-tag">
 					<br>
-		            <center><input type="button" class="btn btn-success" value="Capturar" onClick="take_snapshot()"><center>
+		            <div class="form-actions form-actions-start"><button type="button" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Capturar" onClick="take_snapshot()"><i class="material-icons">photo_camera</i></button></div>
 		            <br>
-		          
-		             
-		             
+
+
+
             </div>
-            
-            
-        
-            
-            
-            
+
+
+
+
+
+
 			<input type="text" name="id" hidden value="{{id}}"/>
             <div class="col-md-6">
 				<section class="conteiner">
-                	<div class="text-center my_result" id="results"></div>
-                	<div class="topoEsquerda1"></div>
+	<div class="text-center my_result" id="results"></div>
+	<div class="topoEsquerda1"></div>
 	                <div class="topoDireita1"></div>
 	                <div class="centro1" id="centro1">Sua Foto</div>
                 </section>
@@ -135,17 +133,17 @@ border-color: #fff;
 				<input class="file-chooser pt-5" type="file" id="flImage" name="fImage" accept="image/*" >
             </div>
 
-            <div class="col-md-12 text-center">
+            <div class="col-md-12 text-center form-actions">
 
                 <br/>
 
-                <button type="submit" class="btn btn-info">Salvar Foto</button>
+                <button type="submit" class="btn btn-info btn-round btn-just-icon" rel="tooltip" title="Salvar Foto"><i class="material-icons">save</i></button>
 
             </div>
 
         </div>
-        
-		
+
+
 
     </form>
 
@@ -204,11 +202,11 @@ file.addEventListener('change', () => {
 
     });
 
-  
+
 
     Webcam.attach( '#my_camera' );
 
-  
+
 
     function take_snapshot() {
 
@@ -223,8 +221,8 @@ file.addEventListener('change', () => {
            // image.src = event.target.result
            image.src = data_uri
             image.onload = onLoadImage
-             
-             
+
+
             //limpa o input file
 			file.value = '';
         } );
@@ -235,4 +233,4 @@ file.addEventListener('change', () => {
 </script>
 
 
- 
+

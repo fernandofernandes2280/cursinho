@@ -1,31 +1,30 @@
 <tr>					
-	<td class="text-center text-light">{{data}}</td>
-	<td class="text-center text-light">
+	<td class="text-center">{{data}}</td>
+	<td class="text-center">
 		{{professor1}}<p class="text-xs text-secondary mb-0 ml-2">{{disciplina1}}</p>
 		{{professor2}}<p class="text-xs text-secondary mb-0 ml-2">{{disciplina2}}</p>
 	
 	</td>
-	<td class="text-center text-light">{{turma}}</td>
+	<td class="text-center">{{turma}}</td>
 	
-	<td class="text-center text-light">
+	<td class="text-center">
 		<a href="{{URL}}/aulas/{{id}}/presentes">
 			{{presencas}}
 		</a>
 		
 	</td>
-	<td class="text-center text-light">{{faltas}}</td>
+	<td class="text-center">{{faltas}}</td>
 	<td class="text-center align-middle text-md"><span class="badge badge-sm {{cor}}">{{status}}</span></td>
-	<td class="text-center text-light" ><span>{{autor}}</span></td>
-	<td class="text-center">
-		<a href="{{URL}}/aulas/{{id}}/edit">
-			<i class="material-icons" style="font-size: 30px;" rel="tooltip" title="Editar">edit</i>
-		</a>
-		<a href="{{URL}}/aulas/{{id}}/delete" hidden>
-			<i class="material-icons" style="font-size: 30px;" rel="tooltip" title="Excluir">delete</i>
-		</a>
-	
-	
+	<td class="text-center"><span>{{autor}}</span></td>
+	<td>
+		<div class="row-actions">
+			<a href="{{URL}}/aulas/{{id}}/edit" class="table-action" rel="tooltip" title="Editar">
+				<i class="material-icons">edit</i>
+			</a>
+			<a href="{{URL}}/aulas/{{id}}/delete" class="table-action table-action-danger" rel="tooltip" title="Excluir" hidden>
+				<i class="material-icons">delete</i>
+			</a>
+		</div>
 	</td>
 </tr>
-
 

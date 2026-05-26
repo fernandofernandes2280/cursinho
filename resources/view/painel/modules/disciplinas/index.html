@@ -1,56 +1,41 @@
+<main class="list-page">
+  <section class="list-panel">
+    <div class="list-toolbar">
+      <div class="list-title">
+        <h5>{{title}}</h5>
+      </div>
+      <div class="list-status">
+        {{statusMessage}}
+      </div>
+      <div class="list-actions">
+        <a href="{{URL}}/disciplinas/new" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Novo">
+          <i class="material-icons">add</i>
+        </a>
+        <a href="{{URL}}/disciplinas" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
+          <i class="material-icons">reply</i>
+        </a>
+      </div>
+    </div>
+  </section>
 
-<h4 class="card-title"></h4>
-<div class="row">
-	<div class="col-4 card-title">
-		<h5>{{title}}</h5>
-	</div>
-	<div class="col-5">
-		{{statusMessage}}
-	</div>
-	<div class="col-3 text-right">
-		<a href="{{URL}}/disciplinas/new">
-				<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo">
-					<i class="material-icons" style="font-size: 30px;">add</i>
-				</button>
-		</a>
-			<a href="{{URL}}/disciplinas">
-				<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
-					<i class="material-icons" style="font-size: 30px;">reply</i>
-				</button>
-			</a>
-	</div>
-</div>
-	<hr>
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th class="text-light font-weight-bold">ID</th>
-				<th class="text-light font-weight-bold">Nome</th>
-				<th style="width:200px">Ações</th>
-			</tr>
-		</thead>
-		<tbody>
-			{{itens}}
-		</tbody>
-	</table>
-	{{pagination}}
+  <div class="table-responsive list-table-wrap">
+    <table class="table table-striped list-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th style="width:200px">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{itens}}
+      </tbody>
+    </table>
+  </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  <div class="list-footer">
+    <div class="list-pagination">
+      {{pagination}}
+    </div>
+  </div>
+</main>

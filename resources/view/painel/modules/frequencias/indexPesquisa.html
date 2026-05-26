@@ -1,112 +1,84 @@
+<main class="list-page">
+  <section id="pacientes" class="list-panel">
+    <form method="get" id="form">
+      <div class="list-toolbar">
+        <div class="list-title">
+          <h5>{{title}}</h5>
+        </div>
+        <div class="list-status">
+          {{statusMessage}}
+        </div>
+        <div class="list-actions">
+          <button type="submit" class="btn btn-facebook btn-round btn-just-icon" rel="tooltip" title="Pesquisar">
+            <i class="material-icons">search</i>
+          </button>
+          <button type="button" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfAluno">
+            <i class="material-icons">person_add</i>
+          </button>
+          <a href="javascript:history.back()" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
+            <i class="material-icons">reply</i>
+          </a>
+        </div>
+      </div>
 
-<main>
-<form method="get" id="form">
-      <h4 class="card-title"></h4>
-		<div class="row">
-			<div class="col-sm-4 card-title">
-				<h5>{{title}}</h5>
-			</div>
-			<div class="col-sm-4">
-				{{statusMessage}}
-			</div>
-				<div class="col-lg-4  mt-2">
-			<button type="submit" class="btn  btn-facebook btn-round btn-sm mr-2" rel="tooltip" title="Pesquisar">
-				 <i class="material-icons" style="font-size: 30px;">search</i>
-			</button>
-			 <!-- Aciona modal novoCPF -->
-			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfAluno">
-			  <i class="material-icons" style="font-size: 30px;">person_add</i>
-			</button>
-	   		 <a href="javascript:history.back()">
-			<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Voltar">
-				<i class="material-icons" style="font-size: 30px;">reply</i>
-			</button>
-		</a>
-		</div>
-		
-		</div>
-		<hr>
-
-<section id="pacientes">
-  	
-<div class="form-row">
- 			<div class="col-lg-2">
- 				<label>Matrícula:</label>
- 				<input type="text" name="matricula" id="matricula" class="form-control-pessoal" value="{{matricula}}" style="color:black" >
-		</div>
-	  	<div class="col-lg-4">
-			<label>Nome:</label>
-			<input type="text" name="nome" class="form-control-pessoal" value="{{nome}}" style="color:black">
-	  	</div>
-		<div class="col-lg-2 " >
-			<label>CPF:</label>
-			<input type="text" name="cpfPesq" id="cpfPesq" class="form-control-pessoal mascara-cpf cpfPesquisa" value="{{cpf}}" style="color:black" >
-		</div>
-		 <div class="col-md-2 mb-2">
-		      <label for="turma">Turma</label>
-		       <select class="custom-select" id="turma" name="turma"  >
-		       <option value="" >Todas</option>
-			        {{optionTurma}}
-			   </select>
-		    </div>	  
-		<div class="col-lg-2" >
-			<label>Status:</label>
-			<select name="status" class="custom-select" >
-			    
-				<option style="color:black" value="" {{selectedAtIn}}>Todos</option>
-			{{optionStatus}}
-			</select>
-		</div>
-	
-	</div>
-  	</form>
-  
+      <div class="list-filters">
+        <div class="list-field list-field-sm">
+          <label for="matricula">Matrícula</label>
+          <input type="text" name="matricula" id="matricula" class="form-control-pessoal" value="{{matricula}}">
+        </div>
+        <div class="list-field list-field-lg">
+          <label for="nome">Nome</label>
+          <input type="text" name="nome" id="nome" class="form-control-pessoal" value="{{nome}}">
+        </div>
+        <div class="list-field list-field-sm">
+          <label for="cpfPesq">CPF</label>
+          <input type="text" name="cpfPesq" id="cpfPesq" class="form-control-pessoal mascara-cpf cpfPesquisa" value="{{cpf}}">
+        </div>
+        <div class="list-field list-field-sm">
+          <label for="turma">Turma</label>
+          <select class="custom-select" id="turma" name="turma">
+            <option value="">Todas</option>
+            {{optionTurma}}
+          </select>
+        </div>
+        <div class="list-field list-field-sm">
+          <label for="status">Status</label>
+          <select name="status" id="status" class="custom-select">
+            <option value="" {{selectedAtIn}}>Todos</option>
+            {{optionStatus}}
+          </select>
+        </div>
+      </div>
+    </form>
   </section>
-  
-  
-  <div class="table-responsive">
-  	<table class="table table-striped">
-  		
-  		<thead class="text-center" >
-  			<tr>
-  				<th class="text-light" style="font-weight: bold">Matrícula</th>
-  				<th class="text-light" style="font-weight: bold">Nome</th>
-  				<th class="text-light" style="font-weight: bold">Turma</th>
-  				<th class="text-light" style="font-weight: bold">CPF</th>
-  			</tr>
-  		</thead>
-  		<tbody >
-  		
-  			{{itens}}
-  			
-  		</tbody>
-  	
-  	</table>
- </div>
-  <hr>
-  <div class="row " >
-  	<div class="col d-flex justify-content-start">
-  				{{pagination}} 
-  	</div>
-  	<div class="col d-flex justify-content-end">
-  				<span >&nbsp;&nbsp;&nbsp;Total de registros encontrados: {{total}}</span>
-  	</div>
-  	
+
+  <div class="table-responsive list-table-wrap">
+    <table class="table table-striped list-table">
+      <thead>
+        <tr>
+          <th>Matrícula</th>
+          <th>Nome</th>
+          <th>Turma</th>
+          <th>CPF</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{itens}}
+      </tbody>
+    </table>
   </div>
-  <hr>
+
+  <div class="list-footer">
+    <div class="list-pagination">
+      {{pagination}}
+    </div>
+    <span class="list-total">Total de registros encontrados: {{total}}</span>
+  </div>
 </main>
 
-
-<!-- teste com ajax -->
 <section class="users" hidden>
-    
-    <article class="users_user">
-        <h3>TESTE DE AJAX</h3>
-        <a class="remove" href="#" data-action="{{URL}}/delete" data-id="3">Deletar</a>
-        </article>
-    
+  <article class="users_user">
+    <h3>TESTE DE AJAX</h3>
+    <a class="remove" href="#" data-action="{{URL}}/delete" data-id="3">Deletar</a>
+  </article>
 </section>
-
-
-
-

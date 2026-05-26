@@ -113,27 +113,21 @@
 		<td colspan="2">
 			<table width="100%">
 				<tr>
-					<td>
+					<td class="form-actions form-actions-start">
 						<input hidden type="submit" rel="tooltip" title="Visualizar Imagem" value="Visualizar" onclick="capture();" />
 						
-							<button type="submit" class="btn btn-facebook btn-round btn-sm " rel="tooltip" title="Download da Carteira" name="imageDown" onclick="captureDown();" />
-								<i class="material-icons" style="font-size: 30px;">download</i><b class="h5">Download</b>
+							<button type="submit" class="btn btn-facebook btn-round btn-just-icon" rel="tooltip" title="Download da Carteira" name="imageDown" onclick="captureDown();">
+								<i class="material-icons">download</i>
 							</button>
 						
-						<a href="{{URL}}/aluno/update" {{hiddenBtnAlterar}}>
-							<button type="button" class="btn btn-warning btn-round btn-sm " rel="tooltip" title="Alterar dados da Carteira">
-								<i class="material-icons" style="font-size: 30px;">reply</i><b class="h5">Alterar Dados</b>
-							</button>
+						<a href="{{URL}}/aluno/update" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Alterar dados da Carteira" {{hiddenBtnAlterar}}>
+							<i class="material-icons">reply</i>
 						</a>
-						<a href="{{URL}}/aluno" {{hiddenBtnSairUpdate}}>
-							<button type="button" class="btn btn-default btn-round btn-sm " rel="tooltip" title="Sair">
-								<i class="material-icons" style="font-size: 30px;">logout</i><b class="h5">Sair</b>
-							</button>
+						<a href="{{URL}}/aluno" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Sair" {{hiddenBtnSairUpdate}}>
+							<i class="material-icons">logout</i>
 						</a>
-						<a href="javascript:history.back()" {{hiddenBtnSair}}>
-							<button type="button" class="btn btn-default btn-round btn-sm " rel="tooltip" title="Sair">
-								<i class="material-icons" style="font-size: 30px;">logout</i><b class="h5">Sair</b>
-							</button>
+						<a href="javascript:history.back()" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Sair" {{hiddenBtnSair}}>
+							<i class="material-icons">logout</i>
 						</a>
 		
 					</td>
@@ -158,7 +152,7 @@
 										<img style="border-radius: 10px;" width=400 class="img-fluid" alt="FotoCursinho" src="{{URL}}/resources/assets/img/preparasantana.png">
 									</div>
 									<div class="col-md-9 pt-0 text-dark" style="padding-left: 180px">
-										<label class="h5">Progama Municipal de Cursos Preparatório<br><b class="prepara">PREPARA</b> <b class="santana">SANTANA</b></label>
+										<label class="h5">Programa Municipal de Cursos Preparatório<br><b class="prepara">PREPARA</b> <b class="santana">SANTANA</b></label>
 									</div>
 									<div class="logopms ">
 										<img width=250 class="img-fluid mb-2" alt="FotoCursinho" src="{{URL}}/resources/assets/img/logopms.png">

@@ -1,50 +1,34 @@
-    <div class="sidebar" data-color="danger" data-background-color="white">
-      <!--
-        Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
-
-        Tip 2: you can also add an image using data-image tag
-    -->
-
-
-
-
-    	<div class="logo">
-    
-        
-   		<div class="d-flex px-2 py-1">
-		  <div class="py-2">
-		    <a href="{{perfilLink}}">
-		      <img style="background-color:#ffff" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="avatar avatar-lg me-3 border-radius-lg" alt="foto">
-		    </a>
-		  </div>
-		  <div class="d-flex flex-column justify-content-center px-2">
-		    <a href="{{perfilLink}}" class="text-dark">
-		      <h7 class="mb-0 text-sm px-2">{{usuarioLogado}}</h7>
-		    </a>
-		    <span class="badge badge-sm bg-gradient-success">{{tipoUsuario}}</span>
-		    <a href="{{URL}}/logout" class="text-right">
-	           				<span  rel="tooltip" title="Sair" style="font-size: 15px"> <i class="material-icons">logout</i>Sair</span>
-	      				</a>
-		  </div>
-		</div>
-
-
-        </div>
-      
-	 	<div class="sidebar-wrapper">
-
-        <ul class="nav">
-        		{{links}}
-				{{dropdownProducao}}
-				{{dropdownManutencao}}
-				
-        </ul>
-        
+<aside class="sidebar" data-color="danger" data-background-color="white">
+  <div class="logo">
+    <div class="d-flex px-2 py-1">
+      <div class="py-2">
+        <a href="{{perfilLink}}" class="sidebar-avatar-link me-3">
+          <span class="sidebar-avatar">
+            <img src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" alt="foto">
+          </span>
+        </a>
       </div>
-			
+      <div class="d-flex flex-column justify-content-center px-2">
+        <a href="{{perfilLink}}" class="text-dark">
+          <h7 class="mb-0 text-sm px-2">{{usuarioLogado}}</h7>
+        </a>
+        <div class="sidebar-user-actions">
+          <span class="badge badge-sm bg-gradient-success">{{tipoUsuario}}</span>
+          <a href="{{URL}}/logout" class="sidebar-logout" rel="tooltip" title="Sair">
+            <i class="material-icons">logout</i>
+            <span>Sair</span>
+          </a>
+        </div>
+      </div>
     </div>
+  </div>
 
-
-
-
-    
+  <div class="sidebar-wrapper">
+    <ul class="nav">
+      {{links}}
+      {{dropdownProducao}}
+      {{dropdownRelatorio}}
+      {{dropdownManutencao}}
+    </ul>
+  </div>
+</aside>

@@ -1,45 +1,34 @@
+<main class="list-page">
+  <section class="list-panel">
+    <div class="list-toolbar">
+      <div class="list-title">
+        <h5>{{title}}</h5>
+      </div>
+    </div>
+  </section>
 
-								<div class="row">
-									<div class="col-6 card-title">
-										<h5>{{title}}</h5>
-									</div>
-								</div>
-									<hr>
-									<div class="table-responsive">
-									<table class="table table-striped">
-										<thead>
-											<tr>
-												<th>ID</th>
-												<th>Data</th>
-												<th>Ip</th>
-												<th>User</th>
-												<th>Tabela</th>
-												<th>Ação</th>
-												<th>Campos</th>
-											</tr>
-										</thead>
-										<tbody>
-											{{itens}}
-										</tbody>
-									</table>
-									</div>
-									{{pagination}}
+  <div class="table-responsive list-table-wrap">
+    <table class="table table-striped list-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Data</th>
+          <th>Ip</th>
+          <th>User</th>
+          <th>Tabela</th>
+          <th>Ação</th>
+          <th>Campos</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{itens}}
+      </tbody>
+    </table>
+  </div>
 
-							
-
-
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
-
-
-
+  <div class="list-footer">
+    <div class="list-pagination">
+      {{pagination}}
+    </div>
+  </div>
+</main>

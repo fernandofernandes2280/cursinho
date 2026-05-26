@@ -1,53 +1,41 @@
+<main class="list-page">
+  <section class="list-panel">
+    <div class="list-toolbar">
+      <div class="list-title">
+        <h5>Usuários</h5>
+      </div>
+      <div class="list-status">
+        {{statusMessage}}
+      </div>
+      <div class="list-actions">
+        <button type="button" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfUser">
+          <i class="material-icons">person_add</i>
+        </button>
+      </div>
+    </div>
+  </section>
 
-<div class="row">
-	<div class="col-md-3 card-title">
-		<h5>Usuários</h5>
-	</div>
-	<div class="col-md-5">
-		{{statusMessage}}
-	</div>
-	<div class="col-md-4 text-right">
-			 <!-- Aciona modal novoCPF -->
-			<button type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfUser">
-			  <i class="material-icons" style="font-size: 30px;">person_add</i>
-			</button>
-	</div>
-</div>
-	
-	<div class="table-responsive">
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>ID</th>
-				<th>Nome</th>
-				<th>E-mail</th>
-				<th>CPF</th>
-				<th>Tipo</th>
-				<th style="width:200px">Ações</th>
-			</tr>
-		</thead>
-		<tbody>
-			{{itens}}
-		</tbody>
-	</table>
-	</div>
-	{{pagination}}
+  <div class="table-responsive list-table-wrap">
+    <table class="table table-striped list-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>CPF</th>
+          <th>Tipo</th>
+          <th style="width:200px">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{itens}}
+      </tbody>
+    </table>
+  </div>
 
-							
-
-
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
-
-
-
+  <div class="list-footer">
+    <div class="list-pagination">
+      {{pagination}}
+    </div>
+  </div>
+</main>

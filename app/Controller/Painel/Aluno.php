@@ -209,6 +209,7 @@ class Aluno extends Page{
 				'total' => self::$qtdTotal,
 				'selectedAtivo' =>  $selectedAtivo,
 				'selectedInativo' =>  $selectedInativo,
+				'selectedAtIn' =>  $selectedAtIn,
 		       'optionTurma' => EntityTurma::getSelectTurmas( @$queryParams['turma']) ,
 		       'optionStatus' => EntityStatus::getSelectStatus( @$queryParams['status']) ,
 		    //    'botaoExcluir' => $botãoExcluir

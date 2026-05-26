@@ -1,21 +1,15 @@
 <tr>
-	<td class="text-center" >{{matricula}}</td>					
+	<td class="text-center">{{matricula}}</td>
 	<td>
-		<div class="d-flex px-2 py-1">
-		  <div>
-		    <img style="background-color: #fff; border-radius:10px;" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="avatar avatar-sm me-3 border-radius-lg" alt="foto">
-		  </div>
-		  <div class="d-flex flex-column justify-content-center">
-		    <h7 class="mb-0 text-sm px-2"><a href="{{URL}}/alunos/{{idAluno}}/edit" rel="tooltip" title="Visualizar"><span class=" badge badge-sm {{cor}} pb-0"><h6>{{nome}}</h6></span></a></h7>
-		  </div>
-		  <div class="d-flex flex-column justify-content-center">
-		    <a href="{{URL}}/frequencias/{{idAula}}/edit/individual/{{idAluno}}" >
-			  <i class="material-icons" style="font-size: 30px;" rel="tooltip" title="Selecionar para Presença">how_to_reg</i>
-		</a>
-		  </div>
+		<div class="student-cell">
+		  <img src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="student-avatar" alt="foto">
+		  <a href="{{URL}}/alunos/{{idAluno}}/edit" class="student-name-pill {{cor}}" rel="tooltip" title="Visualizar">{{nome}}</a>
+		  <a href="{{URL}}/frequencias/{{idAula}}/edit/individual/{{idAluno}}" class="table-action" rel="tooltip" title="Selecionar para Presença">
+			<i class="material-icons">how_to_reg</i>
+		  </a>
 		</div>
 
 	</td>
-	<td class="text-center" ><span>{{turma}}</span></td>
-	<td class="text-center" ><span>{{cpf}}</span></td>
+	<td class="text-center"><span>{{turma}}</span></td>
+	<td class="text-center"><span>{{cpf}}</span></td>
 	</tr>

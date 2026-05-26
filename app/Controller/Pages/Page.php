@@ -9,11 +9,12 @@ class Page extends Generica{
 	
 	
 	//metodo responsavel por renderizar o topo da pagina
-	private static function getHeader(){
+	private static function getHeader($title = ''){
 		
 		
 		return View::render('pages/header',[
-				'menuActive' => 'active'
+				'menuActive' => 'active',
+				'title' => $title
 				
 		]);
 		
@@ -122,7 +123,7 @@ class Page extends Generica{
 	public static function getPage($title, $content){
 		return View::render('pages/page',[
 				'title' => $title,
-				'header' => self::getHeader(),
+				'header' => self::getHeader($title),
 				'content' => $content,
 				'footer' => self::getFooter()
 				

@@ -7,7 +7,7 @@ use \App\Model\Entity\User;
 use \App\Session\Visitor\Login as SessionVisitorLogin;
 use \App\Session\User\Login as SessionUserLogin;
 use \App\Controller\Painel\Alert;
-use \App\Controller\Painel\Page;
+use \App\Controller\Pages\Page;
 use Bissolli\ValidadorCpfCnpj\CPF;
 use \App\Controller\Comunication\Email;
 
