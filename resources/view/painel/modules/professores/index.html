@@ -1,61 +1,46 @@
-<main class="list-page">
-  <section id="pacientes" class="list-panel">
-    <form method="get" id="form">
-      <div class="list-toolbar">
-        <div class="list-title">
+<main class="alunos-page">
+  <section id="pesquisa" class="alunos-panel">
+      <div class="alunos-toolbar">
+        <div class="alunos-title">
           <h5>{{title}}</h5>
         </div>
-        <div class="list-status">
+        <div class="alunos-status">
           {{statusMessage}}
         </div>
-        <div class="list-actions">
-          <button type="submit" class="btn btn-facebook btn-round btn-just-icon" rel="tooltip" title="Pesquisar">
-            <i class="material-icons">search</i>
-          </button>
+        <div class="alunos-actions">
           <button type="button" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfProfessor">
             <i class="material-icons">person_add</i>
           </button>
         </div>
       </div>
-
-      <div class="list-filters">
-        <div class="list-field list-field-lg">
-          <label for="nome">Nome</label>
-          <input type="text" name="nome" id="nome" class="form-control-pessoal" value="{{nome}}">
-        </div>
-        <div class="list-field list-field-sm">
-          <label for="status">Status</label>
-          <select name="status" id="status" class="custom-select">
-            <option value="" {{selectedAtIn}}>Ativo/Inativo</option>
-            <option value="1" {{selectedAtivo}}>Ativo</option>
-            <option value="0" {{selectedInativo}}>Inativo</option>
-          </select>
-        </div>
-      </div>
-    </form>
   </section>
 
-  <div class="table-responsive list-table-wrap">
-    <table class="table table-striped list-table">
+  <section class="alunos-datatable-panel">
+    <table
+      id="datatablesSimple"
+      class="table table-striped alunos-table"
+      data-caption="Listagem de professores cadastrados"
+      data-entity-singular="professor"
+      data-entity-plural="professores"
+      data-placeholder="Buscar professor..."
+      data-search-title="Buscar na listagem de professores"
+      data-name-column="1"
+      data-status-column="3"
+      data-actions-column="4"
+    >
+      <caption>Listagem de professores cadastrados</caption>
       <thead>
         <tr>
-          <th>Id</th>
-          <th>Nome</th>
-          <th>CPF</th>
-          <th>Status</th>
-          <th style="width:15%">Ações</th>
+          <th data-type="string">Id</th>
+          <th data-type="html">Nome</th>
+          <th data-type="string">CPF</th>
+          <th data-type="html">Status</th>
+          <th data-type="html" data-sortable="false" data-searchable="false">Ações</th>
         </tr>
       </thead>
       <tbody>
         {{itens}}
       </tbody>
     </table>
-  </div>
-
-  <div class="list-footer">
-    <div class="list-pagination">
-      {{pagination}}
-    </div>
-    <span class="list-total">Total: {{totalPacientes}}</span>
-  </div>
+  </section>
 </main>

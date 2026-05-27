@@ -118,14 +118,14 @@ class User extends Page{
 	
 	//Método responsavel por renderizar a view de Listagem de USuários
 	public static function getUsers($request){
+		$obPagination = null;
+		$itens = self::getUserItems($request, $obPagination);
 		
 		//Conteúdo da Home
 		$content = View::render('painel/modules/users/index',[
-				'itens' => self::getUserItems($request, $obPagination),
-				'pagination' => parent::getPagination($request, $obPagination),
+				'itens' => $itens,
+				'pagination' => $obPagination ? parent::getPagination($request, $obPagination) : '',
 				'statusMessage' => Funcoes::getStatus($request),
-				'navBar'=>View::render('painel/navBar',[]),
-				'footer'=>View::render('painel/modules/pacientes/footer',[]),
 				
 				
 		]);
@@ -318,13 +318,11 @@ class User extends Page{
 				'email' => $obUser->email,
 				'senha' => $obUser->senha,
 				'cpf' => Funcoes::mask($obUser->cpf, '###.###.###-##'), 
-				'selectedAdmin'=> $selectedAdmin,
-				'selectedVisitante'=> $selectedVisitante,
-				'selectedOperador'=> $selectedOperador,
-				'statusMessage' => Funcoes::getStatus($request),
-				'navBar'=>View::render('painel/navBar',[]),
-			 	'footer'=>View::render('painel/modules/pacientes/footer',[]),
-		          'foto' => $obUser->foto.'?var='.$reload,
+					'selectedAdmin'=> $selectedAdmin,
+					'selectedVisitante'=> $selectedVisitante,
+					'selectedOperador'=> $selectedOperador,
+					'statusMessage' => Funcoes::getStatus($request),
+			          'foto' => $obUser->foto.'?var='.$reload,
 		        'required' => '',
 		         'ponteiro' => '',
 		    'alunoChecado' => $alunoChecado,

@@ -1,82 +1,45 @@
+<form method="post" action="" class="frequencia-edit-form">
+  <input type="hidden" value="{{idAula}}" name="idAula">
 
-<form  method="post" action="">
-	<div class="row">
-			<div class="col-md-3 " >
-			<h5>{{title}}</h5>
-			<input type="text" value="{{idAula}}" hidden name="idAula"/>
-		</div>
-	
+  <div class="frequencia-edit-header">
+    <h5>{{title}}</h5>
 
-	<div class="col-md-9 text-right form-actions">
-		<a href="{{URL}}/frequencias" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
-			<i class="material-icons">reply</i>
-		</a>
-	</div>
-</div>
-	
-<div class="row">
-			<div class="col-md-6 " >
-<div class="card card-stats">
-          <div class="card-header card-header-success card-header-icon">
-            <div class="card-icon">
-              <strong class="h6">{{aula}}</strong>
-            </div>
-           
-            <p class="card-category text-light mt-5">Lançar Frequência:</p>
-           
-            
-            <div class="form-actions form-actions-start">
-            <a href="{{URL}}/frequencias/{{idAula}}/edit/individual" class="btn btn-facebook btn-round btn-just-icon" rel="tooltip" title="Frequência Individual">
-				<i class="material-icons">person</i>
-		    </a>
-		    
-			<button type="submit" class="btn btn-primary btn-round btn-just-icon freqGeralDesktop" rel="tooltip" title="Frequência Geral">
-				<i class="material-icons">qr_code_2</i>
-			</button>
-		    
-		    
-		     <a href="{{URL}}/frequencias/{{idAula}}/edit/mobile" class="btn btn-primary btn-round btn-just-icon freqGeralMobile" rel="tooltip" title="Frequência Mobile">
-				<i class="material-icons">qr_code_2</i>
-		    </a>
-            </div>
-            
-            
-          </div>
-          <div class="card-footer">
-              <div class="stats">
-                  
-              </div>
-          </div>
+    <div class="form-actions">
+      <a href="{{URL}}/frequencias" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
+        <i class="material-icons">reply</i>
+      </a>
+    </div>
+  </div>
+
+  <section class="frequencia-launch-card">
+    <div class="frequencia-aula-info">
+      <span class="frequencia-aula-icon">
+        <i class="material-icons">event_available</i>
+      </span>
+      <div>
+        <span class="frequencia-label">Aula</span>
+        <strong>{{aula}}</strong>
       </div>
+    </div>
 
-	</div>
+    <div class="frequencia-launch-actions">
+      <span class="frequencia-label">Lançar Frequência</span>
+      <div class="form-actions form-actions-start">
+        <a href="{{URL}}/frequencias/{{idAula}}/edit/individual" class="btn btn-facebook btn-round btn-just-icon" rel="tooltip" title="Frequência Individual">
+          <i class="material-icons">person</i>
+        </a>
 
-</div>						
+        <button type="submit" class="btn btn-primary btn-round btn-just-icon freqGeralDesktop" rel="tooltip" title="Frequência Geral">
+          <i class="material-icons">qr_code_2</i>
+        </button>
 
-
+        <a href="{{URL}}/frequencias/{{idAula}}/edit/mobile" class="btn btn-primary btn-round btn-just-icon freqGeralMobile" rel="tooltip" title="Frequência Mobile">
+          <i class="material-icons">qr_code_2</i>
+        </a>
+      </div>
+    </div>
+  </section>
 </form>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

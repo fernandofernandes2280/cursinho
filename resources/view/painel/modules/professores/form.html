@@ -1,195 +1,122 @@
-
-
-<form  method="post">
-	<div class="row">
-			<div class="col-md-3 " >
-			<h5>{{title}} </h5>
-		</div>
-		<div class="col-md-5 " >
-			{{statusMessage}}
-		</div>
-
-
-	<div class="col-md-4 text-right form-actions">
-	 <button class="btn btn-facebook btn-round btn-just-icon" type="submit" rel="tooltip" title="Salvar">
-	<i class="material-icons">save</i>
-     </button>
-
-		 <!-- Aciona modal novoCPF -->
-			<button type="button" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfProfessor">
-			  <i class="material-icons">person_add</i>
-			</button>
-
-		<a href="{{URL}}/professores" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
-			<i class="material-icons">reply</i>
-		</a>
-	</div>
-</div>
-
-<br>
-
-
-		<div class="form-row  ">
-		    <div class="colfoto mb-1 mr-2 pt-fotoProf text-center ">
-			<a href="{{URL}}/professores/photo/{{id}}" style="{{ponteiro}}">
-					<img style="background-color: #fff;; border-radius: 10%" {{hiddenFoto}} title="Carregar nova foto" class="img-fluid" alt="Foto" rel="tooltip" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" style="cursor:pointer">
-				</a>
-		    </div>
-
-    <div class="col-md-10 mb-2">
-
-        <div class="form-row">
-		<div class="col-nomeProf mb-2">
-		<label for="nome">Nome</label>
-		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required  />
-
-		</div>
-		<div class="col-cep mb-2">
-			      <label for="cep">Cep</label>
-			      <input type="text" class="form-control-pessoal" data-action="{{URL}}/delete" data-id="3" id="cep" name="cep" value="{{cep}}">
-
-		</div>
-	</div>
-	<div class="form-row">
-		    <div class="col-endProf  ">
-		      <label for="endereco">Endereço</label>
-		      <small class="text-muted"> logradouro (rua, avenida, ..) + número</small>
-		      <input type="text" class="form-control-pessoal" id="endereco" name="endereco" value="{{endereco}}"  >
-		    </div>
-
-		    <div class="col-md-3">
-		      <label for="bairro">Bairro</label>
-		       <select class="custom-select" id="bairro" name="bairro" required>
-			        {{optionBairros}}
-			   </select>
-			 </div>
-				<div class="col-md-2">
-			      <label for="cidade">Cidade</label>
-			      <input type="text" class="form-control-pessoal" id="cidade" name="cidade" value="{{cidade}}" >
-			    </div>
-				    <div class="col-md-1">
-					<label for="uf">UF</label>
-					<input type="text" class="form-control-pessoal" id="uf" name="uf" value="{{uf}}" >
-				</div>
-	</div>
-
-
+<form method="post" class="professor-form">
+  <div class="row professor-form-header">
+    <div class="col-md-3">
+      <h5>{{title}}</h5>
+    </div>
+    <div class="col-md-5">
+      {{statusMessage}}
     </div>
 
+    <div class="col-md-4 text-right form-actions">
+      <button class="btn btn-facebook btn-round btn-just-icon" type="submit" rel="tooltip" title="Salvar">
+        <i class="material-icons">save</i>
+      </button>
+      <button type="button" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfProfessor">
+        <i class="material-icons">person_add</i>
+      </button>
+      <a href="{{URL}}/professores" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
+        <i class="material-icons">reply</i>
+      </a>
+    </div>
+  </div>
 
+  <div class="professor-form-body">
+    <div class="professor-fields-grid">
+      <div class="professor-photo-box">
+        <a href="{{URL}}/professores/photo/{{id}}" style="{{ponteiro}}">
+          <img {{hiddenFoto}} title="Carregar nova foto" alt="Foto" rel="tooltip" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}">
+        </a>
+      </div>
 
-		  </div>
+      <div class="professor-field professor-field-nome">
+        <label for="nome">Nome</label>
+        <input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required>
+      </div>
+      <div class="professor-field professor-field-cep">
+        <label for="cep">Cep</label>
+        <input type="text" class="form-control-pessoal" data-action="{{URL}}/delete" data-id="3" id="cep" name="cep" value="{{cep}}">
+      </div>
 
+      <div class="professor-field professor-field-endereco">
+        <label for="endereco">Endereço</label>
+        <small class="text-muted">logradouro (rua, avenida, ..) + número</small>
+        <input type="text" class="form-control-pessoal" id="endereco" name="endereco" value="{{endereco}}">
+      </div>
+      <div class="professor-field professor-span-3">
+        <label for="bairro">Bairro</label>
+        <select class="custom-select" id="bairro" name="bairro" required>
+          {{optionBairros}}
+        </select>
+      </div>
+      <div class="professor-field professor-span-2">
+        <label for="cidade">Cidade</label>
+        <input type="text" class="form-control-pessoal" id="cidade" name="cidade" value="{{cidade}}">
+      </div>
+      <div class="professor-field professor-span-1">
+        <label for="uf">UF</label>
+        <input type="text" class="form-control-pessoal" id="uf" name="uf" value="{{uf}}">
+      </div>
 
-		  <div class="form-row">
+      <div class="professor-field professor-span-3">
+        <label for="funcao">Função</label>
+        <input type="text" class="form-control-pessoal" id="funcao" name="funcao" value="{{funcao}}" required>
+      </div>
+      <div class="professor-field professor-span-2">
+        <label for="dataNasc">Data Nascimento</label>
+        <input type="date" class="form-control-pessoal" id="dataNasc" name="dataNasc" value="{{dataNasc}}" required>
+      </div>
+      <div class="professor-field professor-span-2">
+        <label for="cpf">CPF:</label>
+        <input class="form-control-pessoal cpfProfessor mascara-cpf" required type="text" id="cpf" value="{{cpf}}" name="cpf">
+      </div>
+      <div class="professor-field professor-span-3">
+        <label for="fone">Telefone</label>
+        <small class="text-muted">(ddd) + seu número</small>
+        <input type="text" class="form-control-pessoal mascara-telefone" id="fone" name="fone" value="{{fone}}" maxlength="11">
+      </div>
+      <div class="professor-field professor-span-2">
+        <label for="status">Status</label>
+        <select class="custom-select" id="status" name="status" required>
+          {{optionStatus}}
+        </select>
+      </div>
 
-				  <div class="col-funcao mb-2">
-				      <label for="funcao">Função</label>
-				      <input type="text" class="form-control-pessoal" id="funcao" name="funcao" value="{{funcao}}" required >
-					</div>
-					<div class="col-data mb-2">
-				      <label for="dataNasc">Data Nascimento</label>
-				      <input type="date" class="form-control-pessoal" id="dataNasc" name="dataNasc" value="{{dataNasc}}" required>
-					</div>
-
-				    <div class="col-cpf mb-2">
-						<label for="cpf">CPF:</label>
-		                <input class="form-control-pessoal cpfProfessor mascara-cpf" required type="text" id="cpf" value="{{cpf}}" name="cpf" />
-				    </div>
-
-				    <div class="col-md-3 mb-2">
-				      <label for="fone1">Telefone</label>
-				      <small class="text-muted"> (ddd) + seu número</small>
-				      <input type="text" class="form-control-pessoal mascara-telefone" id="fone" name="fone" value="{{fone}}" maxlength="11">
-				    </div>
-				     <script>
-					$('#fone').keyup(function() {
-						  $(this).val(this.value.replace(/\D/g, ''));
-						});
-				      </script>
-
-				    <div class="col-md-2 mb-2">
-				      <label for="status">Status</label>
-				          <select class="custom-select" id="status" name="status" required>
-					        {{optionStatus}}
-					   </select>
-				    </div>
-
-		   </div>
-
-		   <div class="form-row">
-
-
-
-				    <div class="col-md-12 mb-2">
-						<label>Email</label>
-						<input type="email" name="email" class="form-control-pessoal" value="{{email}}" required>
-				</div>
-
-			</div>
-
-		</form>
-
-		<form method="get" {{adicionarDisciplina}}>
-		<div class="form-row">
-				<div class="col-md-6">
-			      <label for="bairro">Adicionar Disciplina</label>
-			       <select class="custom-select" id="disciplina" name="disciplina" required>
-			       <option></option>
-				        {{optionDisciplinas}}
-				   </select>
-			    </div>
-			    <div class="col-md-4 mt-4 form-actions form-actions-start">
-
-					<button type="submit" class="btn btn-primary btn-round btn-just-icon" rel="tooltip" title="Adicionar">
-					<i class="material-icons">add_circle_outline</i>
-					</button>
-
-			    </div>
-		</div>
-		<div class="row">
-			<div class="col-md-6 " >
-					  <div class="table-responsive">
-						<table class="table table-striped">
-
-							<thead class=" text-light text-center">
-
-							</thead>
-							<tbody >
-
-								{{itensDisciplina}}
-
-							</tbody>
-
-						</table>
-					 </div>
-			</div>
-		</div>
-
+      <div class="professor-field professor-span-12">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" class="form-control-pessoal" value="{{email}}" required>
+      </div>
+    </div>
+  </div>
 </form>
 
+<form method="get" class="professor-disciplina-form" {{adicionarDisciplina}}>
+  <div class="professor-disciplina-grid">
+    <div class="professor-field professor-disciplina-select">
+      <label for="disciplina">Adicionar Disciplina</label>
+      <select class="custom-select" id="disciplina" name="disciplina" required>
+        <option></option>
+        {{optionDisciplinas}}
+      </select>
+    </div>
+    <div class="professor-field form-actions form-actions-start">
+      <button type="submit" class="btn btn-primary btn-round btn-just-icon" rel="tooltip" title="Adicionar">
+        <i class="material-icons">add_circle_outline</i>
+      </button>
+    </div>
+  </div>
 
+  <div class="table-responsive list-table-wrap professor-disciplina-table">
+    <table class="table table-striped list-table">
+      <thead></thead>
+      <tbody>
+        {{itensDisciplina}}
+      </tbody>
+    </table>
+  </div>
+</form>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<script>
+  $('#fone').keyup(function() {
+    $(this).val(this.value.replace(/\D/g, ''));
+  });
+</script>

@@ -23,83 +23,40 @@ class Professor extends Page{
 	//esconde busca rápida de prontuário no navBar (''->exibe  'hidden'->esconde)
 	private static $buscaRapidaPront = 'hidden';
 	
-	//Método responsavel por obter a rendereizacao dos pacientes para a página
-	private static function getProfessoresItems($request, &$obPagination){
-		
-		
-		
+	//Método responsavel por obter a rendereizacao dos professores para a página
+	private static function getProfessoresItems($request){
 		$resultados = '';
-		
-		//Pagina Atual
-		$queryParams = $request->getQueryParams();
-		$paginaAtual = $queryParams['page'] ?? 1;
-		
-		
-		//Armazena valor busca pelo nome do paciente
-		$nome = $queryParams['nome'] ?? '';
-		
-		//Filtro Status
-		$filtroStatus = $queryParams['status'] ?? '';
-		//Filtro recebe apenas os valores possíveis(s ou n) caso contrário recebe vazio.
-		$filtroStatus = in_array($filtroStatus, ['1','0']) ? $filtroStatus : '';
-		
-		//Condições SQL
-		$condicoes = [
-				
-				strlen((string)$nome) ? 'nome LIKE "%'.str_replace(' ', '%', $nome).'%"' : null,
-				strlen((string)$filtroStatus) ? 'status = "'.$filtroStatus.'" ' : null,
-		];
-		
-		//Remove posições vazias
-		$condicoes = array_filter($condicoes);
-		
-		//cláusula where
-		$where = implode(' AND ', $condicoes);
-		
-	
-		//Quantidade total de registros
-		// $quantidadeTotal = EntityPaciente::getPacientes($where, null,null,'COUNT(*) as qtd')->fetchObject()->qtd;
-		
-		self::$qtdTotal = EntityProfessor::getProfessores($where, null,null,'COUNT(*) as qtd')->fetchObject()->qtd;
-		
-		//Instancia de paginação
-		$obPagination = new Pagination(self::$qtdTotal,$paginaAtual,5);
-		#############################################
-		
-		
-		//Verifica se existe pesquisa, se sim, ordena pelo ulltimo pac cadastrado, se nao, ordena pelo Prontuário
-		$order = 'id' ;
-		
-		
-		
-		//Obtem os pacientes
-		$results = EntityProfessor::getProfessores($where, $order, $obPagination->getLimit());
-		
-		
-		
+
+		self::$qtdTotal = EntityProfessor::getProfessores(null, null, null, 'COUNT(*) as qtd')->fetchObject()->qtd;
+		$order = 'id DESC';
+		$results = EntityProfessor::getProfessores(null, $order);
+
 		$resultadoDisciplinas = '';
 		//Renderiza
 		while ($obProfessor = $results -> fetchObject(EntityProfessor::class)) {
 		    
 		    $resultsDisciplina = EntityDisciplinaProfessor::getDisciplinasProfessor('idProfessor = '.$obProfessor->id);
 		    while ($obDisciplina = $resultsDisciplina -> fetchObject(EntityDisciplinaProfessor::class)) {
-		        $resultadoDisciplinas .= ''.@EntityDisciplina::getDisciplinaById($obDisciplina->idDisciplina)->nome.', ';
+		        $obDisciplinaAtual = EntityDisciplina::getDisciplinaById($obDisciplina->idDisciplina);
+		        if ($obDisciplinaAtual instanceof EntityDisciplina) {
+		            $resultadoDisciplinas .= $obDisciplinaAtual->nome.', ';
+		        }
 		    }
 			 
 		    $reload = rand();
-			//View de pacientes
-			$resultados .= View::render('painel/modules/professores/item',[
-			
-			//muda cor do texto do status para azul(ativo) ou vermelho(inativo)
-			    $obProfessor->status == 1 ? $cor = 'bg-gradient-success' : $cor = 'bg-gradient-danger',
+		    $obStatus = $obProfessor->status !== null && $obProfessor->status !== '' ? EntityStatus::getStatusById((int)$obProfessor->status) : null;
+		    $cor = $obProfessor->status == 1 ? 'bg-gradient-success' : 'bg-gradient-danger';
+		    $foto = strlen((string)$obProfessor->foto) ? $obProfessor->foto : 'profile.png';
 
+			//View de professores
+			$resultados .= View::render('painel/modules/professores/item',[
 			    'nome' => $obProfessor->nome,
 			    'cpf' =>Funcoes::mask($obProfessor->cpf, '###.###.###-##') ,
-			    'status' =>EntityStatus::getStatusById($obProfessor->status)->nome,
+			    'status' => $obStatus ? $obStatus->nome : 'Sem status',
 			    'id' => $obProfessor->id,
 			    'cor' => $cor,
 			    'email' => $obProfessor->email,
-			    'foto' => $obProfessor->foto.'?var='.$reload,
+			    'foto' => $foto.'?var='.$reload,
 			    'disciplinas' => rtrim($resultadoDisciplinas,', '),
 			    'visivelDeleteProfessor' => permissaoExcluirProfessor,
 			]);
@@ -119,48 +76,11 @@ class Professor extends Page{
 	
 	//Método responsavel por renderizar a view de Listagem de Pacientes
 	public static function getProfessores($request){
-		$selectedAtivo = '';
-		$selectedInativo = '';
-		$selectedAtIn = '';
-		$selectedAd = '';
-		$selectedTm = '';
-		$selectedAdTm = '';
-		//Recebe os parâmetros da requisição
-		$queryParams = $request->getQueryParams();
-
-	//	var_dump('ola');exit;
-
-		if (isset($queryParams['tipo'])) {
-			if($queryParams['tipo'] == 'TM')$selectedTm = 'selected';
-					else if($queryParams['tipo'] == 'AD') $selectedAd = 'selected';
-					else $selectedAdTm = 'selected';
-		}
-		
-		if (isset($queryParams['status'])) {
-			if($queryParams['status'] == '1')$selectedAtivo = 'selected';
-			else if($queryParams['status'] == '0') $selectedInativo = 'selected';
-			else $selectedAtIn = 'selected';
-		}
-		
-		//esconde busca rápida de prontuário no navBar
-		$hidden = '';
 		//Conteúdo da Home
 		$content = View::render('painel/modules/professores/index',[
 				'title' => 'Professores > Pesquisa',
-				'itens' => self::getProfessoresItems($request,$obPagination),
-				'pagination' => parent::getPagination($request, $obPagination),
+				'itens' => self::getProfessoresItems($request),
 				'statusMessage' => Funcoes::getStatus($request),
-				'nome' =>  $queryParams['nome'] ?? '',
-				'pront' =>  $queryParams['pront'] ?? '',
-				'totalPacientes' => self::$qtdTotal,
-				'selectedAtivo' =>  $selectedAtivo,
-				'selectedInativo' =>  $selectedInativo,
-				'selectedAdTm' => $selectedAdTm,
-				'selectedAd' =>  $selectedAd,
-				'selectedTm' =>  $selectedTm,
-				'selectedAtIn' => $selectedAtIn,
-				
-				
 		]);
 		
 		//Retorna a página completa

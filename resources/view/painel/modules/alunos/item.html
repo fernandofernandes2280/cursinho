@@ -1,19 +1,18 @@
 <tr>
-  <td class="alunos-matricula">{{matricula}}</td>
-  <td>
-    <a href="{{URL}}/alunos/{{id}}/edit" class="student-cell" rel="tooltip" title="Visualizar">
-      <img src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="student-avatar" alt="foto">
-      <span class="student-name-pill {{cor}}">{{nome}}</span>
-    </a>
+  <td class="alunos-matricula" data-label="Matrícula">{{matricula}}</td>
+  <td class="student-name-column" data-label="Nome">
+    <div class="student-cell">
+      <button type="button" class="student-photo-button" data-toggle="modal" data-target="#modalStudentPhoto" data-photo-src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" rel="tooltip" title="Ampliar foto">
+        <img src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="student-avatar" alt="Foto de {{nome}}">
+      </button>
+      <a href="{{URL}}/alunos/{{id}}/edit" class="student-name-link" rel="tooltip" title="Editar aluno">{{nome}}</a>
+    </div>
   </td>
-  <td class="text-center"><span>{{turma}}</span></td>
-  <td class="text-center"><span>{{cpf}}</span></td>
-  <td class="text-center"><span>{{autor}}</span></td>
-  <td>
+  <td class="text-center" data-label="Turma"><span>{{turma}}</span></td>
+  <td class="text-center" data-label="CPF"><span>{{cpf}}</span></td>
+  <td class="text-center" data-label="Status"><span class="student-status-pill {{statusCor}}">{{status}}</span></td>
+  <td data-label="Ações">
     <div class="row-actions">
-      <a href="{{URL}}/alunos/{{id}}/edit" class="table-action" rel="tooltip" title="Visualizar">
-        <i class="material-icons">visibility</i>
-      </a>
       <a href="{{URL}}/alunos/{{id}}/delete" class="table-action table-action-danger" rel="tooltip" title="Excluir" {{visivelDeleteAluno}}>
         <i class="material-icons">delete</i>
       </a>

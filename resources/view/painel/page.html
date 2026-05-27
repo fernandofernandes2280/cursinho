@@ -11,8 +11,9 @@
   <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
   <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="{{URL}}/resources/css/tailwind-dashboard.css?v=25" rel="stylesheet">
+  <link href="{{URL}}/resources/css/tailwind-dashboard.css?v=46" rel="stylesheet">
 
   <script src="{{URL}}/resources/assets/js/core/jquery.min.js"></script>
   <script src="{{URL}}/resources/js/photo/webcam.min.js"></script>
@@ -103,12 +104,29 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade student-photo-modal" id="modalStudentPhoto" tabindex="-1" aria-labelledby="modalStudentPhotoLabel" aria-hidden="true">
+      <div class="modal-dialog student-photo-dialog">
+        <div class="modal-content student-photo-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalStudentPhotoLabel">Foto do aluno</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body student-photo-body">
+            <img id="studentPhotoPreview" class="student-photo-preview" src="" alt="Foto ampliada do aluno">
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="{{URL}}/resources/js/jquery.mask.js"></script>
   <script src="{{URL}}/resources/js/pages.js"></script>
   <script src="{{URL}}/resources/js/jquery.plugin.html2canvas.js"></script>
   <script src="{{URL}}/resources/js/html2canvas.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var storageKey = 'painelSidebarCollapsed';
@@ -177,6 +195,17 @@
         var modalTrigger = event.target.closest('[data-toggle="modal"][data-target]');
         if (modalTrigger) {
           event.preventDefault();
+          if (modalTrigger.getAttribute('data-target') === '#modalStudentPhoto') {
+            var photoPreview = document.getElementById('studentPhotoPreview');
+            var photoTitle = document.getElementById('modalStudentPhotoLabel');
+            var nameLink = modalTrigger.closest('.student-cell') ? modalTrigger.closest('.student-cell').querySelector('.student-name-link') : null;
+            var title = nameLink ? nameLink.textContent.trim() : 'Foto do aluno';
+            if (photoPreview) {
+              photoPreview.src = modalTrigger.getAttribute('data-photo-src') || '';
+              photoPreview.alt = 'Foto de ' + title;
+            }
+            if (photoTitle) photoTitle.textContent = title;
+          }
           openModal(modalTrigger.getAttribute('data-target'));
           return;
         }
@@ -228,6 +257,61 @@
           }
         });
       });
+
+      var datatablesSimple = document.getElementById('datatablesSimple');
+      if (datatablesSimple && window.simpleDatatables) {
+        var caption = datatablesSimple.getAttribute('data-caption') || 'Listagem de registros';
+        var singular = datatablesSimple.getAttribute('data-entity-singular') || 'registro';
+        var plural = datatablesSimple.getAttribute('data-entity-plural') || 'registros';
+        var placeholder = datatablesSimple.getAttribute('data-placeholder') || 'Buscar...';
+        var searchTitle = datatablesSimple.getAttribute('data-search-title') || 'Buscar na listagem';
+        var configuredColumns = [];
+        var htmlColumns = [
+          datatablesSimple.getAttribute('data-name-column'),
+          datatablesSimple.getAttribute('data-status-column')
+        ];
+        htmlColumns.forEach(function(columnIndex) {
+          var index = parseInt(columnIndex, 10);
+          if (!Number.isNaN(index)) {
+            configuredColumns.push({
+              select: index,
+              type: 'html'
+            });
+          }
+        });
+        var actionsColumn = parseInt(datatablesSimple.getAttribute('data-actions-column'), 10);
+        if (!Number.isNaN(actionsColumn)) {
+          configuredColumns.push({
+            select: actionsColumn,
+            type: 'html',
+            sortable: false,
+            searchable: false
+          });
+        }
+
+        new simpleDatatables.DataTable(datatablesSimple, {
+          caption: caption,
+          perPage: 10,
+          perPageSelect: [10, 25, 50, ['Todos', 0]],
+          searchable: true,
+          fixedHeight: false,
+          firstLast: true,
+          firstText: 'Primeira',
+          lastText: 'Última',
+          nextText: 'Próxima',
+          prevText: 'Anterior',
+          columns: configuredColumns,
+          labels: {
+            placeholder: placeholder,
+            searchTitle: searchTitle,
+            pageTitle: 'Página {page}',
+            perPage: 'registros por página',
+            noRows: 'Nenhum ' + singular + ' encontrado',
+            noResults: 'Nenhum resultado corresponde à sua busca',
+            info: 'Mostrando {start} a {end} de {rows} ' + plural
+          }
+        });
+      }
     });
   </script>
 </body>

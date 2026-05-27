@@ -520,10 +520,6 @@ textarea {
   white-space: nowrap;
 }
 
-.navbar-form {
-  margin-left: auto;
-}
-
 .painel-navbar-actions {
   display: flex;
   align-items: center;
@@ -1054,10 +1050,152 @@ body.sidebar-collapsed .navbar {
   color: #344767;
 }
 
-.alunos-table-wrap {
+.alunos-table-wrap,
+.alunos-datatable-panel {
   border: 1px solid var(--line);
   border-radius: .45rem;
   background: #fff;
+}
+
+.alunos-datatable-panel {
+  overflow: hidden;
+}
+
+.alunos-datatable-panel .datatable-top,
+.alunos-datatable-panel .datatable-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem 1rem;
+  padding: .85rem .75rem;
+  color: #344767;
+}
+
+.alunos-datatable-panel .datatable-top {
+  flex-direction: row-reverse;
+  border-bottom: 1px solid var(--line);
+}
+
+.alunos-datatable-panel .datatable-search {
+  flex: 1 1 28rem;
+  max-width: 42rem;
+  margin-right: auto;
+}
+
+.alunos-datatable-panel .datatable-bottom {
+  border-top: 1px solid var(--line);
+}
+
+.alunos-datatable-panel .datatable-dropdown label {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin: 0;
+  color: #344767;
+  font-weight: 700;
+}
+
+.alunos-datatable-panel .datatable-selector,
+.alunos-datatable-panel .datatable-input {
+  min-height: 2.45rem;
+  border: 1px solid #cbd5e1;
+  border-radius: .45rem;
+  background: #fff;
+  color: var(--text);
+  outline: none;
+}
+
+.alunos-datatable-panel .datatable-selector {
+  padding: .45rem 2rem .45rem .65rem;
+}
+
+.alunos-datatable-panel .datatable-input {
+  width: 100%;
+  padding: .5rem .7rem;
+}
+
+.alunos-datatable-panel .datatable-input:focus,
+.alunos-datatable-panel .datatable-selector:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .14);
+}
+
+.alunos-datatable-panel .datatable-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.alunos-datatable-panel .datatable-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+}
+
+.alunos-datatable-panel .datatable-table caption {
+  padding: .85rem .9rem;
+  border-bottom: 1px solid var(--line);
+  caption-side: top;
+  color: #24324a;
+  font-weight: 800;
+  text-align: left;
+}
+
+.alunos-datatable-panel .datatable-sorter,
+.alunos-datatable-panel .datatable-filter {
+  color: inherit;
+  font-weight: inherit;
+}
+
+.alunos-datatable-panel .datatable-info {
+  color: #24324a;
+  font-weight: 700;
+}
+
+.alunos-datatable-panel .datatable-pagination ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.alunos-datatable-panel .datatable-pagination a,
+.alunos-datatable-panel .datatable-pagination button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: .35rem .65rem;
+  border: 1px solid #c084fc;
+  border-radius: .4rem;
+  background: #faf5ff;
+  color: #7e22ce;
+  font-weight: 700;
+}
+
+.alunos-datatable-panel .datatable-pagination a:hover,
+.alunos-datatable-panel .datatable-pagination button:hover {
+  border-color: #a855f7;
+  background: #f3e8ff;
+  color: #6b21a8;
+}
+
+.alunos-datatable-panel .datatable-pagination .datatable-active a,
+.alunos-datatable-panel .datatable-pagination .datatable-active button,
+.alunos-datatable-panel .datatable-pagination .active a,
+.alunos-datatable-panel .datatable-pagination .active button {
+  border-color: #9333ea;
+  background: #9333ea;
+  color: #fff;
+}
+
+.alunos-datatable-panel .datatable-pagination .datatable-disabled a,
+.alunos-datatable-panel .datatable-pagination .datatable-disabled button {
+  opacity: .45;
+  pointer-events: none;
 }
 
 .alunos-table {
@@ -1100,6 +1238,20 @@ body.sidebar-collapsed .navbar {
   min-width: 18rem;
 }
 
+.student-photo-button {
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  border-radius: .5rem;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.student-photo-button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .28);
+  outline-offset: 2px;
+}
+
 .student-avatar {
   display: block;
   width: 2.45rem;
@@ -1111,12 +1263,42 @@ body.sidebar-collapsed .navbar {
   object-position: center;
 }
 
-.student-name-pill {
+.student-name-link {
+  color: #24324a;
+  font-size: .95rem;
+  font-weight: 800;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.student-name-link:hover,
+.student-name-link:focus {
+  color: #1d4ed8;
+}
+
+.student-name-stack {
+  display: flex;
+  flex-direction: column;
+  gap: .18rem;
+  min-width: 0;
+}
+
+.student-subtitle {
+  max-width: 22rem;
+  color: #64748b;
+  font-size: .78rem;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.student-status-pill,
+.professor-status-pill {
   display: inline-flex;
   align-items: center;
   max-width: 24rem;
-  min-height: 1.9rem;
-  padding: .35rem .8rem;
+  min-height: 1.65rem;
+  padding: .28rem .6rem;
   border-radius: .5rem;
   color: #fff !important;
   font-size: .86rem;
@@ -1129,20 +1311,35 @@ body.sidebar-collapsed .navbar {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16);
 }
 
-.student-name-pill.bg-gradient-success {
-  background: var(--status-active);
-}
-
-.student-name-pill.bg-gradient-danger {
-  background: var(--status-inactive);
-}
-
-body.light-edition .alunos-table td .student-name-pill {
+body.light-edition .alunos-table td .student-status-pill,
+body.light-edition .alunos-table td .professor-status-pill,
+body.light-edition .datatable-table td .student-status-pill,
+body.light-edition .datatable-table td .professor-status-pill {
   color: #fff !important;
 }
 
-body.light-edition .list-table td .student-name-pill {
-  color: #fff !important;
+.student-photo-dialog {
+  width: min(100%, 27.2rem);
+}
+
+.student-photo-content {
+  background: #f8fafc;
+}
+
+.student-photo-body {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.student-photo-preview {
+  display: block;
+  width: min(80%, 22.4rem);
+  max-height: min(56vh, 27.2rem);
+  border-radius: .5rem;
+  background: #fff;
+  object-fit: contain;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, .18);
 }
 
 .row-actions {
@@ -1286,6 +1483,348 @@ form .btn.btn-just-icon .material-icons {
 
 .form-actions-start {
   justify-content: flex-start;
+}
+
+.aluno-form,
+.professor-form,
+.user-form {
+  width: 100%;
+}
+
+.aluno-form-header,
+.professor-form-header,
+.user-form-header {
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.aluno-form-body,
+.professor-form-body,
+.user-form-body {
+  width: 100%;
+}
+
+.aluno-photo-box,
+.professor-photo-box,
+.user-photo-box {
+  display: flex;
+  justify-content: flex-start;
+  grid-column: 1 / span 2;
+  grid-row: 1 / span 2;
+  min-width: 0;
+  padding-top: .35rem;
+}
+
+.aluno-photo-box a,
+.professor-photo-box a,
+.user-photo-box a {
+  display: block;
+  width: min(100%, 10rem);
+}
+
+.aluno-photo-box img,
+.professor-photo-box img,
+.user-photo-box img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: .5rem;
+  background: #fff;
+  object-fit: cover;
+  object-position: center;
+}
+
+.aluno-fields-grid,
+.professor-fields-grid,
+.user-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: .85rem 1rem;
+  align-items: end;
+  min-width: 0;
+  width: 100%;
+}
+
+.aluno-form-meta,
+.aluno-field,
+.professor-field,
+.user-field {
+  min-width: 0;
+}
+
+.aluno-form-meta {
+  grid-column: 3 / -1;
+  min-height: 1.5rem;
+}
+
+.aluno-form-meta label {
+  margin-right: .35rem;
+}
+
+.aluno-matricula-value {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.aluno-field label,
+.professor-field label,
+.user-field label {
+  margin-bottom: .4rem;
+  color: #344767;
+}
+
+.aluno-field .text-muted,
+.professor-field .text-muted,
+.user-field .text-muted {
+  margin-left: .25rem;
+  font-weight: 600;
+}
+
+.aluno-field .form-control-pessoal,
+.aluno-field .custom-select,
+.professor-field .form-control-pessoal,
+.professor-field .custom-select,
+.user-field .form-control-pessoal,
+.user-field .custom-select {
+  width: 100%;
+}
+
+.aluno-field-nome {
+  grid-column: 3 / span 7;
+}
+
+.aluno-field-cep {
+  grid-column: span 3;
+}
+
+.professor-field-nome {
+  grid-column: 3 / span 7;
+}
+
+.professor-field-cep {
+  grid-column: span 3;
+}
+
+.professor-field-endereco {
+  grid-column: 3 / span 4;
+}
+
+.user-field-nome {
+  grid-column: 3 / span 5;
+}
+
+.user-field-email {
+  grid-column: span 5;
+}
+
+.aluno-span-1 { grid-column: span 1; }
+.aluno-span-2 { grid-column: span 2; }
+.aluno-span-3 { grid-column: span 3; }
+.aluno-span-4 { grid-column: span 4; }
+.aluno-span-5 { grid-column: span 5; }
+.aluno-span-6 { grid-column: span 6; }
+.aluno-span-7 { grid-column: span 7; }
+.aluno-span-8 { grid-column: span 8; }
+.aluno-span-9 { grid-column: span 9; }
+.aluno-span-10 { grid-column: span 10; }
+.aluno-span-11 { grid-column: span 11; }
+.aluno-span-12 { grid-column: span 12; }
+
+.professor-span-1 { grid-column: span 1; }
+.professor-span-2 { grid-column: span 2; }
+.professor-span-3 { grid-column: span 3; }
+.professor-span-4 { grid-column: span 4; }
+.professor-span-5 { grid-column: span 5; }
+.professor-span-6 { grid-column: span 6; }
+.professor-span-7 { grid-column: span 7; }
+.professor-span-8 { grid-column: span 8; }
+.professor-span-9 { grid-column: span 9; }
+.professor-span-10 { grid-column: span 10; }
+.professor-span-11 { grid-column: span 11; }
+.professor-span-12 { grid-column: span 12; }
+
+.user-span-1 { grid-column: span 1; }
+.user-span-2 { grid-column: span 2; }
+.user-span-3 { grid-column: span 3; }
+.user-span-4 { grid-column: span 4; }
+.user-span-5 { grid-column: span 5; }
+.user-span-6 { grid-column: span 6; }
+.user-span-7 { grid-column: span 7; }
+.user-span-8 { grid-column: span 8; }
+.user-span-9 { grid-column: span 9; }
+.user-span-10 { grid-column: span 10; }
+.user-span-11 { grid-column: span 11; }
+.user-span-12 { grid-column: span 12; }
+
+.user-password-field {
+  position: relative;
+}
+
+.user-password-field .form-control-pessoal {
+  padding-right: 2.7rem;
+}
+
+.user-password-toggle {
+  position: absolute;
+  right: .8rem;
+  bottom: .55rem;
+  color: #64748b;
+  font-size: 1.45rem;
+  cursor: pointer;
+}
+
+.user-permissions {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: .45rem;
+  background: #fff;
+}
+
+.user-permissions > label {
+  margin-bottom: .75rem;
+  color: #344767;
+  font-weight: 800;
+}
+
+.user-permissions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: .65rem 1rem;
+}
+
+.user-permissions-grid label {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  margin: 0;
+  color: #344767;
+  font-size: .86rem;
+}
+
+.user-permissions-grid input {
+  width: 1rem;
+  height: 1rem;
+}
+
+.professor-disciplina-form {
+  margin-top: 1.25rem;
+}
+
+.professor-disciplina-grid {
+  display: grid;
+  grid-template-columns: minmax(14rem, 1fr) auto;
+  gap: .85rem 1rem;
+  align-items: end;
+  max-width: 44rem;
+}
+
+.professor-disciplina-table {
+  margin-top: 1rem;
+  max-width: 44rem;
+}
+
+.frequencia-edit-form {
+  width: 100%;
+}
+
+.frequencia-edit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.frequencia-edit-header h5 {
+  margin: 0;
+  color: #24324a;
+}
+
+.frequencia-launch-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 20rem);
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: .5rem;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, .08);
+}
+
+.frequencia-aula-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, var(--status-active), #15803d);
+  color: #fff;
+}
+
+.frequencia-aula-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: .5rem;
+  background: rgba(255, 255, 255, .18);
+}
+
+.frequencia-aula-icon .material-icons {
+  font-size: 1.9rem;
+}
+
+.frequencia-label {
+  display: block;
+  margin-bottom: .25rem;
+  font-size: .74rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.frequencia-aula-info .frequencia-label {
+  color: rgba(255, 255, 255, .85);
+}
+
+.frequencia-aula-info strong {
+  display: block;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.frequencia-launch-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: .65rem;
+  min-width: 14rem;
+  padding: 1.25rem;
+  border-left: 1px solid var(--line);
+  background: #f8fafc;
+}
+
+.frequencia-launch-actions .frequencia-label {
+  color: #344767;
+}
+
+.frequencia-launch-actions .form-actions {
+  gap: .65rem;
+}
+
+.frequencia-launch-actions .btn {
+  width: 3.25rem;
+  min-width: 3.25rem;
+  height: 3.25rem;
 }
 
 .list-filters {
@@ -1700,6 +2239,18 @@ h6 { font-size: .85rem; }
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .aluno-photo-box,
+  .professor-photo-box,
+  .user-photo-box {
+    align-items: flex-start;
+  }
+
+  .aluno-photo-box a,
+  .professor-photo-box a,
+  .user-photo-box a {
+    width: 8rem;
+  }
+
   .alunos-filters {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1773,12 +2324,99 @@ h6 { font-size: .85rem; }
     width: auto;
   }
 
-  .navbar-form {
-    width: min(48vw, 15rem);
-  }
-
   .content {
     padding-top: 5.5rem;
+  }
+
+  .aluno-form-header,
+  .professor-form-header,
+  .user-form-header {
+    gap: .5rem;
+  }
+
+  .aluno-fields-grid,
+  .professor-fields-grid,
+  .user-fields-grid,
+  .professor-disciplina-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .frequencia-edit-header {
+    align-items: center;
+  }
+
+  .frequencia-launch-card {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .frequencia-aula-info {
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .frequencia-launch-actions {
+    min-width: 0;
+    padding: 1rem;
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .aluno-photo-box,
+  .aluno-form-meta,
+  .aluno-field-nome,
+  .aluno-field-cep,
+  .professor-photo-box,
+  .professor-field-nome,
+  .professor-field-cep,
+  .professor-field-endereco,
+  .user-photo-box,
+  .user-field-nome,
+  .user-field-email,
+  .aluno-span-1,
+  .aluno-span-2,
+  .aluno-span-3,
+  .aluno-span-4,
+  .aluno-span-5,
+  .aluno-span-6,
+  .aluno-span-7,
+  .aluno-span-8,
+  .aluno-span-9,
+  .aluno-span-10,
+  .aluno-span-11,
+  .aluno-span-12,
+  .professor-span-1,
+  .professor-span-2,
+  .professor-span-3,
+  .professor-span-4,
+  .professor-span-5,
+  .professor-span-6,
+  .professor-span-7,
+  .professor-span-8,
+  .professor-span-9,
+  .professor-span-10,
+  .professor-span-11,
+  .professor-span-12,
+  .user-span-1,
+  .user-span-2,
+  .user-span-3,
+  .user-span-4,
+  .user-span-5,
+  .user-span-6,
+  .user-span-7,
+  .user-span-8,
+  .user-span-9,
+  .user-span-10,
+  .user-span-11,
+  .user-span-12 {
+    grid-column: 1 / -1;
+  }
+
+  .aluno-photo-box,
+  .professor-photo-box,
+  .user-photo-box {
+    justify-content: flex-start;
+    grid-row: auto;
   }
 
   .sidebar {
@@ -1847,6 +2485,12 @@ h6 { font-size: .85rem; }
 
   .alunos-toolbar {
     grid-template-columns: 1fr;
+    gap: .6rem;
+    margin-bottom: .25rem;
+  }
+
+  .alunos-panel {
+    padding-bottom: .75rem;
   }
 
   .list-toolbar {
@@ -1873,12 +2517,148 @@ h6 { font-size: .85rem; }
     grid-template-columns: 1fr;
   }
 
-  .alunos-table-wrap {
+  .student-photo-modal {
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: .75rem;
+  }
+
+  .student-photo-dialog {
+    width: 80%;
+    max-width: calc(100vw - 1.5rem);
+    margin: 0;
+  }
+
+  .student-photo-content {
+    max-width: 100%;
+  }
+
+  .student-photo-content .modal-header {
+    gap: .65rem;
+    padding: .75rem;
+  }
+
+  .student-photo-content .modal-title {
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    font-size: 1rem;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .student-photo-content .close {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: .45rem;
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+
+  .student-photo-content .close:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, .28);
+    outline-offset: 2px;
+  }
+
+  .student-photo-body {
+    padding: .75rem;
+  }
+
+  .student-photo-preview {
+    width: 80%;
+    max-height: calc(80vh - 6.4rem);
+    border-radius: .45rem;
+  }
+
+  .alunos-table-wrap,
+  .alunos-datatable-panel {
     margin-right: -.75rem;
     margin-left: -.75rem;
     border-right: 0;
     border-left: 0;
     border-radius: 0;
+  }
+
+  .alunos-datatable-panel .datatable-top,
+  .alunos-datatable-panel .datatable-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .65rem;
+    padding: .75rem .65rem;
+  }
+
+  .alunos-datatable-panel .datatable-search,
+  .alunos-datatable-panel .datatable-input {
+    flex-basis: auto;
+    max-width: none;
+    width: 100%;
+  }
+
+  .alunos-datatable-panel .datatable-dropdown,
+  .alunos-datatable-panel .datatable-dropdown label {
+    width: 100%;
+  }
+
+  .alunos-datatable-panel .datatable-selector {
+    width: min(10rem, 100%);
+  }
+
+  .alunos-datatable-panel .datatable-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .alunos-datatable-panel .datatable-table {
+    display: table;
+    min-width: 56rem;
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  .alunos-datatable-panel .datatable-table thead {
+    display: table-header-group;
+  }
+
+  .alunos-datatable-panel .datatable-table tbody {
+    display: table-row-group;
+  }
+
+  .alunos-datatable-panel .datatable-table tr {
+    display: table-row;
+  }
+
+  .alunos-datatable-panel .datatable-table th,
+  .alunos-datatable-panel .datatable-table td {
+    display: table-cell;
+    width: auto;
+    white-space: nowrap;
+  }
+
+  .alunos-datatable-panel .datatable-table td {
+    padding: .65rem .75rem;
+    border-bottom: 1px solid var(--line);
+    text-align: left !important;
+  }
+
+  .alunos-datatable-panel .datatable-table td::before {
+    display: none;
+    content: none;
+  }
+
+  .alunos-datatable-panel .datatable-table td.student-name-column {
+    min-width: 18rem;
+    white-space: normal;
+  }
+
+  .alunos-datatable-panel .datatable-table .student-cell {
+    min-width: 18rem;
   }
 
   .list-table-wrap {
@@ -1890,10 +2670,10 @@ h6 { font-size: .85rem; }
   }
 
   .student-cell {
-    min-width: 15rem;
+    width: auto;
   }
 
-  .student-name-pill {
+  .student-status-pill {
     max-width: 12rem;
   }
 
@@ -1988,6 +2768,6 @@ h6 { font-size: .85rem; }
   }
 
   .freqGeralMobile {
-    display: inline;
+    display: inline-flex;
   }
 }

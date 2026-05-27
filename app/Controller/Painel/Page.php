@@ -372,13 +372,13 @@ class Page{
 	}
 	
 	//Método resposanvel por renderizar a view do painel com conteúdos dinâmicos
-	public static function getPanel($title, $content, $currentModule, $hidden){
+	public static function getPanel($title, $content, $currentModule, $hidden = null){
 		
 		//Renderiza a view do painel
 		$contentPanel = View::render('painel/panel',[
 				'menu' => self::getMenu($currentModule),
 				'content' => $content,
-				'navBar'=>View::render('painel/navBar',['hidden' => $hidden]),
+				'navBar'=>View::render('painel/navBar',[]),
 				'footer'=>View::render('painel/modules/pacientes/footer',[]),
 
 
@@ -391,13 +391,13 @@ class Page{
 	
 	
 	//Método resposanvel por renderizar a view do Dashoboard
-	public static function getPanelDashboard($title, $content, $currentModule, $hidden){
+	public static function getPanelDashboard($title, $content, $currentModule, $hidden = null){
 	    
 	    //Renderiza a view do painel
 	    $contentPanel = View::render('painel/panelDashboard',[
 	        'menu' => self::getMenu($currentModule),
 	        'content' => $content,
-	        'navBar'=>View::render('painel/navBar',['hidden' => $hidden]),
+	        'navBar'=>View::render('painel/navBar',[]),
 	        'footer'=>View::render('painel/modules/pacientes/footer',[]),
 	        
 	        

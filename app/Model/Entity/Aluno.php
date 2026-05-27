@@ -8,65 +8,86 @@ class Aluno extends Generica{
 
 	const FOTO_PADRAO = 'profile.png';
 
+	/** @var string|null */
 	public $endereco;
 
+	/** @var string|null */
 	public $numero;
 	
 	//bairro do aluno
+	/** @var string|null */
 	public $bairro;
 	
 	//cidade do aluno
+	/** @var string|null */
 	public $cidade;
 	
 	//cep do aluno
+	/** @var string|null */
 	public $cep;
 	
-	//unidade federal do aluno
+	//unidade federal do aluno	
+	/** @var string|null */
 	public $uf;
 	
-	//telefone do aluno
+	//telefone do aluno 
+	/** @var string|null */
 	public $fone;
 	
 	//data de nascimento do aluno
+	/** @var string|null */
 	public $dataNasc;
 	
 	//data de cadastro do aluno
+	/** @var string|null */
 	public $dataCad;
 	
 	//cidade de nascimento do aluno
+	/** @var string|null */
 	public $naturalidade;
 	
 	//nome da mãe do aluno
+	/** @var string|null */
 	public $mae;
 	
 	//escolaridade do aluno
+	/** @var string|null */
 	public $escolaridade;
 	
 	//sexo do aluno
+	/** @var string|null */
 	public $sexo;
 	
 	//caminho da foto do aluno
+	/** @var string|null */
 	public $foto;
 	
 	//estado civil do aluno
+	/** @var string|null */
 	public $estadoCivil;
 	
 	//observações do aluno
+	/** @var string|null */
 	public $obs;
 	
 	//status do aluno (ativo/inativo)
+	/** @var string|null */
 	public $status;
 	
 	//CPF do aluno
+	/** @var string|null */
 	public $cpf;
 	
 	//Turma do aluno
+	/** @var string|null */
 	public $turma;
 	
 	//Matrícula do aluno
+	/** @var string|null */
 	public $matricula;
 	
 	//Autor do cadastrio
+	/** @var string|null */
 	public $autor;
 
 	public function getFoto($cache = true){
@@ -135,7 +156,7 @@ class Aluno extends Generica{
 		$this->id = (new Database('alunos'))->insert([
 				'nome' => $this->nome,
 				'endereco'=>$this->endereco,
-		    'numero'=>$this->numero,
+		    	'numero'=>$this->numero,
 				'bairro'=>$this->bairro,
 				'cidade'=>$this->cidade,
 				'uf'=>$this->uf,
@@ -168,7 +189,7 @@ class Aluno extends Generica{
 		return (new Database('alunos'))->update('id = '.$this->id,[
 				'nome' => $this->nome,
 				'endereco'=>$this->endereco,
-		    'numero'=>$this->numero,
+		    	'numero'=>$this->numero,
 				'bairro'=>$this->bairro,
 				'cidade'=>$this->cidade,
 				'uf'=>$this->uf,
@@ -263,7 +284,7 @@ class Aluno extends Generica{
 	    //Inicia a Sessão
 	    Funcoes::init();
 	    
-	    //destri a sessao
+	    //destroi a sessao
 	    unset($_SESSION['aluno']['novo']);
 	    
 	    //sucesso
