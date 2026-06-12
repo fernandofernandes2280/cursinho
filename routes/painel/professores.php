@@ -7,7 +7,8 @@ use \App\Controller\Painel;
 $obRouter->get('/professores',[
 
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:professores.view'
     ],
     
     
@@ -20,7 +21,8 @@ $obRouter->get('/professores',[
 $obRouter->post('/professores',[
 
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:professores.view'
     ],
     
     
@@ -34,7 +36,8 @@ $obRouter->post('/professores',[
 $obRouter->get('/professores/{id}/edit',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:professores.update'
     ],
     
     
@@ -47,7 +50,8 @@ $obRouter->get('/professores/{id}/edit',[
 $obRouter->post('/professores/{id}/edit',[
    
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:professores.update'
     ],
     
     
@@ -61,7 +65,8 @@ $obRouter->post('/professores/{id}/edit',[
 $obRouter->get('/professores/new',[
 
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:professores.create'
     ],
     
     
@@ -74,7 +79,8 @@ $obRouter->get('/professores/new',[
 $obRouter->post('/professores/new',[
 
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:professores.create'
     ],
     
     
@@ -88,7 +94,8 @@ $obRouter->post('/professores/new',[
 $obRouter->get('/professores/{id}/delete',[
 
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:professores.delete'
     ],
     
     
@@ -101,7 +108,8 @@ $obRouter->get('/professores/{id}/delete',[
 $obRouter->post('/professores/{id}/delete',[
 
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:professores.delete'
     ],
     
     
@@ -114,7 +122,8 @@ $obRouter->post('/professores/{id}/delete',[
 $obRouter->get('/professores/photo/{id}',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:professores.photo'
     ],
     
     
@@ -127,7 +136,8 @@ $obRouter->get('/professores/photo/{id}',[
 $obRouter->post('/professores/photo/{id}',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:professores.photo'
     ],
     
     
@@ -135,6 +145,5 @@ $obRouter->post('/professores/photo/{id}',[
         return new Response(200, Painel\Professor::setPhotoProfessor($request));
     }
     ]);
-
 
 

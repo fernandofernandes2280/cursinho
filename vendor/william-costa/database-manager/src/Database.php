@@ -118,6 +118,18 @@ class Database{
     }
   }
 
+  public function beginTransaction(){
+    return $this->connection->beginTransaction();
+  }
+
+  public function commit(){
+    return $this->connection->commit();
+  }
+
+  public function rollBack(){
+    return $this->connection->rollBack();
+  }
+
   /**
    * Método responsável por inserir dados no banco
    * @param  array $values [ field => value ]

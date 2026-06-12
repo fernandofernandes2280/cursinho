@@ -7,7 +7,8 @@ use \App\Controller\Painel;
 //ROTA de Listage de escolaridades
 $obRouter->get('/escolaridades',[
 		'middlewares' => [
-				'require-user-login'
+				'require-user-login',
+				'can:disciplinas.view'
 		],
 		
 		
@@ -20,7 +21,8 @@ $obRouter->get('/escolaridades',[
 //ROTA de Cadastro de um Novo de escolaridades
 $obRouter->get('/escolaridades/new',[
 		'middlewares' => [
-				'require-user-login'
+				'require-user-login',
+				'can:disciplinas.create'
 		],
 		
 		
@@ -32,7 +34,8 @@ $obRouter->get('/escolaridades/new',[
 //ROTA de Cadastro de um Novo de escolaridades (POST)
 $obRouter->post('/escolaridades/new',[
 		'middlewares' => [
-				'require-user-login'
+				'require-user-login',
+				'can:disciplinas.create'
 		],
 		
 		
@@ -44,7 +47,8 @@ $obRouter->post('/escolaridades/new',[
 //ROTA de Edição de um de escolaridades
 $obRouter->get('/escolaridades/{id}/edit',[
 		'middlewares' => [
-				'require-user-login'
+				'require-user-login',
+				'can:disciplinas.update'
 		],
 		
 		
@@ -56,7 +60,8 @@ $obRouter->get('/escolaridades/{id}/edit',[
 //ROTA de Edição de um de escolaridades (POST)
 $obRouter->post('/escolaridades/{id}/edit',[
 		'middlewares' => [
-				'require-user-login'
+				'require-user-login',
+				'can:disciplinas.update'
 		],
 		
 		
@@ -68,7 +73,8 @@ $obRouter->post('/escolaridades/{id}/edit',[
 //ROTA de Exclusão de um de escolaridades
 $obRouter->get('/escolaridades/{id}/delete',[
 		'middlewares' => [
-				'require-user-login'
+				'require-user-login',
+				'can:disciplinas.delete'
 		],
 		
 		
@@ -79,7 +85,8 @@ $obRouter->get('/escolaridades/{id}/delete',[
 //ROTA de Exclusão de um de escolaridades (POST)
 $obRouter->post('/escolaridades/{id}/delete',[
 		'middlewares' => [
-				'require-user-login'
+				'require-user-login',
+				'can:disciplinas.delete'
 		],
 		
 		
@@ -87,4 +94,3 @@ $obRouter->post('/escolaridades/{id}/delete',[
 			return new Response(200, Painel\Escolaridade::setDeleteEscolaridade($request,$id));
 		}
 		]);
-

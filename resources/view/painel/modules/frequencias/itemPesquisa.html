@@ -1,15 +1,20 @@
 <tr>
-	<td class="text-center">{{matricula}}</td>
-	<td>
-		<div class="student-cell">
-		  <img src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="student-avatar" alt="foto">
-		  <a href="{{URL}}/alunos/{{idAluno}}/edit" class="student-name-pill {{cor}}" rel="tooltip" title="Visualizar">{{nome}}</a>
-		  <a href="{{URL}}/frequencias/{{idAula}}/edit/individual/{{idAluno}}" class="table-action" rel="tooltip" title="Selecionar para Presença">
-			<i class="material-icons">how_to_reg</i>
-		  </a>
-		</div>
-
-	</td>
-	<td class="text-center"><span>{{turma}}</span></td>
-	<td class="text-center"><span>{{cpf}}</span></td>
-	</tr>
+  <td class="text-center">{{matricula}}</td>
+  <td>
+    <div class="student-cell">
+      <button type="button" class="student-photo-button" data-toggle="modal" data-target="#modalStudentPhoto" data-photo-src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" data-photo-title="{{nome}}" rel="tooltip" title="Ampliar foto">
+        <img src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="student-avatar" alt="Foto de {{nome}}">
+      </button>
+      <span class="student-name-stack">
+        <span class="student-name-link" rel="tooltip" title="Aluno">{{nome}}</span>
+        <span class="student-subtitle">Selecionar para frequência individual</span>
+      </span>
+      <a href="{{URL}}/frequencias/{{idAula}}/edit/individual/{{idAluno}}" class="table-action" rel="tooltip" title="Selecionar para presença">
+        <i class="material-icons">how_to_reg</i>
+      </a>
+    </div>
+  </td>
+  <td class="text-center"><span class="student-status-pill {{statusCor}}">{{status}}</span></td>
+  <td class="text-center"><span>{{turma}}</span></td>
+  <td class="text-center"><span>{{cpf}}</span></td>
+</tr>

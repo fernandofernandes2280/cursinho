@@ -8,7 +8,8 @@ use \App\Controller\Painel;
 $obRouter->get('/frequencias',[
 
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:frequencias.view'
     ],
     
     
@@ -22,7 +23,8 @@ $obRouter->get('/frequencias',[
 $obRouter->get('/frequencias/{id}/edit',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:frequencias.update'
     ],
     
     
@@ -36,7 +38,8 @@ $obRouter->get('/frequencias/{id}/edit',[
 $obRouter->get('/frequencias/{id}/edit/individual',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:frequencias.update'
     ],
     
     
@@ -50,7 +53,8 @@ $obRouter->get('/frequencias/{id}/edit/individual',[
 $obRouter->get('/frequencias/{idAula}/edit/pesqAluno',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:frequencias.update'
     ],
     
     
@@ -65,7 +69,8 @@ $obRouter->get('/frequencias/{idAula}/edit/pesqAluno',[
 $obRouter->get('/frequencias/{id}/edit/individual/{idAluno}',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:frequencias.update'
     ],
     
     
@@ -78,7 +83,8 @@ $obRouter->get('/frequencias/{id}/edit/individual/{idAluno}',[
 $obRouter->post('/frequencias/{id}/edit/individual/{idAluno}',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:frequencias.confirm'
     ],
     
     
@@ -92,7 +98,8 @@ $obRouter->post('/frequencias/{id}/edit/individual/{idAluno}',[
 $obRouter->post('/frequencias/{id}/edit',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:frequencias.qrcode'
     ],
     
     
@@ -106,7 +113,8 @@ $obRouter->post('/frequencias/{id}/edit',[
 $obRouter->get('/frequencias/{id}/edit/mobile',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:frequencias.qrcode'
     ],
     
     
@@ -120,7 +128,8 @@ $obRouter->get('/frequencias/{id}/edit/mobile',[
 $obRouter->get('/frequencias/{id}/reactive/{idMatricula}',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:frequencias.confirm'
     ],
     
     
@@ -133,7 +142,8 @@ $obRouter->get('/frequencias/{id}/reactive/{idMatricula}',[
 $obRouter->get('/frequencias/{id}/reactiveMobile/{idMatricula}',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:frequencias.confirm'
     ],
     
     
@@ -141,4 +151,3 @@ $obRouter->get('/frequencias/{id}/reactiveMobile/{idMatricula}',[
         return new Response(200, Painel\Frequencia::setFrequenciaReactiveMobileAluno($request,$id,$idMatricula));
     }
     ]);
-

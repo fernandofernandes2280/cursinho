@@ -5,6 +5,7 @@ use \Closure;
 use \Exception;
 use \ReflectionFunction;
 use \App\Http\Middleware\Queue as MiddlewareQueue;
+use \App\Utils\Funcoes;
 class Router{
 
 		/**
@@ -205,9 +206,41 @@ class Router{
 	public function getCurrentUrl(){
 		return $this->url.$this->getUri();
 	}
+
+	private function pullStatusFromRoute($route){
+		$parts = parse_url($route);
+
+		if(!isset($parts['query'])){
+			return $route;
+		}
+
+		parse_str($parts['query'], $queryParams);
+
+		if(!isset($queryParams['statusMessage'])){
+			return $route;
+		}
+
+		Funcoes::flashStatus($queryParams['statusMessage'], $queryParams);
+		unset($queryParams['statusMessage']);
+
+		$cleanRoute = $parts['path'] ?? '';
+		$queryString = http_build_query($queryParams);
+
+		if($queryString !== ''){
+			$cleanRoute .= '?'.$queryString;
+		}
+
+		if(isset($parts['fragment'])){
+			$cleanRoute .= '#'.$parts['fragment'];
+		}
+
+		return $cleanRoute;
+	}
 	
 	//Método responsavel por redirecionar a URL
 	public function redirect($route) {
+		$route = $this->pullStatusFromRoute($route);
+
 		//URL
 		$url = $this->url.$route;
 		

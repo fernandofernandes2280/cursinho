@@ -7,7 +7,8 @@ use \App\Controller\Painel;
 //ROTA de get para Inativar Aluno
 $obRouter->get('/inativar',[
 		'middlewares' => [
-				'require-user-login'
+				'require-user-login',
+				'can:alunos.inativar'
 		],
 		
 		
@@ -20,7 +21,8 @@ $obRouter->get('/inativar',[
 //ROTA post para Inativar Aluno
 $obRouter->post('/inativar',[
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:alunos.inativar'
     ],
     
     

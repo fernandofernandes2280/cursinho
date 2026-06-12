@@ -5,7 +5,6 @@ namespace App\Controller\Painel;
 use \App\Utils\View;
 use \App\Model\Entity\Disciplina as EntityDisciplina;
 use \App\Utils\Funcoes;
-use \WilliamCosta\DatabaseManager\Pagination;
 
 class Disciplina extends Page{
 	
@@ -13,22 +12,12 @@ class Disciplina extends Page{
 	private static $hidden = 'hidden';
 	
 	//Método responsavel por obter a renderização da listagem dos registros do banco
-	private static function getDisciplinaItems($request, &$obPagination){
+	private static function getDisciplinaItems($request){
 
 		$itens = '';
 		
-		//Quantidade total de registros
-		$quantidadetotal =  EntityDisciplina::getDisciplinas(null, null, null, 'COUNT(*) as qtd')->fetchObject()->qtd;
-		
-		//Página atual
-		$queryParams = $request->getQueryParams();
-		$paginaAtual = $queryParams['page'] ?? 1;
-		
-		//Instancia de paginacao
-		$obPagination = new Pagination($quantidadetotal,$paginaAtual,5);
-		
 		//Resultados da Página
-		$results = EntityDisciplina::getDisciplinas(null, 'nome',$obPagination->getLimit());
+		$results = EntityDisciplina::getDisciplinas(null, 'nome');
 		
 		//Renderiza o item
 		while ($ob = $results->fetchObject(EntityDisciplina::class)) {
@@ -55,8 +44,7 @@ class Disciplina extends Page{
 		//Conteúdo da Home
 		$content = View::render('painel/modules/disciplinas/index',[
 		        'title' => 'Disciplinas',
-				'itens' => self::getDisciplinaItems($request, $obPagination),
-				'pagination' => parent::getPagination($request, $obPagination),
+				'itens' => self::getDisciplinaItems($request),
 				'statusMessage' => self::getStatus($request),
 
 		]);

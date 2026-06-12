@@ -9,8 +9,6 @@ use \App\Model\Entity\Professor as EntityProfessor;
 use \App\Model\Entity\Disciplina as EntityDisciplina;
 use \App\Model\Entity\Status as EntityStatus;
 use \App\Model\Entity\DisciplinaProfessor as EntityDisciplinaProfessor;
-use \WilliamCosta\DatabaseManager\Pagination;
-use Dompdf\Dompdf;
 use Bissolli\ValidadorCpfCnpj\CPF;
 use \App\Controller\File\Upload as Upload;
 use \App\Controller\Painel\Resize;
@@ -22,6 +20,58 @@ class Professor extends Page{
 	private static $qtdTotal ;
 	//esconde busca rápida de prontuário no navBar (''->exibe  'hidden'->esconde)
 	private static $buscaRapidaPront = 'hidden';
+
+	private static function formatDate($date){
+		$timestamp = strlen((string)$date) ? strtotime($date) : false;
+
+		return $timestamp ? date('d/m/Y', $timestamp) : '';
+	}
+
+	private static function formatPhone($phone){
+		$digits = preg_replace('/\D+/', '', (string)$phone);
+
+		if(strlen($digits) === 11){
+			return Funcoes::mask($digits, '(##) #####-####');
+		}
+
+		return trim((string)$phone);
+	}
+
+	private static function getProfessorEndereco($obProfessor){
+		$obBairro = (int)$obProfessor->bairro > 0 ? EntityBairro::getBairroById((int)$obProfessor->bairro) : null;
+		$endereco = trim((string)$obProfessor->endereco);
+		$bairro = $obBairro ? trim((string)$obBairro->nome) : '';
+		$cidadeUf = trim(trim((string)$obProfessor->cidade).' / '.trim((string)$obProfessor->uf), ' /');
+		$partes = [];
+
+		if($endereco !== ''){
+			$partes[] = $endereco;
+		}
+
+		if($bairro !== ''){
+			$partes[] = $bairro;
+		}
+
+		if($cidadeUf !== ''){
+			$partes[] = $cidadeUf;
+		}
+
+		return implode(' - ', $partes);
+	}
+
+	private static function getProfessorDisciplinas($idProfessor){
+		$disciplinas = [];
+		$resultsDisciplina = EntityDisciplinaProfessor::getDisciplinasProfessor('idProfessor = '.(int)$idProfessor);
+
+		while ($obDisciplina = $resultsDisciplina -> fetchObject(EntityDisciplinaProfessor::class)) {
+			$obDisciplinaAtual = EntityDisciplina::getDisciplinaById($obDisciplina->idDisciplina);
+			if ($obDisciplinaAtual instanceof EntityDisciplina) {
+				$disciplinas[] = $obDisciplinaAtual->nome;
+			}
+		}
+
+		return implode(', ', $disciplinas);
+	}
 	
 	//Método responsavel por obter a rendereizacao dos professores para a página
 	private static function getProfessoresItems($request){
@@ -31,21 +81,13 @@ class Professor extends Page{
 		$order = 'id DESC';
 		$results = EntityProfessor::getProfessores(null, $order);
 
-		$resultadoDisciplinas = '';
 		//Renderiza
 		while ($obProfessor = $results -> fetchObject(EntityProfessor::class)) {
-		    
-		    $resultsDisciplina = EntityDisciplinaProfessor::getDisciplinasProfessor('idProfessor = '.$obProfessor->id);
-		    while ($obDisciplina = $resultsDisciplina -> fetchObject(EntityDisciplinaProfessor::class)) {
-		        $obDisciplinaAtual = EntityDisciplina::getDisciplinaById($obDisciplina->idDisciplina);
-		        if ($obDisciplinaAtual instanceof EntityDisciplina) {
-		            $resultadoDisciplinas .= $obDisciplinaAtual->nome.', ';
-		        }
-		    }
 			 
 		    $reload = rand();
 		    $obStatus = $obProfessor->status !== null && $obProfessor->status !== '' ? EntityStatus::getStatusById((int)$obProfessor->status) : null;
 		    $cor = $obProfessor->status == 1 ? 'bg-gradient-success' : 'bg-gradient-danger';
+		    $statusToken = $obProfessor->status == 1 ? 'ativo' : 'inativo';
 		    $foto = strlen((string)$obProfessor->foto) ? $obProfessor->foto : 'profile.png';
 
 			//View de professores
@@ -55,12 +97,17 @@ class Professor extends Page{
 			    'status' => $obStatus ? $obStatus->nome : 'Sem status',
 			    'id' => $obProfessor->id,
 			    'cor' => $cor,
+			    'statusToken' => $statusToken,
 			    'email' => $obProfessor->email,
+			    'fone' => self::formatPhone($obProfessor->fone),
+			    'endereco' => self::getProfessorEndereco($obProfessor),
+			    'funcao' => $obProfessor->funcao,
+			    'dataNasc' => self::formatDate($obProfessor->dataNasc),
+			    'dataCad' => self::formatDate($obProfessor->dataCad ?? ''),
 			    'foto' => $foto.'?var='.$reload,
-			    'disciplinas' => rtrim($resultadoDisciplinas,', '),
+			    'disciplinas' => self::getProfessorDisciplinas($obProfessor->id),
 			    'visivelDeleteProfessor' => permissaoExcluirProfessor,
 			]);
-			$resultadoDisciplinas = '';
 		}
 	
 		//Grava o Log do usuário
@@ -97,9 +144,12 @@ class Professor extends Page{
 	    
 	    //QUERY PARAMS
 	    $queryParams = $request->getQueryParams();
+	    $old = Funcoes::pullOldInput('professor.novo');
+	    $statusMessage = $queryParams['statusMessage'] ?? '';
+	    $cpfProfessor = $queryParams['cpfProfessor'] ?? ($old['cpf'] ?? '');
 	    
 	    //instancia classe pra verificar CPF
-	    $validaCpf = new CPF($queryParams['cpfProfessor']);
+	    $validaCpf = new CPF($cpfProfessor);
 	    
 	    //verifica se é válido o cpf
 	    if (!$validaCpf->isValid()){
@@ -111,7 +161,7 @@ class Professor extends Page{
 	    //busca usuário pelo CPF sem a maskara
 	    $ob = EntityProfessor::getProfessorByCPF($validaCpf->getValue());
 	    //verifica se o cpf já está cadastrado
-	    if($ob instanceof EntityProfessor){
+	    if($ob instanceof EntityProfessor && !in_array($statusMessage, ['cpfDuplicated', 'cpfduplicated'])){
 	        $request->getRouter()->redirect('/professores?statusMessage=duplicad');
 	    }
 	    
@@ -120,23 +170,27 @@ class Professor extends Page{
 	    $content = View::render('painel/modules/professores/form',[
 	        
 	        'title' => 'Professor > Novo',
-	        'nome' => @$_SESSION['professor']['novo']['nome'] ?? '',
-	        'cep' => @$_SESSION['professor']['novo']['cep'] ??'',
-	        'endereco' => @$_SESSION['professor']['novo']['endereco'] ?? '',
+	        'id' => '',
+	        'nome' => $old['nome'] ?? '',
+	        'cep' => $old['cep'] ??'',
+	        'endereco' => $old['endereco'] ?? '',
 	        'statusMessage' => Funcoes::getStatus($request),
-	        'fone' => @$_SESSION['professor']['novo']['fone'] ??'',
-	        'cidade' => @$_SESSION['professor']['novo']['cidade'] ??'Santana',
-	        'uf' => @$_SESSION['professor']['novo']['uf'] ??'AP',
-	        'cpf' => @$_SESSION['professor']['novo']['cpf'] ?? @$validaCpf->getValue(),
-	        'funcao' => @$_SESSION['professor']['novo']['funcao'] ??'Professor',
-	        'dataNasc' => @$_SESSION['professor']['novo']['dataNasc'] ??'',
-	        'optionBairros' =>@$_SESSION['professor']['novo']['bairro'] ? EntityBairro::getSelectBairros($_SESSION['professor']['novo']['dataNasc']) : EntityBairro::getSelectBairros(null),
-	        'email' => @$_SESSION['professor']['novo']['email'] ??'',
+	        'fone' => ($old['fone'] ?? '') ?: '(00)00000-0000',
+	        'cidade' => $old['cidade'] ??'Santana',
+	        'uf' => $old['uf'] ??'AP',
+	        'cpf' => $old['cpf'] ?? $validaCpf->getValue(),
+	        'funcao' => $old['funcao'] ??'Professor',
+	        'dataNasc' => $old['dataNasc'] ??'',
+	        'optionBairros' => EntityBairro::getSelectBairros($old['bairro'] ?? null),
+	        'email' => $old['email'] ??'',
 	        'adicionarDisciplina' => 'hidden',
-	        'optionStatus' => @$_SESSION['professor']['novo']['status'] ? EntityStatus::getSelectStatus($_SESSION['professor']['novo']['status']) : EntityStatus::getSelectStatus(null),
+	        'optionStatus' => EntityStatus::getSelectStatus($old['status'] ?? null),
 	        'foto' => 'profile.png',
 	        'labelId' => 'hidden',
-	        'ponteiro' => 'pointer-events: none;'
+	        'ponteiro' => 'pointer-events: none;',
+	        'hiddenFoto' => '',
+	        'optionDisciplinas' => '',
+	        'itensDisciplina' => ''
 	        
 	    ]);
 	    
@@ -162,7 +216,10 @@ class Professor extends Page{
 	    $obProfessor = EntityProfessor::getProfessorByCPF($validaCpf->getValue());
 	    
 	    if($obProfessor instanceof EntityProfessor){
-	        $request->getRouter()->redirect('/professores/new?statusMessage=cpfDuplicated');
+	        $request->getRouter()->redirect('/professores/new?'.http_build_query([
+	            'cpfProfessor' => $validaCpf->getValue(),
+	            'statusMessage' => 'cpfDuplicated'
+	        ]));
 	    }
 	    
 	    
@@ -177,7 +234,7 @@ class Professor extends Page{
 	    $obProfessor->funcao = $postVars['funcao'];
 	    $obProfessor->dataNasc = implode("-",array_reverse(explode("/",$postVars['dataNasc'])));
 	    $obProfessor->cpf = $validaCpf->getValue(); //cpf sem formatação
-	    $obProfessor->fone = $postVars['fone'] ?? '';
+	    $obProfessor->fone = preg_replace('/\D+/', '', $postVars['fone'] ?? '');
 	    $obProfessor->status = $postVars['status'];
 	    $obProfessor->email = $postVars['email'];
 	    $obProfessor->cadastrar();
@@ -229,7 +286,7 @@ class Professor extends Page{
 	        'email' => $obProfessor->email,
 	        'escondeBotaoAcesso' => '',
 	        'readonly' => '',
-	        'itensDisciplina' => self::getProfessorDisciplinaItems($request, $obPagination, $obProfessor->id),
+	        'itensDisciplina' => self::getProfessorDisciplinaItems($obProfessor->id),
 	        'adicionarDisciplina' => '',
 	        'optionStatus' => EntityStatus::getSelectStatus($obProfessor->status),
 	        'foto' => $obProfessor->foto.'?var='.$reload,
@@ -288,7 +345,7 @@ class Professor extends Page{
 	    $obProfessor->funcao = Funcoes::convertePriMaiuscula($postVars['funcao']) ?? $obProfessor->funcao;
 	    $obProfessor->dataNasc = implode("-",array_reverse(explode("/",$postVars['dataNasc'])));
 	    $obProfessor->cpf = $validaCpf->getValue(); //cpf sem formatação
-	    $obProfessor->fone = str_replace('-', '', $postVars['fone']) ?? $obProfessor->fone;
+	    $obProfessor->fone = preg_replace('/\D+/', '', $postVars['fone'] ?? '') ?: $obProfessor->fone;
 	    $obProfessor->status = $postVars['status'] ?? $obProfessor->status;
 	    $obProfessor->email = $postVars['email'] ?? $obProfessor->email;
 	    $obProfessor->atualizar();
@@ -311,33 +368,21 @@ class Professor extends Page{
 	
 	
 	//Método responsavel por obter a rendereizacao as Disciplinas do professor
-	private static function getProfessorDisciplinaItems($request, &$obPagination, $id){
+	private static function getProfessorDisciplinaItems($id){
 	    $resultados = '';
-	    //Pagina Atual
-	    $queryParams = $request->getQueryParams();
-	    $paginaAtual = $queryParams['page'] ?? 1;
-	    
-	    //Quantidade total de registros
-	    // $quantidadeTotal = EntityPaciente::getPacientes($where, null,null,'COUNT(*) as qtd')->fetchObject()->qtd;
-	    $where = 'idProfessor = '.$id;
-	    self::$qtdTotal = EntityDisciplinaProfessor::getDisciplinasProfessor($where, null,null,'COUNT(*) as qtd')->fetchObject()->qtd;
-	    
-	    //Instancia de paginação
-	    $obPagination = new Pagination(self::$qtdTotal,$paginaAtual,5);
-	    #############################################
-	    
-	    //Verifica se existe pesquisa, se sim, ordena pelo ulltimo pac cadastrado, se nao, ordena pelo Prontuário
-	    $order = 'id' ;
-	    //Obtem os pacientes
-	    $results = EntityDisciplinaProfessor::getDisciplinasProfessor($where, $order, $obPagination->getLimit());
+	    $where = 'idProfessor = '.(int)$id;
+	    $order = 'id';
+	    $results = EntityDisciplinaProfessor::getDisciplinasProfessor($where, $order);
 	   
 	    //Renderiza
 	    while ($obProfessorDisciplina = $results -> fetchObject(EntityDisciplinaProfessor::class)) {
-	        
-	        //View de pacientes
+	        $obDisciplina = EntityDisciplina::getDisciplinaById((int)$obProfessorDisciplina->idDisciplina);
+	        if (!$obDisciplina instanceof EntityDisciplina) continue;
+
 	        $resultados .= View::render('painel/modules/professores/itemDisciplina',[
-	            'nome' =>EntityDisciplina::getDisciplinaById($obProfessorDisciplina->idDisciplina)->nome,
-	            'idDisciplina' => $obProfessorDisciplina->id,
+	            'nome' => $obDisciplina->nome,
+	            'idDisciplina' => $obProfessorDisciplina->idDisciplina,
+	            'idVinculo' => $obProfessorDisciplina->id,
 	            'idProfessor' =>$obProfessorDisciplina->idProfessor
 	        ]);
 	    }
@@ -474,13 +519,29 @@ class Professor extends Page{
 	    
 	    //Status
 	    if(!isset($queryParams['disciplina'])) return '';
+
+	    $id = (int)$id;
+	    $idDisciplina = (int)$queryParams['disciplina'];
+	    if($idDisciplina <= 0){
+	        $request->getRouter()->redirect('/professores/'.$id.'/edit');
+	    }
 	    
 	    //obtém o Disciplina do banco de dados
-	    $obDisciplina = EntityDisciplina::getDisciplinaById($queryParams['disciplina']);
+	    $obDisciplina = EntityDisciplina::getDisciplinaById($idDisciplina);
+	    if(!$obDisciplina instanceof EntityDisciplina){
+	        $request->getRouter()->redirect('/professores/'.$id.'/edit');
+	    }
+
+	    $where = 'idProfessor = '.$id.' AND idDisciplina = '.$idDisciplina;
+	    $obDisciplinaExistente = EntityDisciplinaProfessor::getDisciplinasProfessor($where, null, 1)->fetchObject(EntityDisciplinaProfessor::class);
+
+	    if($obDisciplinaExistente instanceof EntityDisciplinaProfessor){
+	        $request->getRouter()->redirect('/professores/'.$id.'/edit');
+	    }
 	    
 	    $obDisciplinaProfessor = new EntityDisciplinaProfessor();
 	    $obDisciplinaProfessor->idProfessor = $id;
-	    $obDisciplinaProfessor->idDisciplina = $obDisciplina->id;
+	    $obDisciplinaProfessor->idDisciplina = $idDisciplina;
 	    $obDisciplinaProfessor->cadastrar();
 	    $request->getRouter()->redirect('/professores/'.$id.'/edit');
 	}
@@ -494,8 +555,10 @@ class Professor extends Page{
 	    if(!isset($queryParams['removeDisciplina'])) return '';
 	    
 	    //obtém o Disciplina do banco de dados
-	    $obDisciplinaProfessor = EntityDisciplinaProfessor::getDisciplinaProfessorById($queryParams['removeDisciplina']);
-	    $obDisciplinaProfessor->excluir();
+	    $obDisciplinaProfessor = EntityDisciplinaProfessor::getDisciplinaProfessorById((int)$queryParams['removeDisciplina']);
+	    if($obDisciplinaProfessor instanceof EntityDisciplinaProfessor && (int)$obDisciplinaProfessor->idProfessor === (int)$id){
+	        $obDisciplinaProfessor->excluir();
+	    }
 	    $request->getRouter()->redirect('/professores/'.$id.'/edit');
 	}
 	

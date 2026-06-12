@@ -9,7 +9,8 @@ use \App\Controller\Pages;
 $obRouter->get('',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:dashboard.view'
     ],
     
     function ($request){
@@ -22,7 +23,8 @@ $obRouter->get('',[
 $obRouter->get('/alunos',[
 
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:alunos.view'
     ],
     
     function ($request){
@@ -34,7 +36,8 @@ $obRouter->get('/alunos',[
 $obRouter->post('/alunos',[
 
  'middlewares' => [
-    'require-user-login'
+    'require-user-login',
+    'can:alunos.view'
  ],
  
     
@@ -50,7 +53,8 @@ $obRouter->post('/alunos',[
 $obRouter->get('/alunos/photo/{id}',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:alunos.photo'
     ],
     
     function ($request,$id){
@@ -62,7 +66,8 @@ $obRouter->get('/alunos/photo/{id}',[
 $obRouter->post('/alunos/photo/{id}',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:alunos.photo'
     ],
     
     function ($request){
@@ -76,7 +81,8 @@ $obRouter->post('/alunos/photo/{id}',[
 $obRouter->get('/alunos/{id}/edit',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:alunos.update'
     ],
     
     function ($request,$id){
@@ -88,11 +94,25 @@ $obRouter->get('/alunos/{id}/edit',[
 $obRouter->post('/alunos/{id}/edit',[
    
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:alunos.update'
     ],
     
     function ($request,$id){
         return new Response(200, Painel\Aluno::setEditAluno($request,$id));
+    }
+    ]);
+
+//ROTA de Exclusão de documento do aluno
+$obRouter->post('/alunos/{id}/documentos/{documento}/delete',[
+
+    'middlewares' => [
+        'require-user-login',
+        'can:alunos.update'
+    ],
+
+    function ($request,$id,$documento){
+        return new Response(200, Painel\Aluno::setDeleteDocumentoAluno($request,$id,$documento));
     }
     ]);
 
@@ -101,7 +121,8 @@ $obRouter->post('/alunos/{id}/edit',[
 $obRouter->get('/alunos/new',[
 
  'middlewares' => [
-    'require-user-login'
+    'require-user-login',
+    'can:alunos.create'
  ],
 
     
@@ -114,7 +135,8 @@ $obRouter->get('/alunos/new',[
 $obRouter->post('/alunos/new',[
     
  'middlewares' => [
-    'require-user-login'
+    'require-user-login',
+    'can:alunos.create'
  ],
     
     function ($request){
@@ -127,7 +149,8 @@ $obRouter->post('/alunos/new',[
 $obRouter->get('/alunos/{id}/delete',[
 
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:alunos.delete'
     ],
     
     function ($request,$id){
@@ -139,7 +162,8 @@ $obRouter->get('/alunos/{id}/delete',[
 $obRouter->post('/alunos/{id}/delete',[
 
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:alunos.delete'
     ],
     
     function ($request,$id){
@@ -151,7 +175,8 @@ $obRouter->post('/alunos/{id}/delete',[
 $obRouter->get('/alunos/{id}/carteira',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:alunos.carteira'
     ],
     
     function ($request,$id){
@@ -163,7 +188,8 @@ $obRouter->get('/alunos/{id}/carteira',[
 $obRouter->post('/alunos/{id}/carteira',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:alunos.carteira'
     ],
     
     function ($request,$id){

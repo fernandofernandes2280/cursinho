@@ -1,45 +1,59 @@
-<form method="post" action="" class="frequencia-edit-form">
+<form method="post" action="" class="work-form-page frequencia-choice-page">
   <input type="hidden" value="{{idAula}}" name="idAula">
 
-  <div class="frequencia-edit-header">
-    <h5>{{title}}</h5>
-
-    <div class="form-actions">
-      <a href="{{URL}}/frequencias" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
-        <i class="material-icons">reply</i>
-      </a>
+  <header class="form-shell-header">
+    <div class="form-shell-title">
+      <h5>{{title}}</h5>
     </div>
-  </div>
+    <a href="{{URL}}/frequencias" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
+      <i class="material-icons">reply</i>
+    </a>
+  </header>
 
-  <section class="frequencia-launch-card">
-    <div class="frequencia-aula-info">
-      <span class="frequencia-aula-icon">
-        <i class="material-icons">event_available</i>
-      </span>
-      <div>
-        <span class="frequencia-label">Aula</span>
-        <strong>{{aula}}</strong>
-      </div>
+  <section class="frequencia-context-card">
+    <span>Aula selecionada</span>
+    <strong>{{aula}}</strong>
+  </section>
+
+  <section class="form-shell-card">
+    <div class="frequencia-choice-header">
+      <span>Tipo de frequência</span>
+      <h6>Escolha como deseja registrar</h6>
     </div>
 
-    <div class="frequencia-launch-actions">
-      <span class="frequencia-label">Lançar Frequência</span>
-      <div class="form-actions form-actions-start">
-        <a href="{{URL}}/frequencias/{{idAula}}/edit/individual" class="btn btn-facebook btn-round btn-just-icon" rel="tooltip" title="Frequência Individual">
+    <div class="frequencia-choice-grid">
+      <a href="{{URL}}/frequencias/{{idAula}}/edit/pesqAluno" class="frequencia-choice-card" rel="tooltip" title="Frequência Individual">
+        <span class="frequencia-choice-icon">
           <i class="material-icons">person</i>
-        </a>
+        </span>
+        <span class="frequencia-choice-text">
+          <span>Individual</span>
+          <strong>Buscar aluno</strong>
+          <small>Selecione por matrícula ou nome.</small>
+        </span>
+      </a>
 
-        <button type="submit" class="btn btn-primary btn-round btn-just-icon freqGeralDesktop" rel="tooltip" title="Frequência Geral">
+      <button type="submit" class="frequencia-choice-card frequencia-choice-button max-lg:!hidden" rel="tooltip" title="Frequência por QR Code">
+        <span class="frequencia-choice-icon">
           <i class="material-icons">qr_code_2</i>
-        </button>
+        </span>
+        <span class="frequencia-choice-text">
+          <span>QR Code</span>
+          <strong>Abrir leitura</strong>
+          <small>Registro geral por leitura do código.</small>
+        </span>
+      </button>
 
-        <a href="{{URL}}/frequencias/{{idAula}}/edit/mobile" class="btn btn-primary btn-round btn-just-icon freqGeralMobile" rel="tooltip" title="Frequência Mobile">
+      <a href="{{URL}}/frequencias/{{idAula}}/edit/mobile" class="frequencia-choice-card lg:!hidden" rel="tooltip" title="Frequência por QR Code">
+        <span class="frequencia-choice-icon">
           <i class="material-icons">qr_code_2</i>
-        </a>
-      </div>
+        </span>
+        <span class="frequencia-choice-text">
+          <span>QR Code</span>
+          <strong>Abrir leitura</strong>
+          <small>Registro geral por leitura do código.</small>
+        </span>
+      </a>
     </div>
   </section>
 </form>
-
-
-

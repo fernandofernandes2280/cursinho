@@ -72,7 +72,7 @@
       <div class="professor-field professor-span-3">
         <label for="fone">Telefone</label>
         <small class="text-muted">(ddd) + seu número</small>
-        <input type="text" class="form-control-pessoal mascara-telefone" id="fone" name="fone" value="{{fone}}" maxlength="11">
+        <input type="text" class="form-control-pessoal mascara-telefone" id="fone" name="fone" value="{{fone}}" maxlength="14">
       </div>
       <div class="professor-field professor-span-2">
         <label for="status">Status</label>
@@ -90,33 +90,264 @@
 </form>
 
 <form method="get" class="professor-disciplina-form" {{adicionarDisciplina}}>
-  <div class="professor-disciplina-grid">
-    <div class="professor-field professor-disciplina-select">
-      <label for="disciplina">Adicionar Disciplina</label>
-      <select class="custom-select" id="disciplina" name="disciplina" required>
-        <option></option>
-        {{optionDisciplinas}}
-      </select>
-    </div>
-    <div class="professor-field form-actions form-actions-start">
-      <button type="submit" class="btn btn-primary btn-round btn-just-icon" rel="tooltip" title="Adicionar">
-        <i class="material-icons">add_circle_outline</i>
+  <div class="professor-disciplina-panel">
+    <label for="disciplinaSearch">Adicionar Disciplina</label>
+    <input type="hidden" id="disciplina" name="disciplina" value="">
+    <select class="professor-discipline-source" id="disciplinaOptions" hidden aria-hidden="true">
+      <option></option>
+      {{optionDisciplinas}}
+    </select>
+
+    <div class="professor-discipline-tools">
+      <div class="professor-discipline-search" data-professor-discipline-search>
+        <input type="search" class="professor-discipline-search-input" id="disciplinaSearch" placeholder="Selecione a disciplina:" autocomplete="off">
+        <button type="button" class="professor-discipline-toggle" aria-label="Abrir lista de disciplinas">
+          <i class="material-icons">expand_more</i>
+        </button>
+        <div class="professor-discipline-results" data-discipline-results></div>
+      </div>
+      <button type="button" class="btn btn-alert btn-round btn-just-icon professor-discipline-quick-add" data-toggle="modal" data-target="#modalDisciplinaRapidaProfessor" rel="tooltip" title="Cadastrar disciplina rapidamente">
+        <i class="material-icons">add</i>
       </button>
     </div>
-  </div>
 
-  <div class="table-responsive list-table-wrap professor-disciplina-table">
-    <table class="table table-striped list-table">
-      <thead></thead>
-      <tbody>
-        {{itensDisciplina}}
-      </tbody>
-    </table>
+    <div class="professor-discipline-chips" aria-label="Disciplinas selecionadas">
+      {{itensDisciplina}}
+    </div>
   </div>
 </form>
 
+<div class="modal fade" id="modalDisciplinaRapidaProfessor" tabindex="-1" aria-labelledby="modalDisciplinaRapidaProfessorLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalDisciplinaRapidaProfessorLabel">Cadastrar disciplina</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="quick-discipline-professor">Professor: <strong>{{nome}}</strong></p>
+        <label for="nomeDisciplinaRapidaProfessor">Nome da disciplina</label>
+        <input type="text" class="form-control-pessoal" id="nomeDisciplinaRapidaProfessor" autocomplete="off">
+        <small class="quick-discipline-feedback" id="disciplinaRapidaProfessorFeedback"></small>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-round btn-just-icon" data-dismiss="modal" rel="tooltip" title="Fechar">
+          <i class="material-icons">close</i>
+        </button>
+        <button type="button" class="btn btn-success btn-round btn-just-icon" id="salvarDisciplinaRapidaProfessor" rel="tooltip" title="Salvar">
+          <i class="material-icons">save</i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-  $('#fone').keyup(function() {
-    $(this).val(this.value.replace(/\D/g, ''));
+  document.addEventListener('DOMContentLoaded', function () {
+    var form = document.querySelector('.professor-disciplina-form');
+    if (!form || form.hasAttribute('hidden')) return;
+
+    var source = document.getElementById('disciplinaOptions');
+    var hiddenInput = document.getElementById('disciplina');
+    var searchWrap = document.querySelector('[data-professor-discipline-search]');
+    var searchInput = document.getElementById('disciplinaSearch');
+    var resultsBox = document.querySelector('[data-discipline-results]');
+    var toggleButton = searchWrap ? searchWrap.querySelector('.professor-discipline-toggle') : null;
+    var chipsBox = document.querySelector('.professor-discipline-chips');
+    var quickModal = document.getElementById('modalDisciplinaRapidaProfessor');
+    var quickName = document.getElementById('nomeDisciplinaRapidaProfessor');
+    var quickFeedback = document.getElementById('disciplinaRapidaProfessorFeedback');
+    var quickSave = document.getElementById('salvarDisciplinaRapidaProfessor');
+    var idProfessor = '{{id}}';
+
+    if (!source || !hiddenInput || !searchWrap || !searchInput || !resultsBox || !chipsBox) return;
+
+    var selectedIds = Array.prototype.slice.call(document.querySelectorAll('.professor-discipline-chip[data-disciplina-id]'))
+      .map(function (chip) {
+        return chip.getAttribute('data-disciplina-id');
+      });
+
+    var options = buildOptions();
+
+    function buildOptions() {
+      return Array.prototype.slice.call(source.options)
+        .filter(function (option) {
+          return option.value && selectedIds.indexOf(option.value) === -1;
+        })
+        .map(function (option) {
+          return {
+            value: option.value,
+            label: option.textContent.trim()
+          };
+        });
+    }
+
+    function normalizeText(text) {
+      return (text || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function closeResults() {
+      resultsBox.classList.remove('is-open');
+    }
+
+    function selectDiscipline(option) {
+      hiddenInput.value = option.value;
+      searchInput.value = option.label;
+      closeResults();
+      form.submit();
+    }
+
+    function setQuickFeedback(message, isError) {
+      if (!quickFeedback) return;
+      quickFeedback.textContent = message || '';
+      quickFeedback.classList.toggle('is-error', !!isError);
+      quickFeedback.classList.toggle('is-success', !!message && !isError);
+    }
+
+    function closeQuickModal() {
+      if (!quickModal) return;
+      quickModal.classList.remove('show');
+      quickModal.setAttribute('aria-hidden', 'true');
+    }
+
+    function addOptionToSource(idDisciplina, nome) {
+      var exists = Array.prototype.some.call(source.options, function (option) {
+        return option.value === String(idDisciplina);
+      });
+
+      if (!exists) {
+        var option = document.createElement('option');
+        option.value = String(idDisciplina);
+        option.textContent = nome;
+        source.appendChild(option);
+      }
+    }
+
+    function appendChip(disciplina) {
+      if (!disciplina || !disciplina.idDisciplina || !disciplina.nome) return;
+
+      var idDisciplina = String(disciplina.idDisciplina);
+      if (selectedIds.indexOf(idDisciplina) !== -1) return;
+
+      selectedIds.push(idDisciplina);
+
+      var chip = document.createElement('span');
+      chip.className = 'professor-discipline-chip';
+      chip.setAttribute('data-disciplina-id', idDisciplina);
+      chip.textContent = disciplina.nome + ' ';
+
+      var remove = document.createElement('a');
+      remove.href = '{{URL}}/professores/' + idProfessor + '/edit?removeDisciplina=' + disciplina.idVinculo;
+      remove.className = 'professor-discipline-chip-remove';
+      remove.setAttribute('title', 'Remover disciplina');
+
+      var icon = document.createElement('i');
+      icon.className = 'material-icons';
+      icon.textContent = 'close';
+      remove.appendChild(icon);
+      chip.appendChild(remove);
+
+      chipsBox.appendChild(chip);
+      options = buildOptions();
+    }
+
+    function renderResults() {
+      var term = normalizeText(searchInput.value);
+      var filtered = options.filter(function (option) {
+        return normalizeText(option.label).indexOf(term) !== -1;
+      });
+
+      resultsBox.innerHTML = '';
+
+      if (!filtered.length) {
+        var empty = document.createElement('div');
+        empty.className = 'professor-discipline-empty';
+        empty.textContent = 'Nenhuma disciplina encontrada';
+        resultsBox.appendChild(empty);
+        resultsBox.classList.add('is-open');
+        return;
+      }
+
+      filtered.forEach(function (option) {
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'professor-discipline-option';
+        button.textContent = option.label;
+        button.addEventListener('click', function () {
+          selectDiscipline(option);
+        });
+        resultsBox.appendChild(button);
+      });
+
+      resultsBox.classList.add('is-open');
+    }
+
+    searchInput.addEventListener('focus', renderResults);
+    searchInput.addEventListener('input', renderResults);
+
+    searchInput.addEventListener('keydown', function (event) {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+
+      var firstOption = resultsBox.querySelector('.professor-discipline-option');
+      if (firstOption) firstOption.click();
+    });
+
+    if (toggleButton) {
+      toggleButton.addEventListener('click', function () {
+        searchInput.focus();
+        renderResults();
+      });
+    }
+
+    document.addEventListener('click', function (event) {
+      if (!searchWrap.contains(event.target)) closeResults();
+    });
+
+    form.addEventListener('submit', function (event) {
+      if (!hiddenInput.value) event.preventDefault();
+    });
+
+    if (quickSave && quickName) {
+      quickName.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          quickSave.click();
+        }
+      });
+
+      quickSave.addEventListener('click', function () {
+        var nome = quickName.value.trim();
+
+        if (!nome) {
+          setQuickFeedback('Informe o nome da disciplina.', true);
+          quickName.focus();
+          return;
+        }
+
+        quickSave.disabled = true;
+        setQuickFeedback('Salvando...');
+
+        $.post('{{URL}}/ajax/professores/disciplinas/nova', { idProfessor: idProfessor, nome: nome }, function (response) {
+          if (!response || !response.success) {
+            setQuickFeedback((response && response.message) ? response.message : 'Não foi possível cadastrar a disciplina.', true);
+            return;
+          }
+
+          addOptionToSource(response.disciplina.idDisciplina, response.disciplina.nome);
+          appendChip(response.disciplina);
+          searchInput.value = '';
+          quickName.value = '';
+          setQuickFeedback(response.message || 'Disciplina cadastrada.');
+          closeQuickModal();
+        }, 'json').fail(function () {
+          setQuickFeedback('Erro ao salvar a disciplina.', true);
+        }).always(function () {
+          quickSave.disabled = false;
+        });
+      });
+    }
   });
 </script>

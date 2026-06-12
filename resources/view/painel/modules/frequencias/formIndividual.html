@@ -1,108 +1,58 @@
+<main class="work-form-page frequencia-individual-page">
+  <header class="form-shell-header">
+    <div class="form-shell-title">
+      <h5>{{title}}</h5>
+    </div>
+    <a href="{{voltarUrl}}" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
+      <i class="material-icons">reply</i>
+    </a>
+  </header>
 
-<form  method="post" action="?page=1">
-	<div class="row">
-			<div class="col-md-10 " >
-			<h5>{{title}}</h5>
-		</div>
- 		
-	
+  <section class="frequencia-context-card">
+    <span>Tipo de frequência</span>
+    <strong>Frequência individual</strong>
+    <small>{{aula}}</small>
+  </section>
 
-	<div class="col-md-2 text-right form-actions">
-		<a href="{{URL}}/frequencias/{{idAula}}/edit" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
-			<i class="material-icons">reply</i>
-		</a>
-	</div>
-</div>
-</form>	
-<div class="row">
-			<div class="col-md-6 " >
-<div class="card card-stats">
-          <div class="card-header card-header-success card-header-icon">
-            <div class="card-icon">
-              <strong class="h6">{{aula}}</strong>
-            </div>
-            
-            <p class="card-category text-light mt-5">Lançar Frequência:</p>
-           
-            
-            <div class="form-actions form-actions-start">
-            <a href="{{URL}}/frequencias/{{idAula}}/edit/individual" class="btn btn-facebook btn-round btn-just-icon" rel="tooltip" title="Frequência Individual">
-				<i class="material-icons">person</i>
-		    </a>
-            </div>
-		
-            
-            
-          </div>
-          <div class="card-footer">
-              <div class="stats">
-                  
-              </div>
-          </div>
+  <section class="form-shell-card frequencia-confirm-card">
+    <div class="frequencia-confirm-header">
+      <div>
+        <span>Aluno selecionado</span>
+        <h6>Confirmação individual</h6>
+      </div>
+      <div class="form-status">{{statusMessage}}</div>
+    </div>
+
+    <form method="post" action="{{formAction}}" class="frequencia-confirm-form">
+      <div class="frequencia-confirm-photo">
+        <img src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" alt="Foto de {{nome}}">
       </div>
 
-	</div>
-	</div>
-	<div class="row">
-		<div class="col-md-12">
-			<form method="post">
-			<div class="row">
-					
-				<div class="col-md-4 form-actions form-actions-start">
-					<a href="{{URL}}/frequencias/{{id}}/edit/pesqAluno" class="btn btn-facebook btn-round btn-just-icon" rel="tooltip" title="Pesquisar aluno">
-						<i class="material-icons">search</i>
-					</a>
-				</div>
-				<div class="col-md-8" >
-						{{statusMessage}}
-				</div>
-			</div>
-				    
-					<div class="row">
-					    <div class="colfoto mb-2 mr-2 ml-3 mt-2 text-center">
-					    	<a href="{{URL}}/alunos/photo/{{id}}" style="{{ponteiro}}">
-								<img style="background-color: #fff; border-radius: 10%" title="Carregar nova foto" class="img-fluid" alt="Foto" rel="tooltip" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" style="cursor:pointer">
-							</a>
-					    </div>
-						<div class="col-md-8">
-						    <label class="h5">Matrícula: <span class="text-light">{{matricula}}</span></label><br>
-				     	    <label class="h5">Aluno: <span class="text-light">{{nome}}</span></label><br>
-						    <label class="h5">Turma: <span class="text-light">{{turma}}</span></label><br>
-						    <label class="h5">Status: <span class="text-light">{{status}}</span></label><br>
-						    <button {{escondeBotaoConfirmar}} type="submit" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Clique para Confirmar Presença">
-								<i class="material-icons">check</i>
-							</button>
-					    </div>
-				    </div>
-					
-			</form>
-		</div>
-	</div>					
+      <dl class="frequencia-confirm-details">
+        <div>
+          <dt>Matrícula</dt>
+          <dd>{{matricula}}</dd>
+        </div>
+        <div>
+          <dt>Aluno</dt>
+          <dd>{{nome}}</dd>
+        </div>
+        <div>
+          <dt>Turma</dt>
+          <dd>{{turma}}</dd>
+        </div>
+        <div>
+          <dt>Status</dt>
+          <dd><span class="student-status-pill {{statusClasse}}">{{status}}</span></dd>
+        </div>
+      </dl>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      <div class="frequencia-confirm-actions">
+        <button {{escondeBotaoConfirmar}} type="submit" class="btn btn-success" rel="tooltip" title="Confirmar presença">
+          <i class="material-icons">check</i>
+          <span>Confirmar</span>
+        </button>
+      </div>
+    </form>
+  </section>
+</main>

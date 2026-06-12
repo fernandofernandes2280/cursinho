@@ -132,41 +132,25 @@ class Professor extends Generica {
 	
     //Método responsavel por iniciar sessao com dados do form
 	public static function getSessaoDados($obProfessor){
-	    //inicia sessão
-	    Funcoes::init();
-	    
-	    //Define a sessao do usuario
-	    $_SESSION['professor']['novo'] = [
-	        'nome' => $obProfessor['nome'],
-	        'cep' => $obProfessor['cep'],
-	        'endereco' => $obProfessor['endereco'],
-	        'bairro' => $obProfessor['bairro'],
-	        'cidade' => $obProfessor['cidade'],
-	        'uf' => $obProfessor['uf'],
-	        'funcao' => $obProfessor['funcao'],
-	        'dataNasc' =>date('Y-m-d',strtotime($obProfessor['dataNasc'])),
-	        'cpf' => $obProfessor['cpf'],
-	        'fone' => $obProfessor['fone'],
-	        'status' => $obProfessor['status'],
-	        'email' => $obProfessor['email']
-	        
-	        
-	    ];
-	    
-	    //Sucesso
-	    return true;
+	    return Funcoes::flashOldInput('professor.novo', [
+	        'nome' => $obProfessor['nome'] ?? '',
+	        'cep' => $obProfessor['cep'] ?? '',
+	        'endereco' => $obProfessor['endereco'] ?? '',
+	        'bairro' => $obProfessor['bairro'] ?? '',
+	        'cidade' => $obProfessor['cidade'] ?? '',
+	        'uf' => $obProfessor['uf'] ?? '',
+	        'funcao' => $obProfessor['funcao'] ?? '',
+	        'dataNasc' => $obProfessor['dataNasc'] ?? '',
+	        'cpf' => $obProfessor['cpf'] ?? '',
+	        'fone' => $obProfessor['fone'] ?? '',
+	        'status' => $obProfessor['status'] ?? '',
+	        'email' => $obProfessor['email'] ?? ''
+	    ]);
 	}
 	
 	//Método responsavel por Finalizar sessao 
 	public static function getFinalizaSessaoDados(){
-	    //Inicia a Sessão
-	    Funcoes::init();
-	    
-	    //destri a sessao
-	    unset($_SESSION['professor']['novo']);
-	    
-	    //sucesso
-	    return true;
+	    return Funcoes::clearOldInput('professor.novo');
 	}
 	
 	

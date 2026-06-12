@@ -13,23 +13,60 @@ html{margin:30px 40px 5px 40px;
 		   	padding-top: 10px
 		   }
 		   
-		input[type="checkbox"]{
-    
-   height: 12;
-    
-}
+	input[type="checkbox"]{
+	   height: 12;
+	}
 
-</style>
+		.report-heading{
+			text-align: center;
+			text-transform: uppercase;
+			margin-bottom: 14px;
+		}
 
-<table border="1" style="font-size: 11px;font-family: Arial, Helvetica, sans-serif; border-collapse: collapse; width:100%">
-	<tr>
-		<td align="left" style="width:10%"><span><img width=180 src="{{URL}}/resources/assets/img/preparasantana.png" class="mb-0"   alt="LogoSUS" ></span></td>
-		<td align="center" style="font-size: 16px;font-weight: bold;">CURSO PREPARATÓRIO GRATUITO PREPARA SANTANA</td>
-	</tr>
-	<tr>
-		<td colspan="2" align="center" style="font-size: 14px;font-weight: bold; height:3%">RELAÇÃO DE ALUNOS</td>
-	</tr>
-</table>
+		.report-logo{
+			display: block;
+			width: 48px;
+			max-height: 42px;
+			margin: 0 auto 5px auto;
+		}
+
+		.report-title-main,
+		.report-title-sub{
+			font-size: 10px;
+			font-weight: normal;
+			line-height: 1.12;
+		}
+
+		.report-title-sub{
+			margin-top: 1px;
+		}
+
+		.report-page-number{
+			position: fixed;
+			right: 0;
+			bottom: -18px;
+			color: #57606a;
+			font-size: 9px;
+		}
+
+		.report-page-number:after{
+			content: "Página " counter(page) " de " counter(pages);
+		}
+
+		</style>
+
+		<div class="report-page-number"></div>
+
+			<div class="report-heading">
+				<img src="{{logoRelatorio}}" class="report-logo" alt="Logotipo do relatório">
+				{{tituloRelatorio}}
+		</div>
+
+		<table border="1" style="font-size: 11px;font-family: Arial, Helvetica, sans-serif; border-collapse: collapse; width:100%">
+			<tr>
+				<td align="center" style="font-size: 12px;font-weight: bold; height:3%">RELAÇÃO DE ALUNOS</td>
+		</tr>
+	</table>
 
 <table border="1" style="font-size: 11px;font-family: Arial, Helvetica, sans-serif; border-collapse: collapse; width:100%">
 	
@@ -62,13 +99,3 @@ html{margin:30px 40px 5px 40px;
 
 
 
-
-
-
-
-
-
-
-
-
- 

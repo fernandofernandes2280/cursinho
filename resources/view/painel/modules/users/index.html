@@ -1,13 +1,11 @@
-<main class="list-page">
-  <section class="list-panel">
-    <div class="list-toolbar">
-      <div class="list-title">
+<main class="alunos-page">
+  <section class="alunos-panel">
+    <div class="alunos-toolbar">
+      <div class="alunos-title">
         <h5>Usuários</h5>
       </div>
-      <div class="list-status">
-        {{statusMessage}}
-      </div>
-      <div class="list-actions">
+      <div class="alunos-status">{{statusMessage}}</div>
+      <div class="alunos-actions">
         <button type="button" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfUser">
           <i class="material-icons">person_add</i>
         </button>
@@ -15,27 +13,33 @@
     </div>
   </section>
 
-  <div class="table-responsive list-table-wrap">
-    <table class="table table-striped list-table">
+  <section class="alunos-datatable-panel">
+    <table
+      id="datatablesSimple"
+      class="table table-striped alunos-table"
+      data-caption="Listagem de usuários cadastrados"
+      data-entity-singular="usuário"
+      data-entity-plural="usuários"
+      data-placeholder="Buscar usuário..."
+      data-search-title="Buscar na listagem de usuários"
+      data-name-column="1"
+      data-actions-column="5"
+      data-html-columns="1,5"
+    >
+      <caption>Listagem de usuários cadastrados</caption>
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Nome</th>
-          <th>E-mail</th>
-          <th>CPF</th>
-          <th>Tipo</th>
-          <th style="width:200px">Ações</th>
+          <th data-type="string">ID</th>
+          <th data-type="html">Nome</th>
+          <th data-type="string">E-mail</th>
+          <th data-type="string">CPF</th>
+          <th data-type="string">Tipo</th>
+          <th data-type="html" data-sortable="false" data-searchable="false">Ações</th>
         </tr>
       </thead>
       <tbody>
         {{itens}}
       </tbody>
     </table>
-  </div>
-
-  <div class="list-footer">
-    <div class="list-pagination">
-      {{pagination}}
-    </div>
-  </div>
+  </section>
 </main>

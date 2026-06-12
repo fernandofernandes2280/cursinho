@@ -9,7 +9,8 @@ use \App\Controller\Visitor;
 $obRouter->get('/users',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:usuarios.view'
     ],
 		
 		function ($request){
@@ -23,7 +24,8 @@ $obRouter->get('/users/new',[
 		
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:usuarios.create'
     ],
 		
 		function ($request,$id){
@@ -35,7 +37,8 @@ $obRouter->get('/users/new',[
 $obRouter->post('/users/new',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:usuarios.create'
     ],
 		
 		
@@ -49,7 +52,8 @@ $obRouter->get('/users/{id}/edit',[
 		
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:usuarios.update'
     ],
 		
 		function ($request,$id){
@@ -62,7 +66,8 @@ $obRouter->post('/users/{id}/edit',[
 		
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:usuarios.update'
     ],
 		
 		function ($request,$id){
@@ -73,7 +78,8 @@ $obRouter->post('/users/{id}/edit',[
 //ROTA de Exclusão de um de Usuário
 $obRouter->get('/users/{id}/delete',[
 		'middlewares' => [
-				'require-user-login'
+				'require-user-login',
+				'can:usuarios.delete'
 		],
 		
 		
@@ -84,7 +90,8 @@ $obRouter->get('/users/{id}/delete',[
 //ROTA de Exclusão de um de Usuário (POST)
 $obRouter->post('/users/{id}/delete',[
 		'middlewares' => [
-				'require-user-login'
+				'require-user-login',
+				'can:usuarios.delete'
 		],
 		
 		
@@ -119,7 +126,8 @@ $obRouter->post('/trocarSenha',[
 $obRouter->get('/users/photo/{id}',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:usuarios.photo'
     ],
     
     function ($request,$id){
@@ -131,11 +139,11 @@ $obRouter->get('/users/photo/{id}',[
 $obRouter->post('/users/photo/{id}',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:usuarios.photo'
     ],
     
     function ($request){
         return new Response(200, Painel\User::setPhoto($request));
     }
     ]);
-

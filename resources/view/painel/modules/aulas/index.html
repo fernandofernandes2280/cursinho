@@ -1,70 +1,57 @@
-<main class="list-page">
-  <section class="list-panel">
-    <form method="get" id="form">
-      <div class="list-toolbar">
-        <div class="list-title">
-          <h5>{{title}}</h5>
-        </div>
-        <div class="list-status">
-          {{statusMessage}}
-        </div>
-        <div class="list-actions">
-          <button type="submit" class="btn btn-facebook btn-round btn-just-icon" rel="tooltip" title="Pesquisar">
-            <i class="material-icons">search</i>
-          </button>
-          <a href="{{URL}}/aulas/new" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Nova">
-            <i class="material-icons">add_circle_outline</i>
-          </a>
-        </div>
+<main class="alunos-page">
+  <section class="alunos-panel">
+    <div class="alunos-toolbar">
+      <div class="alunos-title">
+        <h5>{{title}}</h5>
       </div>
-
-      <div class="list-filters">
-        <div class="list-field list-field-sm">
-          <label for="data">Data da Aula</label>
-          <input type="date" max="9999-12-31" class="form-control-pessoal" id="data" name="data" value="{{data}}">
-        </div>
-        <div class="list-field">
-          <label for="turma">Turma</label>
-          <select class="custom-select" id="turma" name="turma">
-            <option></option>
-            {{optionTurma}}
-          </select>
-        </div>
-        <div class="list-field">
-          <label for="status">Status</label>
-          <select class="custom-select" id="status" name="status">
-            <option></option>
-            {{optionStatus}}
-          </select>
-        </div>
+      <div class="alunos-status">{{statusMessage}}</div>
+      <div class="alunos-actions">
+        <button type="button" class="btn btn-default btn-round btn-just-icon alunos-columns-toggle" rel="tooltip" title="Ocultar/exibir campos" data-toggle-column-controls="datatablesSimple" aria-expanded="false">
+          <i class="material-icons">view_column</i>
+        </button>
+        <button type="button" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Imprimir" data-table-print>
+          <i class="material-icons">print</i>
+        </button>
+        <a href="{{URL}}/aulas/new" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Nova">
+          <i class="material-icons">add_circle_outline</i>
+        </a>
       </div>
-    </form>
+      <div id="aulasColumnControls" class="alunos-column-controls" data-table-column-controls="datatablesSimple" hidden></div>
+    </div>
   </section>
 
-  <div class="table-responsive list-table-wrap">
-    <table class="table table-hover list-table">
+  <section class="alunos-datatable-panel">
+    <table
+      id="datatablesSimple"
+      class="table table-hover alunos-table"
+      data-caption="Listagem de aulas cadastradas"
+      data-entity-singular="aula"
+      data-entity-plural="aulas"
+      data-placeholder="Buscar aula..."
+      data-search-title="Buscar na listagem de aulas"
+      data-multi-search="true"
+      data-name-column="1"
+      data-status-column="5"
+      data-actions-column="7"
+      data-html-columns="0,1,5,7"
+      data-adaptive-pdf="true"
+    >
+      <caption>Listagem de aulas cadastradas</caption>
       <thead>
         <tr>
-          <th>Data</th>
-          <th>Professores</th>
-          <th>Turma</th>
-          <th>Presenças</th>
-          <th>Faltas</th>
-          <th>Status</th>
-          <th>Autor</th>
-          <th style="width:13%">Ações</th>
+          <th data-type="string" data-column-key="data">Data</th>
+          <th data-type="html" data-column-key="professores">Professores</th>
+          <th data-type="string" data-column-key="turma">Turma</th>
+          <th data-type="num" data-column-key="presencas">Presenças</th>
+          <th data-type="num" data-column-key="faltas">Faltas</th>
+          <th data-type="html" data-column-key="status">Status</th>
+          <th data-type="string" data-column-key="autor" data-default-visible="false">Autor</th>
+          <th data-type="html" data-sortable="false" data-searchable="false">Ações</th>
         </tr>
       </thead>
       <tbody>
         {{itens}}
       </tbody>
     </table>
-  </div>
-
-  <div class="list-footer">
-    <div class="list-pagination">
-      {{pagination}}
-    </div>
-    <span class="list-total">Total: {{totalAtendimentos}}</span>
-  </div>
+  </section>
 </main>

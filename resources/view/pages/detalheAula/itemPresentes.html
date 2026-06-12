@@ -2,12 +2,17 @@
 	<td class="text-center">{{matricula}}</td>
 	<td>
 		<div class="student-cell">
-		  <img src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="student-avatar" alt="foto">
-		  <a class="font-weight-bold" href="{{URL}}/alunos/{{idAluno}}/edit" rel="tooltip" title="Visualizar">{{nome}}</a>
+		  <button type="button" class="student-photo-button" data-toggle="modal" data-target="#modalStudentPhoto" data-photo-src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" rel="tooltip" title="Ampliar foto">
+		    <img src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="student-avatar" alt="Foto de {{nome}}">
+		  </button>
+		  <a class="student-name-link" href="{{URL}}/alunos/{{idAluno}}/edit" rel="tooltip" title="Visualizar">{{nome}}</a>
 		</div>
 	</td>
+	<td class="text-center">{{fotoAuditoria}}</td>
 	<td class="text-center">{{turma}}</td>
-	<td class="text-center">{{status}}</td>
+	<td class="text-center">{{fone}}</td>
+	<td>{{endereco}}</td>
+	<td class="text-center"><span class="student-status-pill {{statusCor}}">{{status}}</span></td>
 	<td class="text-center">{{hora}}</td>
 	
 </tr>

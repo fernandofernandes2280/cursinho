@@ -1,4 +1,4 @@
-<form method="post" class="aluno-form">
+<form method="post" enctype="multipart/form-data" class="aluno-form">
   <div class="row aluno-form-header">
     <div class="col-md-3">
       <h5>{{title}}</h5>
@@ -11,10 +11,10 @@
       <a href="{{URL}}/alunos/{{id}}/carteira" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Imprimir Carteira de Estudante">
         <i class="material-icons">badge</i>
       </a>
-      <a href="#" target="_blank" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Imprimir Capa">
+      <a href="#" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Imprimir Dados Cadastrais" data-aluno-form-print>
         <i class="material-icons">print</i>
       </a>
-      <a href="{{URL}}/frequencias/{{idAula}}/edit/individual/{{idAluno}}" class="btn btn-primary btn-round btn-just-icon" rel="tooltip" title="Selecionar Para Frequência" {{hideBtnFreq}}>
+      <a href="{{URL}}/frequencias?frequenciaAluno={{idAluno}}" class="btn btn-primary btn-round btn-just-icon" rel="tooltip" title="Selecionar Para Frequência" {{hideBtnFreq}}>
         <i class="material-icons">how_to_reg</i>
       </a>
       <button class="btn btn-facebook btn-round btn-just-icon" type="submit" rel="tooltip" title="Salvar">
@@ -29,10 +29,23 @@
     </div>
   </div>
 
+  <div class="aluno-completion-card" data-cadastro-completion>
+    <div class="aluno-completion-main">
+      <div>
+        <strong>Conclusão do cadastro</strong>
+        <small data-completion-detail>Calculando preenchimento...</small>
+      </div>
+      <span data-completion-label>0%</span>
+    </div>
+    <div class="aluno-completion-track" aria-hidden="true">
+      <span data-completion-bar></span>
+    </div>
+  </div>
+
   <div class="aluno-form-body">
     <div class="aluno-fields-grid">
       <div class="aluno-photo-box">
-        <a href="{{URL}}/alunos/photo/{{id}}" style="{{ponteiro}}">
+        <a href="{{fotoLink}}" style="{{ponteiro}}" data-photo-submit="{{fotoSubmit}}">
           <img title="Carregar nova foto" alt="Foto" rel="tooltip" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}">
         </a>
       </div>
@@ -110,7 +123,7 @@
       <div class="aluno-field aluno-span-3">
         <label for="fone">Telefone</label>
         <small class="text-muted">(ddd) + seu número</small>
-        <input type="text" class="form-control-pessoal mascara-telefone" id="fone" name="fone" value="{{fone}}" maxlength="11">
+        <input type="text" class="form-control-pessoal mascara-telefone" id="fone" name="fone" value="{{fone}}" maxlength="14">
       </div>
       <div class="aluno-field aluno-span-2">
         <label for="cpf">CPF:</label>
@@ -137,12 +150,266 @@
         <label for="obs">Observações</label>
         <input type="text" class="form-control-pessoal" id="obs" name="obs" value="{{obs}}">
       </div>
+
+      <div class="aluno-field aluno-span-12 aluno-documents-section">
+        <div class="aluno-documents-header">
+          <strong>Documentos do aluno</strong>
+          <small>Envie arquivos separados em PDF.</small>
+        </div>
+        <div class="aluno-documents-grid">
+          <div class="aluno-document-upload">
+            <input type="file" id="documentoIdentificacao" name="documentoIdentificacao" accept="application/pdf,.pdf">
+            <div class="aluno-document-main-row">
+              <button type="button" class="aluno-document-button" data-document-trigger>Documento de Identificação</button>
+              <div class="aluno-document-file-row">
+                <small data-document-feedback>{{documentoIdentificacaoInfo}}</small>
+                {{documentoIdentificacaoDelete}}
+              </div>
+            </div>
+            <div class="aluno-document-progress" aria-hidden="true"><span></span></div>
+          </div>
+          <div class="aluno-document-upload">
+            <input type="file" id="documentoResidencia" name="documentoResidencia" accept="application/pdf,.pdf">
+            <div class="aluno-document-main-row">
+              <button type="button" class="aluno-document-button" data-document-trigger>Comprovante de Residência</button>
+              <div class="aluno-document-file-row">
+                <small data-document-feedback>{{documentoResidenciaInfo}}</small>
+                {{documentoResidenciaDelete}}
+              </div>
+            </div>
+            <div class="aluno-document-progress" aria-hidden="true"><span></span></div>
+          </div>
+          <div class="aluno-document-upload">
+            <input type="file" id="documentoOutros" name="documentoOutros" accept="application/pdf,.pdf">
+            <div class="aluno-document-main-row">
+              <button type="button" class="aluno-document-button" data-document-trigger>Outros documentos</button>
+              <div class="aluno-document-file-row">
+                <small data-document-feedback>{{documentoOutrosInfo}}</small>
+                {{documentoOutrosDelete}}
+              </div>
+            </div>
+            <div class="aluno-document-progress" aria-hidden="true"><span></span></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </form>
 
 <script>
-  $('#fone').keyup(function() {
-    $(this).val(this.value.replace(/\D/g, ''));
+  $('[data-photo-submit="1"]').on('click', function(event) {
+    event.preventDefault();
+
+    var form = $(this).closest('form')[0];
+    if (!form) return;
+
+    if (typeof form.checkValidity === 'function' && !form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    var redirect = $(form).find('input[name="redirectPhoto"]');
+    if (!redirect.length) {
+      redirect = $('<input>', {
+        type: 'hidden',
+        name: 'redirectPhoto'
+      }).appendTo(form);
+    }
+    redirect.val('1');
+
+    if (typeof form.requestSubmit === 'function') {
+      form.requestSubmit();
+      return;
+    }
+
+    $('<button>', {
+      type: 'submit',
+      hidden: true
+    }).appendTo(form).trigger('click').remove();
+  });
+
+  $('.aluno-document-upload [data-document-trigger]').on('click', function() {
+    $(this).closest('.aluno-document-upload').find('input[type="file"]').trigger('click');
+  });
+
+  $('.aluno-document-upload [data-document-delete]').on('click', function() {
+    if (!confirm('Deseja excluir este documento?')) return;
+
+    $('<form>', {
+      method: 'post',
+      action: $(this).data('document-delete')
+    }).appendTo('body').trigger('submit');
+  });
+
+  function applyDocumentLoadedState($card) {
+    var $feedback = $card.find('[data-document-feedback]');
+    var $progress = $card.find('.aluno-document-progress span');
+
+    if ($.trim($feedback.text()).length) {
+      $card.addClass('is-loaded');
+      $progress.css('width', '100%');
+    }
+  }
+
+  var completionItems = [
+    { label: 'Nome', selector: '#nome' },
+    { label: 'CEP', selector: '#cep', type: 'cep' },
+    { label: 'Endereço', selector: '#endereco' },
+    { label: 'Número', selector: '#numero' },
+    { label: 'Bairro', selector: '#bairro', type: 'select' },
+    { label: 'Cidade', selector: '#cidade' },
+    { label: 'UF', selector: '#uf' },
+    { label: 'Naturalidade', selector: '#naturalidade' },
+    { label: 'Escolaridade', selector: '#escolaridade', type: 'select' },
+    { label: 'Estado civil', selector: '#estadoCivil', type: 'select' },
+    { label: 'Sexo', selector: '#sexo', type: 'select' },
+    { label: 'Nascimento', selector: '#dataNasc' },
+    { label: 'Cadastro', selector: '#dataCad' },
+    { label: 'Telefone', selector: '#fone', type: 'phone' },
+    { label: 'CPF', selector: '#cpf', type: 'cpf' },
+    { label: 'Turma', selector: '#turma', type: 'select' },
+    { label: 'Mãe', selector: '#mae' },
+    { label: 'Status', selector: '#status', type: 'select' },
+    { label: 'Documento de Identificação', selector: '#documentoIdentificacao', type: 'document' },
+    { label: 'Comprovante de Residência', selector: '#documentoResidencia', type: 'document' }
+  ];
+
+  function onlyDigits(value) {
+    return String(value || '').replace(/\D/g, '');
+  }
+
+  function hasUsefulValue(value) {
+    var normalized = $.trim(String(value || ''));
+
+    return normalized !== '' && normalized !== '0';
+  }
+
+  function isCompletionItemFilled(item) {
+    var $field = $(item.selector);
+    var value = $field.val();
+    var digits = onlyDigits(value);
+
+    if (!$field.length) return false;
+
+    if (item.type === 'document') {
+      return $field.closest('.aluno-document-upload').hasClass('is-loaded');
+    }
+
+    if (item.type === 'phone') {
+      return digits.length === 11 && !/^0+$/.test(digits);
+    }
+
+    if (item.type === 'cpf') {
+      return digits.length === 11 && !/^0+$/.test(digits);
+    }
+
+    if (item.type === 'cep') {
+      return digits.length >= 8 && !/^0+$/.test(digits);
+    }
+
+    return hasUsefulValue(value);
+  }
+
+  function updateCadastroCompletion() {
+    var completed = 0;
+    var pending = [];
+
+    $.each(completionItems, function(index, item) {
+      if (isCompletionItemFilled(item)) {
+        completed++;
+        return;
+      }
+
+      pending.push(item.label);
+    });
+
+    var total = completionItems.length;
+    var percent = total ? Math.round((completed / total) * 100) : 0;
+    var $card = $('[data-cadastro-completion]');
+
+    $card
+      .removeClass('is-low is-medium is-complete')
+      .addClass(percent >= 100 ? 'is-complete' : (percent >= 70 ? 'is-medium' : 'is-low'));
+    $card.find('[data-completion-label]').text(percent + '%');
+    $card.find('[data-completion-bar]').css('width', percent + '%');
+
+    if (!pending.length) {
+      $card.find('[data-completion-detail]').text('Cadastro completo nos dados principais.');
+      return;
+    }
+
+    $card.find('[data-completion-detail]').text(
+      completed + ' de ' + total + ' itens preenchidos. Pendentes: ' + pending.slice(0, 3).join(', ') + (pending.length > 3 ? '...' : '')
+    );
+  }
+
+  $('.aluno-document-upload').each(function() {
+    applyDocumentLoadedState($(this));
+  });
+
+  updateCadastroCompletion();
+
+  $('.aluno-form').on('input change', 'input, select', updateCadastroCompletion);
+
+  $('.aluno-document-upload input[type="file"]').on('change', function() {
+    var input = this;
+    var file = input.files && input.files[0] ? input.files[0] : null;
+    var $card = $(input).closest('.aluno-document-upload');
+    var $feedback = $card.find('[data-document-feedback]');
+    var $progress = $card.find('.aluno-document-progress span');
+    var previousText = $feedback.data('previous-text') || $feedback.html();
+
+    $feedback.data('previous-text', previousText);
+    $card.removeClass('is-loading is-loaded is-invalid');
+    $progress.css('width', '0%');
+
+    if (!file) {
+      $feedback.html(previousText);
+      applyDocumentLoadedState($card);
+      updateCadastroCompletion();
+      return;
+    }
+
+    if (!/\.pdf$/i.test(file.name)) {
+      input.value = '';
+      $card.addClass('is-invalid');
+      $feedback.text('Envie apenas arquivo PDF.');
+      updateCadastroCompletion();
+      return;
+    }
+
+    $card.addClass('is-loading');
+    $feedback.text('Carregando PDF...');
+
+    var finishLoaded = function() {
+      $progress.css('width', '100%');
+      window.setTimeout(function() {
+        $card.removeClass('is-loading').addClass('is-loaded');
+        $feedback.text(file.name);
+        updateCadastroCompletion();
+      }, 180);
+    };
+
+    if (!window.FileReader) {
+      window.setTimeout(finishLoaded, 450);
+      return;
+    }
+
+    var reader = new FileReader();
+    reader.onprogress = function(event) {
+      if (!event.lengthComputable) return;
+
+      var percent = Math.min(95, Math.round((event.loaded / event.total) * 100));
+      $progress.css('width', percent + '%');
+    };
+    reader.onload = finishLoaded;
+    reader.onerror = function() {
+      input.value = '';
+      $card.removeClass('is-loading').addClass('is-invalid');
+      $feedback.text('Não foi possível carregar este PDF.');
+      $progress.css('width', '0%');
+      updateCadastroCompletion();
+    };
+    reader.readAsArrayBuffer(file);
   });
 </script>

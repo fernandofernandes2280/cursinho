@@ -121,29 +121,102 @@ body{
 
     var scanning = false;
     var html5qrcode = new Html5Qrcode("reader", true);
-    function docReady(fn) {
-        // see if DOM is already available
-        if (document.readyState === "complete" || document.readyState === "interactive") {
-            // call on next available tick
+	    function docReady(fn) {
+	        // see if DOM is already available
+	        if (document.readyState === "complete" || document.readyState === "interactive") {
+	            // call on next available tick
             setTimeout(fn, 1);
         } else {
-            document.addEventListener("DOMContentLoaded", fn);
-        }
-    }
-    function startScanning(facingMode) {
-        console.log(facingMode)
-        var results = document.getElementById('scanned-result');
-        var lastMessage;
-        var codesFound = 0;
-        function onScanSuccess(qrCodeMessage) {
-            if (lastMessage !== qrCodeMessage) {
-                lastMessage = qrCodeMessage;
-                ++codesFound;
-              //  results.innerHTML += `<div>[${codesFound}] - ${qrCodeMessage}</div>`;
+	            document.addEventListener("DOMContentLoaded", fn);
+	        }
+	    }
+	    function getCameraTraseira(cameras) {
+	        if (!Array.isArray(cameras)) {
+	            return null;
+	        }
 
+	        return cameras.find(function(camera) {
+	            var label = (camera.label || '').toLowerCase();
+	            return label.includes('back') ||
+	                label.includes('rear') ||
+	                label.includes('environment') ||
+	                label.includes('traseira') ||
+	                label.includes('trasera') ||
+	                label.includes('world');
+	        }) || null;
+	    }
 
-                var dataString = { send : true , matricula : qrCodeMessage, idAula : {{idAula}} };
-				var vartime = 3000;
+	    function startCameraPreferida(cameraConfig, onScanSuccess) {
+	        return Html5Qrcode.getCameras()
+	            .then(function(cameras) {
+	                var cameraTraseira = getCameraTraseira(cameras);
+
+	                if (cameraTraseira) {
+	                    return html5qrcode.start(cameraTraseira.id, cameraConfig, onScanSuccess);
+	                }
+
+	                return html5qrcode.start({ facingMode: { exact: "environment" } }, cameraConfig, onScanSuccess)
+	                    .catch(function() {
+	                        return html5qrcode.start({ facingMode: "user" }, cameraConfig, onScanSuccess);
+	                    });
+	            })
+	            .catch(function() {
+	                return html5qrcode.start({ facingMode: { exact: "environment" } }, cameraConfig, onScanSuccess)
+	                    .catch(function() {
+	                        return html5qrcode.start({ facingMode: "user" }, cameraConfig, onScanSuccess);
+	                    });
+	            });
+	    }
+
+	    function capturarFotoAuditoria() {
+	        var video = document.querySelector('#reader video');
+
+	        if (!video || !video.videoWidth || !video.videoHeight) {
+	            return '';
+	        }
+
+	        var maxWidth = 480;
+	        var scale = Math.min(1, maxWidth / video.videoWidth);
+	        var canvas = document.createElement('canvas');
+	        canvas.width = Math.round(video.videoWidth * scale);
+	        canvas.height = Math.round(video.videoHeight * scale);
+	        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+	        try {
+	            return canvas.toDataURL('image/jpeg', 0.72);
+	        } catch (e) {
+	            return '';
+	        }
+	    }
+
+	    function startScanning(facingMode) {
+	        var results = document.getElementById('scanned-result');
+	        var lastMessage;
+	        var codesFound = 0;
+	        var aguardandoCaptura = false;
+	        var atrasoCapturaAuditoria = 2000;
+	        function onScanSuccess(qrCodeMessage) {
+	            if (!aguardandoCaptura && lastMessage !== qrCodeMessage) {
+	                lastMessage = qrCodeMessage;
+	                aguardandoCaptura = true;
+	                ++codesFound;
+	              //  results.innerHTML += `<div>[${codesFound}] - ${qrCodeMessage}</div>`;
+
+	                results.innerHTML = `
+			<section class="sessaoVerde">
+				<div class="row">
+				  <div class="col-md-12 alert alert-success text-center divDados">
+					<h3>QR CODE LIDO</h3>
+					<p class="h4 mb-0">Afaste a carteira da câmera e mantenha o rosto visível. Capturando foto em 2 segundos...</p>
+				  </div>
+				 </div>
+			</section>
+
+	                             `;
+
+	                setTimeout(function(){
+	                var dataString = { send : true , matricula : qrCodeMessage, idAula : {{idAula}}, fotoAuditoria: capturarFotoAuditoria() };
+					var vartime = 3000;
                 $.ajax({
 
                     type: "POST",
@@ -164,7 +237,7 @@ body{
 										//aluno já confirmou sua presença
 										if(data.successPresenca){
 
-												 results.innerHTML += `
+												 results.innerHTML = `
 
 	    <section class="sessaoLaranja">
 			<div class="row mb-3">
@@ -212,7 +285,7 @@ body{
 
 											if(data.successUpdate){//Sucesso na confirmação da presença
 
-												 results.innerHTML += `
+												 results.innerHTML = `
 
 		<section class="sessaoVerde">
 			<div class="row mb-3">
@@ -257,7 +330,7 @@ body{
 											}else{//erro na atualização da frequencia
 
 												 $("#reader").attr("hidden",true);
-					                            results.innerHTML += `
+					                            results.innerHTML = `
 
 		<section class="sessaoVermelha">
 			<div class="row">
@@ -293,7 +366,7 @@ body{
 										 //sucesso na inserção do aluno na frequencia
 										if(data.successInsert){
 
-											 results.innerHTML += `
+											 results.innerHTML = `
 
 		<section class="sessaoVerde">
 			<div class="row mb-3">
@@ -338,7 +411,7 @@ body{
 										}else{// erro na inserção do aluno na frequencia
 
 										 $("#reader").attr("hidden",true);
-				                            results.innerHTML += `
+				                            results.innerHTML = `
 
 		<section class="sessaoVermelha">
 			<div class="row">
@@ -371,7 +444,7 @@ body{
 								}else{//Aluno está inativo
 
 								 $("#reader").attr("hidden",true);
-	                            results.innerHTML += `
+	                            results.innerHTML = `
 
 			<section class="sessaoVermelha">
 			<div class="row mb-3">
@@ -418,7 +491,7 @@ body{
 							}else{ //Aluno não existe
 
 							 $("#reader").attr("hidden",true);
-                            results.innerHTML += `
+                            results.innerHTML = `
 
 		<section class="sessaoVermelha">
 			<div class="row">
@@ -446,20 +519,19 @@ body{
 							}
 
 
-                    } ,error: function(xhr, status, error) {
-                        alert(error);
-                    },
-                });
+	                    } ,error: function(xhr, status, error) {
+	                        aguardandoCaptura = false;
+	                        lastMessage = null;
+	                        alert(error);
+	                    },
+	                });
+	                }, atrasoCapturaAuditoria);
 
 
-            }
+	            }
         }
-        // Tenta a câmera traseira; se não existir, usa a câmera padrão/frontal.
-        var cameraConfig = { fps: 10 };
-        return html5qrcode.start({ facingMode: { ideal: "environment" } }, cameraConfig, onScanSuccess)
-            .catch(function() {
-                return html5qrcode.start({ facingMode: facingMode }, cameraConfig, onScanSuccess);
-            });
+	        var cameraConfig = { fps: 10 };
+	        return startCameraPreferida(cameraConfig, onScanSuccess);
 
 
 
@@ -493,5 +565,3 @@ body{
     });
 
 </script>
-
-

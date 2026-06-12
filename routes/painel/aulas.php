@@ -7,7 +7,8 @@ use \App\Controller\Painel;
 $obRouter->get('/aulas',[
 
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:aulas.view'
     ],
                 function ($request){
 					return new Response(200, Painel\Aula::getAulas($request));
@@ -15,23 +16,11 @@ $obRouter->get('/aulas',[
 				}
 		]);
 
-//ROTA de POST de Agendas
-$obRouter->post('/agendas',[
-	
-    'middlewares' => [
-        'require-user-login'
-    ],
-		function ($request){
-		    return new Response(200, Painel\Aula::setAgendas($request));
-			
-		}
-		]);
-
-
 //ROTA de get de nova Aula
 $obRouter->get('/aulas/new',[
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:aulas.create'
     ],
     
     function ($request){
@@ -43,7 +32,8 @@ $obRouter->get('/aulas/new',[
 //ROTA de POST de nova Aula
 $obRouter->post('/aulas/new',[
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:aulas.create'
     ],
     
     function ($request){
@@ -57,7 +47,8 @@ $obRouter->post('/aulas/new',[
 $obRouter->get('/aulas/{id}/edit',[
 	
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:aulas.update'
     ],
 		function ($request,$id){
 		    return new Response(200, Painel\Aula::getAulaEdit($request,$id));
@@ -68,7 +59,8 @@ $obRouter->get('/aulas/{id}/edit',[
 //ROTA de Post de Edição de Aulas
 $obRouter->post('/aulas/{id}/edit',[
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:aulas.update'
     ],
     
 		function ($request, $id){
@@ -81,7 +73,8 @@ $obRouter->post('/aulas/{id}/edit',[
 $obRouter->get('/aulas/{id}/delete',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:aulas.delete'
     ],
     function ($request,$id){
      //   return new Response(200, Painel\Aula::getAulaDelete($request,$id));
@@ -92,7 +85,8 @@ $obRouter->get('/aulas/{id}/delete',[
 //ROTA de Post de EXCLUSÃO de Aulas
 $obRouter->post('/aulas/{id}/delete',[
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:aulas.delete'
     ],
     
     function ($request, $id){
@@ -105,7 +99,8 @@ $obRouter->post('/aulas/{id}/delete',[
 //ROTA de GET de presentes na aula
 $obRouter->get('/aulas/{id}/presentes',[
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:aulas.presentes'
     ],
     
     function ($request, $id){

@@ -1,167 +1,279 @@
-								<div class="row">
-									<div class="col-md-6 card-title">
-										<h5>{{title}}</h5>
-									</div>
-									<div class="col-md-6">
-										{{statusMessage}}
-									</div>
-								</div>
-								<form  method="post" action="?page=1">
-									<div class="row ">
+<main class="work-form-page aula-form-page">
+  <form method="post" action="?page=1" class="aula-form">
+    <header class="form-shell-header">
+      <div class="form-shell-title">
+        <h5>{{title}}</h5>
+        <div class="form-status">{{statusMessage}}</div>
+      </div>
 
-										<div class="col-md-12 align-self-end text-right form-actions">
+      <div class="form-actions">
+        <button class="btn btn-facebook btn-round btn-just-icon" type="submit" rel="tooltip" title="Salvar">
+          <i class="material-icons">save</i>
+        </button>
+        <a href="{{URL}}/aulas" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
+          <i class="material-icons">reply</i>
+        </a>
+      </div>
+    </header>
 
-										      <button class="btn btn-facebook btn-round btn-just-icon" type="submit" rel="tooltip" title="Salvar">
-											<i class="material-icons">save</i>
-										     </button>
+    <section class="form-shell-card">
+      <div class="aula-form-grid">
+        <div class="aula-field aula-span-3">
+          <label for="data">Data da aula</label>
+          <input {{desabilitaData}} type="date" max="9999-12-31" class="form-control-pessoal" id="data" name="data" value="{{data}}" required>
+        </div>
 
-												<a href="{{URL}}/aulas" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
-													<i class="material-icons">reply</i>
-												</a>
-										</div>
-									</div>
+        <div class="aula-field aula-span-2">
+          <label for="dia">Dia da semana</label>
+          <input type="text" class="form-control-pessoal" id="dia" name="dia" value="{{dia}}" readonly>
+        </div>
 
-									<div>
+        <div class="aula-field aula-span-3">
+          <label for="turma">Turma</label>
+          <select {{desabilitaTurma}} class="custom-select" id="turma" name="turma" required>
+            <option></option>
+            {{optionTurmas}}
+          </select>
+        </div>
 
-										  <div class="form-row">
-										    <div class="col-md-3 mb-2">
-										      <label for="data">Data da Aula</label>
-										      <input {{desabilitaData}} type="date" max="9999-12-31" class="form-control-pessoal" id="data" name="data" value="{{data}}" required  >
-										    </div>
-										     <div class="col-md-2 mb-2">
-										      <label for="data">Dia Semana</label>
-										      <input type="text" class="form-control-pessoal" id="dia" name="dia" value="{{dia}}" readonly  >
-										    </div>
+        <div class="aula-field aula-span-4">
+          <label for="status">Status</label>
+          <select class="custom-select" id="status" name="status" required>
+            {{optionStatus}}
+          </select>
+        </div>
 
-										    <div class="col-md-3 mb-2">
-												<label for="profissional">Turma</label>
-												       <select {{desabilitaTurma}} class="custom-select" id="turma" name="turma" required>
-												       <option></option>
-													        {{optionTurmas}}
-													   </select>
-										    </div>
-										    <div class="col-md-4 mb-2">
-										      <label for="status">Status</label>
-												<select class="custom-select" id="status" name="status" required >
-												  {{optionStatus}}
-												</select>
-										    </div>
+        <div class="aula-section-title aula-span-12">Primeira aula</div>
 
-										  </div>
-										  <div class="form-row">
+        <div class="aula-field aula-span-5">
+          <label for="professor1">Professor</label>
+          <select class="custom-select" id="professor1" name="professor1" required>
+            <option></option>
+            {{optionProfessores1}}
+          </select>
+        </div>
 
-										    <div class="col-md-4 mb-2">
-											<label for="profissional">Professor 1ª Aula </label>
-											       <select class="custom-select" id="professor1" name="professor1" required>
-											       <option></option>
-												        {{optionProfessores1}}
-											   </select>
-										    </div>
+        <div class="aula-field aula-span-5">
+          <label for="disciplina1">Disciplina</label>
+          <div class="aula-disciplina-picker">
+            <select class="custom-select" id="disciplina1" name="disciplina1" required>
+              <option></option>
+              {{optionDisciplina1}}
+            </select>
+            <button type="button" class="btn btn-alert btn-round btn-just-icon aula-disciplina-add" id="btnDisciplinaRapida1" data-professor="#professor1" data-disciplina="#disciplina1" rel="tooltip" title="Adicionar disciplina ao professor" disabled>
+              <i class="material-icons">add</i>
+            </button>
+          </div>
+        </div>
 
-										    <div class="col-md-4 mb-2">
-											<label for="profissional">Disciplina </label>
-											       <select class="custom-select" id="disciplina1" name="disciplina1" required>
-											       <option></option>
-											       {{optionDisciplina1}}
-											   </select>
-										    </div>
+        <div class="aula-section-title aula-span-12">Segunda aula</div>
 
-										  </div>
-										  <div class="form-row">
+        <div class="aula-field aula-span-5">
+          <label for="professor2">Professor</label>
+          <select class="custom-select" id="professor2" name="professor2" required>
+            <option></option>
+            {{optionProfessores2}}
+          </select>
+        </div>
 
-										    <div class="col-md-4 mb-2">
-											<label for="profissional">Professor 2ª Aula </label>
-											       <select class="custom-select" id="professor2" name="professor2" required>
-											       <option></option>
-												        {{optionProfessores2}}
-											   </select>
-										    </div>
+        <div class="aula-field aula-span-5">
+          <label for="disciplina2">Disciplina</label>
+          <div class="aula-disciplina-picker">
+            <select class="custom-select" id="disciplina2" name="disciplina2" required>
+              <option></option>
+              {{optionDisciplina2}}
+            </select>
+            <button type="button" class="btn btn-alert btn-round btn-just-icon aula-disciplina-add" id="btnDisciplinaRapida2" data-professor="#professor2" data-disciplina="#disciplina2" rel="tooltip" title="Adicionar disciplina ao professor" disabled>
+              <i class="material-icons">add</i>
+            </button>
+          </div>
+        </div>
 
-										    <div class="col-md-4 mb-2">
-											<label for="profissional">Disciplina </label>
-											       <select class="custom-select" id="disciplina2" name="disciplina2" required>
-											       <option></option>
-											         {{optionDisciplina2}}
-											   </select>
-										    </div>
+        <div class="aula-field aula-span-12">
+          <label for="obs">Observações</label>
+          <textarea class="form-control-pessoal" id="obs" name="obs" spellcheck="false">{{obs}}</textarea>
+        </div>
+      </div>
+    </section>
+  </form>
 
-										  </div>
-										    <div class="form-row">
-										    <label for="profissional">Observações</label>
-										    <div class="col-md-12 mb-2">
-										 <textarea class="form-control-pessoal" id="obs" name="obs" spellcheck="false">{{obs}} </textarea>
-										    </div>
+  <div class="modal fade" id="modalDisciplinaRapida" tabindex="-1" aria-labelledby="modalDisciplinaRapidaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalDisciplinaRapidaLabel">Adicionar disciplina</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="quick-discipline-professor">Professor: <strong id="disciplinaRapidaProfessor"></strong></p>
+          <label for="nomeDisciplinaRapida">Nome da disciplina</label>
+          <input type="text" class="form-control-pessoal" id="nomeDisciplinaRapida" autocomplete="off">
+          <small class="quick-discipline-feedback" id="disciplinaRapidaFeedback"></small>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger btn-round btn-just-icon" data-dismiss="modal" rel="tooltip" title="Fechar">
+            <i class="material-icons">close</i>
+          </button>
+          <button type="button" class="btn btn-success btn-round btn-just-icon" id="salvarDisciplinaRapida" rel="tooltip" title="Salvar">
+            <i class="material-icons">save</i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
 
-										  </div>
+<script type="text/javascript">
+  $(document).ready(function()
+  {
+    $("#data").on("change", function(){
+      var d = this.value.split("-");
+      var data = new Date(d[0], d[1]-1, d[2]).getDay();
+      var dia_semana = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'][data];
+      $("#dia").val(dia_semana);
+    }).change();
 
+    function preencherDisciplinas($disciplina, result, selecionada) {
+      var options = '<option value="">Selecione a disciplina</option>';
 
- <script type="text/javascript">
- //preenche select automaticamente
-    $(document).ready(function()
-		{
+      if (Array.isArray(result) && result.length) {
+        $.each(result, function(i,v)
+        {
+          options = options + '<option value="'+ v.idDisciplina +'">'+ v.nome +'</option>';
+        });
+      }else{
+        options = '<option value="">Professor sem disciplina cadastrada</option>';
+      }
 
-		 $("#data").on("change", function(){
-		     var d = this.value.split("-");
-		     var data = new Date(d[0], d[1]-1, d[2]).getDay();
-		     var dia_semana = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'][data];
-		     $("#dia").val(dia_semana);
-		  }).change();
+      $disciplina.html(options);
 
-			//Select Professor 1
-			$("#professor1").change(function()
-			{
-				var value = $(this).val();
-				$.post("{{URL}}/app/Controller/Ajax/disciplinaProfessor.php", {id:value}, function(result){
-					$("#disciplina1").empty();
-					if (result)
-					{
-						var options = '';
-						$.each(result, function(i,v)
-						{
-							options = options + '<option value="'+ v.idDisciplina +'">'+ v.nome +'</option>'
-						});
-						$("#disciplina1").html(options);
-					}
-				}, "json");
-			});
+      if (selecionada) {
+        $disciplina.val(String(selecionada)).trigger("change");
+      }
+    }
 
-			//Select Professor 2
-			$("#professor2").change(function()
-			{
-				var value = $(this).val();
-				$.post("{{URL}}/app/Controller/Ajax/disciplinaProfessor.php", {id:value}, function(result){
-					$("#disciplina2").empty();
-					if (result)
-					{
-						var options = '';
-						$.each(result, function(i,v)
-						{
-							options = options + '<option value="'+ v.idDisciplina +'">'+ v.nome +'</option>'
-						});
-						$("#disciplina2").html(options);
-					}
-				}, "json");
-			});
-		})
+    function carregarDisciplinas(professor, disciplina, selecionada) {
+      var value = $(professor).val();
+      var $disciplina = $(disciplina);
+      $disciplina.html('<option value="">Selecione um professor</option>');
 
+      if (!value) return $.Deferred().resolve().promise();
+
+      $.post("{{URL}}/ajax/professores/disciplinas", {idProfessor:value}, function(result){
+        preencherDisciplinas($disciplina, result, selecionada);
+      }, "json").fail(function(){
+        $disciplina.html('<option value="">Erro ao carregar disciplinas</option>');
+      });
+    }
+
+    function atualizarBotoesDisciplina() {
+      $(".aula-disciplina-add").each(function()
+      {
+        var professor = $(this).data("professor");
+        $(this).prop("disabled", !$(professor).val());
+      });
+    }
+
+    function abrirModalDisciplinaRapida() {
+      var $modal = $("#modalDisciplinaRapida");
+      $modal.addClass("show").attr("aria-hidden", "false");
+      setTimeout(function() { $("#nomeDisciplinaRapida").focus(); }, 50);
+    }
+
+    function fecharModalDisciplinaRapida() {
+      $("#modalDisciplinaRapida").removeClass("show").attr("aria-hidden", "true");
+    }
+
+    function setDisciplinaFeedback(mensagem, erro) {
+      $("#disciplinaRapidaFeedback")
+        .text(mensagem || "")
+        .toggleClass("is-error", !!erro)
+        .toggleClass("is-success", !!mensagem && !erro);
+    }
+
+    $("#professor1").change(function()
+    {
+      carregarDisciplinas(this, "#disciplina1");
+      atualizarBotoesDisciplina();
+    });
+
+    $("#professor2").change(function()
+    {
+      carregarDisciplinas(this, "#disciplina2");
+      atualizarBotoesDisciplina();
+    });
+
+    $(".aula-disciplina-add").on("click", function()
+    {
+      var professor = $(this).data("professor");
+      var disciplina = $(this).data("disciplina");
+      var idProfessor = $(professor).val();
+
+      if (!idProfessor) {
+        $(professor).focus();
+        return;
+      }
+
+      $("#modalDisciplinaRapida").data("professor", professor).data("disciplina", disciplina);
+      $("#disciplinaRapidaProfessor").text($(professor + " option:selected").text().trim());
+      $("#nomeDisciplinaRapida").val("");
+      setDisciplinaFeedback("");
+      abrirModalDisciplinaRapida();
+    });
+
+    $("#salvarDisciplinaRapida").on("click", function()
+    {
+      var $modal = $("#modalDisciplinaRapida");
+      var professor = $modal.data("professor");
+      var disciplina = $modal.data("disciplina");
+      var idProfessor = $(professor).val();
+      var nome = $.trim($("#nomeDisciplinaRapida").val());
+      var $botao = $(this);
+
+      if (!nome) {
+        setDisciplinaFeedback("Informe o nome da disciplina.", true);
+        $("#nomeDisciplinaRapida").focus();
+        return;
+      }
+
+      $botao.prop("disabled", true);
+      setDisciplinaFeedback("Salvando...");
+
+      $.post("{{URL}}/ajax/professores/disciplinas/nova", {idProfessor:idProfessor, nome:nome}, function(response)
+      {
+        if (!response || !response.success) {
+          setDisciplinaFeedback((response && response.message) ? response.message : "Não foi possível cadastrar a disciplina.", true);
+          return;
+        }
+
+        preencherDisciplinas($(disciplina), response.disciplinas || [], response.disciplina.idDisciplina);
+        setDisciplinaFeedback(response.message || "Disciplina cadastrada.");
+        fecharModalDisciplinaRapida();
+      }, "json").fail(function()
+      {
+        setDisciplinaFeedback("Erro ao salvar a disciplina.", true);
+      }).always(function()
+      {
+        $botao.prop("disabled", false);
+      });
+    });
+
+    setTimeout(function()
+    {
+      var disciplina1Selecionada = $("#disciplina1").attr("data-form-draft-value") || $("#disciplina1").val();
+      var disciplina2Selecionada = $("#disciplina2").attr("data-form-draft-value") || $("#disciplina2").val();
+
+      if ($("#professor1").val() && $("#disciplina1 option").length <= 1) {
+        carregarDisciplinas("#professor1", "#disciplina1", disciplina1Selecionada);
+      }
+
+      if ($("#professor2").val() && $("#disciplina2 option").length <= 1) {
+        carregarDisciplinas("#professor2", "#disciplina2", disciplina2Selecionada);
+      }
+
+      atualizarBotoesDisciplina();
+    }, 0);
+  });
 </script>
-
-
-
-									</div>
-
-
-								</form>
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,41 +1,51 @@
-<main class="list-page">
-  <section class="list-panel">
-    <div class="list-toolbar">
-      <div class="list-title">
+<main class="alunos-page">
+  <section class="alunos-panel">
+    <div class="alunos-toolbar">
+      <div class="alunos-title">
         <h5>{{title}}</h5>
       </div>
-      <div class="list-status">
-        {{statusMessage}}
-      </div>
-      <div class="list-actions">
+      <div class="alunos-status">{{statusMessage}}</div>
+      <div class="alunos-actions">
+        <button type="button" class="btn btn-default btn-round btn-just-icon alunos-columns-toggle" rel="tooltip" title="Ocultar/exibir campos" data-toggle-column-controls="datatablesSimple" aria-expanded="false">
+          <i class="material-icons">view_column</i>
+        </button>
+        <button type="button" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Imprimir" data-table-print>
+          <i class="material-icons">print</i>
+        </button>
         <a href="{{URL}}/disciplinas/new" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Novo">
           <i class="material-icons">add</i>
         </a>
-        <a href="{{URL}}/disciplinas" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
-          <i class="material-icons">reply</i>
-        </a>
       </div>
+      <div id="disciplinasColumnControls" class="alunos-column-controls" data-table-column-controls="datatablesSimple" hidden></div>
     </div>
   </section>
 
-  <div class="table-responsive list-table-wrap">
-    <table class="table table-striped list-table">
+  <section class="alunos-datatable-panel">
+    <table
+      id="datatablesSimple"
+      class="table table-striped alunos-table"
+      data-caption="Listagem de disciplinas cadastradas"
+      data-entity-singular="disciplina"
+      data-entity-plural="disciplinas"
+      data-placeholder="Buscar disciplina..."
+      data-search-title="Buscar na listagem de disciplinas"
+      data-multi-search="true"
+      data-name-column="1"
+      data-actions-column="2"
+      data-html-columns="1,2"
+      data-adaptive-pdf="true"
+    >
+      <caption>Listagem de disciplinas cadastradas</caption>
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Nome</th>
-          <th style="width:200px">Ações</th>
+          <th data-type="string" data-column-key="id">ID</th>
+          <th data-type="html" data-column-key="nome">Nome</th>
+          <th data-type="html" data-sortable="false" data-searchable="false">Ações</th>
         </tr>
       </thead>
       <tbody>
         {{itens}}
       </tbody>
     </table>
-  </div>
-
-  <div class="list-footer">
-    <div class="list-pagination">
-      {{pagination}}
-    </div>
-  </div>
+  </section>
 </main>

@@ -3,6 +3,7 @@
 namespace App\Model\Entity;
 
 use \WilliamCosta\DatabaseManager\Database;
+use App\Auth\Permission;
 use App\Utils\Funcoes;
 
 class User{
@@ -55,11 +56,11 @@ class User{
 	//Permissao para acessar Botão Novo Usuário
 	public $btnNovoUsuario;
 
-	//Permissao para acessar Menu Presença
-	public $menuPresenca;
-	
 	//Permissao para acessar Menu Disciplinas
 	public $menuDisciplinas;
+
+	//Permissoes granulares em JSON
+	public $permissoes;
 	
 	//Método responsavel por cadastrar o usuário no Banco de Dados
 	public function cadastrar(){
@@ -83,9 +84,9 @@ class User{
 		    'menuProfessores' 	=> $this->menuProfessores,
 		    'menuAulas' 	=> $this->menuAulas,
 		    'menuFrequencias' 	=> $this->menuFrequencias,
-		    'btnNovoUsuario' 	=> $this->btnNovoUsuario,
-		    'menuPresenca' 	=> $this->menuPresenca,
-		    'menuDisciplinas' 	=> $this->menuDisciplinas,
+			    'btnNovoUsuario' 	=> $this->btnNovoUsuario,
+			    'menuDisciplinas' 	=> $this->menuDisciplinas,
+			    'permissoes' 	=> $this->permissoes,
 		    
 		]);
 		
@@ -110,9 +111,9 @@ class User{
 		    'menuProfessores' 	=> $this->menuProfessores,
 		    'menuAulas' 	=> $this->menuAulas,
 		    'menuFrequencias' 	=> $this->menuFrequencias,
-		    'btnNovoUsuario' 	=> $this->btnNovoUsuario,
-		    'menuPresenca' 	=> $this->menuPresenca,
-		    'menuDisciplinas' 	=> $this->menuDisciplinas,
+			    'btnNovoUsuario' 	=> $this->btnNovoUsuario,
+			    'menuDisciplinas' 	=> $this->menuDisciplinas,
+			    'permissoes' 	=> $this->permissoes,
 		    
 		    
 		]);
@@ -157,43 +158,33 @@ class User{
 	
 	//Método responsavel por iniciar sessao com dados do form
 	public static function getSessaoDados($ob){
-	    //inicia sessão
-	    Funcoes::init();
-	    
-	    //Define a sessao do usuario
-	    $_SESSION['usuario']['novo'] = [
-	        'nome' => $ob['nome'],
-	        'email' => $ob['email'],
-	        'senha' => $ob['senha'],
-	        'cpf' => $ob['cpf'],
-	        'tipo' => $ob['tipo'],
-	        'excluirAluno' => $ob['excluirAluno'],
-	        'excluirProfessor' => $ob['excluirProfessor'],
-	        'excluirDisciplina' => $ob['excluirDisciplina'],
-	        'excluirUsuario' => $ob['excluirUsuario'],
-	        'menuAlunos' 	=> $ob['menuAlunos'],
-	        'menuProfessores' 	=> $ob['menuProfessores'],
-	        'menuAulas' 	=> $ob['menuAulas'],
-	        'menuFrequencias' 	=> $ob['menuFrequencias'],
-	        'btnNovoUsuario' 	=> $ob['btnNovoUsuario'],
-	        'menuPresenca' 	=> $ob['menuPresenca'],
-	        'menuDisciplinas' 	=> $ob['menuDisciplinas'],
-	    ];
-	   
-	    //Sucesso
-	    return true;
+		$permissoes = $ob['permissoes'] ?? $ob['permissions'] ?? [];
+		if(is_string($permissoes)){
+			$permissoes = json_decode($permissoes, true) ?: [];
+		}
+
+	    return Funcoes::flashOldInput('usuario.novo', [
+	        'nome' => $ob['nome'] ?? '',
+	        'email' => $ob['email'] ?? '',
+	        'cpf' => $ob['cpf'] ?? '',
+	        'tipo' => $ob['tipo'] ?? '',
+	        'excluirAluno' => $ob['excluirAluno'] ?? $ob['checkExcluirAluno'] ?? '0',
+	        'excluirProfessor' => $ob['excluirProfessor'] ?? $ob['checkExcluirProfessor'] ?? '0',
+	        'excluirDisciplina' => $ob['excluirDisciplina'] ?? $ob['checkDisciplina'] ?? '0',
+	        'excluirUsuario' => $ob['excluirUsuario'] ?? $ob['checkExcluirUsuario'] ?? '0',
+	        'menuAlunos' => $ob['menuAlunos'] ?? $ob['checkMenuAlunos'] ?? '0',
+	        'menuProfessores' => $ob['menuProfessores'] ?? $ob['checkMenuProfessores'] ?? '0',
+	        'menuAulas' => $ob['menuAulas'] ?? $ob['checkMenuAulas'] ?? '0',
+	        'menuFrequencias' => $ob['menuFrequencias'] ?? $ob['checkMenuFrequencias'] ?? '0',
+	        'btnNovoUsuario' => $ob['btnNovoUsuario'] ?? $ob['checkBtnNovoUsuario'] ?? '0',
+		        'menuDisciplinas' => $ob['menuDisciplinas'] ?? $ob['checkMenuDisciplinas'] ?? '0',
+	        'permissoes' => Permission::encodePermissions($permissoes),
+	    ]);
 	}
 	
 	//Método responsavel por Finalizar sessao
 	public static function getFinalizaSessaoDados(){
-	    //Inicia a Sessão
-	    Funcoes::init();
-	    
-	    //destri a sessao
-	    unset($_SESSION['usuario']['novo']);
-	    
-	    //sucesso
-	    return true;
+	    return Funcoes::clearOldInput('usuario.novo');
 	}
 	
 }

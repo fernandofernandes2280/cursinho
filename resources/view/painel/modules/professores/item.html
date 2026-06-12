@@ -1,5 +1,4 @@
 <tr>
-  <td class="alunos-matricula" data-label="Id">{{id}}</td>
   <td class="student-name-column" data-label="Nome">
     <div class="student-cell">
       <button type="button" class="student-photo-button" data-toggle="modal" data-target="#modalStudentPhoto" data-photo-src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" rel="tooltip" title="Ampliar foto">
@@ -7,14 +6,23 @@
       </button>
       <div class="student-name-stack">
         <a href="{{URL}}/professores/{{id}}/edit" class="student-name-link" rel="tooltip" title="Editar professor">{{nome}}</a>
-        <span class="student-subtitle">{{disciplinas}}</span>
       </div>
     </div>
   </td>
+  <td class="text-center" data-label="Status"><span class="professor-status-pill {{cor}}">{{status}}</span><span class="datatable-status-token" data-report-exclude="true"> statusfilter{{statusToken}} </span></td>
+  <td data-label="Disciplinas"><span>{{disciplinas}}</span></td>
   <td class="text-center" data-label="CPF"><span>{{cpf}}</span></td>
-  <td class="text-center" data-label="Status"><span class="professor-status-pill {{cor}}">{{status}}</span></td>
+  <td class="text-center" data-label="Telefone"><span>{{fone}}</span></td>
+  <td data-label="Endereço"><span>{{endereco}}</span></td>
+  <td class="text-center" data-label="Função"><span>{{funcao}}</span></td>
+  <td data-label="E-mail"><span>{{email}}</span></td>
+  <td class="text-center" data-label="Nascimento"><span>{{dataNasc}}</span></td>
+  <td class="text-center" data-label="Cadastro"><span>{{dataCad}}</span></td>
   <td data-label="Ações">
     <div class="row-actions">
+      <a href="{{URL}}/professores/{{id}}/edit" class="table-action" rel="tooltip" title="Editar">
+        <i class="material-icons">edit</i>
+      </a>
       <a href="{{URL}}/professores/{{id}}/delete" class="table-action table-action-danger" rel="tooltip" {{visivelDeleteProfessor}} title="Excluir">
         <i class="material-icons">delete</i>
       </a>

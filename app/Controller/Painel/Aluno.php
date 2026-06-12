@@ -12,8 +12,416 @@ use \App\Model\Entity\Status as EntityStatus;
 use \App\Utils\Funcoes;
 use \App\Controller\File\Upload as Upload;
 use Bissolli\ValidadorCpfCnpj\CPF;
+use \WilliamCosta\DatabaseManager\Database;
 
 class Aluno extends Page{
+	private const DOCUMENTOS_ALUNO = [
+		'documentoIdentificacao' => [
+			'fileName' => 'documento-identificacao.pdf',
+			'label' => 'Documento de Identificação',
+			'fallbackFileNames' => ['rg.pdf', 'cpf.pdf'],
+		],
+		'documentoResidencia' => [
+			'fileName' => 'comprovante-residencia.pdf',
+			'label' => 'Comprovante de Residência',
+		],
+		'documentoOutros' => [
+			'fileName' => 'outros-documentos.pdf',
+			'label' => 'Outros documentos',
+		],
+	];
+
+	private static function formatDate($date){
+		$timestamp = strlen((string)$date) ? strtotime($date) : false;
+
+		return $timestamp ? date('d/m/Y', $timestamp) : '';
+	}
+
+	private static function formatPhone($phone){
+		$digits = preg_replace('/\D+/', '', (string)$phone);
+
+		if(strlen($digits) === 11){
+			return Funcoes::mask($digits, '(##) #####-####');
+		}
+
+		return trim((string)$phone);
+	}
+
+	private static function formatDateTime($date){
+		$timestamp = strlen((string)$date) ? strtotime($date) : false;
+
+		return $timestamp ? date('d/m/Y H:i', $timestamp) : '-';
+	}
+
+	private static function escape($value){
+		return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+	}
+
+	private static function getAlunoDocumentosDir($idAluno){
+		return dirname(__DIR__).'/File/files/documentos-alunos/'.(int)$idAluno;
+	}
+
+	private static function getAlunoDocumentoUrl($idAluno, $fileName){
+		return URL.'/app/Controller/File/files/documentos-alunos/'.(int)$idAluno.'/'.$fileName;
+	}
+
+	private static function getAlunoDocumentosMetaPath($idAluno){
+		return self::getAlunoDocumentosDir($idAluno).'/documentos.json';
+	}
+
+	private static function getAlunoDocumentosMeta($idAluno){
+		$path = self::getAlunoDocumentosMetaPath($idAluno);
+
+		if(!is_file($path)){
+			return [];
+		}
+
+		$meta = json_decode((string)file_get_contents($path), true);
+
+		return is_array($meta) ? $meta : [];
+	}
+
+	private static function salvarAlunoDocumentosMeta($idAluno, $meta){
+		return file_put_contents(
+			self::getAlunoDocumentosMetaPath($idAluno),
+			json_encode($meta, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+		) !== false;
+	}
+
+	private static function getUploadOriginalName($file, $fallback){
+		$name = basename(str_replace('\\', '/', (string)($file['name'] ?? '')));
+
+		return $name !== '' ? $name : $fallback;
+	}
+
+	private static function getAlunoDocumentoFileNames($documento){
+		return array_merge([$documento['fileName']], (array)($documento['fallbackFileNames'] ?? []));
+	}
+
+	private static function getAlunoDocumentoArquivo($idAluno, $documento){
+		foreach(self::getAlunoDocumentoFileNames($documento) as $currentFileName){
+			$path = self::getAlunoDocumentosDir($idAluno).'/'.$currentFileName;
+
+			if(is_file($path)){
+				return $currentFileName;
+			}
+		}
+
+		return '';
+	}
+
+	private static function getAlunoDocumentoInfo($idAluno, $fileName, $fallbackFileNames = []){
+		if((int)$idAluno <= 0){
+			return '';
+		}
+
+		$fileNames = self::getAlunoDocumentoFileNames([
+			'fileName' => $fileName,
+			'fallbackFileNames' => $fallbackFileNames,
+		]);
+		$meta = self::getAlunoDocumentosMeta($idAluno);
+
+		foreach($fileNames as $currentFileName){
+			$path = self::getAlunoDocumentosDir($idAluno).'/'.$currentFileName;
+
+			if(is_file($path)){
+				$displayName = trim((string)($meta[$currentFileName]['originalName'] ?? '')) ?: $currentFileName;
+
+				return '<a href="'.self::getAlunoDocumentoUrl($idAluno, $currentFileName).'" target="_blank" rel="noopener" class="student-name-link">'.self::escape($displayName).'</a>';
+			}
+		}
+
+		return '';
+	}
+
+	private static function getAlunoDocumentoDeleteButton($idAluno, $field){
+		if((int)$idAluno <= 0 || !isset(self::DOCUMENTOS_ALUNO[$field])){
+			return '';
+		}
+
+		$currentFileName = self::getAlunoDocumentoArquivo($idAluno, self::DOCUMENTOS_ALUNO[$field]);
+
+		if($currentFileName === ''){
+			return '';
+		}
+
+		return '<button type="button" class="aluno-document-delete" data-document-delete="'.URL.'/alunos/'.(int)$idAluno.'/documentos/'.$field.'/delete" title="Excluir documento"><i class="material-icons">delete</i></button>';
+	}
+
+	private static function getAlunoDocumentosVars($idAluno = null){
+		$idAluno = (int)$idAluno;
+
+		return [
+			'documentoIdentificacaoInfo' => self::getAlunoDocumentoInfo(
+				$idAluno,
+				self::DOCUMENTOS_ALUNO['documentoIdentificacao']['fileName'],
+				self::DOCUMENTOS_ALUNO['documentoIdentificacao']['fallbackFileNames']
+			),
+			'documentoResidenciaInfo' => self::getAlunoDocumentoInfo($idAluno, self::DOCUMENTOS_ALUNO['documentoResidencia']['fileName']),
+			'documentoOutrosInfo' => self::getAlunoDocumentoInfo($idAluno, self::DOCUMENTOS_ALUNO['documentoOutros']['fileName']),
+			'documentoIdentificacaoDelete' => self::getAlunoDocumentoDeleteButton($idAluno, 'documentoIdentificacao'),
+			'documentoResidenciaDelete' => self::getAlunoDocumentoDeleteButton($idAluno, 'documentoResidencia'),
+			'documentoOutrosDelete' => self::getAlunoDocumentoDeleteButton($idAluno, 'documentoOutros'),
+		];
+	}
+
+	private static function isPdfUpload($file){
+		if(!is_array($file) || (int)($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE){
+			return true;
+		}
+
+		if((int)($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK){
+			return false;
+		}
+
+		$extension = strtolower(pathinfo((string)($file['name'] ?? ''), PATHINFO_EXTENSION));
+		$type = strtolower((string)($file['type'] ?? ''));
+
+		if(is_file((string)($file['tmp_name'] ?? '')) && function_exists('finfo_open')){
+			$finfo = finfo_open(FILEINFO_MIME_TYPE);
+			if($finfo){
+				$detectedType = finfo_file($finfo, $file['tmp_name']);
+				finfo_close($finfo);
+				if($detectedType){
+					$type = strtolower((string)$detectedType);
+				}
+			}
+		}
+
+		return $extension === 'pdf' && in_array($type, ['application/pdf', 'application/x-pdf'], true);
+	}
+
+	private static function documentosAlunoValidos($request){
+		$fileVars = $request->getFileVars();
+
+		foreach(self::DOCUMENTOS_ALUNO as $field => $documento){
+			$file = $fileVars[$field] ?? null;
+
+			if(!is_array($file) || (int)($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE){
+				continue;
+			}
+
+			if(!self::isPdfUpload($file)){
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private static function salvarDocumentosAluno($request, $idAluno){
+		$fileVars = $request->getFileVars();
+		$dir = self::getAlunoDocumentosDir($idAluno);
+		$temArquivos = false;
+
+		if(!self::documentosAlunoValidos($request)){
+			return false;
+		}
+
+		foreach(self::DOCUMENTOS_ALUNO as $field => $documento){
+			$file = $fileVars[$field] ?? null;
+			$temArquivos = $temArquivos || (is_array($file) && (int)($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE);
+		}
+
+		if(!$temArquivos){
+			return true;
+		}
+
+		if(!is_dir($dir) && !mkdir($dir, 0775, true)){
+			return false;
+		}
+
+		$meta = self::getAlunoDocumentosMeta($idAluno);
+
+		foreach(self::DOCUMENTOS_ALUNO as $field => $documento){
+			$file = $fileVars[$field] ?? null;
+
+			if(!is_array($file) || (int)($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE){
+				continue;
+			}
+
+			if(!move_uploaded_file($file['tmp_name'], $dir.'/'.$documento['fileName'])){
+				return false;
+			}
+
+			$meta[$documento['fileName']] = [
+				'originalName' => self::getUploadOriginalName($file, $documento['fileName']),
+				'updatedAt' => date('c'),
+			];
+		}
+
+		return self::salvarAlunoDocumentosMeta($idAluno, $meta);
+	}
+
+	private static function excluirDocumentoAluno($idAluno, $field){
+		if(!isset(self::DOCUMENTOS_ALUNO[$field])){
+			return false;
+		}
+
+		$dir = self::getAlunoDocumentosDir($idAluno);
+
+		if(!is_dir($dir)){
+			return true;
+		}
+
+		$meta = self::getAlunoDocumentosMeta($idAluno);
+
+		foreach(self::getAlunoDocumentoFileNames(self::DOCUMENTOS_ALUNO[$field]) as $fileName){
+			$path = $dir.'/'.$fileName;
+
+			if(is_file($path) && !unlink($path)){
+				return false;
+			}
+
+			unset($meta[$fileName]);
+		}
+
+		return self::salvarAlunoDocumentosMeta($idAluno, $meta);
+	}
+
+	public static function setDeleteDocumentoAluno($request, $id, $documento){
+		$obAluno = EntityAluno::getAlunoById($id);
+
+		if(!$obAluno instanceof EntityAluno){
+			$request->getRouter()->redirect('/alunos');
+		}
+
+		if(!self::excluirDocumentoAluno($obAluno->id, $documento)){
+			$request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=documentoDeleteError');
+		}
+
+		$request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=documentoDeleted');
+	}
+
+	private static function getFrequenciaStatusLabel($status){
+		if($status === 'P'){
+			return 'Presente';
+		}
+
+		if($status === 'F'){
+			return 'Falta';
+		}
+
+		return strlen((string)$status) ? (string)$status : '-';
+	}
+
+	private static function getFrequenciaStatusClass($status){
+		if($status === 'P'){
+			return 'bg-gradient-success';
+		}
+
+		if($status === 'F'){
+			return 'bg-gradient-danger';
+		}
+
+		return 'bg-gradient-warning';
+	}
+
+	private static function getAlunoFrequenciasItems($idAluno){
+		$resultados = '';
+		$table = 'frequencia AS F
+			INNER JOIN aulas AS AU ON AU.id = F.idAula
+			LEFT JOIN turmas AS T ON T.id = AU.turma
+			LEFT JOIN statusAula AS SA ON SA.id = AU.status
+			LEFT JOIN professores AS P1 ON P1.id = AU.professor1
+			LEFT JOIN professores AS P2 ON P2.id = AU.professor2
+			LEFT JOIN disciplinas AS D1 ON D1.id = AU.disciplina1
+			LEFT JOIN disciplinas AS D2 ON D2.id = AU.disciplina2';
+		$fields = 'F.id,
+			F.idAula,
+			F.status AS frequenciaStatus,
+			F.dataReg AS frequenciaDataReg,
+			AU.data AS aulaData,
+			AU.diaSemana,
+			T.nome AS turmaNome,
+			SA.nome AS aulaStatus,
+			P1.nome AS professor1Nome,
+			P2.nome AS professor2Nome,
+			D1.nome AS disciplina1Nome,
+			D2.nome AS disciplina2Nome';
+		$results = (new Database($table))->select(
+			'F.idAluno = '.(int)$idAluno,
+			'AU.data DESC, AU.id DESC',
+			null,
+			$fields
+		);
+
+		while($obFrequencia = $results->fetchObject()){
+			$resultados .= View::render('painel/modules/alunos/itemFrequencia',[
+				'idAula' => (int)$obFrequencia->idAula,
+				'data' => self::formatDate($obFrequencia->aulaData).' ( '.self::escape($obFrequencia->diaSemana ?: '-').' )',
+				'turma' => self::escape($obFrequencia->turmaNome ?: 'Sem turma'),
+				'professor1' => self::escape($obFrequencia->professor1Nome ?: 'Sem professor'),
+				'disciplina1' => self::escape($obFrequencia->disciplina1Nome ?: 'Sem disciplina'),
+				'professor2' => self::escape($obFrequencia->professor2Nome ?: ''),
+				'disciplina2' => self::escape($obFrequencia->disciplina2Nome ?: ''),
+				'frequencia' => self::escape(self::getFrequenciaStatusLabel($obFrequencia->frequenciaStatus)),
+				'frequenciaCor' => self::getFrequenciaStatusClass($obFrequencia->frequenciaStatus),
+				'aulaStatus' => self::escape($obFrequencia->aulaStatus ?: 'Sem status'),
+				'registro' => self::formatDateTime($obFrequencia->frequenciaDataReg),
+			]);
+		}
+
+		return $resultados;
+	}
+
+	private static function getAlunoFrequenciasResumo($idAluno){
+		$obResumo = (new Database('frequencia'))->select(
+			'idAluno = '.(int)$idAluno,
+			null,
+			null,
+			'COUNT(*) AS total, SUM(status = "P") AS presencas, SUM(status = "F") AS faltas'
+		)->fetchObject();
+		$total = (int)($obResumo->total ?? 0);
+		$presencas = (int)($obResumo->presencas ?? 0);
+		$faltas = (int)($obResumo->faltas ?? 0);
+		$percentual = $total > 0 ? ($presencas / $total) * 100 : 0;
+
+		return [
+			'total' => $total,
+			'presencas' => $presencas,
+			'faltas' => $faltas,
+			'percentual' => number_format($percentual, 1, ',', '.').'%',
+		];
+	}
+
+	private static function getAlunoFrequenciasTable($obAluno){
+		$resumo = self::getAlunoFrequenciasResumo($obAluno->id);
+
+		return View::render('painel/modules/alunos/frequencias',[
+			'title' => 'Frequências das aulas',
+			'subtitle' => self::escape($obAluno->matricula.' - '.$obAluno->nome),
+			'totalFrequencias' => $resumo['total'],
+			'totalPresencas' => $resumo['presencas'],
+			'totalFaltas' => $resumo['faltas'],
+			'percentualPresenca' => $resumo['percentual'],
+			'itens' => self::getAlunoFrequenciasItems($obAluno->id),
+		]);
+	}
+
+	private static function getAlunoEndereco($obAluno){
+		$obBairro = (int)$obAluno->bairro > 0 ? EntityBairro::getBairroById((int)$obAluno->bairro) : null;
+		$endereco = trim((string)$obAluno->endereco);
+		$numero = trim((string)$obAluno->numero);
+		$bairro = $obBairro ? trim((string)$obBairro->nome) : '';
+		$cidadeUf = trim(trim((string)$obAluno->cidade).' / '.trim((string)$obAluno->uf), ' /');
+		$partes = [];
+
+		if($endereco !== ''){
+			$partes[] = $numero !== '' ? $endereco.', '.$numero : $endereco;
+		}
+
+		if($bairro !== ''){
+			$partes[] = $bairro;
+		}
+
+		if($cidadeUf !== ''){
+			$partes[] = $cidadeUf;
+		}
+
+		return implode(' - ', $partes);
+	}
+
 	//Método responsavel por obter a rendereizacao da lista de Alunos
 	private static function getAlunoItems($request){
 
@@ -23,19 +431,29 @@ class Aluno extends Page{
 
 		while ($obAluno = $results -> fetchObject(EntityAluno::class)) {
 
-		    $obStatus = $obAluno->status !== null && $obAluno->status !== '' ? EntityStatus::getStatusById((int)$obAluno->status) : null;
-		    $obTurma = (int)$obAluno->turma > 0 ? EntityTurma::getTurmaById((int)$obAluno->turma) : null;
-		    $statusCor = $obAluno->status == 1 ? 'bg-gradient-success' : 'bg-gradient-danger';
+			    $obStatus = $obAluno->status !== null && $obAluno->status !== '' ? EntityStatus::getStatusById((int)$obAluno->status) : null;
+			    $obTurma = (int)$obAluno->turma > 0 ? EntityTurma::getTurmaById((int)$obAluno->turma) : null;
+			    $obEscolaridade = (int)$obAluno->escolaridade > 0 ? EntityEscolaridade::getEscolaridadeById((int)$obAluno->escolaridade) : null;
+			    $statusCor = $obAluno->status == 1 ? 'bg-gradient-success' : 'bg-gradient-danger';
+			    $statusToken = $obAluno->status == 1 ? 'ativo' : 'inativo';
 
-			$resultados .= View::render('painel/modules/alunos/item',[
+				$resultados .= View::render('painel/modules/alunos/item',[
 			    'nome' => $obAluno->nome,
 			    'status' => $obStatus ? $obStatus->nome : 'Sem status',
 			    'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##') ,
 			    'id' => $obAluno->id,
-			    'matricula' => $obAluno->matricula,
-			    'turma' => $obTurma ? $obTurma->nome : 'Sem turma',
-			    'foto' => $obAluno->getFoto(),
-			    'statusCor' => $statusCor,
+				    'matricula' => $obAluno->matricula,
+				    'turma' => $obTurma ? $obTurma->nome : 'Sem turma',
+				    'fone' => self::formatPhone($obAluno->fone),
+				    'endereco' => self::getAlunoEndereco($obAluno),
+				    'escolaridade' => $obEscolaridade ? $obEscolaridade->nome : '',
+				    'sexo' => $obAluno->sexo,
+				    'dataNasc' => self::formatDate($obAluno->dataNasc),
+				    'dataCad' => self::formatDate($obAluno->dataCad),
+				    'mae' => $obAluno->mae,
+				    'foto' => $obAluno->getFoto(),
+				    'statusCor' => $statusCor,
+			    'statusToken' => $statusToken,
 			    'visivelDeleteAluno' => permissaoExcluirAluno,
 			]);
 		}
@@ -54,12 +472,6 @@ class Aluno extends Page{
 
 		//Recebe os parâmetros da requisição
 		$queryParams = $request->getQueryParams();
-
-		if (isset($queryParams['status'])) {
-			if($queryParams['status'] == 'ATIVO')$selectedAtivo = 'selected';
-			else if($queryParams['status'] == 'INATIVO') $selectedInativo = 'selected';
-			else $selectedAtIn = 'selected';
-		}
 
 		//esconde busca rápida de prontuário no navBar
 		$hidden = '';
@@ -111,7 +523,7 @@ class Aluno extends Page{
 	    ]);
 
 	    //Retorna a página completa
-	    return parent::getPanel('Cortar Foto > Cursinho', $content,'alunos', self::$hidden);
+	    return parent::getPanel('Cortar Foto > Cursinho', $content,'alunos');
 
 	}
 
@@ -128,7 +540,7 @@ class Aluno extends Page{
 	    ]);
 
 	    //Retorna a página completa
-	    return parent::getPanel('Editar Aluno > Cursinho', $content,'alunos', self::$hidden);
+	    return parent::getPanel('Editar Aluno > Cursinho', $content,'alunos');
 
 	}
 
@@ -180,13 +592,8 @@ class Aluno extends Page{
 	public static function getEditAluno($request,$id){
 
 	    Funcoes::init();
-	    if(isset($_SESSION['idAula'])){
-	        $idAula = $_SESSION['idAula'];
-	        $hideBtnFreq = '';
-	    }else{
-
-	        $hideBtnFreq = 'hidden';
-	    }
+	    $idAula = $_SESSION['idAula'] ?? '';
+	    $hideBtnFreq = '';
 
 	    //obtém o Aluno do banco de dados
 	    $obAluno = EntityAluno::getAlunoById($id);
@@ -200,7 +607,7 @@ class Aluno extends Page{
 	    $obAluno->sexo == 'FEM' ? $selectedSexoF = 'selected' : $selectedSexoF = '';
 
 	    //Conteúdo do Formulário
-	    $content = View::render('painel/modules/alunos/form',[
+	    $content = View::render('painel/modules/alunos/form', array_merge([
 	        'matricula'=>$obAluno->matricula,
 	        'id' => $obAluno->id,
 	        'title' => 'Alunos > Editar',
@@ -225,12 +632,15 @@ class Aluno extends Page{
 	        'optionStatus' => EntityStatus::getSelectStatus($obAluno->status),
 	        'foto' => $obAluno->getFoto(),
 	        'ponteiro' => '',
+	        'fotoLink' => URL.'/alunos/photo/'.$obAluno->id,
+	        'fotoSubmit' => '0',
 	        'idAula' => @$idAula,
 	        'hideBtnFreq' => $hideBtnFreq,
 	        'idAluno' => $obAluno->id,
 	        'selectedSexoM' => $selectedSexoM  ,
 	        'selectedSexoF' => $selectedSexoF
-	    ]);
+	    ], self::getAlunoDocumentosVars($obAluno->id)));
+	    $content .= self::getAlunoFrequenciasTable($obAluno);
 
 	    //Retorna a página completa
 	    return parent::getPanel('Editar Aluno > Cursinho', $content,'alunos');
@@ -258,7 +668,7 @@ class Aluno extends Page{
 	        $ob = EntityAluno::getAlunoByCpf($validaCpf->getValue());
 	        //verifica se cpf informado já está cadastrado
 	        if(($ob instanceof EntityAluno)){
-	            $request->getRouter()->redirect('/alunos/'.$ob->id.'/edit?statusMessage=cpfduplicated');
+	            $request->getRouter()->redirect('/alunos/'.$ob->id.'/edit?statusMessage=cpfDuplicated');
 	        }
 	    }
 
@@ -275,6 +685,10 @@ class Aluno extends Page{
 	        //redireciona para os dados do aluno
 	        $request->getRouter()->redirect('/alunos/'.$obAlunoMatricula->id.'/edit');
 
+	    }
+
+	    if(!self::documentosAlunoValidos($request)){
+	        $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=documentoInvalid');
 	    }
 
 
@@ -294,7 +708,7 @@ class Aluno extends Page{
 	    $obAluno->sexo = $postVars['sexo'] ?? $obAluno->sexo;
 	    $obAluno->naturalidade = $postVars['naturalidade'] ?? $obAluno->naturalidade;
 	    $obAluno->escolaridade = $postVars['escolaridade'] ?? $obAluno->escolaridade;
-	    $obAluno->fone =str_replace('-', '', $postVars['fone']) ?? $obAluno->fone;
+	    $obAluno->fone = preg_replace('/\D+/', '', $postVars['fone'] ?? '') ?: $obAluno->fone;
 	    $obAluno->mae = Funcoes::convertePriMaiuscula($postVars['mae'])?? $obAluno->mae;
 	    $obAluno->estadoCivil = $postVars['estadoCivil'] ?? $obAluno->estadoCivil;
 	    $obAluno->status = $postVars['status'] ?? $obAluno->status;
@@ -305,6 +719,9 @@ class Aluno extends Page{
 	    $obAluno->turma = $postVars['turma'] ?? $obAluno->turma;
 	    $obAluno->atualizar();
 
+	    if(!self::salvarDocumentosAluno($request, $obAluno->id)){
+	        $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=documentoInvalid');
+	    }
 
 	    //	Logs::setNewLog($request);
 
@@ -320,10 +737,13 @@ class Aluno extends Page{
 	    Funcoes::init();
 
 	    $queryParams = $request->getQueryParams();
+	    $old = Funcoes::pullOldInput('aluno.novo');
+	    $statusMessage = $queryParams['statusMessage'] ?? '';
+	    $cpfAluno = $queryParams['cpfAluno'] ?? ($old['cpf'] ?? '');
 
 
 	    //instancia classe pra verificar CPF
-	    $validaCpf = new CPF($queryParams['cpfAluno']);
+	    $validaCpf = new CPF($cpfAluno);
 
 	    //verifica se é válido o cpf
 	    if (!$validaCpf->isValid()){
@@ -335,41 +755,50 @@ class Aluno extends Page{
 	    //busca usuário pelo CPF sem a maskara
 	    $ob = EntityAluno::getAlunoByCpf($validaCpf->getValue());
 	    //verifica se o cpf já está cadastrado
-	    if($ob instanceof EntityAluno){
+	    if($ob instanceof EntityAluno && !in_array($statusMessage, ['cpfDuplicated', 'cpfduplicated'])){
 	        $request->getRouter()->redirect('/alunos?statusMessage=duplicad');
 	    }
 
+	    $sexo = $old['sexo'] ?? '';
 
 	    //Conteúdo do Formulário
-	    $content = View::render('painel/modules/alunos/form',[
+	    $content = View::render('painel/modules/alunos/form', array_merge([
 	        'matricula'=> '',
 	        'title' => 'Alunos > Novo',
-	        'nome' => @$_SESSION['aluno']['novo']['nome'] ?? '',
-	        'cep' => @$_SESSION['aluno']['novo']['cep'] ?? '',
-	        'endereco' => @$_SESSION['aluno']['novo']['endereco'] ?? '',
-	        'numero' => @$_SESSION['aluno']['novo']['numero'] ?? '',
-	        'naturalidade' => @$_SESSION['aluno']['novo']['naturalidade'] ?? '',
-	        'fone' => @$_SESSION['aluno']['novo']['fone'] ?? '',
-	        'mae' => @$_SESSION['aluno']['novo']['mae'] ?? '',
-	        'obs' => @$_SESSION['aluno']['novo']['obs'] ?? '',
-	        'cpf' => @$_SESSION['aluno']['novo']['cpf'] ?? @$validaCpf->getValue(),
-	        'dataNasc' => @$_SESSION['aluno']['novo']['dataNasc'] ??'',
-	        'dataCad' => @$_SESSION['aluno']['novo']['dataCad'] ??'',
+	        'nome' => $old['nome'] ?? '',
+	        'cep' => $old['cep'] ?? '',
+	        'endereco' => $old['endereco'] ?? '',
+	        'numero' => $old['numero'] ?? '',
+	        'naturalidade' => $old['naturalidade'] ?? '',
+	        'fone' => ($old['fone'] ?? '') ?: '(00)00000-0000',
+	        'mae' => $old['mae'] ?? '',
+	        'obs' => $old['obs'] ?? '',
+	        'cpf' => $old['cpf'] ?? $validaCpf->getValue(),
+	        'dataNasc' => $old['dataNasc'] ??'',
+	        'dataCad' => $old['dataCad'] ?? date('Y-m-d'),
 	        'statusMessage' => Funcoes::getStatus($request),
-	        'optionBairros' => @$_SESSION['aluno'] ? EntityBairro::getSelectBairros($_SESSION['aluno']['novo']['bairro']) : EntityBairro::getSelectBairros(null),
-	        'optionEscolaridade' =>@$_SESSION['aluno'] ? EntityEscolaridade::getSelectEscolaridade($_SESSION['aluno']['novo']['escolaridade']) : EntityEscolaridade::getSelectEscolaridade(null),
-	        'optionEstadoCivil' => @$_SESSION['aluno'] ? EntityEstadoCivil::getSelectEstadoCivil($_SESSION['aluno']['novo']['estadoCivil']) : EntityEstadoCivil::getSelectEstadoCivil(null),
-	        'cidade' => @$_SESSION['aluno']['novo']['cidade'] ?? 'Santana',
-	        'uf' => @$_SESSION['aluno']['novo']['uf'] ?? 'Ap',
-	        'optionTurma' =>  @$_SESSION['aluno'] ? EntityTurma::getSelectTurmas($_SESSION['aluno']['novo']['turma']) : EntityTurma::getSelectTurmas(null),
-	        'optionStatus' => @$_SESSION['aluno'] ? EntityStatus::getSelectStatus($_SESSION['aluno']['novo']['status']) : EntityStatus::getSelectStatus(null),
+	        'optionBairros' => EntityBairro::getSelectBairros($old['bairro'] ?? null),
+	        'optionEscolaridade' => EntityEscolaridade::getSelectEscolaridade($old['escolaridade'] ?? null),
+	        'optionEstadoCivil' => EntityEstadoCivil::getSelectEstadoCivil($old['estadoCivil'] ?? null),
+	        'cidade' => $old['cidade'] ?? 'Santana',
+	        'uf' => $old['uf'] ?? 'Ap',
+	        'optionTurma' => EntityTurma::getSelectTurmas($old['turma'] ?? null),
+	        'optionStatus' => EntityStatus::getSelectStatus($old['status'] ?? null),
 	        'foto' => EntityAluno::FOTO_PADRAO,
-	        'ponteiro' => 'pointer-events: none;'
+	        'ponteiro' => '',
+	        'fotoLink' => '#',
+	        'fotoSubmit' => '1',
+	        'id' => '',
+	        'idAula' => '',
+	        'idAluno' => '',
+	        'hideBtnFreq' => 'hidden',
+	        'selectedSexoM' => $sexo === 'MAS' ? 'selected' : '',
+	        'selectedSexoF' => $sexo === 'FEM' ? 'selected' : ''
 
-	    ]);
+	    ], self::getAlunoDocumentosVars()));
 
 	    //Retorna a página completa
-	    return parent::getPanel('Novo Aluno > Cursinho', $content,'alunos', self::$hidden);
+	    return parent::getPanel('Novo Aluno > Cursinho', $content,'alunos');
 
 	}
 
@@ -391,7 +820,17 @@ class Aluno extends Page{
 	    $ob = EntityAluno::getAlunoByCpf($validaCpf->getValue());
 	    //verifica se o cpf já está cadastrado
 	    if($ob instanceof EntityAluno){
-	        $request->getRouter()->redirect('/alunos/new?statusMessage=cpfduplicated');
+	        $request->getRouter()->redirect('/alunos/new?'.http_build_query([
+	            'cpfAluno' => $validaCpf->getValue(),
+	            'statusMessage' => 'cpfDuplicated'
+	        ]));
+	    }
+
+	    if(!self::documentosAlunoValidos($request)){
+	        $request->getRouter()->redirect('/alunos/new?'.http_build_query([
+	            'cpfAluno' => $validaCpf->getValue(),
+	            'statusMessage' => 'documentoInvalid'
+	        ]));
 	    }
 
 
@@ -408,14 +847,12 @@ class Aluno extends Page{
 	    $obAluno->cidade = $postVars['cidade'];
 	    $obAluno->uf = Funcoes::convertePriMaiuscula($postVars['uf']);
 	    $obAluno->dataNasc = implode("-",array_reverse(explode("/",$postVars['dataNasc'])));
-	    //recebe a data do formulário e converte para objeto data
-	    $dataCad = date_create_from_format('Y-m-d', $postVars['dataCad']);
-	    //formata a data vinda do formulário com a hora atual
-	    //$obAluno->dataCad = $dataCad->format('Y-m-d H:i:s');
+	    //Data de cadastro sempre baseada na data atual do sistema.
+	    $obAluno->dataCad = date('Y-m-d H:i:s');
 	    $obAluno->sexo = $postVars['sexo'];
 	    $obAluno->naturalidade = $postVars['naturalidade'];
 	    $obAluno->escolaridade = $postVars['escolaridade'];
-	    $obAluno->fone = $postVars['fone'];
+	    $obAluno->fone = preg_replace('/\D+/', '', $postVars['fone'] ?? '');
 	    $obAluno->mae = Funcoes::convertePriMaiuscula($postVars['mae']);
 	    $obAluno->estadoCivil = $postVars['estadoCivil'];
 	    $obAluno->status = $postVars['status'];
@@ -430,12 +867,21 @@ class Aluno extends Page{
 	    $obMatricula->matricula = EntityAluno::geraMatricula($obMatricula->id);
 	    $obMatricula->atualizar();
 
+	    if(!self::salvarDocumentosAluno($request, $obAluno->id)){
+	        EntityAluno::getFinalizaSessaoDados();
+	        $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=documentoInvalid');
+	    }
+
 	    //encerra sessão com os dados do form
 	    EntityAluno::getFinalizaSessaoDados();
 
 	    //	Logs::setNewLog($request);
 
 	    //Redireciona o usuário
+	    if(($postVars['redirectPhoto'] ?? '') == '1'){
+	        $request->getRouter()->redirect('/alunos/photo/'.$obAluno->id);
+	    }
+
 	    $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=created');
 
 	}
@@ -461,7 +907,7 @@ class Aluno extends Page{
 	    ]);
 
 	    //Retorna a página completa
-	    return parent::getPanel('Excluir Aluno > Cursinho', $content,'alunos', self::$hidden);
+	    return parent::getPanel('Excluir Aluno > Cursinho', $content,'alunos');
 
 	}
 	//Metodo responsável por Excluir um Aluno
@@ -565,7 +1011,7 @@ class Aluno extends Page{
 
 	 //   unset($_SESSION['idAluno']);
 
-	        return parent::getPageCarteira('Carteira do Aluno > Cursinho', $content,'alunos', self::$hidden);
+	        return parent::getPageCarteira('Carteira do Aluno > Cursinho', $content,'alunos');
 
 
 	       // return parent::getPanel('Carteira do Aluno > Cursinho', $content,'alunos', 'hidden');

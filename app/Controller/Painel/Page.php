@@ -4,6 +4,7 @@ namespace App\Controller\Painel;
 
 use App\Utils\View;
 use \App\Model\Entity\User as EntityUser;
+use \App\Model\Entity\Configuracao as EntityConfiguracao;
 use \App\Utils\Funcoes;
 
 class Page{
@@ -43,6 +44,13 @@ class Page{
 		    'modal' => '',
 		    'visivel' => permissaoMenuProfessores
 			],
+			  'disciplinas' =>[
+	        'label' => 'Disciplinas',
+	        'link' => URL.'/disciplinas',
+	        'material-icons' => 'clear_all',
+	        'modal' => '',
+	        'visivel' => permissaoMenuDisciplinas
+	    ],
 		'aulas' =>[
 				'label' => 'Aulas',
 				'link' => URL.'/aulas',
@@ -59,23 +67,7 @@ class Page{
 	        'visivel' => permissaoMenuFrequencias
 	        
 	    ],
-	    'presencas' =>[
-	        'label' => 'Presença',
-	        'link' => URL.'/presencas',
-	        'material-icons' => 'checklist_rtl',
-	        'modal' => '',
-	        'visivel' => permissaoMenuPresenca
-	        
-	    ],
-	    
-	    'disciplinas' =>[
-	        'label' => 'Disciplinas',
-	        'link' => URL.'/disciplinas',
-	        'material-icons' => 'clear_all',
-	        'modal' => '',
-	        'visivel' => permissaoMenuDisciplinas
-	    ],
-			'users' =>[
+				'users' =>[
 					'label' => 'Usuários',
 					'link' => URL.'/users',
 					'material-icons' => 'people',
@@ -87,7 +79,14 @@ class Page{
 					'link' => '#',
 					'material-icons' => 'people',
 			    'modal' => 'data-toggle="modal" data-target="#relatorioModal"',
-			    'visivel' => 'hidden'
+			        'visivel' => 'hidden'
+			],
+			'configuracoes' =>[
+				'label' => 'Configurações',
+				'link' => URL.'/configuracoes',
+				'material-icons' => 'settings',
+				'modal' => '',
+				'visivel' => permissaoMenuConfiguracoes
 			],
 			
 	    'inativar' =>[
@@ -354,11 +353,13 @@ class Page{
 	//Método responsavel por retornar o conteudo (view) da estrutura generica de página do painel
 	public static function getPage($title,$content){
 		return View::render('painel/page',[
-				'title' => $title,
-				'content' => $content,
-				'relatorio' =>'/relatorios',
-				'readonly' => ''
-		]);
+					'title' => $title,
+					'content' => $content,
+					'reportTitle' => htmlspecialchars(EntityConfiguracao::getTituloRelatorio(), ENT_QUOTES, 'UTF-8'),
+					'reportLogo' => htmlspecialchars(EntityConfiguracao::getLogoRelatorioUrl(), ENT_QUOTES, 'UTF-8'),
+					'relatorio' =>'/relatorios',
+					'readonly' => ''
+			]);
 	}
 	
 	//Método responsavel por retornar o conteudo específico pra carteira do estudante

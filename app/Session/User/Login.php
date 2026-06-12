@@ -2,22 +2,12 @@
 
 namespace App\Session\User;
 
+use App\Auth\Permission;
+use App\Model\Entity\User as EntityUser;
+
 class Login{
 
-	private const OPERADOR_DEFAULT_PERMISSIONS = [
-		'menuAlunos',
-		'menuProfessores',
-		'menuAulas',
-		'menuFrequencias',
-		'menuPresenca',
-		'menuDisciplinas',
-	];
-
-	private const OPERADOR_BLOCKED_PERMISSIONS = [
-		'menuUsuarios',
-		'btnNovoUsuario',
-		'excluirUsuario',
-	];
+	private static $currentUser = null;
 
 	private static function init(){
 		if(session_status() != PHP_SESSION_ACTIVE ){
@@ -29,30 +19,16 @@ class Login{
 		return $tipo == 'Admin';
 	}
 
-	private static function isOperadorType($tipo){
-		return $tipo == 'Operador';
-	}
-
 	public static function hasDefaultPermissionForType($tipo, $permission){
-		return self::isOperadorType($tipo) && in_array($permission, self::OPERADOR_DEFAULT_PERMISSIONS, true);
+		return Permission::roleAllows($tipo, $permission);
 	}
 
 	public static function isPermissionBlockedForType($tipo, $permission){
-		return self::isOperadorType($tipo) && in_array($permission, self::OPERADOR_BLOCKED_PERMISSIONS, true);
+		return Permission::roleDenies($tipo, $permission);
 	}
 
 	public static function getPermissionValueForUser($obUser, $permission){
-		$tipo = $obUser->tipo ?? '';
-
-		if(self::isPermissionBlockedForType($tipo, $permission)){
-			return 0;
-		}
-
-		if(self::isAdminType($tipo) || self::hasDefaultPermissionForType($tipo, $permission)){
-			return 1;
-		}
-
-		return (int)($obUser->{$permission} ?? 0);
+		return Permission::isAllowed($obUser, $permission) ? 1 : 0;
 	}
 
 	private static function getUsuarioArray($obUser){
@@ -63,18 +39,28 @@ class Login{
 			'tipo' => $obUser->tipo,
 			'cpf' => $obUser->cpf ?? '',
 			'foto' => $obUser->foto,
-			'excluirAluno' => self::getPermissionValueForUser($obUser, 'excluirAluno'),
-			'excluirProfessor' => self::getPermissionValueForUser($obUser, 'excluirProfessor'),
-			'excluirDisciplina' => self::getPermissionValueForUser($obUser, 'excluirDisciplina'),
-			'excluirUsuario' => self::getPermissionValueForUser($obUser, 'excluirUsuario'),
-			'menuAlunos' => self::getPermissionValueForUser($obUser, 'menuAlunos'),
-			'menuProfessores' => self::getPermissionValueForUser($obUser, 'menuProfessores'),
-			'menuAulas' => self::getPermissionValueForUser($obUser, 'menuAulas'),
-			'menuFrequencias' => self::getPermissionValueForUser($obUser, 'menuFrequencias'),
-			'btnNovoUsuario' => self::getPermissionValueForUser($obUser, 'btnNovoUsuario'),
-			'menuPresenca' => self::getPermissionValueForUser($obUser, 'menuPresenca'),
-			'menuDisciplinas' => self::getPermissionValueForUser($obUser, 'menuDisciplinas'),
 		];
+	}
+
+	private static function getCurrentUser(){
+		self::init();
+
+		if(self::$currentUser instanceof EntityUser){
+			return self::$currentUser;
+		}
+
+		$id = $_SESSION['usuario']['id'] ?? null;
+		if($id === null){
+			return null;
+		}
+
+		$obUser = EntityUser::getUserById($id);
+		if($obUser instanceof EntityUser){
+			self::$currentUser = $obUser;
+			return self::$currentUser;
+		}
+
+		return null;
 	}
 
 	public static function login($obUser){
@@ -82,6 +68,7 @@ class Login{
 
 		$usuario = self::getUsuarioArray($obUser);
 		$_SESSION['usuario'] = $usuario;
+		self::$currentUser = $obUser instanceof EntityUser ? $obUser : null;
 
 		return true;
 	}
@@ -96,6 +83,7 @@ class Login{
 		self::init();
 
 		unset($_SESSION['usuario']);
+		self::$currentUser = null;
 
 		return true;
 	}
@@ -103,18 +91,16 @@ class Login{
 	public static function isAdmin(){
 		self::init();
 
-		return self::isAdminType($_SESSION['usuario']['tipo'] ?? '');
+		$obUser = self::getCurrentUser();
+
+		return $obUser instanceof EntityUser && self::isAdminType($obUser->tipo ?? '');
 	}
 
 	public static function can($permission){
 		self::init();
 
-		$tipo = $_SESSION['usuario']['tipo'] ?? '';
+		$obUser = self::getCurrentUser();
 
-		if(self::isPermissionBlockedForType($tipo, $permission)){
-			return false;
-		}
-
-		return self::isAdmin() || self::hasDefaultPermissionForType($tipo, $permission) || (int)($_SESSION['usuario'][$permission] ?? 0) == 1;
+		return $obUser instanceof EntityUser && Permission::isAllowed($obUser, $permission);
 	}
 }

@@ -1,92 +1,38 @@
-<style>
-    body{
-    overflow: hidden;
-    }
-    #reader {
-        width: 440px;
-        height: 330px;
-    }
-    .colfotoFreqGeral {
-    width: 14%;
-    margin-right: 2%;
-    }
-    .title{
-    position: relative;
-    }
-    .btnVoltar{
-    position: absolute;
-    bottom:0;
-    right:0;
-    padding-top: 1px;
-    }
-    @media(max-width: 576px) {
-        #reader {
-            width: 280px;
-            height: 240px;
-        }
-    
-	    .colfotoFreqGeral {
-		    width: 30%;
-		    margin-left: 2%;
-	    }
-	     .divDados {
-		    width: 60%;
-		    margin-left: 2%;
-	    }
-	      .divMsgPresenca {
-		    width: 90%;
-		    margin-left: 2%;
-	    }
-	   
-	    
-    
-    }
-</style>
-
-<div class="container pt-4">
-	<div class="row mb-2" >
-		<div class="col-md-12 text-center ">
-			<span class="text-light h2">{{title}}</span>
-		</div>
-		
-	</div>
-	<div class="row mb-4 justify-content-md-center" >
-		
-		<div class="col-md-7 bg-warning text-center pt-3 pb-3 title">
-			
-	 		<span class="h2">{{aula}}</span>
-	 		<a href="javascript:history.back()" class="btnVoltar badge badge-sm bg-gradient-success pt-1">Voltar</a>
-		</div>
-	</div>
-
-<div class="row">
-    <div class="col-md-12 text-center ">
-        <button id="start" hidden>Start Scanning</button>
-        <div class="empty"></div>
-        <div id="reader" style="display: inline-block;"></div>
-        <div class="empty"></div>
-        <div class="row justify-content-md-center ">
-        	
+<main class="qr-page">
+    <header class="qr-header">
+        <div class="qr-title-block">
+            <span>Leitura de QR Code</span>
+            <h1>{{title}}</h1>
         </div>
-    </div>
-</div>
+        <a href="javascript:history.back()" class="btn btn-warning qr-back-button" rel="tooltip" title="Voltar">
+            <i class="material-icons">keyboard_return</i>
+            <span>Voltar</span>
+        </a>
+    </header>
 
-<div class="text-center" id="scanned-result"></div>
+    <section class="qr-reader-card">
+        <div class="qr-reader-heading">
+            <div>
+                <span>Leitor ativo</span>
+                <h2>Aproxime o QR Code da câmera</h2>
+            </div>
+            <i class="material-icons">qr_code_scanner</i>
+        </div>
 
-</div>
- 
-  <hr style="margin-top: 100px">
-  <div class="row text-center">
-  	<div class="col-md-12">
-  		<span class="text-light h3">Aproxime seu QRCODE da câmera.</span>
-  		 <p class="text-xs text-secondary mb-0">Desenvolvido por: Fernando Xavier (96)99115-8611</p>
-  	</div>
-  </div>
-  
+        <button id="start" hidden>Start Scanning</button>
+        <div id="reader" class="qr-reader"></div>
+        <div id="scanned-result" class="qr-result"></div>
+    </section>
+
+    <footer class="qr-footer">
+        Desenvolvido por Fernando Xavier (96) 99115-8611
+    </footer>
+</main>
+
 <script>
 
 	var count = new Number();
-	var count = 4;  
+	var count = 4;
 	var numero = Math.random();
 	// variável para o contador
 	var contador;
@@ -96,7 +42,7 @@
 	    count = count - 1;
 	     $("#timer").attr("value","Aguarde: "+count);
 	    contador = setTimeout(start,1000);
-	   
+
 	  }
 	}
 
@@ -111,115 +57,301 @@
             document.addEventListener("DOMContentLoaded", fn);
         }
     }
+    function getCameraTraseira(cameras) {
+        if (!Array.isArray(cameras)) {
+            return null;
+        }
+
+        return cameras.find(function(camera) {
+            var label = (camera.label || '').toLowerCase();
+            return label.includes('back') ||
+                label.includes('rear') ||
+                label.includes('environment') ||
+                label.includes('traseira') ||
+                label.includes('trasera') ||
+                label.includes('world');
+        }) || null;
+    }
+
+    function startCameraPreferida(cameraConfig, onScanSuccess) {
+        return Html5Qrcode.getCameras()
+            .then(function(cameras) {
+                var cameraTraseira = getCameraTraseira(cameras);
+
+                if (cameraTraseira) {
+                    return html5qrcode.start(cameraTraseira.id, cameraConfig, onScanSuccess);
+                }
+
+                return html5qrcode.start({ facingMode: { exact: "environment" } }, cameraConfig, onScanSuccess)
+                    .catch(function() {
+                        return html5qrcode.start({ facingMode: "user" }, cameraConfig, onScanSuccess);
+                    });
+            })
+            .catch(function() {
+                return html5qrcode.start({ facingMode: { exact: "environment" } }, cameraConfig, onScanSuccess)
+                    .catch(function() {
+                        return html5qrcode.start({ facingMode: "user" }, cameraConfig, onScanSuccess);
+                    });
+            });
+    }
+
+    function capturarFotoAuditoria() {
+        var video = document.querySelector('#reader video');
+
+        if (!video || !video.videoWidth || !video.videoHeight) {
+            return '';
+        }
+
+        var maxWidth = 480;
+        var scale = Math.min(1, maxWidth / video.videoWidth);
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.round(video.videoWidth * scale);
+        canvas.height = Math.round(video.videoHeight * scale);
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        try {
+            return canvas.toDataURL('image/jpeg', 0.72);
+        } catch (e) {
+            return '';
+        }
+    }
+
     function startScanning(facingMode) {
-      //  console.log(facingMode)
         var results = document.getElementById('scanned-result');
         var lastMessage;
         var codesFound = 0;
-        function onScanSuccess(qrCodeMessage) {
-            if (lastMessage !== qrCodeMessage) {
-                lastMessage = qrCodeMessage;
-                ++codesFound;
-              //  results.innerHTML += `<div>[${codesFound}] - ${qrCodeMessage}</div>`;
-				var dataString = {
+        var aguardandoConfirmacao = false;
+        var vartime = 3000;
+
+	        function retornarLeitor() {
+	            clearTimeout(contador);
+	            count = 4;
+	            results.innerHTML = '';
+	            $("#reader").removeAttr("hidden");
+	            aguardandoConfirmacao = false;
+	            lastMessage = null;
+	        }
+
+	        function agendarRetornoLeitor() {
+	            clearTimeout(contador);
+	            count = 4;
+	            setTimeout(retornarLeitor, vartime);
+	            start();
+	        }
+
+        function exibirCodigoInvalido() {
+            results.innerHTML = `
+            <section class="qr-feedback qr-feedback-danger">
+                <i class="material-icons">error_outline</i>
+                <div class="qr-feedback-content">
+                    <strong>Código inválido</strong>
+                    <span>Tente aproximar novamente o QR Code da câmera.</span>
+                </div>
+                <input class="qr-timer" id="timer" value="Aguarde 5" readonly/>
+            </section>
+            `;
+            $("#reader").attr("hidden", true);
+	            agendarRetornoLeitor();
+        }
+
+        function exibirMensagemAluno(data, tipo) {
+            var classeFeedback = tipo === 'warning' ? 'qr-feedback-warning' : (tipo === 'danger' ? 'qr-feedback-danger' : 'qr-feedback-success');
+
+            results.innerHTML = `
+            <section class="qr-feedback ${classeFeedback}">
+                <div class="qr-student-result">
+                    <div class="qr-student-photo">
+                        <img id="foto" alt="Foto cadastrada" src="">
+                    </div>
+                    <div class="qr-student-data">
+                        <span id="divMatricula"></span>
+                        <strong id="divNome"></strong>
+                        <p id="divPresenca"></p>
+                    </div>
+                </div>
+                <input class="qr-timer" id="timer" value="Aguarde 5" readonly/>
+            </section>
+            `;
+
+            document.getElementById("divMatricula").innerHTML = data.matricula || '';
+            document.getElementById("divNome").innerHTML = data.nome || '';
+            document.getElementById("divPresenca").innerHTML = data.mensagem || '';
+            $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
+            $("#reader").attr("hidden", true);
+	            agendarRetornoLeitor();
+	        }
+
+	        function registrarPresenca(qrCodeMessage) {
+	            var fotoAuditoria = capturarFotoAuditoria();
+	            $("#reader").attr("hidden", true);
+
+	            results.innerHTML = `
+	            <section class="qr-feedback qr-feedback-success">
+                <i class="material-icons">photo_camera</i>
+                <div class="qr-feedback-content">
+                    <strong>Registrando presença</strong>
+                    <span>Mantenha o rosto visível para a foto de auditoria.</span>
+                </div>
+            </section>
+            `;
+
+            $.ajax({
+                type: "POST",
+                url: "{{URL}}/app/Controller/Ajax/authenticateAluno.php",
+                data: {
                     send: true,
+	                    modo: 'registrar',
+	                    matricula: qrCodeMessage,
+	                    idAula: Number("{{idAula}}"),
+	                    fotoAuditoria: fotoAuditoria
+	                },
+                dataType: "json",
+                cache: false,
+                success: function(data) {
+                    if (!data.successExiste || typeof data.nome === "undefined") {
+                        exibirCodigoInvalido();
+                        return;
+                    }
+
+                    if (data.successPresenca) {
+                        exibirMensagemAluno(data, 'warning');
+                        return;
+                    }
+
+                    exibirMensagemAluno(data, data.successUpdate || data.successInsert ? 'success' : 'danger');
+                },
+                error: function(xhr, status, error) {
+                    aguardandoConfirmacao = false;
+                    lastMessage = null;
+                    alert(error);
+                }
+            });
+	        }
+
+	        function exibirConfirmacao(data, qrCodeMessage) {
+	            results.innerHTML = `
+	            <section class="qr-feedback qr-feedback-success qr-confirmation">
+	                <div class="qr-student-result">
+	                    <div class="qr-student-photo">
+	                        <img id="fotoConfirmacao" alt="Foto cadastrada" src="">
+	                    </div>
+	                    <div class="qr-student-data">
+	                        <span>${data.matricula || ''}</span>
+	                        <strong>${data.nome || 'Aluno'}</strong>
+	                        <p>Deseja confirmar esta presença?</p>
+	                    </div>
+	                </div>
+	                <div class="qr-confirm-actions">
+	                    <button type="button" class="btn btn-success qr-confirm-button" id="confirmarPresencaQr">
+	                        <i class="material-icons">check</i>
+	                        <span>Confirmar</span>
+	                    </button>
+	                    <button type="button" class="btn btn-default qr-confirm-button qr-confirm-secondary" id="cancelarPresencaQr">
+	                        <i class="material-icons">close</i>
+	                        <span>Cancelar</span>
+	                    </button>
+	                </div>
+	            </section>
+	            `;
+	            $("#fotoConfirmacao").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
+	            $("#reader").attr("hidden", true);
+	            var confirmarButton = document.getElementById('confirmarPresencaQr');
+	            var cancelarButton = document.getElementById('cancelarPresencaQr');
+	            var confirmacaoResolvida = false;
+
+	            function confirmarComEnter(event) {
+	                if (event.key !== 'Enter') {
+	                    return;
+	                }
+	                event.preventDefault();
+	                confirmarPresenca();
+	            }
+
+	            function encerrarConfirmacao() {
+	                document.removeEventListener('keydown', confirmarComEnter);
+	            }
+
+	            function confirmarPresenca() {
+	                if (confirmacaoResolvida) {
+	                    return;
+	                }
+	                confirmacaoResolvida = true;
+	                encerrarConfirmacao();
+	                registrarPresenca(qrCodeMessage);
+	            }
+
+	            function cancelarPresenca() {
+	                if (confirmacaoResolvida) {
+	                    return;
+	                }
+	                confirmacaoResolvida = true;
+	                encerrarConfirmacao();
+	                retornarLeitor();
+	            }
+
+	            confirmarButton.addEventListener('click', confirmarPresenca);
+	            cancelarButton.addEventListener('click', cancelarPresenca);
+	            document.addEventListener('keydown', confirmarComEnter);
+	            confirmarButton.focus();
+	        }
+
+        function onScanSuccess(qrCodeMessage) {
+            if (aguardandoConfirmacao || lastMessage === qrCodeMessage) {
+                return;
+            }
+
+            lastMessage = qrCodeMessage;
+            aguardandoConfirmacao = true;
+            ++codesFound;
+            results.innerHTML = `
+            <section class="qr-feedback qr-feedback-success">
+                <i class="material-icons">manage_search</i>
+                <div class="qr-feedback-content">
+                    <strong>Consultando QR Code</strong>
+                    <span>Validando aluno e aula no sistema.</span>
+                </div>
+            </section>
+            `;
+
+            $.ajax({
+                type: "POST",
+                url: "{{URL}}/app/Controller/Ajax/authenticateAluno.php",
+                data: {
+                    send: true,
+                    modo: 'consultar',
                     matricula: qrCodeMessage,
                     idAula: Number("{{idAula}}")
-                };
-                var vartime = 3000;
-                $.ajax({
-                    type: "POST",
-                    url: "{{URL}}/app/Controller/Ajax/authenticateAluno.php",
-                    data: dataString,
-                    dataType: "json",
-                    cache : false,
-                    success: function(data){
-                        if(typeof data.nome === "undefined") { 
-                            results.innerHTML = `
-                            <section class="sessaoVermelha">
-                                <div class="row">
-                                    <div class="col-md-12 alert alert-danger text-center divDados">
-                                    <h3>CÓDIGO INVÁLIDO, TENTE NOVAMENTE!</h3>
-                                    
-                                    </div>
-                                    </div>
-                                <div class="row justify-content-md-center mt-2">
-                                    <div class="col-md-3 text-center">
-                                        <input class="form-control h3" id="timer" value="Aguarde 5" realony/>
-                                    </div>
-                                </div>
-                            </section>					                             
-                                                
-                                `;
-                                $("#reader").attr("hidden",true);
-                                //função que aguarda 3sec antes de executar 
-                                setTimeout(function(){
-                                    //recarrega a página	
-                                    location.reload();
-                                }, vartime);
-                            //inicia função contagem regressiva
-                                start();	
-                        }else{
-                                
-                            //CONFIRMA PRESENÇA
-                            results.innerHTML = `
-                            <section class="sessaoVerde">
-                                <div class="row mb-3">
-                                    <div class="colfotoFreqGeral">
-                                    <img style="background-color:#ffff" id="foto" class="img-fluid" alt="Foto" src="">
-                                    </div>
-                                    <div class="col-md-10 alert alert-success divDados">
-                                    <p class="h4 text-left" id="divMatricula"></p>
-                                    <p class="h4 text-left" id="divNome"></p>
-                                    
-                                    </div>
-                                    </div>
-                            
-                                <div class="row divMsgPresenca">
-                                    <div class="col-md-12 alert alert-success text-center" >
-                                        <p class="h4 text-left" id="divPresenca"></p>
-                                    </div>
-                                </div>
-                                
-                                <div class="row justify-content-md-center mt-2">
-                                    <div class="col-md-3 text-center">
-                                        <input class="form-control h3" id="timer" value="Aguarde 5" realony/>
-                                    </div>
-                                </div>
-                            </section>					                            
-                                                                    
-                            `;
-                        
-                            document.getElementById("divMatricula").innerHTML = data.matricula;
-                            document.getElementById("divNome").innerHTML = data.nome;
-                            document.getElementById("divPresenca").innerHTML = data.mensagem;
-                            
-                            $("#foto").attr("src","{{URL}}/app/Controller/File/files/fotos/"+data.foto+"?var="+numero);
-                            $("#reader").attr("hidden",true);
-                    
-                            //função que aguarda 3sec antes de executar 
-                            setTimeout(function(){
-                                //recarrega a página	
-                                location.reload();
-                            }, vartime);
-                            //inicia função contagem regressiva
-                            start();
-                                            
-                        }			
-                    } ,error: function(xhr, status, error) {
-                        alert(error);
-                        },
-                });
+                },
+                dataType: "json",
+                cache: false,
+                success: function(data) {
+                    if (!data.successExiste || typeof data.nome === "undefined") {
+                        exibirCodigoInvalido();
+                        return;
+                    }
 
+                    if (!data.successAtivo) {
+                        exibirMensagemAluno(data, 'danger');
+                        return;
+                    }
 
-            }
-        }       
-        //usa camera frontal
-         return html5qrcode.start({ facingMode: facingMode },{ fps: 20, qrbox: 250 },onScanSuccess);
-        
-        //usar câmera traseira
-      //   return html5qrcode.start({ facingMode: { exact: "environment"} },{ fps: 10, qrbox: 250 },onScanSuccess);
-        
+                    if (data.successPresenca) {
+                        exibirMensagemAluno(data, 'warning');
+                        return;
+                    }
+
+                    exibirConfirmacao(data, qrCodeMessage);
+                },
+                error: function(xhr, status, error) {
+                    aguardandoConfirmacao = false;
+                    lastMessage = null;
+                    alert(error);
+                }
+            });
+        }
+
+        var cameraConfig = { fps: 20, qrbox: 250 };
+        return startCameraPreferida(cameraConfig, onScanSuccess);
     }
     function stopScanning() {
         return html5qrcode.stop();
@@ -248,9 +380,5 @@
                 })
         }
     });
-    
-</script> 		
 
-
-
-
+</script>

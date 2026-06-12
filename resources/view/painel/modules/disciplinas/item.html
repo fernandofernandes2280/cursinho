@@ -1,14 +1,16 @@
-		<tr>
-			<td>{{id}}</td>
-			<td class="font-weight-normal">{{nome}}</td>
-			<td>
-				<div class="row-actions">
-					<a href="{{URL}}/disciplinas/{{id}}/edit" class="table-action" rel="tooltip" title="Editar">
-						<i class="material-icons">edit</i>
-					</a>
-					<a href="{{URL}}/disciplinas/{{id}}/delete" class="table-action table-action-danger" rel="tooltip" title="Excluir" {{excluirDisciplinaVisivel}}>
-						<i class="material-icons">delete</i>
-					</a>
-				</div>
-			</td>
-		</tr>
+<tr>
+  <td class="alunos-matricula" data-label="ID">{{id}}</td>
+  <td class="student-name-column" data-label="Nome">
+    <a href="{{URL}}/disciplinas/{{id}}/edit" class="student-name-link" rel="tooltip" title="Editar disciplina">{{nome}}</a>
+  </td>
+  <td data-label="Ações">
+    <div class="row-actions">
+      <a href="{{URL}}/disciplinas/{{id}}/edit" class="table-action" rel="tooltip" title="Editar">
+        <i class="material-icons">edit</i>
+      </a>
+      <a href="{{URL}}/disciplinas/{{id}}/delete" class="table-action table-action-danger" rel="tooltip" title="Excluir" {{excluirDisciplinaVisivel}}>
+        <i class="material-icons">delete</i>
+      </a>
+    </div>
+  </td>
+</tr>

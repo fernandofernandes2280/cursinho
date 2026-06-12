@@ -1,0 +1,59 @@
+<main class="alunos-page mt-4">
+  <section class="alunos-panel">
+    <div class="alunos-toolbar">
+      <div class="alunos-title">
+        <h5>{{title}}</h5>
+        <p class="mt-1 text-sm font-bold text-slate-500">{{subtitle}}</p>
+        <div class="mt-2 flex flex-wrap gap-2 text-xs font-bold">
+          <span class="rounded border border-slate-200 bg-slate-50 px-2 py-1 text-slate-600">Aulas: {{totalFrequencias}}</span>
+          <span class="rounded border border-emerald-200 bg-emerald-50 px-2 py-1 text-emerald-700">Presenças: {{totalPresencas}}</span>
+          <span class="rounded border border-red-200 bg-red-50 px-2 py-1 text-red-700">Faltas: {{totalFaltas}}</span>
+          <span class="rounded border border-blue-200 bg-blue-50 px-2 py-1 text-blue-700">Aproveitamento: {{percentualPresenca}}</span>
+        </div>
+      </div>
+      <div class="alunos-actions">
+        <button type="button" class="btn btn-default btn-round btn-just-icon alunos-columns-toggle" rel="tooltip" title="Ocultar/exibir campos" data-toggle-column-controls="datatablesSimple" aria-expanded="false">
+          <i class="material-icons">view_column</i>
+        </button>
+        <button type="button" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Imprimir" data-table-print>
+          <i class="material-icons">print</i>
+        </button>
+      </div>
+      <div id="alunoFrequenciasColumnControls" class="alunos-column-controls" data-table-column-controls="datatablesSimple" hidden></div>
+    </div>
+  </section>
+
+  <section class="alunos-datatable-panel">
+    <table
+      id="datatablesSimple"
+      class="table table-striped alunos-table"
+      data-caption="Histórico de frequências do aluno"
+      data-pdf-title="Histórico de frequências do aluno - {{subtitle}}"
+      data-report-summary="Aulas: {{totalFrequencias}} | Presenças: {{totalPresencas}} | Faltas: {{totalFaltas}} | Aproveitamento: {{percentualPresenca}}"
+      data-entity-singular="frequência"
+      data-entity-plural="frequências"
+      data-placeholder="Buscar frequência..."
+      data-search-title="Buscar no histórico de frequências"
+      data-multi-search="true"
+      data-name-column="2"
+      data-status-column="3"
+      data-html-columns="0,2,3"
+      data-adaptive-pdf="true"
+    >
+      <caption>Histórico de frequências do aluno</caption>
+      <thead>
+        <tr>
+          <th data-type="html" data-column-key="data">Data</th>
+          <th data-type="string" data-column-key="turma">Turma</th>
+          <th data-type="html" data-column-key="professores">Professores</th>
+          <th data-type="html" data-column-key="frequencia">Frequência</th>
+          <th data-type="string" data-column-key="aulaStatus">Status da aula</th>
+          <th data-type="string" data-column-key="registro">Registro</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{itens}}
+      </tbody>
+    </table>
+  </section>
+</main>

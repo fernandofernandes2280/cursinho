@@ -8,7 +8,8 @@ use App\Controller\Painel;
 //ROTA GET DE DASHBOARD DO ADMIN
 $obRouter->get('/dashboard',[
 		'middlewares' => [
-				'require-user-login'
+				'require-user-login',
+				'can:dashboard.view'
 		],
 		
 		

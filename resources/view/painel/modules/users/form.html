@@ -64,20 +64,7 @@
 
   <div class="user-permissions" {{permissoesVisivel}}>
     <label>PERMISSÕES:</label>
-
-    <div class="user-permissions-grid">
-      <label><input type="checkbox" {{alunoChecado}} id="checkExcluirAluno" name="checkExcluirAluno" value="1"> Excluir Aluno</label>
-      <label><input type="checkbox" {{professorChecado}} id="checkExcluirProfessor" name="checkExcluirProfessor" value="1"> Excluir Professor</label>
-      <label><input type="checkbox" {{excluirDisciplinaChecado}} id="checkDisciplina" name="checkDisciplina" value="1"> Excluir Disciplina</label>
-      <label><input type="checkbox" {{excluirUsuarioChecado}} id="checkExcluirUsuario" name="checkExcluirUsuario" value="1"> Excluir Usuário</label>
-      <label><input type="checkbox" {{menuAlunosChecado}} id="checkMenuAlunos" name="checkMenuAlunos" value="1"> Menu Alunos</label>
-      <label><input type="checkbox" {{menuProfessorChecado}} id="checkMenuProfessores" name="checkMenuProfessores" value="1"> Menu Professores</label>
-      <label><input type="checkbox" {{menuAulasChecado}} id="checkMenuAulas" name="checkMenuAulas" value="1"> Menu Aulas</label>
-      <label><input type="checkbox" {{menuFrequenciasChecado}} id="checkMenuFrequencias" name="checkMenuFrequencias" value="1"> Menu Frequências</label>
-      <label><input type="checkbox" {{btnNovoUsuarioChecado}} id="checkBtnNovoUsuario" name="checkBtnNovoUsuario" value="1"> Botão Novo Usuário</label>
-      <label><input type="checkbox" {{menuPresencaChecado}} id="checkMenuPresenca" name="checkMenuPresenca" value="1"> Menu Presença</label>
-      <label><input type="checkbox" {{menuDisciplinasChecado}} id="checkMenuDisciplinas" name="checkMenuDisciplinas" value="1"> Menu Disciplinas</label>
-    </div>
+    {{permissionGroups}}
   </div>
 </form>
 
@@ -89,4 +76,38 @@
       input.setAttribute('type', input.getAttribute('type') === 'password' ? 'text' : 'password');
     });
   });
+
+  (function() {
+    var rules = {{rolePermissionRules}};
+    var tipo = document.querySelector('#tipo');
+    var permissionInputs = document.querySelectorAll('.user-permissions input[type="checkbox"][data-permission]');
+
+    if (!tipo || !permissionInputs.length) return;
+
+    function applyRoleRules() {
+      var role = tipo.value;
+      var roleRules = rules[role] || { default: [], denied: [] };
+      var defaults = roleRules.default || [];
+      var denied = roleRules.denied || [];
+
+      permissionInputs.forEach(function(input) {
+        var permission = input.getAttribute('data-permission');
+        var isDefault = defaults.indexOf(permission) !== -1;
+        var isDenied = denied.indexOf(permission) !== -1;
+
+        input.disabled = isDefault || isDenied;
+
+        if (isDefault) {
+          input.checked = true;
+        }
+
+        if (isDenied) {
+          input.checked = false;
+        }
+      });
+    }
+
+    tipo.addEventListener('change', applyRoleRules);
+    applyRoleRules();
+  })();
 </script>

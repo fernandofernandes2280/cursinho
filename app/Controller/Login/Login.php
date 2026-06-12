@@ -95,10 +95,10 @@ class Login extends Page{
 	
 	
 	//Método responsável poer retornar a renderizacao da página de login
-	public static function getLogin($request,$errorMessage = null){
+	public static function getLogin($request,$errorMessage = null,$status = null){
 		
 		//Status
-		$status = !is_null($errorMessage) ? Alert::getError($errorMessage)  : '';
+		$status = $status ?? (!is_null($errorMessage) ? Alert::getError($errorMessage)  : '');
 		
 		
 		//COnteúdo da página de login
@@ -147,13 +147,17 @@ class Login extends Page{
 		
 		
 		SessionUserLogin::login($obUser);
-		$request->getRouter()->redirect('/dashboard');
+		$status = Alert::getSuccess('Login efetuado com sucesso!', [
+			'data-toast-redirect' => URL.'/dashboard'
+		]);
+
+		return self::getLogin($request, null, $status);
 	}
 	
 	//Método responsavel por deslogar o usuario
 	public static function setLogout($request){
 		//Destroi a sessões de Login
-		SessionVisitorLogin::logout();
+		//SessionVisitorLogin::logout();
 		SessionUserLogin::logout();
 		//ENCERRA SESSAO ID DA AULA
 		unset($_SESSION['idAula']);

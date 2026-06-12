@@ -6,6 +6,8 @@ use App\Controller\Painel\Alert;
 use App\Session\User\Login as SessionUserLogin;
 
 class Funcoes{
+    private const OLD_INPUT_SESSION_KEY = '_old_input';
+    private const STATUS_FLASH_SESSION_KEY = '_status_flash';
     
     
     //Método responsavel por retornar a mensagem de status
@@ -30,6 +32,9 @@ class Funcoes{
             case 'duplicad':
                 return Alert::getError('Dados Já cadastrado!');
                 break;
+            case 'duplicated':
+                return Alert::getError('Dados Já cadastrado!');
+                break;
             case 'deletedfail':
                 return Alert::getError('Você não tem permissão para Excluir! Contate o administrador.');
                 break;
@@ -42,11 +47,29 @@ class Funcoes{
             case 'cpfDuplicated':
                 return Alert::getError('CPF já está sendo utilizado por outro usuário!');
                 break;
+            case 'cpfduplicated':
+                return Alert::getError('CPF já está sendo utilizado por outro usuário!');
+                break;
             case 'emailDuplicated':
                 return Alert::getError('E-mail já está sendo utilizado!');
                 break;
-        }
-    }
+	            case 'loginSuccess':
+	                return Alert::getSuccess('Login efetuado com sucesso!');
+	                break;
+	            case 'logoInvalid':
+	                return Alert::getError('Envie um logotipo válido nos formatos PNG, JPG ou WEBP.');
+	                break;
+	            case 'documentoInvalid':
+	                return Alert::getError('Envie os documentos do aluno somente em PDF.');
+	                break;
+	            case 'documentoDeleted':
+	                return Alert::getSuccess('Documento excluído com sucesso!');
+	                break;
+	            case 'documentoDeleteError':
+	                return Alert::getError('Não foi possível excluir o documento.');
+	                break;
+	        }
+	    }
     
     //Método responsavel por Inicializar Sessão
     public static function init(){
@@ -54,6 +77,80 @@ class Funcoes{
         if(session_status() != PHP_SESSION_ACTIVE ){
             session_start();
         }
+    }
+
+    //Método responsável por guardar temporariamente uma mensagem de status
+    public static function flashStatus($statusMessage, $context = []){
+        self::init();
+
+        if(!is_array($context)){
+            $context = [];
+        }
+
+        unset($context['statusMessage']);
+
+        $_SESSION[self::STATUS_FLASH_SESSION_KEY] = [
+            'statusMessage' => $statusMessage,
+            'context' => $context
+        ];
+
+        return true;
+    }
+
+    //Método responsável por recuperar e remover uma mensagem de status temporária
+    public static function pullStatus(){
+        self::init();
+
+        $status = $_SESSION[self::STATUS_FLASH_SESSION_KEY] ?? [];
+
+        unset($_SESSION[self::STATUS_FLASH_SESSION_KEY]);
+
+        return is_array($status) ? $status : [];
+    }
+
+    //Método responsável por guardar temporariamente os dados digitados em um formulário
+    public static function flashOldInput($form, $data, $except = ['senha', 'password', 'password_confirmation']){
+        self::init();
+
+        if(!is_array($data)){
+            $data = [];
+        }
+
+        foreach ($except as $field) {
+            unset($data[$field]);
+        }
+
+        $_SESSION[self::OLD_INPUT_SESSION_KEY][$form] = $data;
+
+        return true;
+    }
+
+    //Método responsável por recuperar e remover os dados temporários de um formulário
+    public static function pullOldInput($form){
+        self::init();
+
+        $old = $_SESSION[self::OLD_INPUT_SESSION_KEY][$form] ?? [];
+
+        unset($_SESSION[self::OLD_INPUT_SESSION_KEY][$form]);
+
+        if(empty($_SESSION[self::OLD_INPUT_SESSION_KEY])){
+            unset($_SESSION[self::OLD_INPUT_SESSION_KEY]);
+        }
+
+        return is_array($old) ? $old : [];
+    }
+
+    //Método responsável por limpar dados temporários de um formulário
+    public static function clearOldInput($form){
+        self::init();
+
+        unset($_SESSION[self::OLD_INPUT_SESSION_KEY][$form]);
+
+        if(empty($_SESSION[self::OLD_INPUT_SESSION_KEY])){
+            unset($_SESSION[self::OLD_INPUT_SESSION_KEY]);
+        }
+
+        return true;
     }
     
 	//Método para gerar qualquer tipo de máscara
@@ -128,10 +225,10 @@ class Funcoes{
 	    $visivelMenuProfessores = SessionUserLogin::can('menuProfessores') ? '' : 'hidden';
 	    $visivelMenuAulas = SessionUserLogin::can('menuAulas') ? '' : 'hidden';
 	    $visivelMenuFrequencias = SessionUserLogin::can('menuFrequencias') ? '' : 'hidden';
-	    $visivelBtnNovoUsuario = SessionUserLogin::can('btnNovoUsuario') ? '' : 'hidden';
-	    $visivelMenuPresenca = SessionUserLogin::can('menuPresenca') ? '' : 'hidden';
+		    $visivelBtnNovoUsuario = SessionUserLogin::can('btnNovoUsuario') ? '' : 'hidden';
 	    $visivelMenuDisciplinas = SessionUserLogin::can('menuDisciplinas') ? '' : 'hidden';
 	    $visivelMenuUsuarios = SessionUserLogin::can('menuUsuarios') ? '' : 'hidden';
+	    $visivelMenuConfiguracoes = SessionUserLogin::can('menuConfiguracoes') ? '' : 'hidden';
 	    $permissao['excluirAluno'] = $visivelDeleteAluno;
 	    $permissao['excluirProfessor'] = $visivelDeleteProfessor;
 	    $permissao['excluirDisciplina'] = $visivelDeleteDisciplina;
@@ -140,10 +237,10 @@ class Funcoes{
 	    $permissao['menuProfessores'] = $visivelMenuProfessores;
 	    $permissao['menuAulas'] = $visivelMenuAulas;
 	    $permissao['menuFrequencias'] = $visivelMenuFrequencias;
-	    $permissao['btnNovoUsuario'] = $visivelBtnNovoUsuario;
-	    $permissao['menuPresenca'] = $visivelMenuPresenca;
+		    $permissao['btnNovoUsuario'] = $visivelBtnNovoUsuario;
 	    $permissao['menuDisciplinas'] = $visivelMenuDisciplinas;
 	    $permissao['menuUsuarios'] = $visivelMenuUsuarios;
+	    $permissao['menuConfiguracoes'] = $visivelMenuConfiguracoes;
 	    $permissao['permissoes'] = $visivelPermissoes;
 	    
 	    return    $permissao;

@@ -4,18 +4,20 @@
         <div class="alunos-title">
           <h5>{{title}}</h5>
         </div>
-        <div class="alunos-status">
-          {{statusMessage}}
-        </div>
+        <div class="alunos-status">{{statusMessage}}</div>
         <div class="alunos-actions">
 
-          <a href="{{URL}}/alunos/relatorios" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Imprimir" target="_blank">
+          <button type="button" class="btn btn-default btn-round btn-just-icon alunos-columns-toggle" rel="tooltip" title="Ocultar/exibir campos" data-toggle-column-controls="datatablesSimple" aria-expanded="false">
+            <i class="material-icons">view_column</i>
+          </button>
+          <button type="button" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Imprimir" data-table-print>
             <i class="material-icons">print</i>
-          </a>
+          </button>
           <button type="button" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfAluno">
             <i class="material-icons">person_add</i>
           </button>
         </div>
+        <div id="alunosColumnControls" class="alunos-column-controls" data-table-column-controls="datatablesSimple" hidden></div>
       </div>
   </section>
 
@@ -29,17 +31,27 @@
       data-placeholder="Buscar aluno..."
       data-search-title="Buscar na listagem de alunos"
       data-name-column="1"
-      data-status-column="4"
-      data-actions-column="5"
+      data-status-column="2"
+      data-status-filter="ativo-inativo"
+      data-actions-column="12"
+      data-html-columns="1,2,12"
+      data-adaptive-pdf="true"
     >
       <caption>Listagem de alunos cadastrados</caption>
       <thead>
         <tr>
-          <th data-type="string">Matrícula</th>
-          <th data-type="html">Nome</th>
-          <th data-type="string">Turma</th>
-          <th data-type="string">CPF</th>
-          <th data-type="html">Status</th>
+          <th data-type="string" data-column-key="matricula">Matrícula</th>
+          <th data-type="html" data-column-key="nome">Nome</th>
+          <th data-type="html" data-column-key="status">Status</th>
+          <th data-type="string" data-column-key="turma">Turma</th>
+          <th data-type="string" data-column-key="cpf">CPF</th>
+          <th data-type="string" data-column-key="fone" data-default-visible="false">Telefone</th>
+          <th data-type="string" data-column-key="endereco" data-default-visible="false">Endereço</th>
+          <th data-type="string" data-column-key="escolaridade" data-default-visible="false">Escolaridade</th>
+          <th data-type="string" data-column-key="sexo" data-default-visible="false">Sexo</th>
+          <th data-type="string" data-column-key="dataNasc" data-default-visible="false">Nascimento</th>
+          <th data-type="string" data-column-key="dataCad" data-default-visible="false">Cadastro</th>
+          <th data-type="string" data-column-key="mae" data-default-visible="false">Mãe</th>
           <th data-type="html" data-sortable="false" data-searchable="false">Ações</th>
         </tr>
       </thead>

@@ -8,7 +8,8 @@ use \App\Controller\Painel;
 $obRouter->get('/disciplinas',[
 		
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:disciplinas.view'
     ],
 		function ($request){
 			return new Response(200, Painel\Disciplina::getDisciplina($request));
@@ -20,7 +21,8 @@ $obRouter->get('/disciplinas',[
 $obRouter->get('/disciplinas/new',[
 		
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:disciplinas.create'
     ],
 		
 		function ($request){
@@ -31,7 +33,8 @@ $obRouter->get('/disciplinas/new',[
 //ROTA de Cadastro de um Novo de Disciplina (POST)
 $obRouter->post('/disciplinas/new',[
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:disciplinas.create'
     ],
 		function ($request){
 		    return new Response(200, Painel\Disciplina::setDisciplinaNew($request));
@@ -41,7 +44,8 @@ $obRouter->post('/disciplinas/new',[
 //ROTA de Edição de um de Disciplina
 $obRouter->get('/disciplinas/{id}/edit',[
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:disciplinas.update'
     ],
 		
 		function ($request,$id){
@@ -52,7 +56,8 @@ $obRouter->get('/disciplinas/{id}/edit',[
 //ROTA de Edição de um de Disciplina (POST)
 $obRouter->post('/disciplinas/{id}/edit',[
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:disciplinas.update'
     ],
 		
 		
@@ -64,7 +69,8 @@ $obRouter->post('/disciplinas/{id}/edit',[
 //ROTA de Exclusão de um de Disciplina
 $obRouter->get('/disciplinas/{id}/delete',[
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:disciplinas.delete'
     ],
 		
 		
@@ -75,7 +81,8 @@ $obRouter->get('/disciplinas/{id}/delete',[
 //ROTA de Exclusão de um de Disciplina (POST)
 $obRouter->post('/disciplinas/{id}/delete',[
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:disciplinas.delete'
     ],
 		
 		function ($request,$id){
@@ -83,3 +90,26 @@ $obRouter->post('/disciplinas/{id}/delete',[
 		}
 		]);
 
+//ROTA de post para cadastro rápido de disciplinas do professor
+$obRouter->post('/ajax/professores/disciplinas/nova',[
+		'middlewares' => [
+				'require-user-login',
+				'can:disciplinas.link-professor'
+		],
+
+		function ($request){
+			return new Response(200, Painel\Ajax::setDisciplinaProfessor($request), 'application/json');
+		}
+		]);
+
+//ROTA de busca das disciplinas vinculadas ao professor
+$obRouter->post('/ajax/professores/disciplinas',[
+		'middlewares' => [
+				'require-user-login',
+				'can:disciplinas.link-professor'
+		],
+
+		function ($request){
+			return new Response(200, Painel\Ajax::getDisciplinasProfessor($request), 'application/json');
+		}
+		]);

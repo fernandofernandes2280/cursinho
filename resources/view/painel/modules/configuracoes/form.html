@@ -1,0 +1,54 @@
+<main class="work-form-page">
+  <section class="form-header">
+    <div>
+      <h5>{{title}}</h5>
+      <p>Parâmetros gerais utilizados pelo sistema.</p>
+    </div>
+    <div class="form-actions">
+      {{statusMessage}}
+    </div>
+  </section>
+
+  <form method="post" class="form-shell-card" enctype="multipart/form-data">
+    <div class="aluno-fields-grid">
+      <div class="aluno-field aluno-span-12">
+        <label for="tituloRelatorio">Cabeçalho do relatório</label>
+        <input
+          type="text"
+          id="tituloRelatorio"
+          name="tituloRelatorio"
+          class="form-control-pessoal"
+          value="{{tituloRelatorio}}"
+          maxlength="255"
+          required
+        >
+        <p class="form-field-hint">Use asterisco (*) para separar as linhas do cabeçalho. O título do relatório será gerado logo abaixo, conforme o tipo de relatório impresso.</p>
+      </div>
+
+      <div class="aluno-field aluno-span-12">
+        <label for="logoRelatorio">Logotipo do relatório</label>
+        <div class="report-logo-setting">
+          <div class="report-logo-preview">
+            <img src="{{logoRelatorio}}?v={{logoVersion}}" alt="Logotipo atual do relatório">
+          </div>
+          <div class="report-logo-control">
+            <input
+              type="file"
+              id="logoRelatorio"
+              name="logoRelatorio"
+              class="form-control-pessoal"
+              accept="image/png,image/jpeg,image/webp"
+            >
+            <p class="form-field-hint">Formatos aceitos: PNG, JPG ou WEBP. Se nenhum arquivo for enviado, o logotipo atual será mantido.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-facebook btn-round btn-just-icon" type="submit" rel="tooltip" title="Salvar">
+        <i class="material-icons">save</i>
+      </button>
+    </div>
+  </form>
+</main>

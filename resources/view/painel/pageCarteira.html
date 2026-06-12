@@ -8,18 +8,19 @@
   <title>{{title}}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons" />
   <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="{{URL}}/resources/css/tailwind-dashboard.css?v=46" rel="stylesheet">
+  <link href="{{URL}}/resources/css/tailwind-dashboard.css?v=81" rel="stylesheet">
 
   <script src="{{URL}}/resources/assets/js/core/jquery.min.js"></script>
   <script src="{{URL}}/resources/js/photo/webcam.min.js"></script>
   <script src="{{URL}}/resources/js/qrcode/html5-qrcode.min.js"></script>
 </head>
 
-<body class="light-edition sidebar-collapsed">
+<body class="light-edition">
   <div class="wrapper">
     {{content}}
 
@@ -106,39 +107,40 @@
   </div>
 
   <script src="{{URL}}/resources/js/jquery.mask.js"></script>
-  <script src="{{URL}}/resources/js/pages.js"></script>
+  <script src="{{URL}}/resources/js/pages.js?v=59"></script>
   <script src="{{URL}}/resources/js/jquery.plugin.html2canvas.js"></script>
   <script src="{{URL}}/resources/js/html2canvas.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      var storageKey = 'painelSidebarCollapsed';
       var body = document.body;
       var toggle = document.getElementById('sidebarToggle');
-
-      function setSidebar(collapsed) {
-        body.classList.toggle('sidebar-collapsed', collapsed);
-        body.classList.toggle('sidebar-open', !collapsed);
-        if (!toggle) return;
-        toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-        toggle.setAttribute('title', collapsed ? 'Exibir painel lateral' : 'Ocultar painel lateral');
-        var icon = toggle.querySelector('.material-icons');
-        if (icon) icon.textContent = collapsed ? 'menu' : 'menu_open';
-      }
-
       var compactQuery = window.matchMedia('(max-width: 1023px)');
-      var saved = null;
-      try {
-        saved = localStorage.getItem(storageKey);
-      } catch (e) {}
 
-      setSidebar(compactQuery.matches ? true : saved === '1');
+      function setSidebar(open) {
+        body.classList.remove('sidebar-collapsed');
 
-      function handleCompactChange(event) {
-        if (event.matches) {
-          setSidebar(true);
+        if (!compactQuery.matches) {
+          body.classList.remove('sidebar-open');
+          if (!toggle) return;
+          toggle.setAttribute('aria-expanded', 'true');
+          toggle.setAttribute('title', 'Painel lateral visível');
+          var desktopIcon = toggle.querySelector('.material-icons');
+          if (desktopIcon) desktopIcon.textContent = 'menu_open';
           return;
         }
-        setSidebar(saved === '1');
+
+        body.classList.toggle('sidebar-open', open);
+        if (!toggle) return;
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.setAttribute('title', open ? 'Ocultar painel lateral' : 'Exibir painel lateral');
+        var icon = toggle.querySelector('.material-icons');
+        if (icon) icon.textContent = open ? 'menu_open' : 'menu';
+      }
+
+      setSidebar(false);
+
+      function handleCompactChange() {
+        setSidebar(false);
       }
 
       if (compactQuery.addEventListener) {
@@ -149,12 +151,8 @@
 
       if (toggle) {
         toggle.addEventListener('click', function() {
-          var collapsed = !body.classList.contains('sidebar-collapsed');
-          setSidebar(collapsed);
-          saved = collapsed ? '1' : '0';
-          try {
-            localStorage.setItem(storageKey, collapsed ? '1' : '0');
-          } catch (e) {}
+          if (!compactQuery.matches) return;
+          setSidebar(!body.classList.contains('sidebar-open'));
         });
       }
 

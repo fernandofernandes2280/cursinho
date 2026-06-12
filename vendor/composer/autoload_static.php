@@ -7,98 +7,71 @@ namespace Composer\Autoload;
 class ComposerStaticInitb1a94724cedacc5c5ce00c1bf1671e8b
 {
     public static $prefixLengthsPsr4 = array (
-        'W' => 
+        'W' =>
         array (
             'WilliamCosta\\DotEnv\\' => 20,
             'WilliamCosta\\DatabaseManager\\' => 29,
         ),
-        'S' => 
-        array (
-            'Svg\\' => 4,
-        ),
-        'P' => 
+        'P' =>
         array (
             'PHPMailer\\PHPMailer\\' => 20,
         ),
-        'F' => 
+        'D' =>
         array (
-            'FontLib\\' => 8,
+            'DASPRiD\\Enum\\' => 13,
         ),
-        'D' => 
-        array (
-            'Dompdf\\' => 7,
-        ),
-        'C' => 
+        'C' =>
         array (
             'CoffeeCode\\Uploader\\' => 20,
         ),
-        'B' => 
+        'B' =>
         array (
             'Bissolli\\ValidadorCpfCnpj\\' => 26,
+            'BaconQrCode\\' => 12,
         ),
-        'A' => 
+        'A' =>
         array (
             'App\\' => 4,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'WilliamCosta\\DotEnv\\' => 
+        'WilliamCosta\\DotEnv\\' =>
         array (
             0 => __DIR__ . '/..' . '/william-costa/dot-env/src',
         ),
-        'WilliamCosta\\DatabaseManager\\' => 
+        'WilliamCosta\\DatabaseManager\\' =>
         array (
             0 => __DIR__ . '/..' . '/william-costa/database-manager/src',
         ),
-        'Svg\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/phenx/php-svg-lib/src/Svg',
-        ),
-        'PHPMailer\\PHPMailer\\' => 
+        'PHPMailer\\PHPMailer\\' =>
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
-        'FontLib\\' => 
+        'DASPRiD\\Enum\\' =>
         array (
-            0 => __DIR__ . '/..' . '/phenx/php-font-lib/src/FontLib',
+            0 => __DIR__ . '/..' . '/dasprid/enum/src',
         ),
-        'Dompdf\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/dompdf/dompdf/src',
-        ),
-        'CoffeeCode\\Uploader\\' => 
+        'CoffeeCode\\Uploader\\' =>
         array (
             0 => __DIR__ . '/..' . '/coffeecode/uploader/src',
         ),
-        'Bissolli\\ValidadorCpfCnpj\\' => 
+        'Bissolli\\ValidadorCpfCnpj\\' =>
         array (
             0 => __DIR__ . '/..' . '/bissolli/validador-cpf-cnpj/src',
         ),
-        'App\\' => 
+        'BaconQrCode\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/bacon/bacon-qr-code/src',
+        ),
+        'App\\' =>
         array (
             0 => __DIR__ . '/../..' . '/app',
         ),
     );
 
-    public static $prefixesPsr0 = array (
-        'S' => 
-        array (
-            'Sabberworm\\CSS' => 
-            array (
-                0 => __DIR__ . '/..' . '/sabberworm/php-css-parser/lib',
-            ),
-        ),
-    );
-
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'Dompdf\\Cpdf' => __DIR__ . '/..' . '/dompdf/dompdf/lib/Cpdf.php',
-        'HTML5_Data' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Data.php',
-        'HTML5_InputStream' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/InputStream.php',
-        'HTML5_Parser' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Parser.php',
-        'HTML5_Tokenizer' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/Tokenizer.php',
-        'HTML5_TreeBuilder' => __DIR__ . '/..' . '/dompdf/dompdf/lib/html5lib/TreeBuilder.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -106,7 +79,6 @@ class ComposerStaticInitb1a94724cedacc5c5ce00c1bf1671e8b
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitb1a94724cedacc5c5ce00c1bf1671e8b::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitb1a94724cedacc5c5ce00c1bf1671e8b::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitb1a94724cedacc5c5ce00c1bf1671e8b::$prefixesPsr0;
             $loader->classMap = ComposerStaticInitb1a94724cedacc5c5ce00c1bf1671e8b::$classMap;
 
         }, null, ClassLoader::class);

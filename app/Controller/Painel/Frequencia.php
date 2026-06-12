@@ -22,12 +22,88 @@ class Frequencia extends Page{
 	private static $totalGeralBpac = 0;
 	//esconde busca rápida de prontuário no navBar
 	private static $hidden = '';
+
+	private static function getOrigemAlunoId($request, $idAluno = null){
+	    $queryParams = $request->getQueryParams();
+	    $origemAluno = (int)($queryParams['origemAluno'] ?? 0);
+
+	    if($origemAluno <= 0){
+	        return 0;
+	    }
+
+	    if(!is_null($idAluno) && $origemAluno !== (int)$idAluno){
+	        return 0;
+	    }
+
+	    $obAluno = EntityAluno::getAlunoById($origemAluno);
+
+	    return $obAluno instanceof EntityAluno ? $origemAluno : 0;
+	}
+
+	private static function getVoltarUrlIndividual($idAula, $origemAluno = 0){
+	    if((int)$origemAluno > 0){
+	        return URL.'/alunos/'.(int)$origemAluno.'/edit';
+	    }
+
+	    return URL.'/frequencias/'.(int)$idAula.'/edit';
+	}
+
+	private static function getFormActionIndividual($idAula, $idAluno, $origemAluno = 0){
+	    $url = URL.'/frequencias/'.(int)$idAula.'/edit/individual/'.(int)$idAluno;
+
+	    if((int)$origemAluno > 0){
+	        $url .= '?origemAluno='.(int)$origemAluno;
+	    }
+
+	    return $url;
+	}
+
+	private static function getRedirectIndividual($idAula, $idAluno, $params = []){
+	    $queryString = http_build_query(array_filter($params, function($value){
+	        return $value !== null && $value !== '';
+	    }));
+	    $route = '/frequencias/'.(int)$idAula.'/edit/individual/'.(int)$idAluno;
+
+	    return $queryString !== '' ? $route.'?'.$queryString : $route;
+	}
+
+	private static function getAlunoFrequenciaContext($request){
+	    $queryParams = $request->getQueryParams();
+	    $idAluno = (int)($queryParams['frequenciaAluno'] ?? 0);
+
+	    if($idAluno <= 0){
+	        return null;
+	    }
+
+	    $obAluno = EntityAluno::getAlunoById($idAluno);
+
+	    return $obAluno instanceof EntityAluno ? $obAluno : null;
+	}
+
+	private static function getLinkAulaAberta($idAula, $obAluno = null){
+	    if($obAluno instanceof EntityAluno){
+	        return URL.'/frequencias/'.(int)$idAula.'/edit/individual/'.(int)$obAluno->id.'?origemAluno='.(int)$obAluno->id;
+	    }
+
+	    return URL.'/frequencias/'.(int)$idAula.'/edit';
+	}
 	
 	
 	//Método responsavel por retornar a mensagem de status
 	private static function getStatus($request){
 	    //Query PArams
 	    $queryParams = $request->getQueryParams();
+
+	    if(!isset($queryParams['statusMessage'])){
+	        $flashStatus = Funcoes::pullStatus();
+
+	        if(!empty($flashStatus['statusMessage'])){
+	            $queryParams = array_merge(
+	                ['statusMessage' => $flashStatus['statusMessage']],
+	                is_array($flashStatus['context'] ?? null) ? $flashStatus['context'] : []
+	            );
+	        }
+	    }
 	    
 	    //Status
 	    if(!isset($queryParams['statusMessage'])) return '';
@@ -35,10 +111,18 @@ class Frequencia extends Page{
 	    //Mensagens de status
 	    switch ($queryParams['statusMessage']) {
 	        case 'confirmed':
-	            return Alert::getSuccess('Presença Registrada com sucesso!');
+	            $attributes = [];
+	            if(!empty($queryParams['toastRedirect'])){
+	                $attributes['data-toast-redirect'] = $queryParams['toastRedirect'];
+	            }
+	            return Alert::getSuccess('Presença Registrada com sucesso!', $attributes);
 	            break;
 	        case 'jaconfirmed':
-	            return Alert::getWarning('Presença Já Registrada!');
+	            $attributes = [];
+	            if(!empty($queryParams['toastRedirect'])){
+	                $attributes['data-toast-redirect'] = $queryParams['toastRedirect'];
+	            }
+	            return Alert::getWarning('Presença Já Registrada!', $attributes);
 	            break;
 	        case 'updated':
 	            return Alert::getSuccess('Aula atualizada com sucesso!');
@@ -134,6 +218,16 @@ class Frequencia extends Page{
 		
 		//Recebe os parâmetros da requisição
 		$queryParams = $request->getQueryParams();
+		$obAlunoFrequencia = self::getAlunoFrequenciaContext($request);
+		$title = 'Frequências > Aulas Abertas';
+		$statusMessage = '';
+		$voltarUrl = URL.'/dashboard';
+
+		if($obAlunoFrequencia instanceof EntityAluno){
+		    $title = 'Frequências > Selecionar aula aberta';
+		    $statusMessage = Alert::getWarning('Selecione uma aula aberta para registrar a frequência de '.$obAlunoFrequencia->matricula.' - '.$obAlunoFrequencia->nome.'.');
+		    $voltarUrl = URL.'/alunos/'.(int)$obAlunoFrequencia->id.'/edit';
+		}
 		
 		$results = EntityAula::getAulas('status = 1','data DESC');
 		$resultados = '';
@@ -143,15 +237,19 @@ class Frequencia extends Page{
 		    $resultados .= View::render('painel/modules/frequencias/item',[
 		        
                  'idAula' => $obAula->id,
-		        'data' => date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome
+		        'data' => date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
+		        'linkAula' => self::getLinkAulaAberta($obAula->id, $obAlunoFrequencia),
+		        'tituloAula' => $obAlunoFrequencia instanceof EntityAluno ? 'Selecionar aula para frequência do aluno' : 'Clique para selecionar'
 		    ]);
 		}
 		
 		
 		//Conteúdo da Home
 		$content = View::render('painel/modules/frequencias/index',[
-				 'title'=> 'Frequências > Aulas Abertas',
-		         'aulas' => $resultados
+				 'title'=> $title,
+		         'aulas' => $resultados,
+		         'statusMessage' => $statusMessage,
+		         'voltarUrl' => $voltarUrl
 				
 				 
 		    
@@ -198,7 +296,7 @@ class Frequencia extends Page{
 	    
 	    Funcoes::init();
 	    $_SESSION['idAula'] = $id;
-	    $content = View::render('painel/modules/frequencias/geral/index',[
+	    $content = View::render('/pages/frequenciaqrcode/index',[
 	        
 	        'title'=> 'Frequência Geral',
 	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
@@ -224,7 +322,7 @@ class Frequencia extends Page{
 	    Funcoes::init();
 	    $_SESSION['idAula'] = $id;
 	    //Conteúdo da Home
-	    $content = View::render('painel/modules/frequencias/geral/indexMobile',[
+	    $content = View::render('/pages/frequenciaqrcode/indexMobile',[
 	        
 	        'title'=> 'Frequência Geral',
 	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
@@ -255,9 +353,12 @@ class Frequencia extends Page{
 	        'escondeBotaoConfirmar' => 'hidden',
 	        'classebtn' => 'facebook',
 	        'status' =>'',
+	        'statusClasse' => 'bg-slate-500',
 	        'idAula' => $obAula->id,
 	        'statusMessage'=> '',
-	        'foto' => EntityAluno::FOTO_PADRAO
+	        'foto' => EntityAluno::FOTO_PADRAO,
+	        'voltarUrl' => self::getVoltarUrlIndividual($obAula->id),
+	        'formAction' => URL.'/frequencias/'.$obAula->id.'/edit/individual'
 	        
 	    ]);
 	    
@@ -279,6 +380,10 @@ class Frequencia extends Page{
 	        //Redireciona
 	        $request->getRouter()->redirect('/frequencias');
 	    }
+
+	    $obTurma = EntityTurma::getTurmaById($obAluno->turma);
+	    $obStatus = EntityStatus::getStatusById($obAluno->status);
+	    $origemAluno = self::getOrigemAlunoId($request, $idAluno);
 	    
 	    
 	    //Conteúdo da Home
@@ -286,15 +391,18 @@ class Frequencia extends Page{
 	        'title' => 'Frequências > Editar',
 	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
 	        'id' => $obAula->id,
-	        'matricula' => EntityAluno::getAlunoById($idAluno)->matricula,
-	        'nome' => EntityAluno::getAlunoById($idAluno)->nome,
+	        'matricula' => $obAluno->matricula,
+	        'nome' => $obAluno->nome,
 	        'idAluno' => $idAluno,
-	        'turma' => EntityTurma::getTurmaById(EntityAluno::getAlunoById($idAluno)->turma)->nome, 
+	        'turma' => $obTurma ? $obTurma->nome : '',
 	        'escondeBotaoConfirmar' => '',
 	        'statusMessage' => self::getStatus($request),
-	        'status' =>EntityStatus::getStatusById(EntityAluno::getAlunoById($idAluno)->status)->nome,
+	        'status' => $obStatus ? $obStatus->nome : '',
+	        'statusClasse' => (int)$obAluno->status === 1 ? 'bg-green-600' : 'bg-red-600',
 	        'foto' => $obAluno->getFoto(),
-	        'idAula' => $obAula->id
+	        'idAula' => $obAula->id,
+	        'voltarUrl' => self::getVoltarUrlIndividual($obAula->id, $origemAluno),
+	        'formAction' => self::getFormActionIndividual($obAula->id, $idAluno, $origemAluno)
 	        
 	    ]);
 	    
@@ -304,6 +412,7 @@ class Frequencia extends Page{
 	
 	//Método responsavel por renderizar a view de Nova Aula
 	public static function getFrequenciaEditIndividualSelectPresenca($request,$id,$idAluno){
+	    $origemAluno = self::getOrigemAlunoId($request, $idAluno);
 	    
 	    //Verifica se o aluno está inativo
 	 //   if(EntityAluno::getAlunoById($idAluno)->status == 2){
@@ -326,7 +435,16 @@ class Frequencia extends Page{
 	        //se nao for, verifica se o aluno é da mesma turma da a aula 
 	        if($obFreq instanceof EntityFrequencia){
 	            if($obFreq->status == 'P'){
-	                $request->getRouter()->redirect('/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=jaconfirmed');
+	                $params = [
+	                    'origemAluno' => $origemAluno,
+	                    'statusMessage' => 'jaconfirmed'
+	                ];
+
+	                if($origemAluno > 0){
+	                    $params['toastRedirect'] = self::getVoltarUrlIndividual($id, $origemAluno);
+	                }
+
+	                $request->getRouter()->redirect(self::getRedirectIndividual($id, $idAluno, $params));
 	            }
 
 	            $obFreq->status = 'P';
@@ -352,23 +470,25 @@ class Frequencia extends Page{
 	    
 	    
 	    
-	    $request->getRouter()->redirect('/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=confirmed');
+	    Funcoes::flashStatus('confirmed', [
+	        'toastRedirect' => self::getVoltarUrlIndividual($id, $origemAluno)
+	    ]);
+	    $request->getRouter()->redirect(self::getRedirectIndividual($id, $idAluno, [
+	        'origemAluno' => $origemAluno
+	    ]));
 	    
 	   
 	}
 	
 	
 	//Método responsavel por obter a rendereizacao dos Alunos para a página
-	private static function getAlunoItems($request, &$obPagination, $idAula){
-	    
-	    $postVars = $request->getPostVars();
+	private static function getAlunoItems($request, $idAula){
 	    
 	    $resultados = '';
 	    
-	    //Pagina Atual
 	    $queryParams = $request->getQueryParams();
-	    $paginaAtual = $queryParams['page'] ?? 1;
 	    
+	    $busca = trim((string)($queryParams['busca'] ?? ''));
 	    
 	    //Armazena valor busca pelo nome do paciente
 	    $nome = $queryParams['nome'] ?? '';
@@ -401,12 +521,17 @@ class Frequencia extends Page{
 	    //if($pront != '') $pront += 0;
 	    
 	    //Condições SQL
+	    $buscaSql = addslashes(str_replace(' ', '%', $busca));
+	    $nomeSql = addslashes(str_replace(' ', '%', $nome));
+	    $matriculaSql = addslashes($matricula);
+
 	    $condicoes = [
 	        
-	        strlen((string)$nome) ? 'nome LIKE "%'.str_replace(' ', '%', $nome).'%"' : null,
+	        strlen((string)$busca) ? '(matricula LIKE "%'.$buscaSql.'%" OR nome LIKE "%'.$buscaSql.'%")' : null,
+	        strlen((string)$nome) ? 'nome LIKE "%'.$nomeSql.'%"' : null,
 	        strlen((string)$id) ? 'id = "'.$id.'"' : null,
 	        strlen((string)$turma) ? 'turma = "'.$turma.'"' : null,
-	        strlen((string)$matricula) ? 'matricula = "'.$matricula.'"' : null,
+	        strlen((string)$matricula) ? 'matricula = "'.$matriculaSql.'"' : null,
 	        strlen((string)$status) ? 'status = "'.$status.'" ' : null,
 	        strlen((string)$cpf) ? 'cpf = "'.$cpf.'" ' : null,
 	    ];
@@ -423,31 +548,27 @@ class Frequencia extends Page{
 	    
 	    self::$qtdTotal = EntityAluno::getAlunos($where, null,null,'COUNT(*) as qtd')->fetchObject()->qtd;
 	    
-	    //Instancia de paginação
-	    $obPagination = new Pagination(self::$qtdTotal,$paginaAtual,5);
-	    #############################################
-	    
 	    //Verifica se existe pesquisa, se sim, ordena pelo ulltimo pac cadastrado, se nao, ordena pelo Prontuário
 	    $order = 'id DESC' ;
 	    
 	    //Obtem os pacientes
-	    $results = EntityAluno::getAlunos($where, $order, $obPagination->getLimit());
+	    $results = EntityAluno::getAlunos($where, $order);
 	    //Renderiza
 	    while ($obAluno = $results -> fetchObject(EntityAluno::class)) {
+	        $obStatus = EntityStatus::getStatusById((int)$obAluno->status);
+	        $obTurma = EntityTurma::getTurmaById((int)$obAluno->turma);
+	        $statusCor = (int)$obAluno->status === 1 ? 'bg-gradient-success' : 'bg-gradient-danger';
 	        
 	        //View de pacientes
 	        $resultados .= View::render('painel/modules/frequencias/itemPesquisa',[
-	        //muda cor do texto do status para azul(ativo) ou vermelho(inativo)
-	            $obAluno->status == 1 ? $cor = 'bg-gradient-success' : $cor = 'bg-gradient-danger',
-	            
 	            'nome' => $obAluno->nome,
-	            'status' =>EntityStatus::getStatusById($obAluno->status)->nome,
+	            'status' => $obStatus ? $obStatus->nome : 'Sem status',
+	            'statusCor' => $statusCor,
 	            'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##') ,
 	            'idAluno' => $obAluno->id,
 	            'matricula' => $obAluno->matricula,
-	            'turma' =>EntityTurma::getTurmaById($obAluno->turma)->nome,
+	            'turma' => $obTurma ? $obTurma->nome : 'Sem turma',
 	            'idAula' => $idAula,
-	            'cor' => $cor,
 	            'foto' => $obAluno->getFoto(),
 	        ]);
 	        
@@ -479,10 +600,10 @@ class Frequencia extends Page{
 	    $hidden = '';
 		    //Conteúdo da Home
 	    $content = View::render('painel/modules/frequencias/indexPesquisa',[
-	        'title' => 'Alunos > Pesquisa ',
-	        'itens' => self::getAlunoItems($request,$obPagination,$idAula),
-	        'pagination' => parent::getPagination($request, $obPagination),
+	        'title' => 'Alunos > Pesquisa para frequência individual',
+	        'itens' => self::getAlunoItems($request,$idAula),
 	        'statusMessage' => self::getStatus($request),
+	        'busca' =>  $queryParams['busca'] ?? '',
 	        'nome' =>  $queryParams['nome'] ?? '',
 	        'matricula' =>  $queryParams['matricula'] ?? '',
 	        'id' =>  $queryParams['id'] ?? '',

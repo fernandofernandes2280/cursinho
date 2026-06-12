@@ -13,6 +13,8 @@ class Frequencia{
     public $status;
     public $dataReg;
     public $autor;
+    public $fotoAuditoria;
+    public $dataAuditoria;
     
 	
 		
@@ -33,6 +35,25 @@ class Frequencia{
 		//Sucesso
 		return true;
 	}
+
+	public static function cadastrarFaltasDaAula($idAula, $turma, $autor, $database = null){
+	    $database = $database ?: new Database('frequencia');
+	    $dataReg = date('Y-m-d H:i:s');
+
+	    $query = 'INSERT IGNORE INTO frequencia (idAula, idAluno, dataReg, status, autor)
+	              SELECT ?, A.id, ?, ?, ?
+	              FROM alunos AS A
+	              WHERE A.turma = ?
+	                AND A.status = 1';
+
+	    return $database->execute($query, [
+	        (int)$idAula,
+	        $dataReg,
+	        'F',
+	        (int)$autor,
+	        (int)$turma
+	    ])->rowCount();
+	}
 	
 	//Método responsavel por atualizar os banco de dados com os dados da instancia atual de paciente
 	public function atualizar(){
@@ -45,6 +66,27 @@ class Frequencia{
 	        'dataReg'=>$this->dataReg,
     		'autor'=>$this->autor,
 	    ]);
+	}
+
+	public function registrarPresenca($autor, $fotoAuditoria = null){
+	    $this->status = 'P';
+	    $this->autor = (int)$autor;
+	    $this->dataReg = date('Y-m-d H:i:s');
+
+	    $values = [
+	        'status' => $this->status,
+	        'dataReg' => $this->dataReg,
+	        'autor' => $this->autor,
+	    ];
+
+	    if(strlen((string)$fotoAuditoria)){
+	        $this->fotoAuditoria = $fotoAuditoria;
+	        $this->dataAuditoria = $this->dataReg;
+	        $values['fotoAuditoria'] = $this->fotoAuditoria;
+	        $values['dataAuditoria'] = $this->dataAuditoria;
+	    }
+
+	    return (new Database('frequencia'))->update('id = '.$this->id, $values);
 	}
 	
 	//Método responsavel por retornar uma Frequencia com base no seu Id

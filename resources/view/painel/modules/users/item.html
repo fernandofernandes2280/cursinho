@@ -1,27 +1,24 @@
-		<tr>
-			<td>{{id}}</td>
-			<td>
-				<div class="d-flex px-2 py-1">
-		           <div>
-		             <img src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="avatar avatar-sm me-3 border-radius-lg" alt="foto">
-		           </div>
-		           <div class="d-flex flex-column justify-content-center">
-		             <h7 class="mb-0 text-sm px-2"><a href="{{URL}}/users/{{id}}/edit" rel="tooltip" title="Visualizar">{{nome}}</a></h7>
-		           </div>
-		         </div>
-
-			</td>
-			<td>{{email}}</td>
-			<td>{{cpf}}</td>
-			<td>{{tipo}}</td>
-			<td>
-				<div class="row-actions">
-					<a href="{{URL}}/users/{{id}}/edit" class="table-action" rel="tooltip" title="Editar">
-						<i class="material-icons">edit</i>
-					</a>
-					<a href="{{URL}}/users/{{id}}/delete" class="table-action table-action-danger" rel="tooltip" title="Excluir" {{excluirUsuarioVisivel}}>
-						<i class="material-icons">delete</i>
-					</a>
-				</div>
-			</td>
-		</tr>
+<tr>
+  <td class="alunos-matricula" data-label="ID">{{id}}</td>
+  <td class="student-name-column" data-label="Nome">
+    <div class="student-cell">
+      <button type="button" class="student-photo-button" data-toggle="modal" data-target="#modalStudentPhoto" data-photo-src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" rel="tooltip" title="Ampliar foto">
+        <img src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" class="student-avatar" alt="Foto de {{nome}}">
+      </button>
+      <a href="{{URL}}/users/{{id}}/edit" class="student-name-link" rel="tooltip" title="Editar usuário">{{nome}}</a>
+    </div>
+  </td>
+  <td data-label="E-mail">{{email}}</td>
+  <td class="text-center" data-label="CPF">{{cpf}}</td>
+  <td class="text-center" data-label="Tipo">{{tipo}}</td>
+  <td data-label="Ações">
+    <div class="row-actions">
+      <a href="{{URL}}/users/{{id}}/edit" class="table-action" rel="tooltip" title="Editar">
+        <i class="material-icons">edit</i>
+      </a>
+      <a href="{{URL}}/users/{{id}}/delete" class="table-action table-action-danger" rel="tooltip" title="Excluir" {{excluirUsuarioVisivel}}>
+        <i class="material-icons">delete</i>
+      </a>
+    </div>
+  </td>
+</tr>

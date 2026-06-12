@@ -2,6 +2,8 @@
 
 namespace App\Http;
 
+use App\Utils\Funcoes;
+
 class Request{
 	
 	//Instancia do router
@@ -31,6 +33,7 @@ class Request{
 	public function __construct($router){
 		$this->router = $router;
 		$this->queryParams = $_GET ?? []; //se nao existir passa vazio
+		$this->pullStatusFlash();
 		$this->postVars = $_POST ?? [];
 		$this->fileVars = $_FILES ?? [];
 		$this->header = getallheaders(); //esta função obtem todos os headers recebidos
@@ -38,6 +41,27 @@ class Request{
 		$this->setURI();
 		
 			
+	}
+
+	private function pullStatusFlash(){
+		if(isset($this->queryParams['statusMessage'])){
+			return;
+		}
+
+		$status = Funcoes::pullStatus();
+
+		if(!isset($status['statusMessage'])){
+			return;
+		}
+
+		$context = $status['context'] ?? [];
+
+		if(!is_array($context)){
+			$context = [];
+		}
+
+		$this->queryParams = array_merge($context, $this->queryParams);
+		$this->queryParams['statusMessage'] = $status['statusMessage'];
 	}
 	
 	//Método responsavel por definir a URI
@@ -80,7 +104,6 @@ class Request{
 		return $this->fileVars;
 	}
 }
-
 
 
 

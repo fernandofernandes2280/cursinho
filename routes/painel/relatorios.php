@@ -8,11 +8,11 @@ use \App\Controller\Painel;
 $obRouter->get('/alunos/relatorios',[
     
     'middlewares' => [
-        'require-user-login'
+        'require-user-login',
+        'can:relatorios.view'
     ],
     
     function ($request){
         return new Response(200, Painel\Relatorio::getPdfAluno($request));
     }
     ]);
-

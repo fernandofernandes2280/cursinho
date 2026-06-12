@@ -1,84 +1,49 @@
-<main class="list-page">
-  <section id="pacientes" class="list-panel">
-    <form method="get" id="form">
-      <div class="list-toolbar">
-        <div class="list-title">
-          <h5>{{title}}</h5>
-        </div>
-        <div class="list-status">
-          {{statusMessage}}
-        </div>
-        <div class="list-actions">
-          <button type="submit" class="btn btn-facebook btn-round btn-just-icon" rel="tooltip" title="Pesquisar">
-            <i class="material-icons">search</i>
-          </button>
-          <button type="button" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfAluno">
-            <i class="material-icons">person_add</i>
-          </button>
-          <a href="javascript:history.back()" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
-            <i class="material-icons">reply</i>
-          </a>
-        </div>
+<main class="alunos-page">
+  <section id="pacientes" class="alunos-panel">
+    <div class="alunos-toolbar">
+      <div class="alunos-title">
+        <h5>{{title}}</h5>
       </div>
-
-      <div class="list-filters">
-        <div class="list-field list-field-sm">
-          <label for="matricula">Matrícula</label>
-          <input type="text" name="matricula" id="matricula" class="form-control-pessoal" value="{{matricula}}">
-        </div>
-        <div class="list-field list-field-lg">
-          <label for="nome">Nome</label>
-          <input type="text" name="nome" id="nome" class="form-control-pessoal" value="{{nome}}">
-        </div>
-        <div class="list-field list-field-sm">
-          <label for="cpfPesq">CPF</label>
-          <input type="text" name="cpfPesq" id="cpfPesq" class="form-control-pessoal mascara-cpf cpfPesquisa" value="{{cpf}}">
-        </div>
-        <div class="list-field list-field-sm">
-          <label for="turma">Turma</label>
-          <select class="custom-select" id="turma" name="turma">
-            <option value="">Todas</option>
-            {{optionTurma}}
-          </select>
-        </div>
-        <div class="list-field list-field-sm">
-          <label for="status">Status</label>
-          <select name="status" id="status" class="custom-select">
-            <option value="" {{selectedAtIn}}>Todos</option>
-            {{optionStatus}}
-          </select>
-        </div>
+      <div class="alunos-status">
+        {{statusMessage}}
       </div>
-    </form>
+      <div class="alunos-actions">
+        <button type="button" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfAluno">
+          <i class="material-icons">person_add</i>
+        </button>
+        <a href="javascript:history.back()" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
+          <i class="material-icons">reply</i>
+        </a>
+      </div>
+    </div>
   </section>
 
-  <div class="table-responsive list-table-wrap">
-    <table class="table table-striped list-table">
+  <section class="alunos-datatable-panel">
+    <table
+      id="datatablesSimple"
+      class="table table-striped alunos-table"
+      data-caption="Resultado da pesquisa de alunos para frequência"
+      data-entity-singular="aluno"
+      data-entity-plural="alunos"
+      data-placeholder="Filtrar resultado..."
+      data-search-title="Filtrar alunos encontrados"
+      data-name-column="1"
+      data-status-column="2"
+      data-html-columns="1,2"
+    >
+      <caption>Resultado da pesquisa de alunos para frequência</caption>
       <thead>
         <tr>
-          <th>Matrícula</th>
-          <th>Nome</th>
-          <th>Turma</th>
-          <th>CPF</th>
+          <th data-type="string">Matrícula</th>
+          <th data-type="html">Nome</th>
+          <th data-type="html">Status</th>
+          <th data-type="string">Turma</th>
+          <th data-type="string">CPF</th>
         </tr>
       </thead>
       <tbody>
         {{itens}}
       </tbody>
     </table>
-  </div>
-
-  <div class="list-footer">
-    <div class="list-pagination">
-      {{pagination}}
-    </div>
-    <span class="list-total">Total de registros encontrados: {{total}}</span>
-  </div>
+  </section>
 </main>
-
-<section class="users" hidden>
-  <article class="users_user">
-    <h3>TESTE DE AJAX</h3>
-    <a class="remove" href="#" data-action="{{URL}}/delete" data-id="3">Deletar</a>
-  </article>
-</section>

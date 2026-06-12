@@ -47,9 +47,17 @@ class Queue{
 	
 		//Middleware
 		$middleware = array_shift($this->midllewares);
+		$parameters = [];
+		$middlewareName = $middleware;
+
+		if(is_string($middleware) && strpos($middleware, ':') !== false){
+			$parts = explode(':', $middleware, 2);
+			$middlewareName = $parts[0];
+			$parameters = strlen($parts[1]) ? explode(',', $parts[1]) : [];
+		}
 		
 		//Verifica o mapeamento
-		if(!isset(self::$map[$middleware])){
+		if(!isset(self::$map[$middlewareName])){
 			throw new \Exception("Problemas ao processar o middleware da requisição",500);
 		}
 	
@@ -59,7 +67,9 @@ class Queue{
 			return $queue->next($request);
 		};
 		//Executa o middlewarw
-		return (new self::$map[$middleware])->handle($request,$next);
+		$class = self::$map[$middlewareName];
+
+		return (new $class(...$parameters))->handle($request,$next);
 		
 		
 	}

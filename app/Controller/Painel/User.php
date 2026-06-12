@@ -2,9 +2,9 @@
 
 namespace App\Controller\Painel;
 
+use App\Auth\Permission;
 use \App\Utils\View;
 use \App\Model\Entity\User as EntityUser;
-use \WilliamCosta\DatabaseManager\Pagination;
 use Bissolli\ValidadorCpfCnpj\CPF;
 use \App\Utils\Funcoes;
 use App\Controller\File\Upload;
@@ -33,69 +33,148 @@ class User extends Page{
 		return Login::getPermissionValueForUser($obUser, $permission) == 1 ? 'checked' : '';
 	}
 
-	private static function applyRolePermissions(
-		$tipo,
-		&$excluirUsuario,
-		&$menuAlunos,
-		&$menuProfessores,
-		&$menuAulas,
-		&$menuFrequencias,
-		&$btnNovoUsuario,
-		&$menuPresenca,
-		&$menuDisciplinas
-	){
-		foreach ([
-			'menuAlunos' => &$menuAlunos,
-			'menuProfessores' => &$menuProfessores,
-			'menuAulas' => &$menuAulas,
-			'menuFrequencias' => &$menuFrequencias,
-			'menuPresenca' => &$menuPresenca,
-			'menuDisciplinas' => &$menuDisciplinas,
-		] as $permission => &$value) {
-			if(Login::hasDefaultPermissionForType($tipo, $permission)){
-				$value = '1';
+	private static function normalizePermissionsForRole($tipo, $permissions){
+		$permissions = array_map([Permission::class, 'normalize'], (array)$permissions);
+
+		foreach(array_keys(Permission::listPermissions()) as $permission){
+			if(Permission::roleAllows($tipo, $permission)){
+				$permissions[] = $permission;
 			}
 		}
 
-		if(Login::isPermissionBlockedForType($tipo, 'btnNovoUsuario')){
-			$btnNovoUsuario = '0';
+		$permissions = array_filter(array_unique($permissions), function($permission) use ($tipo){
+			return !Permission::roleDenies($tipo, $permission);
+		});
+
+		return array_values($permissions);
+	}
+
+	private static function legacyPermissionsFromGranular($permissions){
+		$hasAny = function($prefix) use ($permissions){
+			foreach($permissions as $permission){
+				if(strpos($permission, $prefix.'.') === 0){
+					return '1';
+				}
+			}
+
+			return '0';
+		};
+
+		return [
+			'excluirAluno' => in_array(Permission::ALUNOS_DELETE, $permissions, true) ? '1' : '0',
+			'excluirProfessor' => in_array(Permission::PROFESSORES_DELETE, $permissions, true) ? '1' : '0',
+			'excluirDisciplina' => in_array(Permission::DISCIPLINAS_DELETE, $permissions, true) ? '1' : '0',
+			'excluirUsuario' => in_array(Permission::USUARIOS_DELETE, $permissions, true) ? '1' : '0',
+			'menuAlunos' => $hasAny('alunos'),
+			'menuProfessores' => $hasAny('professores'),
+			'menuAulas' => $hasAny('aulas'),
+			'menuFrequencias' => $hasAny('frequencias'),
+			'btnNovoUsuario' => in_array(Permission::USUARIOS_CREATE, $permissions, true) ? '1' : '0',
+			'menuDisciplinas' => $hasAny('disciplinas'),
+		];
+	}
+
+	private static function applyPermissionValues($obUser, $permissions){
+		$legacy = self::legacyPermissionsFromGranular($permissions);
+
+		foreach($legacy as $field => $value){
+			$obUser->{$field} = $value;
 		}
 
-		if(Login::isPermissionBlockedForType($tipo, 'excluirUsuario')){
-			$excluirUsuario = '0';
+		$obUser->permissoes = Permission::encodePermissions($permissions);
+	}
+
+	private static function getOldPermissions($old){
+		$permissions = $old['permissoes'] ?? [];
+		if(is_string($permissions)){
+			$permissions = json_decode($permissions, true) ?: [];
 		}
+
+		return $permissions;
+	}
+
+	private static function renderPermissionGroups($obUser = null, $tipo = '', $oldPermissions = []){
+		$oldPermissions = self::normalizePermissionsForRole($tipo, $oldPermissions);
+		$html = '';
+
+		foreach(Permission::groups() as $group => $permissions){
+			$html .= '<section class="user-permission-group">';
+			$html .= '<h6>'.htmlspecialchars($group, ENT_QUOTES, 'UTF-8').'</h6>';
+			$html .= '<div class="user-permissions-grid">';
+
+			foreach($permissions as $permission => $label){
+				$isChecked = $obUser instanceof EntityUser
+					? Login::getPermissionValueForUser($obUser, $permission) == 1
+					: in_array($permission, $oldPermissions, true);
+
+				$checked = $isChecked ? 'checked' : '';
+				$escapedPermission = htmlspecialchars($permission, ENT_QUOTES, 'UTF-8');
+				$html .= '<label><input type="checkbox" '.$checked.' name="permissions[]" value="'.$escapedPermission.'" data-permission="'.$escapedPermission.'"> '.self::formatPermissionLabel($label).'</label>';
+			}
+
+			$html .= '</div>';
+			$html .= '</section>';
+		}
+
+		return $html;
+	}
+
+	private static function formatPermissionLabel($label){
+		$parts = explode(' ', $label, 2);
+		$action = $parts[0] ?? $label;
+		$target = $parts[1] ?? '';
+
+		return '<span class="user-permission-action">'.htmlspecialchars($action, ENT_QUOTES, 'UTF-8').'</span><span>'.htmlspecialchars($target, ENT_QUOTES, 'UTF-8').'</span>';
+	}
+
+	private static function getRolePermissionRules(){
+		$permissions = array_keys(Permission::listPermissions());
+		$rules = [
+			'Admin' => [
+				'default' => $permissions,
+				'denied' => [],
+			],
+			'Operador' => [
+				'default' => [],
+				'denied' => [],
+			],
+			'Visitante' => [
+				'default' => [],
+				'denied' => [],
+			],
+		];
+
+		foreach($permissions as $permission){
+			if(Permission::roleAllows('Operador', $permission)){
+				$rules['Operador']['default'][] = $permission;
+			}
+
+			if(Permission::roleDenies('Operador', $permission)){
+				$rules['Operador']['denied'][] = $permission;
+			}
+		}
+
+		return json_encode($rules);
 	}
 	
 	//Método responsavel por obter a renderização dos itens de usuários para a página
-	private static function getUserItems($request, &$obPagination){
+	private static function getUserItems($request){
 		//Usuários
 		$itens = '';
-		
-		//Quantidade total de registros
-		$quantidadetotal =  EntityUser::getUsers(null, null, null, 'COUNT(*) as qtd')->fetchObject()->qtd;
-		
-		//Página atual
-		$queryParams = $request->getQueryParams();
-		$paginaAtual = $queryParams['page'] ?? 1;
-		
-		//Instancia de paginacao
-		$obPagination = new Pagination($quantidadetotal,$paginaAtual,5);
 		
 		//Mostra todos os usuários para quem pode gerenciar usuários e apenas o próprio cadastro para os demais.
 		if(self::canManageUsers()){
 		    $where = null;
-		    $paginacao = $obPagination->getLimit();
 		}else{
 		    $where = 'id = '.$_SESSION['usuario']['id'];
-		    $paginacao = 1;
 		} 
 		
 		//Resultados da Página
-		$results = EntityUser::getUsers($where, 'id DESC',$paginacao);
-		
+		$results = EntityUser::getUsers($where, 'id DESC');
 		$reload = rand();
 		//Renderiza o item
 		while ($obUser = $results->fetchObject(EntityUser::class)) {
+			$foto = strlen((string)$obUser->foto) ? $obUser->foto : 'profile.png';
 		
 			//View de depoimentos
 			$itens.= View::render('painel/modules/users/item',[
@@ -104,8 +183,8 @@ class User extends Page{
 					'email' => $obUser->email,
 					'cpf' => Funcoes::mask($obUser->cpf, '###.###.###-##') ,
 					'tipo' => $obUser->tipo,
-    			    'foto' => $obUser->foto.'?var='.$reload,
-			    'excluirUsuarioChecado' => permissaoExcluirUsuario
+					'foto' => $foto.'?var='.$reload,
+					'excluirUsuarioVisivel' => self::canManageUsers() ? permissaoExcluirUsuario : 'hidden'
 			]);
 		}
 		
@@ -118,13 +197,11 @@ class User extends Page{
 	
 	//Método responsavel por renderizar a view de Listagem de USuários
 	public static function getUsers($request){
-		$obPagination = null;
-		$itens = self::getUserItems($request, $obPagination);
+		$itens = self::getUserItems($request);
 		
 		//Conteúdo da Home
 		$content = View::render('painel/modules/users/index',[
 				'itens' => $itens,
-				'pagination' => $obPagination ? parent::getPagination($request, $obPagination) : '',
 				'statusMessage' => Funcoes::getStatus($request),
 				
 				
@@ -143,9 +220,12 @@ class User extends Page{
 	    
 	    //QUERY PARAMS
 	    $queryParams = $request->getQueryParams();
+	    $old = Funcoes::pullOldInput('usuario.novo');
+	    $statusMessage = $queryParams['statusMessage'] ?? '';
+	    $cpfUser = $queryParams['cpfUser'] ?? ($old['cpf'] ?? '');
 	    
 	    //instancia classe pra verificar CPF
-	    $validaCpf = new CPF($queryParams['cpfUser']);
+	    $validaCpf = new CPF($cpfUser);
 	    
 	    //verifica se é válido o cpf
 	    if (!$validaCpf->isValid()){
@@ -157,23 +237,33 @@ class User extends Page{
 	    //busca usuário pelo CPF sem a maskara
 	    $ob = EntityUser::getUserByCPF($validaCpf->getValue());
 	    //verifica se o cpf já está cadastrado
-	    if($ob instanceof EntityUser){
+	    if($ob instanceof EntityUser && !in_array($statusMessage, ['cpfDuplicated', 'cpfduplicated'])){
 	        $request->getRouter()->redirect('/users?statusMessage=duplicated');
 	    }
 	    
+	    $tipo = $old['tipo'] ?? 'Visitante';
+	    $oldPermissions = self::getOldPermissions($old);
 	    
 		//Conteúdo do Formulário
 		$content = View::render('painel/modules/users/form',[
 				'title' => 'Usuários > Novo',
-		         'nome' => @$_SESSION['usuario']['novo']['nome'] ?? '',
-		         'email' => @$_SESSION['usuario']['novo']['email'] ?? '',
-		    'cpf' => @$_SESSION['usuario']['novo']['cpf'] ?? @$validaCpf->getValue(),
-		         'senha' => @$_SESSION['usuario']['novo']['senha'] ?? '',
+		        'id' => '',
+		        'nome' => $old['nome'] ?? '',
+		        'email' => $old['email'] ?? '',
+		        'cpf' => $old['cpf'] ?? $validaCpf->getValue(),
+		        'senha' => '',
 				'statusMessage' => Funcoes::getStatus($request),
-		        'selectedVisitante'=> 'selected',
+		        'selectedAdmin'=> $tipo === 'Admin' ? 'selected' : '',
+		        'selectedOperador'=> $tipo === 'Operador' ? 'selected' : '',
+		        'selectedVisitante'=> $tipo === 'Visitante' ? 'selected' : '',
 		        'foto' => 'profile.png',  
 		        'required' => 'required',
-		         'ponteiro' => 'pointer-events: none;'
+		        'ponteiro' => 'pointer-events: none;',
+		        'btnNovoUsuarioVisivel' => permissaoBtnNovoUsuario,
+		        'permissionGroups' => self::renderPermissionGroups(null, $tipo, $oldPermissions),
+		        'rolePermissionRules' => self::getRolePermissionRules(),
+		        'permissoesVisivel' => permissoes,
+		        'habilitado' => ''
 				
 		]);
 		
@@ -195,32 +285,23 @@ class User extends Page{
 		$senha = $postVars['senha'] ?? '';
 		$cpf = $postVars['cpf'] ?? '';
 		$tipo = $postVars['tipo'] ?? '';
-		$excluirAluno = $postVars['checkExcluirAluno'] ?? '0';
-		$excluirProfessor = $postVars['checkExcluirProfessor'] ?? '0';
-		$excluirDisciplina = $postVars['checkDisciplina'] ?? '0';
-		$excluirUsuario = $postVars['checkExcluirUsuario'] ?? '0';
-		$menuAlunos = $postVars['checkMenuAlunos'] ?? '0';
-		$menuProfessores = $postVars['checkMenuProfessores'] ?? '0';
-		$menuAulas = $postVars['checkMenuAulas'] ?? '0';
-		$menuFrequencias = $postVars['checkMenuFrequencias'] ?? '0';
-		$btnNovoUsuario = $postVars['checkBtnNovoUsuario'] ?? '0';
-		$menuPresenca = $postVars['checkMenuPresenca'] ?? '0';
-		$menuDisciplinas = $postVars['checkMenuDisciplinas'] ?? '0';
+		$permissions = self::normalizePermissionsForRole($tipo, $postVars['permissions'] ?? []);
+		$legacyPermissions = self::legacyPermissionsFromGranular($permissions);
 
-		self::applyRolePermissions(
-			$tipo,
-			$excluirUsuario,
-			$menuAlunos,
-			$menuProfessores,
-			$menuAulas,
-			$menuFrequencias,
-			$btnNovoUsuario,
-			$menuPresenca,
-			$menuDisciplinas
-		);
-		
-		//Cria sessão com os dados do form
-		EntityUser::getSessaoDados($postVars);
+		//Cria sessão temporária com os dados do form
+		EntityUser::getSessaoDados(array_merge($postVars, [
+			'permissoes' => $permissions,
+			'excluirAluno' => $legacyPermissions['excluirAluno'],
+			'excluirProfessor' => $legacyPermissions['excluirProfessor'],
+			'excluirDisciplina' => $legacyPermissions['excluirDisciplina'],
+			'excluirUsuario' => $legacyPermissions['excluirUsuario'],
+			'menuAlunos' => $legacyPermissions['menuAlunos'],
+			'menuProfessores' => $legacyPermissions['menuProfessores'],
+			'menuAulas' => $legacyPermissions['menuAulas'],
+			'menuFrequencias' => $legacyPermissions['menuFrequencias'],
+			'btnNovoUsuario' => $legacyPermissions['btnNovoUsuario'],
+			'menuDisciplinas' => $legacyPermissions['menuDisciplinas'],
+		]));
 		
 		//instancia classe pra verificar CPF
 		$validaCpf = new CPF($cpf);
@@ -230,14 +311,20 @@ class User extends Page{
 		
 		if($obUser instanceof EntityUser){
 		 
-		        $request->getRouter()->redirect('/users/new?statusMessage=cpfDuplicated');
+		        $request->getRouter()->redirect('/users/new?'.http_build_query([
+		            'cpfUser' => $validaCpf->getValue(),
+		            'statusMessage' => 'cpfDuplicated'
+		        ]));
 		}
 		
 		//Valida o email do usuário
 		$obUserEmail = EntityUser::getUserByEmail($email);
 		
 		if($obUserEmail instanceof EntityUser ){
-		    $request->getRouter()->redirect('/users/new?statusMessage=emailDuplicated');
+		    $request->getRouter()->redirect('/users/new?'.http_build_query([
+		        'cpfUser' => $validaCpf->getValue(),
+		        'statusMessage' => 'emailDuplicated'
+		    ]));
 		}
 				
 		//Nova instancia de Usuário
@@ -249,18 +336,7 @@ class User extends Page{
 		//$obUser->senha = password_hash($senha,PASSWORD_DEFAULT);
 		$obUser->senha = $senha;
 		
-		//campos para permissão
-		$obUser->excluirAluno = $excluirAluno;
-		$obUser->excluirProfessor = $excluirProfessor;
-		$obUser->excluirDisciplina = $excluirDisciplina;
-		$obUser->excluirUsuario = $excluirUsuario;
-		$obUser->menuAlunos = $menuAlunos;
-		$obUser->menuProfessores = $menuProfessores;
-		$obUser->menuAulas = $menuAulas;
-		$obUser->menuFrequencias = $menuFrequencias;
-		$obUser->btnNovoUsuario = $btnNovoUsuario;
-		$obUser->menuPresenca = $menuPresenca;
-		$obUser->menuDisciplinas = $menuDisciplinas;
+		self::applyPermissionValues($obUser, $permissions);
 		
 		//grava as informações
 		$obUser->cadastrar();
@@ -297,17 +373,6 @@ class User extends Page{
 		$obUser->tipo == 'Admin' ? $selectedAdmin = 'selected' : $selectedAdmin = '' ;
 		$obUser->tipo == 'Visitante' ? $selectedVisitante = 'selected' : $selectedVisitante = '' ;
 		$obUser->tipo == 'Operador' ? $selectedOperador = 'selected' : $selectedOperador = '' ;
-		$alunoChecado = self::checkedPermission($obUser, 'excluirAluno');
-		$professorChecado = self::checkedPermission($obUser, 'excluirProfessor');
-		$excluirUsuarioChecado = self::checkedPermission($obUser, 'excluirUsuario');
-		$menuAlunoChecado = self::checkedPermission($obUser, 'menuAlunos');
-		$menuProfessorChecado = self::checkedPermission($obUser, 'menuProfessores');
-		$menuAulasChecado = self::checkedPermission($obUser, 'menuAulas');
-		$menuFrequenciasChecado = self::checkedPermission($obUser, 'menuFrequencias');
-		$btnNovoUsuarioChecado = self::checkedPermission($obUser, 'btnNovoUsuario');
-		$menuPresencaChecado = self::checkedPermission($obUser, 'menuPresenca');
-		$menuDisciplinasChecado = self::checkedPermission($obUser, 'menuDisciplinas');
-		$excluirDisciplinaChecado = self::checkedPermission($obUser, 'excluirDisciplina');
 		
 		$reload = rand();
 		//Conteúdo do Formulário
@@ -325,20 +390,11 @@ class User extends Page{
 			          'foto' => $obUser->foto.'?var='.$reload,
 		        'required' => '',
 		         'ponteiro' => '',
-		    'alunoChecado' => $alunoChecado,
-		    'professorChecado' => $professorChecado,
-		    'menuAlunosChecado' => $menuAlunoChecado,
-		    'menuProfessorChecado' => $menuProfessorChecado,
-		    'menuAulasChecado' => $menuAulasChecado,
-		    'menuFrequenciasChecado' => $menuFrequenciasChecado,
-		    'btnNovoUsuarioChecado' => $btnNovoUsuarioChecado,
-		    'btnNovoUsuarioVisivel' => permissaoBtnNovoUsuario,
-		    'menuPresencaChecado' => $menuPresencaChecado,
-		    'menuDisciplinasChecado' => $menuDisciplinasChecado,
+			    'btnNovoUsuarioVisivel' => permissaoBtnNovoUsuario,
+		    'permissionGroups' => self::renderPermissionGroups($obUser, $obUser->tipo),
+		    'rolePermissionRules' => self::getRolePermissionRules(),
 		    'permissoesVisivel' => permissoes,
 		    'habilitado' => habilitaCPFTIPO,
-		    'excluirDisciplinaChecado' => $excluirDisciplinaChecado,
-		    'excluirUsuarioChecado' => $excluirUsuarioChecado,
 		         
 				
 				
@@ -362,18 +418,7 @@ class User extends Page{
 		$senha = $postVars['senha'] ?? '';
 		$tipo = $postVars['tipo'] ?? '';
 		$cpf = $postVars['cpf'] ?? '';
-		//campos para permissão
-		$excluirAluno = $postVars['checkExcluirAluno'] ?? '0';
-		$excluirProfessor = $postVars['checkExcluirProfessor'] ?? '0';
-		$excluirDisciplina = $postVars['checkDisciplina'] ?? '0';
-		$excluirUsuario = $postVars['checkExcluirUsuario'] ?? '0';
-		$menuAlunos = $postVars['checkMenuAlunos'] ?? '0';
-		$menuProfessores = $postVars['checkMenuProfessores'] ?? '0';
-		$menuAulas = $postVars['checkMenuAulas'] ?? '0';
-		$menuFrequencias = $postVars['checkMenuFrequencias'] ?? '0';
-		$btnNovoUsuario = $postVars['checkBtnNovoUsuario'] ?? '0';
-		$menuPresenca = $postVars['checkMenuPresenca'] ?? '0';
-		$menuDisciplinas = $postVars['checkMenuDisciplinas'] ?? '0';
+		$permissions = self::normalizePermissionsForRole($tipo, $postVars['permissions'] ?? []);
 		
 				//obtém o usuário do banco de dados
 		$obUser = EntityUser::getUserById($id);
@@ -386,30 +431,15 @@ class User extends Page{
 		if(!self::canManageUsers()){
 			$tipo = $obUser->tipo;
 			$cpf = $obUser->cpf;
-			$excluirAluno = $obUser->excluirAluno ?? '0';
-			$excluirProfessor = $obUser->excluirProfessor ?? '0';
-			$excluirDisciplina = $obUser->excluirDisciplina ?? '0';
-			$excluirUsuario = $obUser->excluirUsuario ?? '0';
-			$menuAlunos = $obUser->menuAlunos ?? '0';
-			$menuProfessores = $obUser->menuProfessores ?? '0';
-			$menuAulas = $obUser->menuAulas ?? '0';
-			$menuFrequencias = $obUser->menuFrequencias ?? '0';
-			$btnNovoUsuario = $obUser->btnNovoUsuario ?? '0';
-			$menuPresenca = $obUser->menuPresenca ?? '0';
-			$menuDisciplinas = $obUser->menuDisciplinas ?? '0';
+			$permissions = Permission::getExplicitPermissions($obUser);
+			if($permissions === null){
+				$permissions = array_filter(array_keys(Permission::listPermissions()), function($permission) use ($obUser){
+					return Login::getPermissionValueForUser($obUser, $permission) == 1;
+				});
+			}
+		}else{
+			$permissions = self::normalizePermissionsForRole($tipo, $permissions);
 		}
-
-		self::applyRolePermissions(
-			$tipo,
-			$excluirUsuario,
-			$menuAlunos,
-			$menuProfessores,
-			$menuAulas,
-			$menuFrequencias,
-			$btnNovoUsuario,
-			$menuPresenca,
-			$menuDisciplinas
-		);
 		
 		//instancia classe pra verificar CPF
 		$validaCpf = new CPF($cpf);
@@ -438,18 +468,7 @@ class User extends Page{
 		$obUser->cpf = $validaCpf->getValue(); //cpf sem formatação
 		$obUser->senha = $senha;
 		
-		//campos para permissão
-		$obUser->excluirAluno = $excluirAluno;
-		$obUser->excluirProfessor = $excluirProfessor;
-		$obUser->excluirDisciplina = $excluirDisciplina;
-		$obUser->excluirUsuario = $excluirUsuario;
-		$obUser->menuAlunos = $menuAlunos;
-		$obUser->menuProfessores = $menuProfessores;
-		$obUser->menuAulas = $menuAulas;
-		$obUser->menuFrequencias = $menuFrequencias;
-		$obUser->btnNovoUsuario = $btnNovoUsuario;
-		$obUser->menuPresenca = $menuPresenca;
-		$obUser->menuDisciplinas = $menuDisciplinas;
+		self::applyPermissionValues($obUser, $permissions);
 		
 		//grava as informações
 		$obUser->atualizar();

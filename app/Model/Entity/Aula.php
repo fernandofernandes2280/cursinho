@@ -22,13 +22,14 @@ class Aula {
 	public $autor;
 		
 	//Método responsavel por cadastrar um bairro no banco de dados
-	public function cadastrar(){
+	public function cadastrar($database = null){
 		
 	    //define a data
-	    	$this->dataReg = date('Y-m-d H:i:s');
+	    $this->dataReg = date('Y-m-d H:i:s');
+	    $database = $database ?: new Database('aulas');
 	    	
 		//Insere paciente no banco de dados
-		$this->id = (new Database('aulas'))->insert([
+		$this->id = $database->insert([
 				'data'=>date(''.$this->data.' H:i:s'),
 				'turma'=>$this->turma,
 				'professor1'=>$this->professor1,

@@ -1,3 +1,5 @@
+<div class="alunos-status">{{statusMessage}}</div>
+
 <section class="dashboard-grid">
   <article class="dashboard-stat-card dashboard-stat-warning">
     <div class="dashboard-stat-icon">
@@ -79,4 +81,114 @@
       </div>
     </div>
   </article>
+
+  <article class="dashboard-stat-card dashboard-stat-info">
+    <div class="dashboard-stat-icon">
+      <i class="material-icons">school</i>
+    </div>
+    <div class="dashboard-stat-content">
+      <h3>Professores</h3>
+      <div class="table-responsive">
+        <table class="table dashboard-stat-table">
+          <thead>
+            <tr>
+              <th>Ativos</th>
+              <th>Inativos</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{totalProfessoresAtivos}}</td>
+              <td>{{totalProfessoresInativos}}</td>
+              <td>{{totalProfessores}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </article>
+
+  <article class="dashboard-stat-card dashboard-stat-neutral">
+    <div class="dashboard-stat-icon">
+      <i class="material-icons">clear_all</i>
+    </div>
+    <div class="dashboard-stat-content">
+      <h3>Disciplinas</h3>
+      <div class="table-responsive">
+        <table class="table dashboard-stat-table">
+          <thead>
+            <tr>
+              <th>Vinculadas</th>
+              <th>Livres</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{totalDisciplinasVinculadas}}</td>
+              <td>{{totalDisciplinasLivres}}</td>
+              <td>{{totalDisciplinas}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </article>
+
+  <article class="dashboard-stat-card dashboard-stat-primary">
+    <div class="dashboard-stat-icon">
+      <i class="material-icons">connect_without_contact</i>
+    </div>
+    <div class="dashboard-stat-content">
+      <h3>Aulas</h3>
+      <div class="table-responsive">
+        <table class="table dashboard-stat-table">
+          <thead>
+            <tr>
+              <th>Abertas</th>
+              <th>Fech./Canc.</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{totalAulasAbertas}}</td>
+              <td>{{totalAulasFechadasCanceladas}}</td>
+              <td>{{totalAulas}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </article>
+</section>
+
+<section class="dashboard-report-panel">
+  <div class="dashboard-report-header">
+    <div>
+      <span>Relatório rápido</span>
+      <h2>Últimas 5 aulas</h2>
+    </div>
+    <a href="{{URL}}/aulas" class="dashboard-report-link">Ver todas</a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table dashboard-report-table">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Turma</th>
+          <th>Professor / Disciplina</th>
+          <th>Presenças</th>
+          <th>Faltas</th>
+          <th>Status</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{ultimasAulas}}
+      </tbody>
+    </table>
+  </div>
 </section>

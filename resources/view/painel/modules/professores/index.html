@@ -4,14 +4,19 @@
         <div class="alunos-title">
           <h5>{{title}}</h5>
         </div>
-        <div class="alunos-status">
-          {{statusMessage}}
-        </div>
+        <div class="alunos-status">{{statusMessage}}</div>
         <div class="alunos-actions">
+          <button type="button" class="btn btn-default btn-round btn-just-icon alunos-columns-toggle" rel="tooltip" title="Ocultar/exibir campos" data-toggle-column-controls="datatablesSimple" aria-expanded="false">
+            <i class="material-icons">view_column</i>
+          </button>
+          <button type="button" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Imprimir" data-table-print>
+            <i class="material-icons">print</i>
+          </button>
           <button type="button" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfProfessor">
             <i class="material-icons">person_add</i>
           </button>
         </div>
+        <div id="professoresColumnControls" class="alunos-column-controls" data-table-column-controls="datatablesSimple" hidden></div>
       </div>
   </section>
 
@@ -24,17 +29,26 @@
       data-entity-plural="professores"
       data-placeholder="Buscar professor..."
       data-search-title="Buscar na listagem de professores"
-      data-name-column="1"
-      data-status-column="3"
-      data-actions-column="4"
+      data-name-column="0"
+      data-status-column="1"
+      data-status-filter="ativo-inativo"
+      data-actions-column="10"
+      data-html-columns="0,1,10"
+      data-adaptive-pdf="true"
     >
       <caption>Listagem de professores cadastrados</caption>
       <thead>
         <tr>
-          <th data-type="string">Id</th>
-          <th data-type="html">Nome</th>
-          <th data-type="string">CPF</th>
-          <th data-type="html">Status</th>
+          <th data-type="html" data-column-key="nome">Nome</th>
+          <th data-type="html" data-column-key="status">Status</th>
+          <th data-type="string" data-column-key="disciplinas">Disciplinas</th>
+          <th data-type="string" data-column-key="cpf">CPF</th>
+          <th data-type="string" data-column-key="fone" data-default-visible="false">Telefone</th>
+          <th data-type="string" data-column-key="endereco" data-default-visible="false">Endereço</th>
+          <th data-type="string" data-column-key="funcao" data-default-visible="false">Função</th>
+          <th data-type="string" data-column-key="email" data-default-visible="false">E-mail</th>
+          <th data-type="string" data-column-key="dataNasc" data-default-visible="false">Nascimento</th>
+          <th data-type="string" data-column-key="dataCad" data-default-visible="false">Cadastro</th>
           <th data-type="html" data-sortable="false" data-searchable="false">Ações</th>
         </tr>
       </thead>

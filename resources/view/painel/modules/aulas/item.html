@@ -1,30 +1,31 @@
-<tr>					
-	<td class="text-center">{{data}}</td>
-	<td class="text-center">
-		{{professor1}}<p class="text-xs text-secondary mb-0 ml-2">{{disciplina1}}</p>
-		{{professor2}}<p class="text-xs text-secondary mb-0 ml-2">{{disciplina2}}</p>
-	
-	</td>
-	<td class="text-center">{{turma}}</td>
-	
-	<td class="text-center">
-		<a href="{{URL}}/aulas/{{id}}/presentes">
-			{{presencas}}
-		</a>
-		
-	</td>
-	<td class="text-center">{{faltas}}</td>
-	<td class="text-center align-middle text-md"><span class="badge badge-sm {{cor}}">{{status}}</span></td>
-	<td class="text-center"><span>{{autor}}</span></td>
-	<td>
-		<div class="row-actions">
-			<a href="{{URL}}/aulas/{{id}}/edit" class="table-action" rel="tooltip" title="Editar">
-				<i class="material-icons">edit</i>
-			</a>
-			<a href="{{URL}}/aulas/{{id}}/delete" class="table-action table-action-danger" rel="tooltip" title="Excluir" hidden>
-				<i class="material-icons">delete</i>
-			</a>
-		</div>
-	</td>
+<tr>
+  <td class="text-center" data-label="Data">
+    <a href="{{URL}}/aulas/{{id}}/edit" class="student-name-link" rel="tooltip" title="Editar aula">{{data}}</a>
+  </td>
+  <td class="student-name-column" data-label="Professores">
+    <div class="student-name-stack">
+      <span class="student-name-link">{{professor1}}</span>
+      <span class="student-subtitle">{{disciplina1}}</span>
+      <span class="student-name-link">{{professor2}}</span>
+      <span class="student-subtitle">{{disciplina2}}</span>
+    </div>
+  </td>
+  <td class="text-center" data-label="Turma">{{turma}}</td>
+  <td class="text-center" data-label="Presenças">{{presencas}}</td>
+  <td class="text-center" data-label="Faltas">{{faltas}}</td>
+  <td class="text-center" data-label="Status"><span class="student-status-pill {{cor}}">{{status}}</span></td>
+  <td class="text-center" data-label="Autor"><span>{{autor}}</span></td>
+  <td data-label="Ações">
+    <div class="row-actions">
+      <a href="{{URL}}/aulas/{{id}}/presentes" class="table-action" rel="tooltip" title="Listar frequência">
+        <i class="material-icons">fact_check</i>
+      </a>
+      <a href="{{URL}}/aulas/{{id}}/edit" class="table-action" rel="tooltip" title="Editar">
+        <i class="material-icons">edit</i>
+      </a>
+      <a href="{{URL}}/aulas/{{id}}/delete" class="table-action table-action-danger" rel="tooltip" title="Excluir" hidden>
+        <i class="material-icons">delete</i>
+      </a>
+    </div>
+  </td>
 </tr>
-

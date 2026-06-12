@@ -8,19 +8,20 @@
   <title>{{title}}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons" />
   <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="{{URL}}/resources/css/tailwind-dashboard.css?v=46" rel="stylesheet">
+  <link href="{{URL}}/resources/css/tailwind-dashboard.css?v=86" rel="stylesheet">
 
   <script src="{{URL}}/resources/assets/js/core/jquery.min.js"></script>
   <script src="{{URL}}/resources/js/photo/webcam.min.js"></script>
   <script src="{{URL}}/resources/js/qrcode/html5-qrcode.min.js"></script>
 </head>
 
-<body class="light-edition sidebar-collapsed">
+<body class="light-edition" data-report-title="{{reportTitle}}" data-report-logo="{{reportLogo}}">
   <div class="wrapper">
     {{content}}
 
@@ -123,40 +124,43 @@
   </div>
 
   <script src="{{URL}}/resources/js/jquery.mask.js"></script>
-  <script src="{{URL}}/resources/js/pages.js"></script>
+  <script src="{{URL}}/resources/js/pages.js?v=59"></script>
   <script src="{{URL}}/resources/js/jquery.plugin.html2canvas.js"></script>
   <script src="{{URL}}/resources/js/html2canvas.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      var storageKey = 'painelSidebarCollapsed';
       var body = document.body;
       var toggle = document.getElementById('sidebarToggle');
-
-      function setSidebar(collapsed) {
-        body.classList.toggle('sidebar-collapsed', collapsed);
-        body.classList.toggle('sidebar-open', !collapsed);
-        if (!toggle) return;
-        toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-        toggle.setAttribute('title', collapsed ? 'Exibir painel lateral' : 'Ocultar painel lateral');
-        var icon = toggle.querySelector('.material-icons');
-        if (icon) icon.textContent = collapsed ? 'menu' : 'menu_open';
-      }
-
       var compactQuery = window.matchMedia('(max-width: 1023px)');
-      var saved = null;
-      try {
-        saved = localStorage.getItem(storageKey);
-      } catch (e) {}
 
-      setSidebar(compactQuery.matches ? true : saved === '1');
+      function setSidebar(open) {
+        body.classList.remove('sidebar-collapsed');
 
-      function handleCompactChange(event) {
-        if (event.matches) {
-          setSidebar(true);
+        if (!compactQuery.matches) {
+          body.classList.remove('sidebar-open');
+          if (!toggle) return;
+          toggle.setAttribute('aria-expanded', 'true');
+          toggle.setAttribute('title', 'Painel lateral visível');
+          var desktopIcon = toggle.querySelector('.material-icons');
+          if (desktopIcon) desktopIcon.textContent = 'menu_open';
           return;
         }
-        setSidebar(saved === '1');
+
+        body.classList.toggle('sidebar-open', open);
+        if (!toggle) return;
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.setAttribute('title', open ? 'Ocultar painel lateral' : 'Exibir painel lateral');
+        var icon = toggle.querySelector('.material-icons');
+        if (icon) icon.textContent = open ? 'menu_open' : 'menu';
+      }
+
+      setSidebar(false);
+
+      function handleCompactChange() {
+        setSidebar(false);
       }
 
       if (compactQuery.addEventListener) {
@@ -167,12 +171,8 @@
 
       if (toggle) {
         toggle.addEventListener('click', function() {
-          var collapsed = !body.classList.contains('sidebar-collapsed');
-          setSidebar(collapsed);
-          saved = collapsed ? '1' : '0';
-          try {
-            localStorage.setItem(storageKey, collapsed ? '1' : '0');
-          } catch (e) {}
+          if (!compactQuery.matches) return;
+          setSidebar(!body.classList.contains('sidebar-open'));
         });
       }
 
@@ -199,7 +199,7 @@
             var photoPreview = document.getElementById('studentPhotoPreview');
             var photoTitle = document.getElementById('modalStudentPhotoLabel');
             var nameLink = modalTrigger.closest('.student-cell') ? modalTrigger.closest('.student-cell').querySelector('.student-name-link') : null;
-            var title = nameLink ? nameLink.textContent.trim() : 'Foto do aluno';
+            var title = modalTrigger.getAttribute('data-photo-title') || (nameLink ? nameLink.textContent.trim() : 'Foto do aluno');
             if (photoPreview) {
               photoPreview.src = modalTrigger.getAttribute('data-photo-src') || '';
               photoPreview.alt = 'Foto de ' + title;
@@ -258,38 +258,1252 @@
         });
       });
 
+      function normalizePdfValue(value) {
+        return (value || '').replace(/\s+/g, ' ').trim();
+      }
+
+      function getStudentReportTitleLines(value, fallback) {
+        var lines = normalizePdfValue(value)
+          .split('*')
+          .map(function(line) {
+            return normalizePdfValue(line);
+          })
+          .filter(Boolean);
+
+        return lines.length ? lines : [normalizePdfValue(fallback || 'Relatório')];
+      }
+
+      function getStudentReportLogoSrc() {
+        return normalizePdfValue(document.body.getAttribute('data-report-logo'));
+      }
+
+      function loadStudentPdfImageDataUrl(src) {
+        return new Promise(function(resolve) {
+          if (!src) {
+            resolve(null);
+            return;
+          }
+
+          var image = new Image();
+          image.crossOrigin = 'anonymous';
+
+          image.onload = function() {
+            try {
+              var canvas = document.createElement('canvas');
+              var width = image.naturalWidth || image.width;
+              var height = image.naturalHeight || image.height;
+
+              if (!width || !height) {
+                resolve(null);
+                return;
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+              canvas.getContext('2d').drawImage(image, 0, 0);
+
+              resolve({
+                dataUrl: canvas.toDataURL('image/png'),
+                width: width,
+                height: height,
+                format: 'PNG'
+              });
+            } catch (error) {
+              resolve(null);
+            }
+          };
+
+          image.onerror = function() {
+            resolve(null);
+          };
+
+          image.src = src;
+        });
+      }
+
+      function addStudentPdfPageNumbers(doc) {
+        var pageCount = doc.internal.getNumberOfPages();
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(87, 96, 106);
+
+        for (var page = 1; page <= pageCount; page++) {
+          doc.setPage(page);
+          doc.text(
+            'Página ' + page + ' de ' + pageCount,
+            doc.internal.pageSize.getWidth() - 36,
+            doc.internal.pageSize.getHeight() - 18,
+            {
+              align: 'right'
+            }
+          );
+        }
+
+        doc.setTextColor(36, 41, 47);
+      }
+
+      async function drawStudentPdfHeader(doc, reportTitle) {
+        var pageWidth = doc.internal.pageSize.getWidth();
+        var headerY = 32;
+        var logo = await loadStudentPdfImageDataUrl(getStudentReportLogoSrc());
+        var titleLines = getStudentReportTitleLines(document.body.getAttribute('data-report-title'), reportTitle);
+
+        if (logo) {
+          var logoScale = Math.min(48 / logo.width, 42 / logo.height, 1);
+          var logoWidth = logo.width * logoScale;
+          var logoHeight = logo.height * logoScale;
+          var logoX = (pageWidth - logoWidth) / 2;
+
+          doc.addImage(logo.dataUrl, logo.format, logoX, headerY, logoWidth, logoHeight);
+          headerY += logoHeight + 8;
+        }
+
+        titleLines.forEach(function(line) {
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(9);
+          doc.splitTextToSize(line.toLocaleUpperCase('pt-BR'), pageWidth - 72).forEach(function(wrappedLine) {
+            doc.text(wrappedLine, pageWidth / 2, headerY, {
+              align: 'center'
+            });
+            headerY += 10;
+          });
+        });
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(12);
+        headerY += 15;
+        doc.splitTextToSize(reportTitle, pageWidth - 72).forEach(function(line) {
+          doc.text(line, pageWidth / 2, headerY, {
+            align: 'center'
+          });
+          headerY += 13;
+        });
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(87, 96, 106);
+        doc.text('Gerado em: ' + new Date().toLocaleString('pt-BR'), 36, headerY + 3);
+        doc.setTextColor(36, 41, 47);
+
+        return headerY + 18;
+      }
+
+      function formatStudentDate(value) {
+        value = normalizePdfValue(value);
+
+        if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+          var parts = value.substring(0, 10).split('-');
+          return parts[2] + '/' + parts[1] + '/' + parts[0];
+        }
+
+        return value;
+      }
+
+      function getStudentControlValue(form, name) {
+        var field = form.querySelector('[name="' + name + '"]');
+
+        if (!field) {
+          return '';
+        }
+
+        if (field.tagName === 'SELECT') {
+          var option = field.options[field.selectedIndex];
+          return normalizePdfValue(option ? option.textContent : '');
+        }
+
+        return normalizePdfValue(field.value);
+      }
+
+      function getStudentField(label, value) {
+        return {
+          label: label,
+          value: normalizePdfValue(value) || '-'
+        };
+      }
+
+      function getStudentFormData(form) {
+        var matricula = form.querySelector('.aluno-matricula-value');
+        var photo = form.querySelector('.aluno-photo-box img');
+
+        return {
+          photo: photo ? photo.src : '',
+          matricula: normalizePdfValue(matricula ? matricula.textContent : ''),
+          nome: getStudentControlValue(form, 'nome'),
+          cep: getStudentControlValue(form, 'cep'),
+          endereco: getStudentControlValue(form, 'endereco'),
+          numero: getStudentControlValue(form, 'numero'),
+          bairro: getStudentControlValue(form, 'bairro'),
+          cidade: getStudentControlValue(form, 'cidade'),
+          uf: getStudentControlValue(form, 'uf'),
+          naturalidade: getStudentControlValue(form, 'naturalidade'),
+          escolaridade: getStudentControlValue(form, 'escolaridade'),
+          estadoCivil: getStudentControlValue(form, 'estadoCivil'),
+          sexo: getStudentControlValue(form, 'sexo'),
+          dataNasc: formatStudentDate(getStudentControlValue(form, 'dataNasc')),
+          dataCad: formatStudentDate(getStudentControlValue(form, 'dataCad')),
+          fone: getStudentControlValue(form, 'fone'),
+          cpf: getStudentControlValue(form, 'cpf'),
+          turma: getStudentControlValue(form, 'turma'),
+          mae: getStudentControlValue(form, 'mae'),
+          status: getStudentControlValue(form, 'status'),
+          obs: getStudentControlValue(form, 'obs')
+        };
+      }
+
+      function buildStudentPdfRow(left, right) {
+        var labelStyle = {
+          fillColor: [248, 250, 252],
+          textColor: [71, 85, 105],
+          fontStyle: 'bold'
+        };
+
+        return [
+          { content: left.label, styles: labelStyle },
+          { content: left.value },
+          { content: right ? right.label : '', styles: labelStyle },
+          { content: right ? right.value : '' }
+        ];
+      }
+
+      function addStudentPdfSection(doc, title, rows, startY, options) {
+        var pageWidth = doc.internal.pageSize.getWidth();
+        var marginLeft = options && options.marginLeft ? options.marginLeft : 36;
+        var tableWidth = options && options.tableWidth ? options.tableWidth : pageWidth - marginLeft - 36;
+        var hasTitle = normalizePdfValue(title) !== '';
+        var tableStartY = hasTitle ? startY + 7 : startY;
+
+        if (hasTitle) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(9);
+          doc.setTextColor(36, 41, 47);
+          doc.text(title, marginLeft, startY);
+        }
+
+        doc.autoTable({
+          body: rows.map(function(row) {
+            return buildStudentPdfRow(row[0], row[1]);
+          }),
+          startY: tableStartY,
+          tableWidth: tableWidth,
+          margin: {
+            left: marginLeft,
+            right: 36
+          },
+          styles: {
+            font: 'helvetica',
+            fontSize: 8,
+            cellPadding: 4,
+            overflow: 'linebreak',
+            textColor: [36, 41, 47],
+            lineColor: [208, 215, 222],
+            lineWidth: .35
+          },
+          columnStyles: {
+            0: { cellWidth: 64 },
+            1: { cellWidth: (tableWidth - 128) / 2 },
+            2: { cellWidth: 64 },
+            3: { cellWidth: (tableWidth - 128) / 2 }
+          },
+          alternateRowStyles: {
+            fillColor: [252, 253, 255]
+          }
+        });
+
+        return (doc.lastAutoTable ? doc.lastAutoTable.finalY : startY + 24) + 12;
+      }
+
+      function addStudentObservationSection(doc, value, startY) {
+        doc.autoTable({
+          body: [[
+            {
+              content: 'Observações',
+              styles: {
+                fillColor: [248, 250, 252],
+                textColor: [71, 85, 105],
+                fontStyle: 'bold'
+              }
+            },
+            normalizePdfValue(value) || '-'
+          ]],
+          startY: startY,
+          margin: {
+            left: 36,
+            right: 36
+          },
+          columnStyles: {
+            0: { cellWidth: 64 }
+          },
+          styles: {
+            font: 'helvetica',
+            fontSize: 8,
+            cellPadding: 5,
+            overflow: 'linebreak',
+            textColor: [36, 41, 47],
+            lineColor: [208, 215, 222],
+            lineWidth: .35
+          }
+        });
+
+        return (doc.lastAutoTable ? doc.lastAutoTable.finalY : startY + 24) + 12;
+      }
+
+      async function generateStudentFormPdf(form) {
+        var jsPDFConstructor = window.jspdf && window.jspdf.jsPDF;
+
+        if (!jsPDFConstructor || !window.jspdf || typeof jsPDFConstructor !== 'function') {
+          alert('Não foi possível gerar o PDF. A biblioteca jsPDF não foi carregada.');
+          return;
+        }
+
+        var doc = new jsPDFConstructor({
+          orientation: 'portrait',
+          unit: 'pt',
+          format: 'a4'
+        });
+
+        if (typeof doc.autoTable !== 'function') {
+          alert('Não foi possível gerar o PDF. O plugin de tabelas do jsPDF não foi carregado.');
+          return;
+        }
+
+        var data = getStudentFormData(form);
+        var pageWidth = doc.internal.pageSize.getWidth();
+        var y = await drawStudentPdfHeader(doc, 'Dados cadastrais do aluno');
+        var photo = await loadStudentPdfImageDataUrl(data.photo);
+        var photoX = 36;
+        var photoY = y;
+        var photoWidth = 94;
+        var photoHeight = 110;
+        var infoX = photoX + photoWidth + 16;
+        var infoWidth = pageWidth - infoX - 36;
+
+        doc.setDrawColor(208, 215, 222);
+        doc.setFillColor(248, 250, 252);
+        doc.roundedRect(photoX, photoY, photoWidth, photoHeight, 4, 4, 'FD');
+
+        if (photo) {
+          var scale = Math.min((photoWidth - 10) / photo.width, (photoHeight - 10) / photo.height);
+          var imageWidth = photo.width * scale;
+          var imageHeight = photo.height * scale;
+          doc.addImage(
+            photo.dataUrl,
+            photo.format,
+            photoX + (photoWidth - imageWidth) / 2,
+            photoY + (photoHeight - imageHeight) / 2,
+            imageWidth,
+            imageHeight
+          );
+        }
+
+        var afterIdentificacao = addStudentPdfSection(doc, '', [
+          [getStudentField('Matrícula', data.matricula), getStudentField('Status', data.status)],
+          [getStudentField('Nome', data.nome), getStudentField('CPF', data.cpf)],
+          [getStudentField('Turma', data.turma), getStudentField('Telefone', data.fone)]
+        ], y, {
+          marginLeft: infoX,
+          tableWidth: infoWidth
+        });
+
+        var afterEndereco = addStudentPdfSection(doc, '', [
+          [getStudentField('Endereço', data.endereco), getStudentField('CEP', data.cep)],
+          [getStudentField('Nº', data.numero), getStudentField('Bairro', data.bairro)],
+          [getStudentField('Cidade', data.cidade), getStudentField('UF', data.uf)]
+        ], afterIdentificacao - 2, {
+          marginLeft: infoX,
+          tableWidth: infoWidth
+        });
+
+        y = Math.max(photoY + photoHeight + 12, afterEndereco);
+
+        y = addStudentPdfSection(doc, '', [
+          [getStudentField('Nascimento', data.dataNasc), getStudentField('Cadastro', data.dataCad)],
+          [getStudentField('Naturalidade', data.naturalidade), getStudentField('Sexo', data.sexo)],
+          [getStudentField('Escolaridade', data.escolaridade), getStudentField('Estado civil', data.estadoCivil)],
+          [getStudentField('Mãe', data.mae), getStudentField('Telefone', data.fone)]
+        ], y);
+
+        addStudentObservationSection(doc, data.obs, y);
+        addStudentPdfPageNumbers(doc);
+
+        var pdfUrl = doc.output('bloburl');
+        var reportWindow = window.open(pdfUrl, '_blank');
+
+        if (!reportWindow) {
+          window.location.href = pdfUrl;
+        }
+      }
+
+      document.querySelectorAll('[data-aluno-form-print]').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+          event.preventDefault();
+          var form = button.closest('form.aluno-form');
+
+          if (!form) {
+            return;
+          }
+
+          generateStudentFormPdf(form);
+        });
+      });
+
       var datatablesSimple = document.getElementById('datatablesSimple');
       if (datatablesSimple && window.simpleDatatables) {
         var caption = datatablesSimple.getAttribute('data-caption') || 'Listagem de registros';
+        var pdfCaption = datatablesSimple.getAttribute('data-pdf-title') || caption;
         var singular = datatablesSimple.getAttribute('data-entity-singular') || 'registro';
         var plural = datatablesSimple.getAttribute('data-entity-plural') || 'registros';
         var placeholder = datatablesSimple.getAttribute('data-placeholder') || 'Buscar...';
         var searchTitle = datatablesSimple.getAttribute('data-search-title') || 'Buscar na listagem';
-        var configuredColumns = [];
-        var htmlColumns = [
-          datatablesSimple.getAttribute('data-name-column'),
-          datatablesSimple.getAttribute('data-status-column')
-        ];
-        htmlColumns.forEach(function(columnIndex) {
+        var tableId = datatablesSimple.id || 'datatablesSimple';
+        var configuredColumnMap = {};
+        var currentStatusFilter = '';
+
+        function addConfiguredColumn(columnIndex, config) {
           var index = parseInt(columnIndex, 10);
           if (!Number.isNaN(index)) {
-            configuredColumns.push({
-              select: index,
-              type: 'html'
-            });
+            configuredColumnMap[index] = Object.assign(
+              {
+                select: index,
+                type: 'html'
+              },
+              configuredColumnMap[index] || {},
+              config || {}
+            );
           }
-        });
-        var actionsColumn = parseInt(datatablesSimple.getAttribute('data-actions-column'), 10);
-        if (!Number.isNaN(actionsColumn)) {
-          configuredColumns.push({
-            select: actionsColumn,
-            type: 'html',
-            sortable: false,
-            searchable: false
+        }
+
+        var htmlColumns = datatablesSimple.getAttribute('data-html-columns');
+        if (htmlColumns) {
+          htmlColumns.split(',').forEach(function(columnIndex) {
+            addConfiguredColumn(columnIndex.trim());
+          });
+        } else {
+          [
+            datatablesSimple.getAttribute('data-name-column'),
+            datatablesSimple.getAttribute('data-status-column')
+          ].forEach(function(columnIndex) {
+            addConfiguredColumn(columnIndex);
           });
         }
 
-        new simpleDatatables.DataTable(datatablesSimple, {
+        var statusColumn = parseInt(datatablesSimple.getAttribute('data-status-column'), 10);
+        addConfiguredColumn(statusColumn, {
+          searchMethod: statusSearchMethod
+        });
+
+        var actionsColumn = parseInt(datatablesSimple.getAttribute('data-actions-column'), 10);
+        addConfiguredColumn(actionsColumn, {
+          sortable: false,
+          searchable: false
+        });
+
+        var configuredColumns = Object.keys(configuredColumnMap).map(function(index) {
+          return configuredColumnMap[index];
+        });
+
+	        var basePrintableColumns = [];
+	        var columnVisibility = {};
+	        var columnVisibilityStyle = document.createElement('style');
+	        var headerRow = datatablesSimple.tHead ? datatablesSimple.tHead.rows[0] : null;
+
+	        document.head.appendChild(columnVisibilityStyle);
+
+	        if (headerRow) {
+	          Array.prototype.forEach.call(headerRow.cells, function(cell, index) {
+	            if (index === actionsColumn || cell.getAttribute('data-print-exclude') === 'true') {
+	              return;
+	            }
+
+	            columnVisibility[index] = cell.getAttribute('data-default-visible') !== 'false';
+	            basePrintableColumns.push({
+	              index: index,
+	              key: cell.getAttribute('data-column-key') || 'coluna-' + index,
+	              label: normalizeReportText(cell.textContent || '')
+	            });
+	          });
+	        }
+
+	        function getTableCssSelector() {
+	          return '#' + tableId.replace(/([^\w-])/g, '\\$1');
+	        }
+
+	        function getPrintableColumns() {
+	          return basePrintableColumns.filter(function(column) {
+	            return columnVisibility[column.index] !== false;
+	          });
+	        }
+
+	        function updateColumnVisibilityStyles() {
+	          var tableSelector = getTableCssSelector();
+	          var hiddenSelectors = [];
+
+	          Object.keys(columnVisibility).forEach(function(index) {
+	            if (columnVisibility[index] !== false) {
+	              return;
+	            }
+
+	            var nth = parseInt(index, 10) + 1;
+	            hiddenSelectors.push(tableSelector + ' th:nth-child(' + nth + ')');
+	            hiddenSelectors.push(tableSelector + ' td:nth-child(' + nth + ')');
+	          });
+
+	          columnVisibilityStyle.textContent = hiddenSelectors.length ? hiddenSelectors.join(',') + '{display:none!important;}' : '';
+	        }
+
+	        function createColumnVisibilityControls() {
+	          var controls = document.querySelector('[data-table-column-controls="' + tableId + '"]');
+	          var toggle = document.querySelector('[data-toggle-column-controls="' + tableId + '"]');
+
+	          if (!controls || !basePrintableColumns.length) {
+	            updateColumnVisibilityStyles();
+	            if (toggle) {
+	              toggle.hidden = true;
+	            }
+	            return;
+	          }
+
+	          if (!controls.id) {
+	            controls.id = tableId + '-column-controls';
+	          }
+
+	          controls.setAttribute('role', 'region');
+	          controls.setAttribute('aria-label', 'Campos visíveis da listagem');
+
+	          if (toggle) {
+	            toggle.hidden = false;
+	            toggle.setAttribute('aria-controls', controls.id);
+	            toggle.setAttribute('aria-expanded', controls.hidden ? 'false' : 'true');
+
+	            if (toggle.getAttribute('data-column-toggle-ready') !== 'true') {
+	              toggle.setAttribute('data-column-toggle-ready', 'true');
+	              toggle.addEventListener('click', function() {
+	                controls.hidden = !controls.hidden;
+	                toggle.setAttribute('aria-expanded', controls.hidden ? 'false' : 'true');
+	              });
+	            }
+	          }
+
+	          controls.innerHTML = '';
+
+	          var title = document.createElement('span');
+	          title.className = 'alunos-column-controls-title';
+	          title.textContent = 'Campos da listagem';
+	          controls.appendChild(title);
+
+	          basePrintableColumns.forEach(function(column) {
+	            var option = document.createElement('label');
+	            option.className = 'alunos-column-option';
+
+	            var input = document.createElement('input');
+	            input.type = 'checkbox';
+	            input.value = column.key;
+	            input.checked = columnVisibility[column.index] !== false;
+
+	            var text = document.createElement('span');
+	            text.textContent = column.label;
+
+	            input.addEventListener('change', function() {
+	              columnVisibility[column.index] = input.checked;
+
+	              if (!getPrintableColumns().length) {
+	                columnVisibility[column.index] = true;
+	                input.checked = true;
+	              }
+
+	              updateColumnVisibilityStyles();
+	            });
+
+	            option.appendChild(input);
+	            option.appendChild(text);
+	            controls.appendChild(option);
+	          });
+
+	          updateColumnVisibilityStyles();
+	        }
+
+	        function normalizeReportText(value) {
+	          return (value || '').replace(/\s+/g, ' ').trim();
+	        }
+
+	        function getReportTitleLines(value, fallback) {
+	          var lines = normalizeReportText(value)
+	            .split('*')
+	            .map(function(line) {
+	              return normalizeReportText(line);
+	            })
+	            .filter(Boolean);
+
+	          return lines.length ? lines : [normalizeReportText(fallback || 'Relatório')];
+	        }
+
+	        function getReportLogoSrc() {
+	          return normalizeReportText(document.body.getAttribute('data-report-logo'));
+	        }
+
+	        function loadReportLogoDataUrl(src) {
+	          return new Promise(function(resolve) {
+	            if (!src) {
+	              resolve(null);
+	              return;
+	            }
+
+	            var image = new Image();
+	            image.crossOrigin = 'anonymous';
+
+	            image.onload = function() {
+	              try {
+	                var canvas = document.createElement('canvas');
+	                var width = image.naturalWidth || image.width;
+	                var height = image.naturalHeight || image.height;
+
+	                if (!width || !height) {
+	                  resolve(null);
+	                  return;
+	                }
+
+	                canvas.width = width;
+	                canvas.height = height;
+	                canvas.getContext('2d').drawImage(image, 0, 0);
+
+	                resolve({
+	                  dataUrl: canvas.toDataURL('image/png'),
+	                  width: width,
+	                  height: height,
+	                  format: 'PNG'
+	                });
+	              } catch (error) {
+	                resolve(null);
+	              }
+	            };
+
+	            image.onerror = function() {
+	              resolve(null);
+	            };
+
+	            image.src = src;
+	          });
+	        }
+
+	        function normalizeSearchText(value) {
+	          return normalizeReportText(value)
+	            .toLocaleLowerCase('pt-BR')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+        }
+
+        function stripHtmlText(value) {
+          var container = document.createElement('div');
+          container.innerHTML = value || '';
+          return normalizeReportText(container.textContent || container.innerText || value || '');
+        }
+
+        function getDataTableCellSearchText(cell) {
+          if (cell === null || cell === undefined) {
+            return '';
+          }
+
+          if (typeof cell === 'string' || typeof cell === 'number') {
+            return stripHtmlText(String(cell));
+          }
+
+          if (typeof cell.text === 'string') {
+            return stripHtmlText(cell.text);
+          }
+
+          if (typeof cell.data === 'string') {
+            return stripHtmlText(cell.data);
+          }
+
+          if (typeof cell.html === 'string') {
+            return stripHtmlText(cell.html);
+          }
+
+          return stripHtmlText(String(cell));
+        }
+
+        function normalizeStatusTerm(term) {
+          if (term === 'ativo' || term === 'ativos') {
+            return 'ativo';
+          }
+
+          if (term === 'inativo' || term === 'inativos') {
+            return 'inativo';
+          }
+
+          return '';
+        }
+
+        function statusSearchMethod(terms, cell) {
+          var status = getStatusCellValue(cell);
+          terms = Array.isArray(terms) ? terms : [terms];
+
+          return terms.some(function(term) {
+            var normalizedTerm = normalizeSearchText(term);
+
+            if (!normalizedTerm) {
+              return true;
+            }
+
+            if (normalizedTerm === getStatusFilterToken('ativo')) {
+              return status === 'ativo';
+            }
+
+            if (normalizedTerm === getStatusFilterToken('inativo')) {
+              return status === 'inativo';
+            }
+
+            var statusTerm = normalizeStatusTerm(normalizedTerm);
+
+            if (statusTerm) {
+              return status === statusTerm;
+            }
+
+            return status.indexOf(normalizedTerm) !== -1;
+          });
+        }
+
+        function getStatusFilterToken(status) {
+          return status ? 'statusfilter' + status : '';
+        }
+
+        function getStatusCellValue(cell) {
+          var status = normalizeSearchText(getDataTableCellSearchText(cell));
+
+          if (status.indexOf(getStatusFilterToken('inativo')) !== -1) {
+            return 'inativo';
+          }
+
+          if (status.indexOf(getStatusFilterToken('ativo')) !== -1) {
+            return 'ativo';
+          }
+
+          if (status.split(/\s+/).indexOf('inativo') !== -1) {
+            return 'inativo';
+          }
+
+          if (status.split(/\s+/).indexOf('ativo') !== -1) {
+            return 'ativo';
+          }
+
+          return status;
+        }
+
+        function escapeHtml(value) {
+          return normalizeReportText(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+        }
+
+	        function getCleanCellText(cell) {
+	          var clone = cell.cloneNode(true);
+	          clone.querySelectorAll('script, style, img, button, input, select, textarea, [data-report-exclude="true"], .material-icons, .table-action, .row-actions').forEach(function(element) {
+	            element.remove();
+	          });
+
+	          return normalizeReportText(clone.textContent || '');
+	        }
+
+	        createColumnVisibilityControls();
+
+	        var reportRows = Array.prototype.map.call(datatablesSimple.tBodies[0].rows, function(row) {
+	          var valuesByColumn = Array.prototype.map.call(row.cells, function(cell, index) {
+	            return index === actionsColumn ? '' : getCleanCellText(cell);
+	          });
+	          var statusValue = !Number.isNaN(statusColumn) ? getCleanCellText(row.cells[statusColumn] || document.createElement('td')) : '';
+
+	          return {
+	            valuesByColumn: valuesByColumn,
+	            search: normalizeSearchText(valuesByColumn.join(' ')),
+	            status: getStatusCellValue(statusValue)
+	          };
+	        });
+
+        function getReportSearchValue() {
+          var wrapper = datatablesSimple.closest('.datatable-wrapper') || document;
+          var input = wrapper.querySelector('.datatable-input');
+
+          return input ? normalizeReportText(input.value) : '';
+        }
+
+	        function getReportStatusFilter() {
+	          return currentStatusFilter;
+	        }
+
+	        function getReportFilterSummary(searchValue) {
+	          var filters = [];
+	          var statusFilter = getReportStatusFilter();
+
+	          if (statusFilter === 'ativo') {
+	            filters.push('Status: Ativos');
+	          }
+
+	          if (statusFilter === 'inativo') {
+	            filters.push('Status: Inativos');
+	          }
+
+	          if (searchValue) {
+	            filters.push('Pesquisa: ' + searchValue);
+	          }
+
+	          return filters.length ? filters.join(' | ') : 'Nenhum';
+	        }
+
+	        function getFilteredReportRows() {
+	          var searchValue = getReportSearchValue();
+	          var statusFilter = getReportStatusFilter();
+	          var columns = getPrintableColumns();
+	          var terms = normalizeSearchText(searchValue).split(/\s+/).filter(Boolean);
+
+	          if (!terms.length && !statusFilter) {
+	            return reportRows.map(function(row) {
+	              return columns.map(function(column) {
+	                return row.valuesByColumn[column.index] || '';
+	              });
+	            });
+	          }
+
+          return reportRows.filter(function(row) {
+            if (statusFilter && row.status !== statusFilter) {
+              return false;
+            }
+
+            return terms.every(function(term) {
+              var statusTerm = normalizeStatusTerm(term);
+
+              if (!Number.isNaN(statusColumn) && statusTerm) {
+                return row.status === statusTerm;
+              }
+
+              return row.search.indexOf(term) !== -1;
+            });
+	          }).map(function(row) {
+	            return columns.map(function(column) {
+	              return row.valuesByColumn[column.index] || '';
+	            });
+	          });
+	        }
+
+        function createTableSearchControls(dataTable) {
+          var hasStatusFilter = !Number.isNaN(statusColumn) && datatablesSimple.getAttribute('data-status-filter') === 'ativo-inativo';
+          var hasMultiSearch = hasStatusFilter || datatablesSimple.getAttribute('data-multi-search') === 'true';
+
+          if (!hasMultiSearch) {
+            return;
+          }
+
+          var wrapper = datatablesSimple.closest('.datatable-wrapper');
+          var search = wrapper ? wrapper.querySelector('.datatable-search') : null;
+
+          if (!search) {
+            return;
+          }
+
+          function getCurrentSearchTerms() {
+            var searchInput = search.querySelector('.datatable-input');
+            return normalizeReportText(searchInput ? searchInput.value : '').split(/\s+/).filter(Boolean);
+          }
+
+          function applyCombinedSearch() {
+            var queries = [];
+            var searchTerms = getCurrentSearchTerms();
+
+            searchTerms.forEach(function(term) {
+              queries.push({
+                term: term
+              });
+            });
+
+            if (hasStatusFilter && currentStatusFilter) {
+              queries.push({
+                term: getStatusFilterToken(currentStatusFilter)
+              });
+            }
+
+            dataTable.multiSearch(queries);
+          }
+
+          function scheduleCombinedSearch() {
+            setTimeout(applyCombinedSearch, 0);
+          }
+
+          var searchInput = search.querySelector('.datatable-input');
+
+          if (searchInput) {
+            searchInput.addEventListener('input', scheduleCombinedSearch);
+            searchInput.addEventListener('search', scheduleCombinedSearch);
+            searchInput.addEventListener('keyup', scheduleCombinedSearch);
+          }
+
+          if (!hasStatusFilter || search.querySelector('.datatable-status-filter')) {
+            return;
+          }
+
+          var filter = document.createElement('fieldset');
+          filter.className = 'datatable-status-filter';
+          filter.setAttribute('aria-label', 'Filtrar por status');
+
+          [
+            { label: 'Todos', value: '' },
+            { label: 'Ativos', value: 'ativo' },
+            { label: 'Inativos', value: 'inativo' }
+          ].forEach(function(option, index) {
+            var id = tableId + '-status-filter-' + (option.value || 'todos');
+            var item = document.createElement('label');
+            item.className = 'datatable-status-option';
+            item.setAttribute('for', id);
+
+            var input = document.createElement('input');
+            input.type = 'radio';
+            input.name = tableId + '-status-filter';
+            input.id = id;
+            input.value = option.value;
+            input.checked = index === 0;
+
+            var text = document.createElement('span');
+            text.textContent = option.label;
+
+            item.appendChild(input);
+            item.appendChild(text);
+            filter.appendChild(item);
+          });
+
+          search.appendChild(filter);
+
+          filter.addEventListener('change', function(event) {
+            if (!event.target.matches('input[type="radio"]')) {
+              return;
+            }
+
+            currentStatusFilter = event.target.value;
+            applyCombinedSearch();
+          });
+        }
+
+	        function getReportFileName() {
+	          return normalizeSearchText(pdfCaption)
+	            .replace(/[^a-z0-9]+/g, '-')
+	            .replace(/^-|-$/g, '') || 'relatorio';
+	        }
+
+	        function addPdfPageNumbers(doc) {
+	          var pageCount = doc.internal.getNumberOfPages();
+
+	          doc.setFont('helvetica', 'normal');
+	          doc.setFontSize(8);
+	          doc.setTextColor(87, 96, 106);
+
+	          for (var page = 1; page <= pageCount; page++) {
+	            doc.setPage(page);
+	            doc.text(
+	              'Página ' + page + ' de ' + pageCount,
+	              doc.internal.pageSize.getWidth() - 36,
+	              doc.internal.pageSize.getHeight() - 18,
+	              {
+	                align: 'right'
+	              }
+	            );
+	          }
+
+	          doc.setTextColor(36, 41, 47);
+	        }
+
+	        function getAdaptivePdfColumnProfile(column) {
+	          var profiles = {
+	            matricula: { min: 46, max: 58 },
+	            id: { min: 26, max: 34 },
+	            nome: { min: 86, max: 132 },
+	            aluno: { min: 86, max: 132 },
+	            status: { min: 40, max: 48 },
+	            turma: { min: 42, max: 55 },
+	            cpf: { min: 62, max: 76 },
+	            fone: { min: 64, max: 82 },
+	            endereco: { min: 90, max: 150 },
+	            disciplinas: { min: 76, max: 140 },
+	            professores: { min: 92, max: 150 },
+	            funcao: { min: 48, max: 70 },
+	            email: { min: 84, max: 132 },
+	            escolaridade: { min: 62, max: 88 },
+	            sexo: { min: 28, max: 34 },
+	            dataNasc: { min: 50, max: 58 },
+	            dataCad: { min: 50, max: 58 },
+	            data: { min: 58, max: 72 },
+	            presencas: { min: 42, max: 54 },
+	            faltas: { min: 34, max: 46 },
+	            autor: { min: 62, max: 98 },
+	            fotoAuditoria: { min: 50, max: 66 },
+	            hora: { min: 36, max: 46 },
+	            mae: { min: 80, max: 128 }
+	          };
+
+	          return profiles[column.key] || { min: 45, max: 95 };
+	        }
+
+	        function getPdfTextWidthEstimate(value) {
+	          var text = normalizeReportText(value);
+	          var longest = text.split(/\s+/).reduce(function(current, word) {
+	            return word.length > current.length ? word : current;
+	          }, '');
+
+	          return Math.max(text.length * 2.45, longest.length * 4.1) + 14;
+	        }
+
+	        function getAdaptivePdfColumnLayout(columns, headers, rows, availableWidth) {
+	          var widths = columns.map(function(column, index) {
+	            var profile = getAdaptivePdfColumnProfile(column);
+	            var estimated = getPdfTextWidthEstimate(headers[index] || column.label);
+
+	            rows.slice(0, 80).forEach(function(row) {
+	              estimated = Math.max(estimated, getPdfTextWidthEstimate(row[index] || ''));
+	            });
+
+	            return {
+	              min: profile.min,
+	              width: Math.min(profile.max, Math.max(profile.min, estimated))
+	            };
+	          });
+	          var minimumTotal = widths.reduce(function(total, column) {
+	            return total + column.min;
+	          }, 0);
+	          var desiredTotal = widths.reduce(function(total, column) {
+	            return total + column.width;
+	          }, 0);
+
+	          if (desiredTotal > availableWidth) {
+	            var shrinkable = widths.reduce(function(total, column) {
+	              return total + Math.max(0, column.width - column.min);
+	            }, 0);
+	            var overflow = desiredTotal - availableWidth;
+
+	            widths = widths.map(function(column) {
+	              if (minimumTotal > availableWidth) {
+	                return column.min * (availableWidth / minimumTotal);
+	              }
+
+	              if (!shrinkable) {
+	                return column.min;
+	              }
+
+	              return Math.max(column.min, column.width - (Math.max(0, column.width - column.min) / shrinkable * overflow));
+	            });
+	          } else {
+	            widths = widths.map(function(column) {
+	              return column.width;
+	            });
+	          }
+
+	          return {
+	            minimumTotal: minimumTotal,
+	            total: widths.reduce(function(total, width) {
+	              return total + width;
+	            }, 0),
+	            columnStyles: widths.reduce(function(styles, width, index) {
+	              styles[index] = {
+	                cellWidth: Math.floor(width * 10) / 10
+	              };
+	              return styles;
+	            }, {})
+	          };
+	        }
+
+	        function openPrintableReport(headers, rows, searchValue) {
+          var reportWindow = window.open('', '_blank');
+
+          if (!reportWindow) {
+            alert('Não foi possível abrir a janela de impressão. Verifique o bloqueador de pop-ups.');
+            return;
+          }
+
+	          var generatedAt = new Date().toLocaleString('pt-BR');
+	          var reportTitleLines = getReportTitleLines(document.body.getAttribute('data-report-title'), caption);
+	          var reportLogo = getReportLogoSrc();
+	          var filterSummary = getReportFilterSummary(searchValue);
+	          var reportSummary = normalizeReportText(datatablesSimple.getAttribute('data-report-summary') || '');
+	          var bodyRows = rows.length ? rows : [headers.map(function(_, index) {
+	            return index === 0 ? 'Nenhum registro encontrado.' : '';
+	          })];
+	          var summaryHtml = reportSummary ? 'Resumo: ' + escapeHtml(reportSummary) + '<br>' : '';
+
+	          reportWindow.document.write('<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>' + escapeHtml(pdfCaption) + '</title>');
+	          reportWindow.document.write('<style>body{font-family:Arial,sans-serif;margin:24px;color:#24292f}.report-heading{text-align:center;margin-bottom:14px;text-transform:uppercase}.report-logo{display:block;max-width:54px;max-height:46px;object-fit:contain;margin:0 auto 5px}.report-title-main,.report-title-sub{font-size:10px;font-weight:400;line-height:1.16;margin:0}.report-title-sub{margin-top:1px}h2{font-size:12px;font-weight:700;margin:18px 0 0;color:#24292f;text-align:center}.meta{font-size:12px;color:#57606a;margin-bottom:16px}table{width:100%;border-collapse:collapse;font-size:11px}th,td{border:1px solid #d0d7de;padding:6px;text-align:left;vertical-align:top}th{background:#f6f8fa}@media print{body{margin:12mm}}</style>');
+	          reportWindow.document.write('</head><body><div class="report-heading">');
+	          if (reportLogo) {
+	            reportWindow.document.write('<img class="report-logo" src="' + escapeHtml(reportLogo) + '" alt="Logotipo do relatório">');
+	          }
+	          reportTitleLines.forEach(function(line, index) {
+	            reportWindow.document.write('<div class="' + (index === 0 ? 'report-title-main' : 'report-title-sub') + '">' + escapeHtml(line) + '</div>');
+	          });
+	          reportWindow.document.write('<h2>' + escapeHtml(pdfCaption) + '</h2></div><div class="meta">Filtros aplicados: ' + escapeHtml(filterSummary) + '<br>' + summaryHtml + 'Gerado em: ' + escapeHtml(generatedAt) + '<br>Registros: ' + rows.length + '</div><table><thead><tr>');
+          headers.forEach(function(header) {
+            reportWindow.document.write('<th>' + escapeHtml(header) + '</th>');
+          });
+          reportWindow.document.write('</tr></thead><tbody>');
+          bodyRows.forEach(function(row) {
+            reportWindow.document.write('<tr>');
+            row.forEach(function(cell) {
+              reportWindow.document.write('<td>' + escapeHtml(cell) + '</td>');
+            });
+            reportWindow.document.write('</tr>');
+          });
+          reportWindow.document.write('</tbody></table></body></html>');
+          reportWindow.document.close();
+          reportWindow.focus();
+          setTimeout(function() {
+            reportWindow.print();
+          }, 250);
+        }
+
+	        async function generateTablePdf() {
+	          var printableColumns = getPrintableColumns();
+	          var headers = printableColumns.map(function(column) {
+	            return column.label;
+	          });
+          var rows = getFilteredReportRows();
+          var searchValue = getReportSearchValue();
+	          var jsPDFConstructor = window.jspdf && window.jspdf.jsPDF;
+	          var generatedAt = new Date().toLocaleString('pt-BR');
+	          var reportTitleLines = getReportTitleLines(document.body.getAttribute('data-report-title'), caption);
+	          var filterSummary = getReportFilterSummary(searchValue);
+	          var reportSummary = normalizeReportText(datatablesSimple.getAttribute('data-report-summary') || '');
+	          var hasAdaptivePdf = datatablesSimple.getAttribute('data-adaptive-pdf') === 'true';
+
+          if (!headers.length) {
+            alert('Não há colunas disponíveis para imprimir.');
+            return;
+          }
+
+          if (!jsPDFConstructor) {
+            openPrintableReport(headers, rows, searchValue);
+            return;
+          }
+
+	          var pdfOrientation = headers.length > 5 ? 'landscape' : 'portrait';
+
+	          if (hasAdaptivePdf) {
+	            var portraitAvailableWidth = 595.28 - 72;
+	            var portraitLayout = getAdaptivePdfColumnLayout(printableColumns, headers, rows, portraitAvailableWidth);
+	            pdfOrientation = portraitLayout.minimumTotal <= portraitAvailableWidth ? 'portrait' : 'landscape';
+	          }
+
+          var doc = new jsPDFConstructor({
+            orientation: pdfOrientation,
+            unit: 'pt',
+            format: 'a4'
+          });
+
+          if (typeof doc.autoTable !== 'function') {
+            openPrintableReport(headers, rows, searchValue);
+            return;
+          }
+
+	          var pageWidth = doc.internal.pageSize.getWidth();
+	          var tableAvailableWidth = pageWidth - 72;
+	          var adaptiveTableLayout = hasAdaptivePdf ? getAdaptivePdfColumnLayout(printableColumns, headers, rows, tableAvailableWidth) : null;
+	          var headerY = 32;
+	          var logo = await loadReportLogoDataUrl(getReportLogoSrc());
+
+	          if (logo) {
+	            var logoScale = Math.min(48 / logo.width, 42 / logo.height, 1);
+	            var logoWidth = logo.width * logoScale;
+	            var logoHeight = logo.height * logoScale;
+	            var logoX = (pageWidth - logoWidth) / 2;
+
+	            doc.addImage(logo.dataUrl, logo.format, logoX, headerY, logoWidth, logoHeight);
+	            headerY += logoHeight + 8;
+	          }
+
+	          reportTitleLines.forEach(function(line, index) {
+	            doc.setFont('helvetica', 'normal');
+	            doc.setFontSize(9);
+
+	            doc.splitTextToSize(line.toLocaleUpperCase('pt-BR'), pageWidth - 72).forEach(function(wrappedLine) {
+	              doc.text(wrappedLine, pageWidth / 2, headerY, {
+	                align: 'center'
+	              });
+		              headerY += 10;
+	            });
+	          });
+
+	          doc.setFont('helvetica', 'bold');
+	          doc.setFontSize(12);
+	          headerY += 15;
+	          doc.splitTextToSize(pdfCaption, pageWidth - 72).forEach(function(line) {
+	            doc.text(line, pageWidth / 2, headerY, {
+	              align: 'center'
+	            });
+	            headerY += 13;
+	          });
+	          doc.setFont('helvetica', 'normal');
+	          doc.setFontSize(9);
+	          headerY += 1;
+	          doc.splitTextToSize('Filtros aplicados: ' + filterSummary, pageWidth - 72).forEach(function(line) {
+	            doc.text(line, 36, headerY);
+	            headerY += 12;
+	          });
+	          if (reportSummary) {
+	            doc.splitTextToSize('Resumo: ' + reportSummary, pageWidth - 72).forEach(function(line) {
+	              doc.text(line, 36, headerY);
+	              headerY += 12;
+	            });
+	          }
+	          doc.text('Gerado em: ' + generatedAt, 36, headerY);
+	          headerY += 14;
+	          doc.text('Registros: ' + rows.length, 36, headerY);
+
+	          var startY = headerY + 16;
+
+          doc.autoTable({
+            head: [headers],
+            body: rows.length ? rows : [headers.map(function(_, index) {
+              return index === 0 ? 'Nenhum registro encontrado.' : '';
+            })],
+            startY: startY,
+            margin: {
+              left: 36,
+              right: 36
+            },
+	            tableWidth: adaptiveTableLayout ? adaptiveTableLayout.total : 'auto',
+	            columnStyles: adaptiveTableLayout ? adaptiveTableLayout.columnStyles : {},
+            styles: {
+              font: 'helvetica',
+	              fontSize: adaptiveTableLayout ? 7.2 : 8,
+	              cellPadding: adaptiveTableLayout ? 3 : 4,
+              overflow: 'linebreak',
+              textColor: [36, 41, 47],
+              lineColor: [208, 215, 222],
+              lineWidth: .4
+            },
+            headStyles: {
+              fillColor: [246, 248, 250],
+              textColor: [36, 41, 47],
+              fontStyle: 'bold'
+            },
+	            alternateRowStyles: {
+	              fillColor: [248, 250, 252]
+	            }
+	          });
+
+	          addPdfPageNumbers(doc);
+
+	          var pdfUrl = doc.output('bloburl');
+          var reportWindow = window.open(pdfUrl, '_blank');
+
+          if (!reportWindow) {
+            window.location.href = pdfUrl;
+          }
+        }
+
+        document.querySelectorAll('[data-table-print]').forEach(function(button) {
+          button.addEventListener('click', function(event) {
+            event.preventDefault();
+            generateTablePdf();
+          });
+        });
+
+        var dataTable = new simpleDatatables.DataTable(datatablesSimple, {
           caption: caption,
           perPage: 10,
           perPageSelect: [10, 25, 50, ['Todos', 0]],
@@ -311,6 +1525,8 @@
             info: 'Mostrando {start} a {end} de {rows} ' + plural
           }
         });
+
+        createTableSearchControls(dataTable);
       }
     });
   </script>

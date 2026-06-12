@@ -247,48 +247,32 @@ class Aluno extends Generica{
 	
 	//Método responsavel por iniciar sessao com dados do form
 	public static function getSessaoDados($ob){
-	    //inicia sessão
-	    Funcoes::init();
-	    
-	    //Define a sessao do usuario
-	    $_SESSION['aluno']['novo'] = [
-	        'nome' => $ob['nome'],
-	        'cep' => $ob['cep'],
-	        'endereco' => $ob['endereco'],
-	        'numero' => $ob['numero'],
-	        'bairro' => $ob['bairro'],
-	        'cidade' => $ob['cidade'],
-	        'uf' => $ob['uf'],
-	        'dataNasc' => date('Y-m-d',strtotime($ob['dataNasc'])),
-	        'cpf' => $ob['cpf'],
-	        'fone' => $ob['fone'],
-	        'status' => $ob['status'],
-	        'naturalidade' => $ob['naturalidade'],
-	        'escolaridade' => $ob['escolaridade'],
-	        'estadoCivil' => $ob['estadoCivil'],
-	        'sexo' => $ob['sexo'],
-	        'dataCad'=> date('Y-m-d',strtotime($ob['dataCad'])),
-	        'turma' => $ob['turma'],
-	        'mae' => $ob['mae'],
-	        'obs' => $ob['obs']
-	        
-	        
-	    ];
-	    
-	    //Sucesso
-	    return true;
+	    return Funcoes::flashOldInput('aluno.novo', [
+	        'nome' => $ob['nome'] ?? '',
+	        'cep' => $ob['cep'] ?? '',
+	        'endereco' => $ob['endereco'] ?? '',
+	        'numero' => $ob['numero'] ?? '',
+	        'bairro' => $ob['bairro'] ?? '',
+	        'cidade' => $ob['cidade'] ?? '',
+	        'uf' => $ob['uf'] ?? '',
+	        'dataNasc' => $ob['dataNasc'] ?? '',
+	        'cpf' => $ob['cpf'] ?? '',
+	        'fone' => $ob['fone'] ?? '',
+	        'status' => $ob['status'] ?? '',
+	        'naturalidade' => $ob['naturalidade'] ?? '',
+	        'escolaridade' => $ob['escolaridade'] ?? '',
+	        'estadoCivil' => $ob['estadoCivil'] ?? '',
+	        'sexo' => $ob['sexo'] ?? '',
+	        'dataCad'=> $ob['dataCad'] ?? date('Y-m-d'),
+	        'turma' => $ob['turma'] ?? '',
+	        'mae' => $ob['mae'] ?? '',
+	        'obs' => $ob['obs'] ?? ''
+	    ]);
 	}
 	
 	//Método responsavel por Finalizar sessao
 	public static function getFinalizaSessaoDados(){
-	    //Inicia a Sessão
-	    Funcoes::init();
-	    
-	    //destroi a sessao
-	    unset($_SESSION['aluno']['novo']);
-	    
-	    //sucesso
-	    return true;
+	    return Funcoes::clearOldInput('aluno.novo');
 	}
 	
 	

@@ -1,59 +1,83 @@
-<div class="auth-page">
-  <div class="auth-panel">
-    <div class="card card-login mx-auto text-center">
-      <div class="auth-logo">
-        <img src="{{URL}}/resources/assets/img/preparasantana.png" height="80" alt="Prepara Santana">
-      </div>
+<div class="login-modern-page">
+  <div class="login-toast-slot" aria-live="polite" aria-atomic="true">{{status}}</div>
 
-      <div class="card-body">
-        <form action="" method="post" class="auth-form">
-          <div class="input-group form-group">
-            <div class="input-group-prepend">
-              <span>CPF</span>
-            </div>
-            <input class="form-control-pessoal mascara-cpf cpfLogin" required type="text" id="cpf" value="" name="cpf">
-          </div>
-
-          <div class="input-group form-group">
-            <div class="input-group-prepend">
-              <span>Senha</span>
-            </div>
-            <input type="password" name="senha" id="senha" class="form-control-pessoal auth-password" placeholder="Senha">
-            <span class="lnr lnr-eye h2 text-dark" rel="tooltip" title="ver senha"></span>
-          </div>
-
-          <div class="form-group auth-actions">
-            <a href="{{URL}}/" class="btn btn-warning btn-sm" rel="tooltip" title="Voltar para Home">Voltar</a>
-            <input type="submit" value="Entrar" class="btn-entrar btn btn-success login_btn btn-sm" rel="tooltip" title="Entrar no sistema">
-          </div>
-        </form>
-
-        <div class="auth-help">
-          <a href="{{URL}}/login/recuperarSenha">Recuperar Senha</a>
-        </div>
+  <section class="login-modern-card" aria-labelledby="login-title">
+    <div class="login-brand-row">
+      <span class="login-brand-mark">
+        <img src="{{URL}}/resources/assets/img/preparasantana_semfundo.png" alt="Prepara Santana">
+      </span>
+      <div class="login-brand-copy">
+        <p>Acesso administrativo</p>
+        <h1 id="login-title">Cursinho Preparatório Prof. Anunciação</h1>
       </div>
     </div>
 
-    {{status}}
-  </div>
+    <form action="" method="post" class="login-modern-form">
+      <div class="login-field">
+        <label for="cpf">CPF</label>
+        <div class="login-input-wrap">
+          <span class="material-icons" aria-hidden="true">badge</span>
+          <input class="form-control-pessoal mascara-cpf cpfLogin" required type="text" id="cpf" value="" name="cpf" inputmode="numeric" autocomplete="username" placeholder="000.000.000-00">
+        </div>
+      </div>
+
+      <div class="login-field">
+        <label for="senha">Senha</label>
+        <div class="login-input-wrap">
+          <span class="material-icons" aria-hidden="true">lock</span>
+          <input type="password" name="senha" id="senha" class="form-control-pessoal auth-password" autocomplete="current-password" placeholder="Digite sua senha">
+          <button type="button" class="login-password-toggle" rel="tooltip" title="Ver senha" aria-label="Mostrar ou ocultar senha">
+            <span class="material-icons" aria-hidden="true">visibility</span>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="login-primary-button" rel="tooltip" title="Entrar no sistema">
+        <span class="material-icons" aria-hidden="true">login</span>
+        Entrar
+      </button>
+
+      <div class="login-footer-actions">
+        <a href="{{URL}}/">Voltar</a>
+        <a href="{{URL}}/login/recuperarSenha">Recuperar senha</a>
+      </div>
+    </form>
+  </section>
 </div>
 
-<style>
-  .lnr-eye {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    cursor: pointer;
-  }
-</style>
 <script>
-  let btn = document.querySelector('.lnr-eye');
-  btn.addEventListener('click', function() {
-    let input = document.querySelector('#senha');
-    if (input.getAttribute('type') == 'password') {
-      input.setAttribute('type', 'text');
-    } else {
-      input.setAttribute('type', 'password');
+  (function() {
+    var toggle = document.querySelector('.login-password-toggle');
+    var input = document.querySelector('#senha');
+    var form = document.querySelector('.login-modern-form');
+    var submit = document.querySelector('.login-primary-button');
+
+    function bloquearSubmit() {
+      if (!submit || submit.disabled) {
+        return;
+      }
+
+      submit.disabled = true;
+      submit.setAttribute('aria-busy', 'true');
+      submit.innerHTML = '<span class="material-icons" aria-hidden="true">hourglass_top</span>Entrando...';
     }
-  });
+
+    if (toggle && input) {
+      toggle.addEventListener('click', function() {
+        var isPassword = input.getAttribute('type') === 'password';
+        input.setAttribute('type', isPassword ? 'text' : 'password');
+        toggle.querySelector('.material-icons').textContent = isPassword ? 'visibility_off' : 'visibility';
+      });
+    }
+
+    if (form && submit) {
+      form.addEventListener('submit', function() {
+        bloquearSubmit();
+      });
+    }
+
+    if (document.querySelector('.login-toast-slot [data-toast-redirect]')) {
+      bloquearSubmit();
+    }
+  })();
 </script>

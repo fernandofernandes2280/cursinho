@@ -1,5 +1,6 @@
-<div class="alert alert-{{tipo}}" role="alert" >
-
-	{{mensagem}}
-
-</div>
+<span class="system-toast system-toast-{{tipo}}" role="status" aria-live="polite" data-system-toast="1"{{atributos}}>
+  <span class="system-toast-message">{{mensagem}}</span>
+  <button type="button" class="system-toast-close" aria-label="Fechar mensagem">
+    <span class="material-icons" aria-hidden="true">close</span>
+  </button>
+</span>

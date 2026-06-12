@@ -1,10 +1,6 @@
-<tr>					
-	<td>{{nome}}</td>
-	<td>
-		<div class="row-actions">
-			<a href="{{URL}}/professores/{{idProfessor}}/edit?removeDisciplina={{idDisciplina}}" class="table-action table-action-danger" rel="tooltip" title="Remover">
-				<i class="material-icons">close</i>
-			</a>
-		</div>
-	</td>
-	</tr>
+<span class="professor-discipline-chip" data-disciplina-id="{{idDisciplina}}">
+	{{nome}}
+	<a href="{{URL}}/professores/{{idProfessor}}/edit?removeDisciplina={{idVinculo}}" class="professor-discipline-chip-remove" rel="tooltip" title="Remover disciplina">
+		<i class="material-icons">close</i>
+	</a>
+</span>

@@ -40,11 +40,13 @@ define('permissaoMenuFrequencias', $permissao['menuFrequencias']);
 
 define('permissaoBtnNovoUsuario', $permissao['btnNovoUsuario']);
 
-define('permissaoMenuPresenca', $permissao['menuPresenca']);
+//define('permissaoMenuPresenca', $permissao['menuPresenca']);
 
 define('permissaoMenuDisciplinas', $permissao['menuDisciplinas']);
 
 define('permissaoMenuUsuarios', $permissao['menuUsuarios']);
+
+define('permissaoMenuConfiguracoes', $permissao['menuConfiguracoes']);
 
 define('permissaoExcluirDisciplinas', $permissao['excluirDisciplina']);
 
@@ -74,6 +76,7 @@ MiddlewareQueue::setMap([
 		'maintenance' => \App\Http\Middleware\Maintenance::class,
 		'require-user-logout' => \App\Http\Middleware\RequireUserLogout::class,
 		'require-user-login' => \App\Http\Middleware\RequireUserLogin::class,
+		'can' => \App\Http\Middleware\Can::class,
 		'require-visitor-logout' => \App\Http\Middleware\RequireVisitorLogout::class,
 		'require-visitor-login' => \App\Http\Middleware\RequireVisitorLogin::class,
       	'api' => \App\Http\Middleware\Api::class
@@ -83,4 +86,3 @@ MiddlewareQueue::setMap([
 MiddlewareQueue::setDefault([
 		'maintenance'
 ]);
-
