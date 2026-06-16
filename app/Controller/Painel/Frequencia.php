@@ -11,6 +11,7 @@ use \App\Model\Entity\Professor as EntityProfessor;
 use \App\Model\Entity\Disciplina as EntityDisciplina;
 use \App\Model\Entity\Aluno as EntityAluno;
 use \App\Model\Entity\Frequencia as EntityFrequencia;
+use \App\Model\Entity\InativacaoAluno as EntityInativacaoAluno;
 use \App\Model\Entity\Status as EntityStatus;
 use \App\Utils\Funcoes;
 use Bissolli\ValidadorCpfCnpj\CPF;
@@ -80,6 +81,19 @@ class Frequencia extends Page{
 	    return $obAluno instanceof EntityAluno ? $obAluno : null;
 	}
 
+	private static function reativarAlunoSeNecessario($idAluno){
+	    $obAluno = EntityAluno::getAlunoById($idAluno);
+
+	    if(!$obAluno instanceof EntityAluno || (int)$obAluno->status === 1){
+	        return false;
+	    }
+
+	    $obAluno->status = 1;
+	    $obAluno->atualizar();
+
+	    return true;
+	}
+
 	private static function getLinkAulaAberta($idAula, $obAluno = null){
 	    if($obAluno instanceof EntityAluno){
 	        return URL.'/frequencias/'.(int)$idAula.'/edit/individual/'.(int)$obAluno->id.'?origemAluno='.(int)$obAluno->id;
@@ -131,10 +145,10 @@ class Frequencia extends Page{
 	            return Alert::getSuccess('Aula excluída com sucesso!');
 	            break;
 	        case 'error':
-	            return Alert::getError('Turma do aluno diferente!');
+	            return Alert::getWarning('Aluno vinculado à aula selecionada.');
 	            break;
 	        case 'errorInativo':
-	            return Alert::getError('Aluno Inativo! Presença não confirmada!');
+	            return Alert::getWarning('Aluno reativado e vinculado à aula selecionada.');
 	            break;
 	
 	    }
@@ -215,11 +229,12 @@ class Frequencia extends Page{
 
 	//Método responsavel por renderizar a view de Listagem de Frequencias Abertas
 	public static function getFrequencias($request){
+		EntityInativacaoAluno::aplicarCriteriosAutomaticos();
 		
 		//Recebe os parâmetros da requisição
 		$queryParams = $request->getQueryParams();
 		$obAlunoFrequencia = self::getAlunoFrequenciaContext($request);
-		$title = 'Frequências > Aulas Abertas';
+		$title = 'Frequências';
 		$statusMessage = '';
 		$voltarUrl = URL.'/dashboard';
 
@@ -233,11 +248,14 @@ class Frequencia extends Page{
 		$resultados = '';
 		//Renderiza
 		while ($obAula = $results -> fetchObject(EntityAula::class)) {
+		    $obsAula = (string)($obAula->obs ?? '');
+		    $aulaFrequenciaGeral = stripos($obsAula, 'frequência geral') !== false || stripos($obsAula, 'frequencia geral') !== false;
 		      
 		    $resultados .= View::render('painel/modules/frequencias/item',[
 		        
                  'idAula' => $obAula->id,
 		        'data' => date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
+		        'professoresInfo' => $aulaFrequenciaGeral ? 'Professores não definidos' : '',
 		        'linkAula' => self::getLinkAulaAberta($obAula->id, $obAlunoFrequencia),
 		        'tituloAula' => $obAlunoFrequencia instanceof EntityAluno ? 'Selecionar aula para frequência do aluno' : 'Clique para selecionar'
 		    ]);
@@ -249,7 +267,9 @@ class Frequencia extends Page{
 				 'title'=> $title,
 		         'aulas' => $resultados,
 		         'statusMessage' => $statusMessage,
-		         'voltarUrl' => $voltarUrl
+		         'voltarUrl' => $voltarUrl,
+		         'botaoFrequenciaGeral' => $obAlunoFrequencia instanceof EntityAluno ? 'hidden' : '',
+		         'frequenciaLayoutClass' => $obAlunoFrequencia instanceof EntityAluno ? 'frequencias-open-grid-single' : ''
 				
 				 
 		    
@@ -259,6 +279,19 @@ class Frequencia extends Page{
 		
 		//Retorna a página completa
 		return parent::getPanel('Frequências > Cursinho', $content,'frequencias', 'hidden');
+	}
+
+	public static function getFrequenciaGenerica($request){
+	    $content = View::render('/pages/frequenciaqrcode/index',[
+
+	        'title'=> 'Frequência Geral',
+	        'aula' => 'Frequência Geral',
+	        'idAula' => 0,
+	        'aulaGenerica' => 1
+
+	    ]);
+
+	    return parent::getPage('Frêquencias > Cursinho', $content,'frequencias', 'hidden');
 	}
 	
 	
@@ -300,7 +333,8 @@ class Frequencia extends Page{
 	        
 	        'title'=> 'Frequência Geral',
 	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
-	        'idAula' => $obAula->id
+	        'idAula' => $obAula->id,
+	        'aulaGenerica' => 0
 	        
 	    ]);
 	    
@@ -326,7 +360,8 @@ class Frequencia extends Page{
 	        
 	        'title'=> 'Frequência Geral',
 	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
-	        'idAula' => $obAula->id
+	        'idAula' => $obAula->id,
+	        'aulaGenerica' => 0
 	        
 	    ]);
 	    
@@ -413,59 +448,44 @@ class Frequencia extends Page{
 	//Método responsavel por renderizar a view de Nova Aula
 	public static function getFrequenciaEditIndividualSelectPresenca($request,$id,$idAluno){
 	    $origemAluno = self::getOrigemAlunoId($request, $idAluno);
-	    
-	    //Verifica se o aluno está inativo
-	 //   if(EntityAluno::getAlunoById($idAluno)->status == 2){
-	  //      $request->getRouter()->redirect('/frequencias/'.$id.'/edit/individual/'.$idAluno.'?statusMessage=errorInativo');
-	  //  }
 	  
 	    //verifica se a sessao não está ativa
 	    if(session_status() != PHP_SESSION_ACTIVE ){
 	        session_start();
 	    }
 	    $user = $_SESSION['usuario']['id'];
+	    self::reativarAlunoSeNecessario($idAluno);
 	    
 	    //obtém a aula
 	    $obAula = EntityAula::getAulaById($id);
 	    //obtem a frequencia
 	    $obFreq = EntityFrequencia::getFrequencias('idAula = '.$id.' AND idAluno = '.$idAluno) -> fetchObject(EntityFrequencia::class);
-	   
-	    //REGRA : O aluno pode frequentas as aulas em qualquer dia e turma
-	    
-	        //se nao for, verifica se o aluno é da mesma turma da a aula 
-	        if($obFreq instanceof EntityFrequencia){
-	            if($obFreq->status == 'P'){
-	                $params = [
-	                    'origemAluno' => $origemAluno,
-	                    'statusMessage' => 'jaconfirmed'
-	                ];
+	    if(!$obFreq instanceof EntityFrequencia){
+	        $obFreq = EntityFrequencia::garantirVinculoAlunoAula($id, $idAluno, $user);
+	    }
 
-	                if($origemAluno > 0){
-	                    $params['toastRedirect'] = self::getVoltarUrlIndividual($id, $origemAluno);
-	                }
+	    if($obFreq instanceof EntityFrequencia){
+	        if($obFreq->status == 'P'){
+	            $params = [
+	                'origemAluno' => $origemAluno,
+	                'statusMessage' => 'jaconfirmed'
+	            ];
 
-	                $request->getRouter()->redirect(self::getRedirectIndividual($id, $idAluno, $params));
+	            if($origemAluno > 0){
+	                $params['toastRedirect'] = self::getVoltarUrlIndividual($id, $origemAluno);
 	            }
 
-	            $obFreq->status = 'P';
-	            $obFreq->autor = $user; //id temporario do usuario logado para testes
-	            $obFreq->atualizar();
-	        
-	    }else{
-	        //se for sáb ou dom, cria nova instancia de frequencia e registra a presença do aluno
-	        $frequencia = new EntityFrequencia();
-	        $frequencia->idAluno = $idAluno;
-	        $frequencia->idAula = $id;
-	        $frequencia->status = 'P';
-	        $frequencia->autor = $user; //id temporario do usuario logado para testes
-	        $frequencia->cadastrar();
-	        
-	        //ATIVA O ALUNO SE ESTIVER INATIVO
-	        $ativaAluno = EntityAluno::getAlunoById($idAluno);
-	        if($ativaAluno->status == 2){
-	            $ativaAluno->status = 1;
-	            $ativaAluno->atualizar();
+	            $request->getRouter()->redirect(self::getRedirectIndividual($id, $idAluno, $params));
 	        }
+
+	        $obFreq->status = 'P';
+	        $obFreq->autor = $user;
+	        $obFreq->atualizar();
+	    }else{
+	        $request->getRouter()->redirect(self::getRedirectIndividual($id, $idAluno, [
+	            'origemAluno' => $origemAluno,
+	            'statusMessage' => 'error'
+	        ]));
 	    }
 	    
 	    
@@ -647,7 +667,8 @@ class Frequencia extends Page{
 			  
 			   'title'=> 'Frequência Geral',
 			    'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
-			    'idAula' => $obAula->id
+			    'idAula' => $obAula->id,
+			    'aulaGenerica' => 0
 					
 			]);
 			
@@ -672,7 +693,8 @@ class Frequencia extends Page{
 	        
 	        'title'=> 'Frequência Geral',
 	        'aula' =>'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
-	        'idAula' => $obAula->id
+	        'idAula' => $obAula->id,
+	        'aulaGenerica' => 0
 	        
 	    ]);
 	    

@@ -1,6 +1,10 @@
-
-<a href="{{linkAula}}" >
-<button style="font-size: 16px" type="button" class="btn btn-success btn-round btn-sm " rel="tooltip" title="{{tituloAula}}">
-	{{data}}
-</button>
+<a href="{{linkAula}}" class="frequencia-aula-card" rel="tooltip" title="{{tituloAula}}">
+  <span class="frequencia-aula-icon">
+    <i class="material-icons">event_available</i>
+  </span>
+  <span class="frequencia-aula-text">
+    <span>Aula aberta</span>
+    <strong>{{data}}</strong>
+    <small class="frequencia-aula-meta">{{professoresInfo}}</small>
+  </span>
 </a>

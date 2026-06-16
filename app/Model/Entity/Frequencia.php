@@ -54,6 +54,36 @@ class Frequencia{
 	        (int)$turma
 	    ])->rowCount();
 	}
+
+	public static function garantirVinculoAlunoAula($idAula, $idAluno, $autor, $status = 'F', $database = null){
+	    $idAula = (int)$idAula;
+	    $idAluno = (int)$idAluno;
+
+	    if($idAula <= 0 || $idAluno <= 0){
+	        return null;
+	    }
+
+	    $where = 'idAula = '.$idAula.' AND idAluno = '.$idAluno;
+	    $obFrequencia = self::getFrequencias($where)->fetchObject(self::class);
+
+	    if($obFrequencia instanceof self){
+	        return $obFrequencia;
+	    }
+
+	    $database = $database ?: new Database('frequencia');
+	    $database->execute(
+	        'INSERT IGNORE INTO frequencia (idAula, idAluno, dataReg, status, autor) VALUES (?, ?, ?, ?, ?)',
+	        [
+	            $idAula,
+	            $idAluno,
+	            date('Y-m-d H:i:s'),
+	            $status,
+	            (int)$autor
+	        ]
+	    );
+
+	    return self::getFrequencias($where)->fetchObject(self::class);
+	}
 	
 	//Método responsavel por atualizar os banco de dados com os dados da instancia atual de paciente
 	public function atualizar(){

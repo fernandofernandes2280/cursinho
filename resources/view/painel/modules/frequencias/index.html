@@ -13,7 +13,34 @@
     </div>
   </section>
 
-  <div class="list-panel">
-    {{aulas}}
+  <div class="frequencias-open-grid {{frequenciaLayoutClass}}">
+    <section class="form-shell-card frequencias-general-panel" {{botaoFrequenciaGeral}}>
+      <div class="frequencia-choice-header">
+        <span>Leitura por QR Code</span>
+        <h6>Frequência Geral</h6>
+      </div>
+
+      <a href="{{URL}}/frequencias/geral" class="frequencia-choice-card frequencias-general-card" rel="tooltip" title="Abrir leitor de frequência geral">
+        <span class="frequencia-choice-icon">
+          <i class="material-icons">qr_code_2</i>
+        </span>
+        <span class="frequencia-choice-text">
+          <span>QR Code</span>
+          <strong>Abrir leitura</strong>
+          <small>Localiza a aula aberta do dia ou cria uma aula automaticamente.</small>
+        </span>
+      </a>
+    </section>
+
+    <section class="form-shell-card frequencias-open-panel">
+      <div class="frequencia-choice-header">
+        <span>Aulas abertas</span>
+        <h6>Selecione uma aula</h6>
+      </div>
+
+      <div class="frequencias-open-list">
+        {{aulas}}
+      </div>
+    </section>
   </div>
 </main>

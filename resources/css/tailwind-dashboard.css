@@ -2378,6 +2378,94 @@ form .btn.btn-just-icon .material-icons {
   line-height: 1.4;
 }
 
+.aluno-field input[type="color"].form-control-pessoal {
+  min-height: 36px;
+  padding: 3px;
+  cursor: pointer;
+}
+
+.configuracoes-form-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.configuracoes-form-stack .aluno-fields-grid {
+  align-items: start;
+}
+
+.settings-card-title {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.settings-card-title h6 {
+  margin: 0;
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.settings-card-title p {
+  margin: 2px 0 0;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.settings-range-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 54px;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+}
+
+.settings-range-field input[type="range"] {
+  width: 100%;
+  accent-color: #2563eb;
+}
+
+.settings-range-field output {
+  color: #344767;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.settings-inline-control {
+  margin-top: 10px;
+}
+
+.settings-inline-control label {
+  margin-bottom: 6px;
+}
+
+.settings-checkbox-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  margin: 0 0 10px;
+  padding: 6px 10px;
+  border: 1px solid #d8dee8;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #344767;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.settings-checkbox-field input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: #2563eb;
+}
+
 .report-logo-setting {
   display: flex;
   align-items: center;
@@ -4366,6 +4454,107 @@ body.light-edition .dashboard-stat-card .dashboard-stat-table th,
   line-height: 1.4;
 }
 
+.frequencias-open-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.frequencias-open-grid-single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.frequencias-general-panel,
+.frequencias-open-panel {
+  min-width: 0;
+}
+
+.frequencias-general-panel[hidden] {
+  display: none !important;
+}
+
+.frequencias-general-card {
+  min-height: 108px;
+}
+
+.frequencias-open-list {
+  display: grid;
+  gap: 8px;
+}
+
+.frequencia-aula-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 60px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+
+.frequencia-aula-card:hover,
+.frequencia-aula-card:focus {
+  border-color: var(--active-menu);
+  background: #f6f8fa;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.frequencia-aula-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.frequencia-aula-icon .material-icons {
+  font-size: 21px;
+}
+
+.frequencia-aula-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.frequencia-aula-text span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.frequencia-aula-text strong {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.frequencia-aula-meta {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.frequencia-aula-meta:empty {
+  display: none;
+}
+
 .frequencia-context-card small {
   color: var(--muted);
   font-size: 13px;
@@ -5048,6 +5237,10 @@ body.light-edition .dashboard-stat-card .dashboard-stat-table th,
   }
 
   .frequencia-choice-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .frequencias-open-grid {
     grid-template-columns: 1fr;
   }
 

@@ -2,7 +2,7 @@
     <header class="qr-header">
         <div class="qr-title-block">
             <span>Leitura mobile</span>
-            <h1>{{title}}</h1>
+            <h1 id="qrPageTitle">{{title}}</h1>
         </div>
         <a href="javascript:history.back()" class="btn btn-warning qr-back-button" rel="tooltip" title="Voltar">
             <i class="material-icons">keyboard_return</i>
@@ -36,6 +36,8 @@
 	var count = new Number();
 	var count = 4;
 	var numero = Math.random();
+	var currentIdAula = Number("{{idAula}}") || 0;
+	var aulaGenerica = "{{aulaGenerica}}" === "1";
 	// variável para o contador
 	var contador;
 	var tempo = document.getElementById("tempo");
@@ -117,6 +119,40 @@
             return canvas.toDataURL('image/jpeg', 0.72);
         } catch (e) {
             return '';
+        }
+    }
+
+    function agendarRedirecionamentoMeiaNoite() {
+        var agora = new Date();
+        var proximaMeiaNoite = new Date(
+            agora.getFullYear(),
+            agora.getMonth(),
+            agora.getDate() + 1,
+            0,
+            0,
+            5
+        );
+        var tempoAteMeiaNoite = Math.max(1000, proximaMeiaNoite.getTime() - agora.getTime());
+
+        setTimeout(function() {
+            window.location.replace("{{URL}}/frequencias/geral");
+        }, tempoAteMeiaNoite);
+    }
+
+    function atualizarAulaAtual(data) {
+        if (data && data.idAula) {
+            currentIdAula = Number(data.idAula) || currentIdAula;
+        }
+
+        if (data && data.aulaGenerica) {
+            aulaGenerica = true;
+        }
+
+        if (data && data.aulaTitulo) {
+            var title = document.getElementById('qrPageTitle');
+            if (title) {
+                title.textContent = data.aulaTitulo;
+            }
         }
     }
 
@@ -206,7 +242,8 @@
                     send: true,
 	                    modo: 'registrar',
 	                    matricula: qrCodeMessage,
-	                    idAula: {{idAula}},
+	                    idAula: currentIdAula,
+	                    aulaGenerica: aulaGenerica ? 1 : 0,
 	                    fotoAuditoria: fotoAuditoria
 	                },
                 dataType: "json",
@@ -216,6 +253,8 @@
                         exibirCodigoInvalido();
                         return;
                     }
+
+                    atualizarAulaAtual(data);
 
                     if (data.successPresenca) {
                         exibirMensagemAluno(data, 'warning');
@@ -324,7 +363,8 @@
                     send: true,
                     modo: 'consultar',
                     matricula: qrCodeMessage,
-                    idAula: {{idAula}}
+                    idAula: currentIdAula,
+                    aulaGenerica: aulaGenerica ? 1 : 0
                 },
                 dataType: "json",
                 cache: false,
@@ -333,6 +373,8 @@
                         exibirCodigoInvalido();
                         return;
                     }
+
+                    atualizarAulaAtual(data);
 
                     if (!data.successAtivo) {
                         exibirMensagemAluno(data, 'danger');
@@ -361,6 +403,7 @@
         return html5qrcode.stop();
     }
     docReady(function() {
+        agendarRedirecionamentoMeiaNoite();
         var button = document.getElementById('start');
         var facingModeSelect = 'user';
         if (!scanning) {

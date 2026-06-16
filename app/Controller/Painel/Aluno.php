@@ -9,6 +9,7 @@ use \App\Model\Entity\Escolaridade as EntityEscolaridade;
 use \App\Model\Entity\EstadoCivil as EntityEstadoCivil;
 use \App\Model\Entity\Turma as EntityTurma;
 use \App\Model\Entity\Status as EntityStatus;
+use \App\Model\Entity\Configuracao as EntityConfiguracao;
 use \App\Utils\Funcoes;
 use \App\Controller\File\Upload as Upload;
 use Bissolli\ValidadorCpfCnpj\CPF;
@@ -55,6 +56,17 @@ class Aluno extends Page{
 
 	private static function escape($value){
 		return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+	}
+
+	private static function renderCarteiraLinhas($linhas){
+		if(!is_array($linhas)){
+			$linhas = [(string)$linhas];
+		}
+
+		$linhas = array_filter(array_map('trim', $linhas));
+		$linhas = array_map([self::class, 'escape'], $linhas);
+
+		return count($linhas) ? implode('<br>', $linhas) : '';
 	}
 
 	private static function getAlunoDocumentosDir($idAluno){
@@ -985,6 +997,9 @@ class Aluno extends Page{
 	    // echo '<p><img src="' . $oQRC->get(300) . '" alt="QR Code" /></p>'; // Generate and display the QR Code
 	  //  $oQRC->display(300); // Set size and display QR Code default 150px
 	     $reload = rand();
+	     $marcaDaguaCarteiraAlunoHtml = EntityConfiguracao::getUsarMarcaDaguaCarteiraAluno()
+	        ? '<img width="400" class="img-fluid logocursocontainer" alt="Marca d\'água da carteira digital do aluno" src="'.htmlspecialchars(EntityConfiguracao::getMarcaDaguaCarteiraAlunoUrl(), ENT_QUOTES, 'UTF-8').'">'
+	        : '';
 	    //Conteúdo do Formulário
 
 	    $content = View::render('pages/carteira',[
@@ -1003,6 +1018,24 @@ class Aluno extends Page{
 	        'hiddenBtnAlterar' => $hiddenAlterar,
 	        'hiddenBtnSairUpdate' => $hiddenBtnSairUpdate,
 	        'hiddenBtnSair' => $hiddenBtnSair,
+	        'logoCarteiraAluno1' => htmlspecialchars(EntityConfiguracao::getLogoCarteiraAluno1Url(), ENT_QUOTES, 'UTF-8'),
+	        'logoCarteiraAluno2' => htmlspecialchars(EntityConfiguracao::getLogoCarteiraAluno2Url(), ENT_QUOTES, 'UTF-8'),
+	        'cabecalhoCarteiraAluno' => self::renderCarteiraLinhas(EntityConfiguracao::getCabecalhoCarteiraAlunoLinhas()),
+	        'cabecalhoCarteiraAlunoTamanho' => EntityConfiguracao::getCabecalhoCarteiraAlunoTamanho(),
+	        'cabecalhoCarteiraAlunoCor' => htmlspecialchars(EntityConfiguracao::getCabecalhoCarteiraAlunoCor(), ENT_QUOTES, 'UTF-8'),
+	        'subtituloCarteiraAluno' => self::escape(EntityConfiguracao::getSubtituloCarteiraAluno()),
+	        'subtituloCarteiraAlunoTamanho' => EntityConfiguracao::getSubtituloCarteiraAlunoTamanho(),
+	        'subtituloCarteiraAlunoCor' => htmlspecialchars(EntityConfiguracao::getSubtituloCarteiraAlunoCor(), ENT_QUOTES, 'UTF-8'),
+	        'textoCentralCarteiraAluno' => self::escape(EntityConfiguracao::getTextoCentralCarteiraAluno()),
+	        'textoCentralCarteiraAlunoTamanho' => EntityConfiguracao::getTextoCentralCarteiraAlunoTamanho(),
+	        'textoCentralCarteiraAlunoCor' => htmlspecialchars(EntityConfiguracao::getTextoCentralCarteiraAlunoCor(), ENT_QUOTES, 'UTF-8'),
+	        'rodapeCarteiraAluno' => self::escape(EntityConfiguracao::getRodapeCarteiraAluno()),
+	        'rodapeCarteiraAlunoTamanho' => EntityConfiguracao::getRodapeCarteiraAlunoTamanho(),
+	        'rodapeCarteiraAlunoCor' => htmlspecialchars(EntityConfiguracao::getRodapeCarteiraAlunoCor(), ENT_QUOTES, 'UTF-8'),
+	        'corFundoCarteiraAluno' => htmlspecialchars(EntityConfiguracao::getCorFundoCarteiraAluno(), ENT_QUOTES, 'UTF-8'),
+	        'marcaDaguaCarteiraAlunoHtml' => $marcaDaguaCarteiraAlunoHtml,
+	        'marcaDaguaCarteiraAlunoOpacidade' => EntityConfiguracao::getMarcaDaguaCarteiraAlunoOpacidadeCss(),
+	        'assinaturaCarteiraAluno' => htmlspecialchars(EntityConfiguracao::getAssinaturaCarteiraAlunoUrl(), ENT_QUOTES, 'UTF-8'),
 
 
 	    ]);

@@ -19,6 +19,36 @@ $obRouter->get('/frequencias',[
     ]);
 
 
+//ROTA de leitura de QR Code para Frequência Geral
+$obRouter->get('/frequencias/geral',[
+
+    'middlewares' => [
+        'require-user-login',
+        'can:frequencias.qrcode'
+    ],
+
+
+    function ($request){
+        return new Response(200, Painel\Frequencia::getFrequenciaGenerica($request));
+    }
+    ]);
+
+
+//ROTA antiga mantida por compatibilidade
+$obRouter->get('/frequencias/generica',[
+
+    'middlewares' => [
+        'require-user-login',
+        'can:frequencias.qrcode'
+    ],
+
+
+    function ($request){
+        $request->getRouter()->redirect('/frequencias/geral');
+    }
+    ]);
+
+
 //ROTA de Edição de uma Frequencia
 $obRouter->get('/frequencias/{id}/edit',[
     
@@ -104,7 +134,7 @@ $obRouter->post('/frequencias/{id}/edit',[
     
     
     function ($request){
-        return new Response(200, Painel\Frequencia::getFrequenciaGeral($request));
+        $request->getRouter()->redirect('/frequencias/geral');
     }
     ]);
 
@@ -119,7 +149,7 @@ $obRouter->get('/frequencias/{id}/edit/mobile',[
     
     
     function ($request,$id){
-        return new Response(200, Painel\Frequencia::getFrequenciaGeralMobile($request,$id));
+        $request->getRouter()->redirect('/frequencias/geral');
     }
     ]);
 

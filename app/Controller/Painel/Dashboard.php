@@ -8,6 +8,7 @@ use \App\Model\Entity\Aula as EntityAula;
 use \App\Model\Entity\Disciplina as EntityDisciplina;
 use \App\Model\Entity\DisciplinaProfessor as EntityDisciplinaProfessor;
 use \App\Model\Entity\Frequencia as EntityFrequencia;
+use \App\Model\Entity\InativacaoAluno as EntityInativacaoAluno;
 use \App\Model\Entity\Professor as EntityProfessor;
 use \App\Model\Entity\Turma as EntityTurma;
 use \App\Utils\Funcoes;
@@ -75,6 +76,8 @@ class Dashboard extends Page{
     
     //retorna o conteudo (view) DO DASHBOOARD
     public static function getDashboard($request = null){
+        EntityInativacaoAluno::aplicarCriteriosAutomaticos();
+
         $mes_extenso = array(
             'January' => 'Janeiro',
             'February' => 'Fevereiro',

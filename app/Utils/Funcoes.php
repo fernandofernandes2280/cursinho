@@ -59,6 +59,9 @@ class Funcoes{
 	            case 'logoInvalid':
 	                return Alert::getError('Envie um logotipo válido nos formatos PNG, JPG ou WEBP.');
 	                break;
+	            case 'assinaturaInvalid':
+	                return Alert::getError('A assinatura do coordenador deve ser enviada exclusivamente em PNG, para preservar o fundo transparente.');
+	                break;
 	            case 'documentoInvalid':
 	                return Alert::getError('Envie os documentos do aluno somente em PDF.');
 	                break;

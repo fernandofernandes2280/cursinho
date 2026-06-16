@@ -9,41 +9,461 @@
     </div>
   </section>
 
-  <form method="post" class="form-shell-card" enctype="multipart/form-data">
-    <div class="aluno-fields-grid">
-      <div class="aluno-field aluno-span-12">
-        <label for="tituloRelatorio">Cabeçalho do relatório</label>
-        <input
-          type="text"
-          id="tituloRelatorio"
-          name="tituloRelatorio"
-          class="form-control-pessoal"
-          value="{{tituloRelatorio}}"
-          maxlength="255"
-          required
-        >
-        <p class="form-field-hint">Use asterisco (*) para separar as linhas do cabeçalho. O título do relatório será gerado logo abaixo, conforme o tipo de relatório impresso.</p>
+  <form method="post" class="configuracoes-form-stack" enctype="multipart/form-data">
+    <section class="form-shell-card">
+      <div class="settings-card-title">
+        <h6>Relatório</h6>
+        <p>Cabeçalho e logotipo utilizados nos relatórios em PDF.</p>
       </div>
 
-      <div class="aluno-field aluno-span-12">
-        <label for="logoRelatorio">Logotipo do relatório</label>
-        <div class="report-logo-setting">
-          <div class="report-logo-preview">
-            <img src="{{logoRelatorio}}?v={{logoVersion}}" alt="Logotipo atual do relatório">
-          </div>
-          <div class="report-logo-control">
-            <input
-              type="file"
-              id="logoRelatorio"
-              name="logoRelatorio"
-              class="form-control-pessoal"
-              accept="image/png,image/jpeg,image/webp"
-            >
-            <p class="form-field-hint">Formatos aceitos: PNG, JPG ou WEBP. Se nenhum arquivo for enviado, o logotipo atual será mantido.</p>
+      <div class="aluno-fields-grid">
+        <div class="aluno-field aluno-span-12">
+          <label for="tituloRelatorio">Cabeçalho do relatório</label>
+          <input
+            type="text"
+            id="tituloRelatorio"
+            name="tituloRelatorio"
+            class="form-control-pessoal"
+            value="{{tituloRelatorio}}"
+            maxlength="255"
+            required
+          >
+          <p class="form-field-hint">Use asterisco (*) para separar as linhas do cabeçalho. O título do relatório será gerado logo abaixo, conforme o tipo de relatório impresso.</p>
+        </div>
+
+        <div class="aluno-field aluno-span-12">
+          <label for="logoRelatorio">Logotipo do relatório</label>
+          <div class="report-logo-setting">
+            <div class="report-logo-preview">
+              <img src="{{logoRelatorio}}?v={{logoVersion}}" alt="Logotipo atual do relatório">
+            </div>
+            <div class="report-logo-control">
+              <input
+                type="file"
+                id="logoRelatorio"
+                name="logoRelatorio"
+                class="form-control-pessoal"
+                accept="image/png,image/jpeg,image/webp"
+              >
+              <p class="form-field-hint">Formatos aceitos: PNG, JPG ou WEBP. Se nenhum arquivo for enviado, o logotipo atual será mantido.</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
+
+    <section class="form-shell-card">
+      <div class="settings-card-title">
+        <h6>Frequência Geral</h6>
+        <p>Horários usados para definir automaticamente a turma da aula criada pelo leitor de QR Code.</p>
+      </div>
+
+      <div class="aluno-fields-grid">
+        <div class="aluno-field aluno-span-2">
+          <label for="frequenciaGeralManhaInicio">Manhã início</label>
+          <input
+            type="time"
+            id="frequenciaGeralManhaInicio"
+            name="frequenciaGeralManhaInicio"
+            class="form-control-pessoal"
+            value="{{frequenciaGeralManhaInicio}}"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-2">
+          <label for="frequenciaGeralManhaFim">Manhã fim</label>
+          <input
+            type="time"
+            id="frequenciaGeralManhaFim"
+            name="frequenciaGeralManhaFim"
+            class="form-control-pessoal"
+            value="{{frequenciaGeralManhaFim}}"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-2">
+          <label for="frequenciaGeralTardeInicio">Tarde início</label>
+          <input
+            type="time"
+            id="frequenciaGeralTardeInicio"
+            name="frequenciaGeralTardeInicio"
+            class="form-control-pessoal"
+            value="{{frequenciaGeralTardeInicio}}"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-2">
+          <label for="frequenciaGeralTardeFim">Tarde fim</label>
+          <input
+            type="time"
+            id="frequenciaGeralTardeFim"
+            name="frequenciaGeralTardeFim"
+            class="form-control-pessoal"
+            value="{{frequenciaGeralTardeFim}}"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-2">
+          <label for="frequenciaGeralNoiteInicio">Noite início</label>
+          <input
+            type="time"
+            id="frequenciaGeralNoiteInicio"
+            name="frequenciaGeralNoiteInicio"
+            class="form-control-pessoal"
+            value="{{frequenciaGeralNoiteInicio}}"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-2">
+          <label for="frequenciaGeralNoiteFim">Noite fim</label>
+          <input
+            type="time"
+            id="frequenciaGeralNoiteFim"
+            name="frequenciaGeralNoiteFim"
+            class="form-control-pessoal"
+            value="{{frequenciaGeralNoiteFim}}"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-12">
+          <p class="form-field-hint">Quando a primeira leitura ocorrer fora da turma do aluno, a aula será criada pela faixa de horário acima e o aluno será vinculado como exceção.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-shell-card">
+      <div class="settings-card-title">
+        <h6>Inativação automática de alunos</h6>
+        <p>Critérios usados para inativar alunos por faltas no mês atual.</p>
+      </div>
+
+      <div class="aluno-fields-grid">
+        <div class="aluno-field aluno-span-3">
+          <label for="inativacaoFaltasIntercaladasMes">Faltas intercaladas</label>
+          <input
+            type="number"
+            id="inativacaoFaltasIntercaladasMes"
+            name="inativacaoFaltasIntercaladasMes"
+            class="form-control-pessoal"
+            value="{{inativacaoFaltasIntercaladasMes}}"
+            min="1"
+            max="31"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-3">
+          <label for="inativacaoFaltasSeguidasMes">Faltas seguidas</label>
+          <input
+            type="number"
+            id="inativacaoFaltasSeguidasMes"
+            name="inativacaoFaltasSeguidasMes"
+            class="form-control-pessoal"
+            value="{{inativacaoFaltasSeguidasMes}}"
+            min="1"
+            max="31"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-6">
+          <p class="form-field-hint">Padrão atual: inativar com 5 faltas intercaladas ou 3 faltas seguidas no mês. A rotina automática considera somente aulas anteriores ao dia atual, evitando contar como falta definitiva uma aula ainda em andamento.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-shell-card">
+      <div class="settings-card-title">
+        <h6>Carteira digital do aluno</h6>
+        <p>Parâmetros visuais utilizados na emissão da carteira do aluno.</p>
+      </div>
+
+      <div class="aluno-fields-grid">
+        <div class="aluno-field aluno-span-8">
+          <label for="cabecalhoCarteiraAluno">Cabeçalho</label>
+          <input
+            type="text"
+            id="cabecalhoCarteiraAluno"
+            name="cabecalhoCarteiraAluno"
+            class="form-control-pessoal"
+            value="{{cabecalhoCarteiraAluno}}"
+            maxlength="255"
+            required
+          >
+          <p class="form-field-hint">Use asterisco (*) para separar as linhas do cabeçalho da carteira.</p>
+        </div>
+
+        <div class="aluno-field aluno-span-2">
+          <label for="cabecalhoCarteiraAlunoTamanho">Tamanho</label>
+          <input
+            type="number"
+            id="cabecalhoCarteiraAlunoTamanho"
+            name="cabecalhoCarteiraAlunoTamanho"
+            class="form-control-pessoal"
+            value="{{cabecalhoCarteiraAlunoTamanho}}"
+            min="8"
+            max="60"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-2">
+          <label for="cabecalhoCarteiraAlunoCor">Cor</label>
+          <input
+            type="color"
+            id="cabecalhoCarteiraAlunoCor"
+            name="cabecalhoCarteiraAlunoCor"
+            class="form-control-pessoal"
+            value="{{cabecalhoCarteiraAlunoCor}}"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-8">
+          <label for="subtituloCarteiraAluno">Subtítulo</label>
+          <input
+            type="text"
+            id="subtituloCarteiraAluno"
+            name="subtituloCarteiraAluno"
+            class="form-control-pessoal"
+            value="{{subtituloCarteiraAluno}}"
+            maxlength="120"
+            required
+          >
+          <p class="form-field-hint">O subtítulo será exibido duas linhas abaixo do cabeçalho, no lugar do nome do cursinho.</p>
+        </div>
+
+        <div class="aluno-field aluno-span-2">
+          <label for="subtituloCarteiraAlunoTamanho">Tamanho</label>
+          <input
+            type="number"
+            id="subtituloCarteiraAlunoTamanho"
+            name="subtituloCarteiraAlunoTamanho"
+            class="form-control-pessoal"
+            value="{{subtituloCarteiraAlunoTamanho}}"
+            min="8"
+            max="60"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-2">
+          <label for="subtituloCarteiraAlunoCor">Cor</label>
+          <input
+            type="color"
+            id="subtituloCarteiraAlunoCor"
+            name="subtituloCarteiraAlunoCor"
+            class="form-control-pessoal"
+            value="{{subtituloCarteiraAlunoCor}}"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-8">
+          <label for="textoCentralCarteiraAluno">Texto central</label>
+          <input
+            type="text"
+            id="textoCentralCarteiraAluno"
+            name="textoCentralCarteiraAluno"
+            class="form-control-pessoal"
+            value="{{textoCentralCarteiraAluno}}"
+            maxlength="120"
+            required
+          >
+          <p class="form-field-hint">Texto exibido no centro da carteira, abaixo do cabeçalho.</p>
+        </div>
+
+        <div class="aluno-field aluno-span-2">
+          <label for="textoCentralCarteiraAlunoTamanho">Tamanho</label>
+          <input
+            type="number"
+            id="textoCentralCarteiraAlunoTamanho"
+            name="textoCentralCarteiraAlunoTamanho"
+            class="form-control-pessoal"
+            value="{{textoCentralCarteiraAlunoTamanho}}"
+            min="8"
+            max="60"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-2">
+          <label for="textoCentralCarteiraAlunoCor">Cor</label>
+          <input
+            type="color"
+            id="textoCentralCarteiraAlunoCor"
+            name="textoCentralCarteiraAlunoCor"
+            class="form-control-pessoal"
+            value="{{textoCentralCarteiraAlunoCor}}"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-8">
+          <label for="rodapeCarteiraAluno">Rodapé da carteira</label>
+          <input
+            type="text"
+            id="rodapeCarteiraAluno"
+            name="rodapeCarteiraAluno"
+            class="form-control-pessoal"
+            value="{{rodapeCarteiraAluno}}"
+            maxlength="220"
+            required
+          >
+          <p class="form-field-hint">Texto exibido no rodapé da carteira digital do aluno.</p>
+        </div>
+
+        <div class="aluno-field aluno-span-2">
+          <label for="rodapeCarteiraAlunoTamanho">Tamanho</label>
+          <input
+            type="number"
+            id="rodapeCarteiraAlunoTamanho"
+            name="rodapeCarteiraAlunoTamanho"
+            class="form-control-pessoal"
+            value="{{rodapeCarteiraAlunoTamanho}}"
+            min="8"
+            max="60"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-2">
+          <label for="rodapeCarteiraAlunoCor">Cor</label>
+          <input
+            type="color"
+            id="rodapeCarteiraAlunoCor"
+            name="rodapeCarteiraAlunoCor"
+            class="form-control-pessoal"
+            value="{{rodapeCarteiraAlunoCor}}"
+            required
+          >
+        </div>
+
+        <div class="aluno-field aluno-span-6">
+          <label for="logoCarteiraAluno1">Logo 1</label>
+          <div class="report-logo-setting">
+            <div class="report-logo-preview">
+              <img id="previewLogoCarteiraAluno1" src="{{logoCarteiraAluno1}}?v={{logoCarteiraAluno1Version}}" alt="Logo 1 atual da carteira digital do aluno">
+            </div>
+            <div class="report-logo-control">
+              <input
+                type="file"
+                id="logoCarteiraAluno1"
+                name="logoCarteiraAluno1"
+                class="form-control-pessoal"
+                accept="image/png,image/jpeg,image/webp"
+                data-preview-target="previewLogoCarteiraAluno1"
+              >
+              <p class="form-field-hint">Imagem principal exibida no lado esquerdo do cabeçalho da carteira. Formatos aceitos: PNG, JPG ou WEBP.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="aluno-field aluno-span-6">
+          <label for="logoCarteiraAluno2">Logo 2</label>
+          <div class="report-logo-setting">
+            <div class="report-logo-preview">
+              <img id="previewLogoCarteiraAluno2" src="{{logoCarteiraAluno2}}?v={{logoCarteiraAluno2Version}}" alt="Logo 2 atual da carteira digital do aluno">
+            </div>
+            <div class="report-logo-control">
+              <input
+                type="file"
+                id="logoCarteiraAluno2"
+                name="logoCarteiraAluno2"
+                class="form-control-pessoal"
+                accept="image/png,image/jpeg,image/webp"
+                data-preview-target="previewLogoCarteiraAluno2"
+              >
+              <p class="form-field-hint">Imagem secundária exibida no lado direito do cabeçalho da carteira. Formatos aceitos: PNG, JPG ou WEBP.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="aluno-field aluno-span-6">
+          <label for="marcaDaguaCarteiraAluno">Marca d'água</label>
+          <label class="settings-checkbox-field" for="usarMarcaDaguaCarteiraAluno">
+            <input
+              type="checkbox"
+              id="usarMarcaDaguaCarteiraAluno"
+              name="usarMarcaDaguaCarteiraAluno"
+              value="1"
+              {{usarMarcaDaguaCarteiraAlunoChecked}}
+            >
+            <span>Usar marca d'água na carteira</span>
+          </label>
+          <div class="report-logo-setting">
+            <div class="report-logo-preview">
+              <img id="previewMarcaDaguaCarteiraAluno" src="{{marcaDaguaCarteiraAluno}}?v={{marcaDaguaCarteiraAlunoVersion}}" alt="Marca d'água atual da carteira digital do aluno">
+            </div>
+            <div class="report-logo-control">
+              <input
+                type="file"
+                id="marcaDaguaCarteiraAluno"
+                name="marcaDaguaCarteiraAluno"
+                class="form-control-pessoal"
+                accept="image/png,image/jpeg,image/webp"
+                data-preview-target="previewMarcaDaguaCarteiraAluno"
+              >
+              <p class="form-field-hint">Imagem usada como marca d'água da carteira. Formatos aceitos: PNG, JPG ou WEBP.</p>
+            </div>
+          </div>
+          <div class="settings-inline-control">
+            <label for="marcaDaguaCarteiraAlunoOpacidade">Transparência</label>
+            <div class="settings-range-field">
+              <input
+                type="range"
+                id="marcaDaguaCarteiraAlunoOpacidade"
+                name="marcaDaguaCarteiraAlunoOpacidade"
+                min="0"
+                max="100"
+                value="{{marcaDaguaCarteiraAlunoOpacidade}}"
+                data-range-output="marcaDaguaCarteiraAlunoOpacidadeValor"
+              >
+              <output id="marcaDaguaCarteiraAlunoOpacidadeValor">{{marcaDaguaCarteiraAlunoOpacidade}}%</output>
+            </div>
+          </div>
+        </div>
+
+        <div class="aluno-field aluno-span-6">
+          <label for="assinaturaCarteiraAluno">Assinatura do coordenador</label>
+          <div class="report-logo-setting">
+            <div class="report-logo-preview">
+              <img id="previewAssinaturaCarteiraAluno" src="{{assinaturaCarteiraAluno}}?v={{assinaturaCarteiraAlunoVersion}}" alt="Assinatura atual do coordenador">
+            </div>
+            <div class="report-logo-control">
+              <input
+                type="file"
+                id="assinaturaCarteiraAluno"
+                name="assinaturaCarteiraAluno"
+                class="form-control-pessoal"
+                accept="image/png"
+                data-preview-target="previewAssinaturaCarteiraAluno"
+                data-preview-types="image/png"
+              >
+              <p class="form-field-hint">Envie exclusivamente arquivo PNG para preservar o fundo transparente da assinatura.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="aluno-field aluno-span-6">
+          <label for="corFundoCarteiraAluno">Cor de fundo da Carteira</label>
+          <input
+            type="color"
+            id="corFundoCarteiraAluno"
+            name="corFundoCarteiraAluno"
+            class="form-control-pessoal"
+            value="{{corFundoCarteiraAluno}}"
+            required
+          >
+        </div>
+      </div>
+    </section>
 
     <div class="form-actions">
       <button class="btn btn-facebook btn-round btn-just-icon" type="submit" rel="tooltip" title="Salvar">
@@ -52,3 +472,39 @@
     </div>
   </form>
 </main>
+
+<script>
+  document.querySelectorAll('[data-preview-target]').forEach(function(input) {
+    input.addEventListener('change', function() {
+      var file = input.files && input.files[0];
+      var preview = document.getElementById(input.getAttribute('data-preview-target'));
+
+      var allowedTypes = (input.getAttribute('data-preview-types') || 'image/png,image/jpeg,image/webp').split(',');
+
+      if (!file || !preview || allowedTypes.indexOf(file.type) === -1) {
+        return;
+      }
+
+      if (preview.dataset.objectUrl) {
+        URL.revokeObjectURL(preview.dataset.objectUrl);
+      }
+
+      var objectUrl = URL.createObjectURL(file);
+      preview.dataset.objectUrl = objectUrl;
+      preview.src = objectUrl;
+    });
+  });
+
+  document.querySelectorAll('[data-range-output]').forEach(function(input) {
+    var output = document.getElementById(input.getAttribute('data-range-output'));
+
+    if (!output) {
+      return;
+    }
+
+    input.addEventListener('input', function() {
+      output.value = input.value + '%';
+      output.textContent = input.value + '%';
+    });
+  });
+</script>
