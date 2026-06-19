@@ -1,3 +1,5 @@
+<div class="dashboard-live" data-dashboard-live data-dashboard-url="{{URL}}/dashboard/live" data-dashboard-interval="2000">
+<div data-dashboard-content>
 <div class="alunos-status">{{statusMessage}}</div>
 
 <section class="dashboard-grid">
@@ -192,3 +194,84 @@
     </table>
   </div>
 </section>
+</div>
+</div>
+
+<script>
+  (function() {
+    var root = document.querySelector('[data-dashboard-live]');
+
+    if (!root || root.dataset.initialized === '1') {
+      return;
+    }
+
+    var content = root.querySelector('[data-dashboard-content]');
+    var url = root.getAttribute('data-dashboard-url');
+    var interval = parseInt(root.getAttribute('data-dashboard-interval') || '15000', 10);
+    var loading = false;
+    var signature = '';
+
+    if (!content || !url) {
+      return;
+    }
+
+    root.dataset.initialized = '1';
+
+    function replaceDashboard(html) {
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(html || '', 'text/html');
+      var nextContent = doc.querySelector('[data-dashboard-content]');
+
+      if (!nextContent) {
+        return;
+      }
+
+      content.innerHTML = nextContent.innerHTML;
+    }
+
+    function refreshDashboard() {
+      if (loading || document.hidden) {
+        return;
+      }
+
+      loading = true;
+
+      fetch(url, {
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        cache: 'no-store'
+      })
+        .then(function(response) {
+          if (!response.ok) {
+            throw new Error('dashboard-update-failed');
+          }
+
+          return response.json();
+        })
+        .then(function(data) {
+          if (data && data.signature && data.signature === signature) {
+            return;
+          }
+
+          if (data && data.html) {
+            signature = data.signature || '';
+            replaceDashboard(data.html);
+          }
+        })
+        .catch(function() {})
+        .finally(function() {
+          loading = false;
+        });
+    }
+
+    window.setInterval(refreshDashboard, Math.max(interval, 2000));
+
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) {
+        refreshDashboard();
+      }
+    });
+  })();
+</script>

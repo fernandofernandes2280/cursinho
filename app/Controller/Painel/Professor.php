@@ -11,15 +11,264 @@ use \App\Model\Entity\Status as EntityStatus;
 use \App\Model\Entity\DisciplinaProfessor as EntityDisciplinaProfessor;
 use Bissolli\ValidadorCpfCnpj\CPF;
 use \App\Controller\File\Upload as Upload;
-use \App\Controller\Painel\Resize;
 
 
 class Professor extends Page{
+	private const DOCUMENTOS_PROFESSOR = [
+		'documentoIdentificacaoProfessor' => [
+			'fileName' => 'documentos-identificacao.pdf',
+			'label' => 'Documentos de Identificação',
+		],
+		'documentoCurriculoProfessor' => [
+			'fileName' => 'curriculo.pdf',
+			'label' => 'Currículo',
+		],
+		'documentoOutrosProfessor' => [
+			'fileName' => 'outros-documentos.pdf',
+			'label' => 'Outros documentos',
+		],
+	];
 	
 	//Armazena quantidade total de registros listados
 	private static $qtdTotal ;
 	//esconde busca rápida de prontuário no navBar (''->exibe  'hidden'->esconde)
 	private static $buscaRapidaPront = 'hidden';
+
+	private static function escape($value){
+		return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+	}
+
+	private static function getProfessorDocumentosDir($idProfessor){
+		return dirname(__DIR__).'/File/files/documentos-professores/'.(int)$idProfessor;
+	}
+
+	private static function getProfessorDocumentoUrl($idProfessor, $fileName){
+		return URL.'/app/Controller/File/files/documentos-professores/'.(int)$idProfessor.'/'.$fileName;
+	}
+
+	private static function getProfessorDocumentosMetaPath($idProfessor){
+		return self::getProfessorDocumentosDir($idProfessor).'/documentos.json';
+	}
+
+	private static function getProfessorDocumentosMeta($idProfessor){
+		$path = self::getProfessorDocumentosMetaPath($idProfessor);
+
+		if(!is_file($path)){
+			return [];
+		}
+
+		$meta = json_decode((string)file_get_contents($path), true);
+
+		return is_array($meta) ? $meta : [];
+	}
+
+	private static function salvarProfessorDocumentosMeta($idProfessor, $meta){
+		return file_put_contents(
+			self::getProfessorDocumentosMetaPath($idProfessor),
+			json_encode($meta, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+		) !== false;
+	}
+
+	private static function getUploadOriginalName($file, $fallback){
+		$name = basename(str_replace('\\', '/', (string)($file['name'] ?? '')));
+
+		return $name !== '' ? $name : $fallback;
+	}
+
+	private static function getProfessorDocumentoFileNames($documento){
+		return array_merge([$documento['fileName']], (array)($documento['fallbackFileNames'] ?? []));
+	}
+
+	private static function getProfessorDocumentoArquivo($idProfessor, $documento){
+		foreach(self::getProfessorDocumentoFileNames($documento) as $currentFileName){
+			$path = self::getProfessorDocumentosDir($idProfessor).'/'.$currentFileName;
+
+			if(is_file($path)){
+				return $currentFileName;
+			}
+		}
+
+		return '';
+	}
+
+	private static function getProfessorDocumentoInfo($idProfessor, $fileName, $fallbackFileNames = []){
+		if((int)$idProfessor <= 0){
+			return '';
+		}
+
+		$fileNames = self::getProfessorDocumentoFileNames([
+			'fileName' => $fileName,
+			'fallbackFileNames' => $fallbackFileNames,
+		]);
+		$meta = self::getProfessorDocumentosMeta($idProfessor);
+
+		foreach($fileNames as $currentFileName){
+			$path = self::getProfessorDocumentosDir($idProfessor).'/'.$currentFileName;
+
+			if(is_file($path)){
+				$displayName = trim((string)($meta[$currentFileName]['originalName'] ?? '')) ?: $currentFileName;
+
+				return '<a href="'.self::getProfessorDocumentoUrl($idProfessor, $currentFileName).'" target="_blank" rel="noopener" class="student-name-link">'.self::escape($displayName).'</a>';
+			}
+		}
+
+		return '';
+	}
+
+	private static function getProfessorDocumentoDeleteButton($idProfessor, $field){
+		if((int)$idProfessor <= 0 || !isset(self::DOCUMENTOS_PROFESSOR[$field])){
+			return '';
+		}
+
+		$currentFileName = self::getProfessorDocumentoArquivo($idProfessor, self::DOCUMENTOS_PROFESSOR[$field]);
+
+		if($currentFileName === ''){
+			return '';
+		}
+
+		return '<button type="button" class="aluno-document-delete" data-document-delete="'.URL.'/professores/'.(int)$idProfessor.'/documentos/'.$field.'/delete" title="Excluir documento"><i class="material-icons">delete</i></button>';
+	}
+
+	private static function getProfessorDocumentosVars($idProfessor = null){
+		$idProfessor = (int)$idProfessor;
+
+		return [
+			'documentoIdentificacaoProfessorInfo' => self::getProfessorDocumentoInfo($idProfessor, self::DOCUMENTOS_PROFESSOR['documentoIdentificacaoProfessor']['fileName']),
+			'documentoCurriculoProfessorInfo' => self::getProfessorDocumentoInfo($idProfessor, self::DOCUMENTOS_PROFESSOR['documentoCurriculoProfessor']['fileName']),
+			'documentoOutrosProfessorInfo' => self::getProfessorDocumentoInfo($idProfessor, self::DOCUMENTOS_PROFESSOR['documentoOutrosProfessor']['fileName']),
+			'documentoIdentificacaoProfessorDelete' => self::getProfessorDocumentoDeleteButton($idProfessor, 'documentoIdentificacaoProfessor'),
+			'documentoCurriculoProfessorDelete' => self::getProfessorDocumentoDeleteButton($idProfessor, 'documentoCurriculoProfessor'),
+			'documentoOutrosProfessorDelete' => self::getProfessorDocumentoDeleteButton($idProfessor, 'documentoOutrosProfessor'),
+		];
+	}
+
+	private static function isPdfUpload($file){
+		if(!is_array($file) || (int)($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE){
+			return true;
+		}
+
+		if((int)($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK){
+			return false;
+		}
+
+		$extension = strtolower(pathinfo((string)($file['name'] ?? ''), PATHINFO_EXTENSION));
+		$type = strtolower((string)($file['type'] ?? ''));
+
+		if(is_file((string)($file['tmp_name'] ?? '')) && function_exists('finfo_open')){
+			$finfo = finfo_open(FILEINFO_MIME_TYPE);
+			if($finfo){
+				$detectedType = finfo_file($finfo, $file['tmp_name']);
+				finfo_close($finfo);
+				if($detectedType){
+					$type = strtolower((string)$detectedType);
+				}
+			}
+		}
+
+		return $extension === 'pdf' && in_array($type, ['application/pdf', 'application/x-pdf'], true);
+	}
+
+	private static function documentosProfessorValidos($request){
+		$fileVars = $request->getFileVars();
+
+		foreach(self::DOCUMENTOS_PROFESSOR as $field => $documento){
+			$file = $fileVars[$field] ?? null;
+
+			if(!is_array($file) || (int)($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE){
+				continue;
+			}
+
+			if(!self::isPdfUpload($file)){
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private static function salvarDocumentosProfessor($request, $idProfessor){
+		$fileVars = $request->getFileVars();
+		$dir = self::getProfessorDocumentosDir($idProfessor);
+		$temArquivos = false;
+
+		if(!self::documentosProfessorValidos($request)){
+			return false;
+		}
+
+		foreach(self::DOCUMENTOS_PROFESSOR as $field => $documento){
+			$file = $fileVars[$field] ?? null;
+			$temArquivos = $temArquivos || (is_array($file) && (int)($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE);
+		}
+
+		if(!$temArquivos){
+			return true;
+		}
+
+		if(!is_dir($dir) && !mkdir($dir, 0775, true)){
+			return false;
+		}
+
+		$meta = self::getProfessorDocumentosMeta($idProfessor);
+
+		foreach(self::DOCUMENTOS_PROFESSOR as $field => $documento){
+			$file = $fileVars[$field] ?? null;
+
+			if(!is_array($file) || (int)($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE){
+				continue;
+			}
+
+			if(!move_uploaded_file($file['tmp_name'], $dir.'/'.$documento['fileName'])){
+				return false;
+			}
+
+			$meta[$documento['fileName']] = [
+				'originalName' => self::getUploadOriginalName($file, $documento['fileName']),
+				'updatedAt' => date('c'),
+			];
+		}
+
+		return self::salvarProfessorDocumentosMeta($idProfessor, $meta);
+	}
+
+	private static function excluirDocumentoProfessor($idProfessor, $field){
+		if(!isset(self::DOCUMENTOS_PROFESSOR[$field])){
+			return false;
+		}
+
+		$dir = self::getProfessorDocumentosDir($idProfessor);
+
+		if(!is_dir($dir)){
+			return true;
+		}
+
+		$meta = self::getProfessorDocumentosMeta($idProfessor);
+
+		foreach(self::getProfessorDocumentoFileNames(self::DOCUMENTOS_PROFESSOR[$field]) as $fileName){
+			$path = $dir.'/'.$fileName;
+
+			if(is_file($path) && !unlink($path)){
+				return false;
+			}
+
+			unset($meta[$fileName]);
+		}
+
+		return self::salvarProfessorDocumentosMeta($idProfessor, $meta);
+	}
+
+	public static function setDeleteDocumentoProfessor($request, $id, $documento){
+		$obProfessor = EntityProfessor::getProfessorById($id);
+
+		if(!$obProfessor instanceof EntityProfessor){
+			$request->getRouter()->redirect('/professores');
+		}
+
+		if(!self::excluirDocumentoProfessor($obProfessor->id, $documento)){
+			$request->getRouter()->redirect('/professores/'.$obProfessor->id.'/edit?statusMessage=documentoDeleteError');
+		}
+
+		$request->getRouter()->redirect('/professores/'.$obProfessor->id.'/edit?statusMessage=documentoDeleted');
+	}
 
 	private static function formatDate($date){
 		$timestamp = strlen((string)$date) ? strtotime($date) : false;
@@ -167,7 +416,7 @@ class Professor extends Page{
 	    
 
 	    //Conteúdo do Formulário
-	    $content = View::render('painel/modules/professores/form',[
+	    $content = View::render('painel/modules/professores/form', array_merge([
 	        
 	        'title' => 'Professor > Novo',
 	        'id' => '',
@@ -192,7 +441,7 @@ class Professor extends Page{
 	        'optionDisciplinas' => '',
 	        'itensDisciplina' => ''
 	        
-	    ]);
+	    ], self::getProfessorDocumentosVars()));
 	    
 	    //Retorna a página completa
 	    return parent::getPanel('Novo Professor > Cursinho', $content,'professores', self::$buscaRapidaPront);
@@ -221,6 +470,13 @@ class Professor extends Page{
 	            'statusMessage' => 'cpfDuplicated'
 	        ]));
 	    }
+
+	    if(!self::documentosProfessorValidos($request)){
+	        $request->getRouter()->redirect('/professores/new?'.http_build_query([
+	            'cpfProfessor' => $validaCpf->getValue(),
+	            'statusMessage' => 'documentoInvalid'
+	        ]));
+	    }
 	    
 	    
 	    //Nova instancia de Usuário
@@ -238,6 +494,11 @@ class Professor extends Page{
 	    $obProfessor->status = $postVars['status'];
 	    $obProfessor->email = $postVars['email'];
 	    $obProfessor->cadastrar();
+
+	    if(!self::salvarDocumentosProfessor($request, $obProfessor->id)){
+	        EntityProfessor::getFinalizaSessaoDados();
+	        $request->getRouter()->redirect('/professores/'.$obProfessor->id.'/edit?statusMessage=documentoInvalid');
+	    }
 	    
 	    //encerra sessão com os dados do form
 	    EntityProfessor::getFinalizaSessaoDados();
@@ -265,7 +526,7 @@ class Professor extends Page{
 	    
 	    $reload = rand();
 	    //Conteúdo do Formulário
-	    $content = View::render('painel/modules/professores/form',[
+	    $content = View::render('painel/modules/professores/form', array_merge([
 	       
 	        'id' => $obProfessor->id,
 	        'title' => 'Professor > Editar',
@@ -292,7 +553,7 @@ class Professor extends Page{
 	        'foto' => $obProfessor->foto.'?var='.$reload,
 	        'ponteiro' => ''
 	        
-	    ]);
+	    ], self::getProfessorDocumentosVars($obProfessor->id)));
 	    
 	    //Retorna a página completa
 	    return parent::getPanel('Editar Professor > Cursinho', $content,'professores', self::$buscaRapidaPront);
@@ -332,6 +593,10 @@ class Professor extends Page{
 	    if($obProfessorEmail instanceof EntityProfessor && $obProfessorEmail->id != $id){
 	        $request->getRouter()->redirect('/professores/'.$id.'/edit?statusMessage=emailDuplicated');
 	    }
+
+	    if(!self::documentosProfessorValidos($request)){
+	        $request->getRouter()->redirect('/professores/'.$id.'/edit?statusMessage=documentoInvalid');
+	    }
 	    
 	    
 	    
@@ -349,6 +614,10 @@ class Professor extends Page{
 	    $obProfessor->status = $postVars['status'] ?? $obProfessor->status;
 	    $obProfessor->email = $postVars['email'] ?? $obProfessor->email;
 	    $obProfessor->atualizar();
+
+	    if(!self::salvarDocumentosProfessor($request, $obProfessor->id)){
+	        $request->getRouter()->redirect('/professores/'.$obProfessor->id.'/edit?statusMessage=documentoInvalid');
+	    }
 	    
 	    //	Logs::setNewLog($request);
 	    
@@ -475,33 +744,7 @@ class Professor extends Page{
 	    }
 	    
 	    if ($postVars['image'] != ''){
-	        
-	        $img = $postVars['image'];
-	        $folderPath = __DIR__."/File/files/fotos/";
-	        $image_parts = explode(";base64,", $img);
-	        $image_type_aux = explode("image/", $image_parts[0]);
-	        $image_type = $image_type_aux[1];
-	        $image_base64 = base64_decode($image_parts[1]);
-	        $nome =  str_replace(' ', '',$obProfessor->nome);
-	        $id = $obProfessor->id;
-	        $fileName = $id.$nome . '.png';
-	        $obProfessor->foto = $fileName;
-	        $obProfessor->atualizar();
-	        $file = $folderPath . $fileName;
-	        file_put_contents($file, $image_base64);
-	        chmod($file, 0777); //Corrige a permissão do arquivo.
-	        
-	        $img = new Resize();
-	        $config = array();
-	        $config['source_image'] = $file;
-	        $config['width'] = 195;
-	        $config['height'] = 230;
-	        $img->initialize($config);
-	        $img->crop();
-	        
-	        
-	        
-	        
+	        Upload::setUploadImagesWebCamProfessor($request);
 	        
 	        //Redireciona o usuário
 	        $request->getRouter()->redirect('/professores/'.$obProfessor->id.'/edit?statusMessage=updated');

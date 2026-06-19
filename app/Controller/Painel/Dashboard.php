@@ -73,10 +73,11 @@ class Dashboard extends Page{
 
         return '';
     }
-    
-    //retorna o conteudo (view) DO DASHBOOARD
-    public static function getDashboard($request = null){
-        EntityInativacaoAluno::aplicarCriteriosAutomaticos();
+
+    private static function renderDashboardContent($request = null, $aplicarInativacao = true){
+        if($aplicarInativacao){
+            EntityInativacaoAluno::aplicarCriteriosAutomaticos();
+        }
 
         $mes_extenso = array(
             'January' => 'Janeiro',
@@ -141,9 +142,23 @@ class Dashboard extends Page{
             'totalAulasFechadasCanceladas' => $totalAulasFechadasCanceladas,
             'ultimasAulas' => self::getUltimasAulas(),
         ]);
-        
-        return parent::getPanelDashboard('Dashboard > Cursinho', $content,'dashboard', self::$hidden);
-        
+
+        return $content;
+    }
+
+    //retorna o conteudo (view) DO DASHBOOARD
+    public static function getDashboard($request = null){
+        return parent::getPanelDashboard('Dashboard > Cursinho', self::renderDashboardContent($request, true),'dashboard', self::$hidden);
+    }
+
+    public static function getDashboardLive($request = null){
+        $html = self::renderDashboardContent(null, false);
+
+        return [
+            'html' => $html,
+            'signature' => md5($html),
+            'updatedAt' => date('c')
+        ];
     }
     
 }

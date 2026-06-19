@@ -60,6 +60,19 @@ $obRouter->post('/professores/{id}/edit',[
     }
     ]);
 
+//ROTA de Exclusão de documento do professor
+$obRouter->post('/professores/{id}/documentos/{documento}/delete',[
+
+    'middlewares' => [
+        'require-user-login',
+        'can:professores.update'
+    ],
+
+    function ($request,$id,$documento){
+        return new Response(200, Painel\Professor::setDeleteDocumentoProfessor($request,$id,$documento));
+    }
+    ]);
+
 
 //Rota GET para Novo Professor
 $obRouter->get('/professores/new',[
@@ -145,5 +158,4 @@ $obRouter->post('/professores/photo/{id}',[
         return new Response(200, Painel\Professor::setPhotoProfessor($request));
     }
     ]);
-
 

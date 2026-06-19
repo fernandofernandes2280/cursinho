@@ -2,15 +2,13 @@
 
 use \App\Http\Response;
 use \App\Controller\Painel;
-use \App\Controller\Visitor;
 
 
 //ROTA de Listage de Usuários
 $obRouter->get('/users',[
     
     'middlewares' => [
-        'require-user-login',
-        'can:usuarios.view'
+        'require-user-login'
     ],
 		
 		function ($request){
@@ -52,8 +50,7 @@ $obRouter->get('/users/{id}/edit',[
 		
     
     'middlewares' => [
-        'require-user-login',
-        'can:usuarios.update'
+        'require-user-login'
     ],
 		
 		function ($request,$id){
@@ -66,12 +63,22 @@ $obRouter->post('/users/{id}/edit',[
 		
     
     'middlewares' => [
-        'require-user-login',
-        'can:usuarios.update'
+        'require-user-login'
     ],
 		
 		function ($request,$id){
 			return new Response(200, Painel\User::setEditUser($request,$id));
+		}
+		]);
+
+//ROTA de Validação da Senha Atual do Usuário
+$obRouter->post('/users/{id}/verify-password',[
+    'middlewares' => [
+        'require-user-login'
+    ],
+
+		function ($request,$id){
+			return new Response(200, Painel\User::verifyCurrentPassword($request,$id), 'application/json');
 		}
 		]);
 
@@ -106,8 +113,8 @@ $obRouter->get('/trocarSenha',[
 				'require-user-login'
 		],
 		function ($request){
-			return new Response(200, Painel\Senha::getTrocarSenha($request));
-			//return new Response(200, Visitor\Home::getHome($request));
+			$id = (int)($_SESSION['usuario']['id'] ?? 0);
+			$request->getRouter()->redirect($id > 0 ? '/users/'.$id.'/edit' : '/users');
 		}
 		]);
 
@@ -117,8 +124,8 @@ $obRouter->post('/trocarSenha',[
 				'require-user-login'
 		],
 		function ($request){
-			return new Response(200, Painel\Senha::setTrocarSenha($request));
-			//return new Response(200, Visitor\Home::getHome($request));
+			$id = (int)($_SESSION['usuario']['id'] ?? 0);
+			$request->getRouter()->redirect($id > 0 ? '/users/'.$id.'/edit' : '/users');
 		}
 		]);
 
@@ -126,8 +133,7 @@ $obRouter->post('/trocarSenha',[
 $obRouter->get('/users/photo/{id}',[
     
     'middlewares' => [
-        'require-user-login',
-        'can:usuarios.photo'
+        'require-user-login'
     ],
     
     function ($request,$id){
@@ -139,8 +145,7 @@ $obRouter->get('/users/photo/{id}',[
 $obRouter->post('/users/photo/{id}',[
     
     'middlewares' => [
-        'require-user-login',
-        'can:usuarios.photo'
+        'require-user-login'
     ],
     
     function ($request){

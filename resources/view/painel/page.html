@@ -14,10 +14,9 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="{{URL}}/resources/css/tailwind-dashboard.css?v=95" rel="stylesheet">
+  <link href="{{URL}}/resources/css/tailwind-dashboard.css?v=103" rel="stylesheet">
 
   <script src="{{URL}}/resources/assets/js/core/jquery.min.js"></script>
-  <script src="{{URL}}/resources/js/photo/webcam.min.js"></script>
   <script src="{{URL}}/resources/js/qrcode/html5-qrcode.min.js"></script>
 </head>
 
@@ -137,18 +136,18 @@
       var compactQuery = window.matchMedia('(max-width: 1023px)');
 
       function setSidebar(open) {
-        body.classList.remove('sidebar-collapsed');
-
         if (!compactQuery.matches) {
+          body.classList.toggle('sidebar-collapsed', !open);
           body.classList.remove('sidebar-open');
           if (!toggle) return;
-          toggle.setAttribute('aria-expanded', 'true');
-          toggle.setAttribute('title', 'Painel lateral visível');
+          toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+          toggle.setAttribute('title', open ? 'Ocultar painel lateral' : 'Exibir painel lateral');
           var desktopIcon = toggle.querySelector('.material-icons');
-          if (desktopIcon) desktopIcon.textContent = 'menu_open';
+          if (desktopIcon) desktopIcon.textContent = open ? 'menu_open' : 'menu';
           return;
         }
 
+        body.classList.remove('sidebar-collapsed');
         body.classList.toggle('sidebar-open', open);
         if (!toggle) return;
         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
@@ -157,10 +156,18 @@
         if (icon) icon.textContent = open ? 'menu_open' : 'menu';
       }
 
-      setSidebar(false);
+      function isSidebarOpen() {
+        if (!compactQuery.matches) {
+          return !body.classList.contains('sidebar-collapsed');
+        }
+
+        return body.classList.contains('sidebar-open');
+      }
+
+      setSidebar(!compactQuery.matches);
 
       function handleCompactChange() {
-        setSidebar(false);
+        setSidebar(!compactQuery.matches);
       }
 
       if (compactQuery.addEventListener) {
@@ -171,8 +178,7 @@
 
       if (toggle) {
         toggle.addEventListener('click', function() {
-          if (!compactQuery.matches) return;
-          setSidebar(!body.classList.contains('sidebar-open'));
+          setSidebar(!isSidebarOpen());
         });
       }
 
@@ -451,6 +457,26 @@
         };
       }
 
+      function getProfessorFormData(form) {
+        var photo = form.querySelector('.professor-photo-box img');
+
+        return {
+          photo: photo ? photo.src : '',
+          nome: getStudentControlValue(form, 'nome'),
+          cpf: getStudentControlValue(form, 'cpf'),
+          status: getStudentControlValue(form, 'status'),
+          funcao: getStudentControlValue(form, 'funcao'),
+          dataNasc: formatStudentDate(getStudentControlValue(form, 'dataNasc')),
+          fone: getStudentControlValue(form, 'fone'),
+          email: getStudentControlValue(form, 'email'),
+          cep: getStudentControlValue(form, 'cep'),
+          endereco: getStudentControlValue(form, 'endereco'),
+          bairro: getStudentControlValue(form, 'bairro'),
+          cidade: getStudentControlValue(form, 'cidade'),
+          uf: getStudentControlValue(form, 'uf')
+        };
+      }
+
       function buildStudentPdfRow(left, right) {
         var labelStyle = {
           fillColor: [248, 250, 252],
@@ -634,6 +660,82 @@
         }
       }
 
+      async function generateProfessorFormPdf(form) {
+        var jsPDFConstructor = window.jspdf && window.jspdf.jsPDF;
+
+        if (!jsPDFConstructor || !window.jspdf || typeof jsPDFConstructor !== 'function') {
+          alert('Não foi possível gerar o PDF. A biblioteca jsPDF não foi carregada.');
+          return;
+        }
+
+        var doc = new jsPDFConstructor({
+          orientation: 'portrait',
+          unit: 'pt',
+          format: 'a4'
+        });
+
+        if (typeof doc.autoTable !== 'function') {
+          alert('Não foi possível gerar o PDF. O plugin de tabelas do jsPDF não foi carregado.');
+          return;
+        }
+
+        var data = getProfessorFormData(form);
+        var pageWidth = doc.internal.pageSize.getWidth();
+        var y = await drawStudentPdfHeader(doc, 'Dados cadastrais do professor');
+        var photo = await loadStudentPdfImageDataUrl(data.photo);
+        var photoX = 36;
+        var photoY = y;
+        var photoWidth = 94;
+        var photoHeight = 110;
+        var infoX = photoX + photoWidth + 16;
+        var infoWidth = pageWidth - infoX - 36;
+
+        doc.setDrawColor(208, 215, 222);
+        doc.setFillColor(248, 250, 252);
+        doc.roundedRect(photoX, photoY, photoWidth, photoHeight, 4, 4, 'FD');
+
+        if (photo) {
+          var scale = Math.min((photoWidth - 10) / photo.width, (photoHeight - 10) / photo.height);
+          var imageWidth = photo.width * scale;
+          var imageHeight = photo.height * scale;
+          doc.addImage(
+            photo.dataUrl,
+            photo.format,
+            photoX + (photoWidth - imageWidth) / 2,
+            photoY + (photoHeight - imageHeight) / 2,
+            imageWidth,
+            imageHeight
+          );
+        }
+
+        var afterIdentificacao = addStudentPdfSection(doc, '', [
+          [getStudentField('Nome', data.nome), getStudentField('Status', data.status)],
+          [getStudentField('CPF', data.cpf), getStudentField('Função', data.funcao)],
+          [getStudentField('Telefone', data.fone), getStudentField('E-mail', data.email)]
+        ], y, {
+          marginLeft: infoX,
+          tableWidth: infoWidth
+        });
+
+        addStudentPdfSection(doc, '', [
+          [getStudentField('Endereço', data.endereco), getStudentField('CEP', data.cep)],
+          [getStudentField('Bairro', data.bairro), getStudentField('Cidade', data.cidade)],
+          [getStudentField('UF', data.uf), getStudentField('Nascimento', data.dataNasc)]
+        ], afterIdentificacao - 2, {
+          marginLeft: infoX,
+          tableWidth: infoWidth
+        });
+
+        addStudentPdfPageNumbers(doc);
+
+        var pdfUrl = doc.output('bloburl');
+        var reportWindow = window.open(pdfUrl, '_blank');
+
+        if (!reportWindow) {
+          window.location.href = pdfUrl;
+        }
+      }
+
       document.querySelectorAll('[data-aluno-form-print]').forEach(function(button) {
         button.addEventListener('click', function(event) {
           event.preventDefault();
@@ -644,6 +746,19 @@
           }
 
           generateStudentFormPdf(form);
+        });
+      });
+
+      document.querySelectorAll('[data-professor-form-print]').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+          event.preventDefault();
+          var form = button.closest('form.professor-form');
+
+          if (!form) {
+            return;
+          }
+
+          generateProfessorFormPdf(form);
         });
       });
 

@@ -1,48 +1,95 @@
 <div class="login-modern-page">
   <div class="login-toast-slot" aria-live="polite" aria-atomic="true">{{status}}</div>
 
-  <section class="login-modern-card" aria-labelledby="login-title">
-    <div class="login-brand-row">
-      <span class="login-brand-mark">
-        <img src="{{URL}}/resources/assets/img/preparasantana_semfundo.png" alt="Prepara Santana">
-      </span>
-      <div class="login-brand-copy">
-        <p>Acesso administrativo</p>
+  <main class="login-modern-shell" aria-labelledby="login-title">
+    <section class="login-hero-panel">
+      <div class="login-hero-logo">
+        <img src="{{URL}}/resources/assets/img/logopms.png" alt="Prepara Santana">
+      </div>
+
+      <div class="login-hero-copy">
         <h1 id="login-title">Cursinho Preparatório Prof. Anunciação</h1>
       </div>
+
+      <div class="login-hero-accent" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </section>
+
+    <section class="login-modern-card" aria-label="Acesso administrativo">
+      <div class="login-brand-row">
+        <span class="login-brand-mark">
+          <span class="material-icons" aria-hidden="true">admin_panel_settings</span>
+        </span>
+        <div class="login-brand-copy">
+          <p>Acesso administrativo</p>
+          <h2>Entrar no painel</h2>
+        </div>
+      </div>
+
+      <form action="" method="post" class="login-modern-form">
+        <div class="login-field">
+          <label for="cpf">CPF</label>
+          <div class="login-input-wrap">
+            <span class="material-icons" aria-hidden="true">badge</span>
+            <input class="form-control-pessoal mascara-cpf cpfLogin" required type="text" id="cpf" value="" name="cpf" inputmode="numeric" autocomplete="username" placeholder="000.000.000-00">
+          </div>
+        </div>
+
+        <div class="login-field">
+          <label for="senha">Senha</label>
+          <div class="login-input-wrap">
+            <span class="material-icons" aria-hidden="true">lock</span>
+            <input type="password" name="senha" id="senha" class="form-control-pessoal auth-password" autocomplete="current-password" placeholder="Digite sua senha">
+            <button type="button" class="login-password-toggle" rel="tooltip" title="Ver senha" aria-label="Mostrar ou ocultar senha">
+              <span class="material-icons" aria-hidden="true">visibility</span>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="login-primary-button" rel="tooltip" title="Entrar no sistema">
+          <span class="material-icons" aria-hidden="true">login</span>
+          Entrar
+        </button>
+
+        <div class="login-footer-actions">
+          <a href="{{URL}}/login/recuperarSenha" data-password-recovery-open>
+            <span class="material-icons" aria-hidden="true">key</span>
+            Recuperar senha
+          </a>
+        </div>
+      </form>
+    </section>
+  </main>
+</div>
+
+<div class="modal password-recovery-modal" id="passwordRecoveryModal" tabindex="-1" role="dialog" aria-labelledby="passwordRecoveryModalTitle" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="passwordRecoveryModalTitle">Recuperação de Senha</h5>
+        <button type="button" class="close" aria-label="Fechar" data-password-recovery-close>&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p>Para recuperar sua senha, abra um chamado técnico no 1DOC, direcionando para SEMTEC.</p>
+        <p>No chamado, informe:</p>
+        <ul class="password-recovery-list">
+          <li>Título da mensagem: Recuperação de Senha</li>
+          <li>Nome completo</li>
+          <li>Cargo/função</li>
+          <li>Matrícula</li>
+        </ul>
+        <p>Informe também para qual sistema deseja recuperar a senha.</p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-sm" data-password-recovery-close>Entendi</button>
+      </div>
     </div>
-
-    <form action="" method="post" class="login-modern-form">
-      <div class="login-field">
-        <label for="cpf">CPF</label>
-        <div class="login-input-wrap">
-          <span class="material-icons" aria-hidden="true">badge</span>
-          <input class="form-control-pessoal mascara-cpf cpfLogin" required type="text" id="cpf" value="" name="cpf" inputmode="numeric" autocomplete="username" placeholder="000.000.000-00">
-        </div>
-      </div>
-
-      <div class="login-field">
-        <label for="senha">Senha</label>
-        <div class="login-input-wrap">
-          <span class="material-icons" aria-hidden="true">lock</span>
-          <input type="password" name="senha" id="senha" class="form-control-pessoal auth-password" autocomplete="current-password" placeholder="Digite sua senha">
-          <button type="button" class="login-password-toggle" rel="tooltip" title="Ver senha" aria-label="Mostrar ou ocultar senha">
-            <span class="material-icons" aria-hidden="true">visibility</span>
-          </button>
-        </div>
-      </div>
-
-      <button type="submit" class="login-primary-button" rel="tooltip" title="Entrar no sistema">
-        <span class="material-icons" aria-hidden="true">login</span>
-        Entrar
-      </button>
-
-      <div class="login-footer-actions">
-        <a href="{{URL}}/">Voltar</a>
-        <a href="{{URL}}/login/recuperarSenha">Recuperar senha</a>
-      </div>
-    </form>
-  </section>
+  </div>
 </div>
 
 <script>
@@ -51,6 +98,8 @@
     var input = document.querySelector('#senha');
     var form = document.querySelector('.login-modern-form');
     var submit = document.querySelector('.login-primary-button');
+    var recoveryModal = document.getElementById('passwordRecoveryModal');
+    var recoveryTriggers = document.querySelectorAll('[data-password-recovery-open]');
 
     function bloquearSubmit() {
       if (!submit || submit.disabled) {
@@ -60,6 +109,35 @@
       submit.disabled = true;
       submit.setAttribute('aria-busy', 'true');
       submit.innerHTML = '<span class="material-icons" aria-hidden="true">hourglass_top</span>Entrando...';
+    }
+
+    function abrirModalRecuperacao(event) {
+      if (event) {
+        event.preventDefault();
+      }
+
+      if (!recoveryModal) {
+        return;
+      }
+
+      recoveryModal.classList.add('show');
+      recoveryModal.setAttribute('aria-hidden', 'false');
+      recoveryModal.setAttribute('aria-modal', 'true');
+
+      var closeButton = recoveryModal.querySelector('[data-password-recovery-close]');
+      if (closeButton) {
+        closeButton.focus();
+      }
+    }
+
+    function fecharModalRecuperacao() {
+      if (!recoveryModal) {
+        return;
+      }
+
+      recoveryModal.classList.remove('show');
+      recoveryModal.setAttribute('aria-hidden', 'true');
+      recoveryModal.removeAttribute('aria-modal');
     }
 
     if (toggle && input) {
@@ -73,6 +151,28 @@
     if (form && submit) {
       form.addEventListener('submit', function() {
         bloquearSubmit();
+      });
+    }
+
+    if (recoveryModal) {
+      recoveryTriggers.forEach(function(trigger) {
+        trigger.addEventListener('click', abrirModalRecuperacao);
+      });
+
+      recoveryModal.querySelectorAll('[data-password-recovery-close]').forEach(function(button) {
+        button.addEventListener('click', fecharModalRecuperacao);
+      });
+
+      recoveryModal.addEventListener('click', function(event) {
+        if (event.target === recoveryModal) {
+          fecharModalRecuperacao();
+        }
+      });
+
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && recoveryModal.classList.contains('show')) {
+          fecharModalRecuperacao();
+        }
       });
     }
 

@@ -1,0 +1,36 @@
+<main class="precadastro-page precadastro-check-page">
+  <section class="precadastro-shell">
+    <header class="precadastro-header">
+      <div>
+        <span>Pré-cadastro</span>
+        <h1>Aluno</h1>
+      </div>
+    </header>
+
+    <section class="precadastro-check-card">
+      <form method="post" class="precadastro-cpf-form" novalidate>
+        <input type="hidden" name="acao" value="buscar">
+
+        <label for="cpf">CPF</label>
+        <input
+          class="form-control-pessoal mascara-cpf no-validation"
+          required
+          type="text"
+          id="cpf"
+          name="cpf"
+          value="{{cpf}}"
+          inputmode="numeric"
+          autocomplete="off"
+          placeholder="000.000.000-00"
+          data-precadastro-cpf
+        >
+        <div class="precadastro-status precadastro-cpf-status" data-precadastro-cpf-message>{{statusMessage}}</div>
+
+        <button type="submit" class="btn btn-success precadastro-check-button">
+          <i class="material-icons" aria-hidden="true">search</i>
+          <span>Verificar</span>
+        </button>
+      </form>
+    </section>
+  </section>
+</main>

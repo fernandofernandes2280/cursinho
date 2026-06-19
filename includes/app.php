@@ -12,6 +12,8 @@ use \App\Session\User\Login as SessionUserLogin;
 //Carrega variáveis de ambiente
 Environment::load(__DIR__.'/../');
 
+date_default_timezone_set(getenv('APP_TIMEZONE') ?: 'America/Belem');
+
 //DEfine as configurações de Banco de Dados
 Database::config(
 		getenv('DB_HOST'),

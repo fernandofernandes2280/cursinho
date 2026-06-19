@@ -49,20 +49,41 @@
           <option {{selectedVisitante}} value="Visitante">Visitante</option>
         </select>
       </div>
-      <div class="user-field user-span-3 user-password-field">
-        <label for="senha">Senha</label>
-        <input type="password" name="senha" id="senha" class="form-control-pessoal" {{required}} value="{{senha}}">
+      <div class="user-field user-span-3 user-password-field" {{senhaInicialVisivel}}>
+        <label for="senha">Senha inicial</label>
+        <input type="password" name="senha" id="senha" class="form-control-pessoal" {{required}} value="{{senha}}" autocomplete="new-password">
         <span class="lnr lnr-eye user-password-toggle" rel="tooltip" title="Ver senha" data-target="#senha"></span>
       </div>
-      <div class="user-field user-span-1 form-actions form-actions-start">
-        <a href="{{URL}}/trocarSenha" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Trocar Senha">
-          <i class="material-icons">edit_note</i>
-        </a>
+
+      <div class="user-password-change user-span-12" {{trocaSenhaVisivel}} data-requires-current-password="{{senhaAtualObrigatoria}}" data-password-check-url="{{verificarSenhaUrl}}">
+        <div class="user-password-change-title">
+          <i class="material-icons" aria-hidden="true">lock_reset</i>
+          <span>Alterar senha</span>
+        </div>
+        <div class="user-password-change-grid">
+          <div class="user-field user-span-4 user-password-field" {{senhaAtualVisivel}}>
+            <label for="senhaAtual">Senha atual</label>
+            <input type="password" name="senhaAtual" id="senhaAtual" class="form-control-pessoal" autocomplete="current-password">
+            <span class="lnr lnr-eye user-password-toggle" rel="tooltip" title="Ver senha" data-target="#senhaAtual"></span>
+            <small class="user-password-status" data-current-password-status></small>
+          </div>
+          <div class="user-field user-span-4 user-password-field">
+            <label for="novaSenha">Nova senha</label>
+            <input type="password" name="novaSenha" id="novaSenha" class="form-control-pessoal" autocomplete="new-password" data-password-change-field>
+            <span class="lnr lnr-eye user-password-toggle" rel="tooltip" title="Ver senha" data-target="#novaSenha"></span>
+          </div>
+          <div class="user-field user-span-4 user-password-field">
+            <label for="confirmeNovaSenha">Confirmar nova senha</label>
+            <input type="password" name="confirmeNovaSenha" id="confirmeNovaSenha" class="form-control-pessoal" autocomplete="new-password" data-password-change-field>
+            <span class="lnr lnr-eye user-password-toggle" rel="tooltip" title="Ver senha" data-target="#confirmeNovaSenha"></span>
+            <small class="user-password-status" data-new-password-status></small>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="user-permissions" {{permissoesVisivel}}>
+  <div class="user-permissions" {{permissoesVisivel}} data-permissions-locked="{{permissoesBloqueadas}}">
     <label>PERMISSÕES:</label>
     {{permissionGroups}}
   </div>
@@ -78,11 +99,167 @@
   });
 
   (function() {
+    var section = document.querySelector('.user-password-change');
+
+    if (!section || section.getAttribute('data-requires-current-password') !== '1') {
+      return;
+    }
+
+    var checkUrl = section.getAttribute('data-password-check-url');
+    var senhaAtual = document.querySelector('#senhaAtual');
+    var status = section.querySelector('[data-current-password-status]');
+    var passwordFields = section.querySelectorAll('[data-password-change-field]');
+    var checkTimer = null;
+    var lastValue = '';
+
+    if (!checkUrl || !senhaAtual || !passwordFields.length) {
+      return;
+    }
+
+    function setPasswordFieldsEnabled(enabled) {
+      passwordFields.forEach(function(field) {
+        field.disabled = !enabled;
+
+        if (!enabled) {
+          field.value = '';
+          field.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      });
+    }
+
+    function setStatus(message, state) {
+      if (!status) return;
+      status.textContent = message || '';
+      status.classList.remove('is-valid', 'is-invalid', 'is-loading');
+
+      if (state) {
+        status.classList.add(state);
+      }
+    }
+
+    function verifyPassword() {
+      var value = senhaAtual.value || '';
+      var requestValue = value;
+      lastValue = requestValue;
+
+      if (!requestValue) {
+        setPasswordFieldsEnabled(false);
+        setStatus('', '');
+        return;
+      }
+
+      setPasswordFieldsEnabled(false);
+      setStatus('Verificando senha atual...', 'is-loading');
+
+      fetch(checkUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: 'senhaAtual=' + encodeURIComponent(requestValue)
+      })
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          if (senhaAtual.value !== requestValue || lastValue !== requestValue) {
+            return;
+          }
+
+          if (data && data.valid) {
+            setPasswordFieldsEnabled(true);
+            setStatus(data.message || 'Senha atual validada.', 'is-valid');
+            return;
+          }
+
+          setPasswordFieldsEnabled(false);
+          setStatus(data && data.message ? data.message : 'Senha atual inválida.', 'is-invalid');
+        })
+        .catch(function() {
+          setPasswordFieldsEnabled(false);
+          setStatus('Não foi possível validar a senha agora.', 'is-invalid');
+        });
+    }
+
+    setPasswordFieldsEnabled(false);
+
+    senhaAtual.addEventListener('input', function() {
+      window.clearTimeout(checkTimer);
+      setPasswordFieldsEnabled(false);
+
+      if (!senhaAtual.value) {
+        setStatus('', '');
+        return;
+      }
+
+      setStatus('Aguardando digitação...', 'is-loading');
+      checkTimer = window.setTimeout(verifyPassword, 450);
+    });
+  })();
+
+  (function() {
+    var section = document.querySelector('.user-password-change');
+
+    if (!section) {
+      return;
+    }
+
+    var novaSenha = document.querySelector('#novaSenha');
+    var confirmeNovaSenha = document.querySelector('#confirmeNovaSenha');
+    var status = section.querySelector('[data-new-password-status]');
+
+    if (!novaSenha || !confirmeNovaSenha || !status) {
+      return;
+    }
+
+    function setStatus(message, state) {
+      status.textContent = message || '';
+      status.classList.remove('is-valid', 'is-invalid', 'is-loading');
+
+      if (state) {
+        status.classList.add(state);
+      }
+    }
+
+    function validateNewPasswords() {
+      var nova = novaSenha.value || '';
+      var confirmacao = confirmeNovaSenha.value || '';
+
+      confirmeNovaSenha.setCustomValidity('');
+
+      if (!nova || !confirmacao) {
+        setStatus('', '');
+        return;
+      }
+
+      if (nova !== confirmacao) {
+        confirmeNovaSenha.setCustomValidity('Nova senha e confirmação são diferentes.');
+        setStatus('Nova senha e confirmação são diferentes.', 'is-invalid');
+        return;
+      }
+
+      setStatus('Senhas conferem.', 'is-valid');
+    }
+
+    novaSenha.addEventListener('input', validateNewPasswords);
+    confirmeNovaSenha.addEventListener('input', validateNewPasswords);
+  })();
+
+  (function() {
     var rules = {{rolePermissionRules}};
     var tipo = document.querySelector('#tipo');
+    var permissionsContainer = document.querySelector('.user-permissions');
     var permissionInputs = document.querySelectorAll('.user-permissions input[type="checkbox"][data-permission]');
 
     if (!tipo || !permissionInputs.length) return;
+
+    if (permissionsContainer && permissionsContainer.getAttribute('data-permissions-locked') === '1') {
+      permissionInputs.forEach(function(input) {
+        input.disabled = true;
+      });
+      return;
+    }
 
     function applyRoleRules() {
       var role = tipo.value;

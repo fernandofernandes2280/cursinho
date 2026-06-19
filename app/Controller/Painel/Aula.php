@@ -13,6 +13,7 @@ use \App\Model\Entity\Bairro as EntityBairro;
 use \App\Model\Entity\Frequencia as EntityFrequencia;
 use \App\Model\Entity\StatusAula as EntityStatusAula;
 use \App\Model\Entity\User as EntityUser;
+use \App\Session\User\Login as SessionUserLogin;
 use App\Utils\Funcoes;
 use \WilliamCosta\DatabaseManager\Database;
 
@@ -60,6 +61,7 @@ class Aula extends Page{
 	//Método responsavel por obter a rendereizacao das aulas para a página
 	private static function getAulasItems($request){
 		$resultados = '';
+		$visivelDeleteAula = SessionUserLogin::isAdmin() && SessionUserLogin::can('aulas.delete') ? '' : 'hidden';
 
 		self::$qtdTotal = EntityAula::getAulas(null, null, null, 'COUNT(*) as qtd')->fetchObject()->qtd;
 		$results = EntityAula::getAulas(null, 'data DESC, id DESC');
@@ -95,6 +97,7 @@ class Aula extends Page{
 			    'disciplina1' => $obDisciplina1 ? $obDisciplina1->nome : 'Sem disciplina',
 			    'professor2' => $obProfessor2 ? $obProfessor2->nome : '',
 			    'disciplina2' => $obDisciplina2 ? $obDisciplina2->nome : '',
+			    'visivelDeleteAula' => $visivelDeleteAula,
 			    
 			]);
 		}
@@ -337,8 +340,17 @@ class Aula extends Page{
 			$request->getRouter()->redirect('/aulas');
 		}
 		
-		//Exclui o depoimento
-		$obAula->excluir();
+		$database = new Database('aulas');
+		$database->beginTransaction();
+
+		try{
+			$database->execute('DELETE FROM frequencia WHERE idAula = ?', [(int)$obAula->id]);
+			$database->delete('id = '.(int)$obAula->id);
+			$database->commit();
+		}catch(\Throwable $e){
+			$database->rollBack();
+			throw $e;
+		}
 		
 		//Redireciona o usuário
 		$request->getRouter()->redirect('/aulas?statusMessage=deleted');
@@ -353,6 +365,8 @@ class Aula extends Page{
 	    
 	    //obtém o deopimento do banco de dados
 	    $obAula = EntityAula::getAulaById($id);
+	    $queryParams = $request->getQueryParams();
+	    $voltarUrl = ($queryParams['origem'] ?? '') === 'dashboard' ? URL.'/dashboard' : URL.'/aulas';
 	    
 	    //Valida a instancia
 	    if(!$obAula instanceof EntityAula){
@@ -363,6 +377,7 @@ class Aula extends Page{
 	        'title' => 'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,
 	        'subtitle' => 'Frequência',
 	        'itens' => self::getAulasPresentesItems($id),
+	        'voltarUrl' => $voltarUrl,
 	    ]);
 	    
 	    //Retorna a página completa

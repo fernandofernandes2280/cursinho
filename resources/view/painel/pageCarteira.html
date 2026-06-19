@@ -13,10 +13,9 @@
   <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="{{URL}}/resources/css/tailwind-dashboard.css?v=81" rel="stylesheet">
+  <link href="{{URL}}/resources/css/tailwind-dashboard.css?v=82" rel="stylesheet">
 
   <script src="{{URL}}/resources/assets/js/core/jquery.min.js"></script>
-  <script src="{{URL}}/resources/js/photo/webcam.min.js"></script>
   <script src="{{URL}}/resources/js/qrcode/html5-qrcode.min.js"></script>
 </head>
 
@@ -117,18 +116,18 @@
       var compactQuery = window.matchMedia('(max-width: 1023px)');
 
       function setSidebar(open) {
-        body.classList.remove('sidebar-collapsed');
-
         if (!compactQuery.matches) {
+          body.classList.toggle('sidebar-collapsed', !open);
           body.classList.remove('sidebar-open');
           if (!toggle) return;
-          toggle.setAttribute('aria-expanded', 'true');
-          toggle.setAttribute('title', 'Painel lateral visível');
+          toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+          toggle.setAttribute('title', open ? 'Ocultar painel lateral' : 'Exibir painel lateral');
           var desktopIcon = toggle.querySelector('.material-icons');
-          if (desktopIcon) desktopIcon.textContent = 'menu_open';
+          if (desktopIcon) desktopIcon.textContent = open ? 'menu_open' : 'menu';
           return;
         }
 
+        body.classList.remove('sidebar-collapsed');
         body.classList.toggle('sidebar-open', open);
         if (!toggle) return;
         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
@@ -137,10 +136,18 @@
         if (icon) icon.textContent = open ? 'menu_open' : 'menu';
       }
 
-      setSidebar(false);
+      function isSidebarOpen() {
+        if (!compactQuery.matches) {
+          return !body.classList.contains('sidebar-collapsed');
+        }
+
+        return body.classList.contains('sidebar-open');
+      }
+
+      setSidebar(!compactQuery.matches);
 
       function handleCompactChange() {
-        setSidebar(false);
+        setSidebar(!compactQuery.matches);
       }
 
       if (compactQuery.addEventListener) {
@@ -151,8 +158,7 @@
 
       if (toggle) {
         toggle.addEventListener('click', function() {
-          if (!compactQuery.matches) return;
-          setSidebar(!body.classList.contains('sidebar-open'));
+          setSidebar(!isSidebarOpen());
         });
       }
 

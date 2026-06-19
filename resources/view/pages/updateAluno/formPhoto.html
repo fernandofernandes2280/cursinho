@@ -1,235 +1,66 @@
+<div class="photo-capture-page photo-capture-public">
+  <div class="photo-capture-header">
+    <div>
+      <h2>{{title}}</h2>
+      <p>Posicione o celular na vertical e centralize o rosto na moldura.</p>
+    </div>
+  </div>
 
-	<div class="row text-center">
-		<div class="col-md-3 " >
-			<h2 style="color: #007bff;">{{title}}</h2>
-			<h7 style="color: #fff;">Posicione o celular na vertical</h7>
+  <form method="post" enctype="multipart/form-data" class="photo-capture-form" data-photo-capture data-photo-max-size="5242880">
+    <input type="hidden" name="id" value="{{id}}">
+    <input type="hidden" name="image" class="image-tag" data-photo-image>
+    <input type="file" id="flImage" name="fImage" accept="image/*" class="photo-capture-file" data-photo-file>
 
-		</div>
-
-</div>
-
-
-
-<hr>
-
-<div class="container">
-<style>
-.conteiner{
-	width: 330px;
-	height: 230px;
-	position: relative;
-	border: 1px solid;
-}
-
-.my_camera{
-position: relative;
-left:10%
-}
-
-.my_result{
-position: relative;
-
-}
-
-.topoEsquerda{
-top:0;
-left:5%;
-margin-left: 12px;
-height: 105%;
-width: 19%;
-position: absolute;
-background-color:#1a2035;
-}
-
-.topoDireita{
-top:0;
-right:-10%;
-margin-right: 14px;
-height: 100%;
-width: 18%;
-position: absolute;
-background-color:#1a2035;
-}
-.centro{
-position: absolute;
-top:0;
-left:27%;
-width: 56%;
-height: 100%;
-transparent;
-border-width: 2px;
-border-style: dashed;
-border-color: #fff;
-display: none;
-}
-
-.topoEsquerda1{
-top:0;
-left:5%;
-height: 100%;
-width: 21%;
-position: absolute;
-background-color:#1a2035;
-}
-.topoDireita1{
-top:0;
-right:0;
-left:84%;
-height: 100%;
-width: 10%;
-position: absolute;
-background-color: #1a2035;
-}
-.centro1{
-position: absolute;
-top:0;
-left:25%;
-width: 59%;
-height: 100%;
-transparent;
-border-width: 2px;
-border-style: dashed;
-border-color: #fff;
- display : flex;
- align-items : center;
- justify-content : center;
-}
-
-</style>
-    <form method="post" enctype="multipart/form-data" >
-        <div class="row text-center">
-            <div class="col-md-6" >
-            <section class="conteiner text-center">
-	                <div class="my_camera" id="my_camera"></div>
-	                <div class="topoEsquerda"></div>
-	                <div class="topoDireita"></div>
-	                <div class="centro"></div>
-	         </section>
-	                <br/>
-	                <input type="hidden" name="image" class="image-tag">
-
-		            <div class="form-actions form-actions-start"><button type="button" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Capturar" onClick="take_snapshot()"><i class="material-icons">photo_camera</i></button></div>
-		            <br>
-
-
-
-            </div>
-
-
-
-
-
-
-			<input type="text" name="id" hidden value="{{id}}"/>
-            <div class="col-md-6">
-				<section class="conteiner" >
-	<div class="text-center my_result" id="results"></div>
-	<div class="topoEsquerda1"></div>
-	                <div class="topoDireita1"></div>
-	                <div class="centro1" id="centro1">Sua Foto</div>
-                </section>
-               <img id="photo-preview" draggable="false">
-				<input class="file-chooser pt-5" type="file" id="flImage" name="fImage" accept="image/*" hidden >
-            </div>
-
-            <div class="col-md-12 text-center form-actions">
-
-
-
-                <button type="submit" class="btn btn-info btn-round btn-just-icon" rel="tooltip" title="Salvar Foto"><i class="material-icons">save</i></button>
-
-            </div>
-
+    <div class="photo-capture-grid">
+      <section class="photo-capture-panel">
+        <div class="photo-capture-panel-header">
+          <strong>Câmera</strong>
+          <span data-photo-status>Solicitando acesso à câmera...</span>
         </div>
 
+        <div class="photo-capture-stage photo-capture-camera">
+          <video autoplay muted playsinline data-photo-video></video>
+          <div class="photo-capture-frame" aria-hidden="true">
+            <span>Centralize o rosto</span>
+          </div>
+        </div>
 
+        <div class="photo-capture-actions">
+          <button type="button" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Capturar" data-photo-capture-action>
+            <i class="material-icons">photo_camera</i>
+          </button>
+          <button type="button" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Escolher arquivo" data-photo-file-trigger>
+            <i class="material-icons">upload_file</i>
+          </button>
+        </div>
+      </section>
 
-    </form>
+      <section class="photo-capture-panel">
+        <div class="photo-capture-panel-header">
+          <strong>Pré-visualização</strong>
+          <span data-photo-preview-status>Aguardando captura</span>
+        </div>
 
+        <div class="photo-capture-stage photo-capture-preview">
+          <canvas data-photo-canvas hidden></canvas>
+          <img alt="Pré-visualização da foto" data-photo-preview hidden>
+          <div class="photo-capture-placeholder" data-photo-placeholder>
+            <i class="material-icons" aria-hidden="true">portrait</i>
+            <span>Sua foto aparecerá aqui</span>
+          </div>
+        </div>
+
+        <div class="photo-capture-actions">
+          <button type="button" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Tirar outra foto" data-photo-retake>
+            <i class="material-icons">refresh</i>
+          </button>
+          <button type="submit" class="btn btn-info btn-round btn-just-icon" rel="tooltip" title="Salvar Foto">
+            <i class="material-icons">save</i>
+          </button>
+        </div>
+      </section>
+    </div>
+  </form>
 </div>
 
-
-
-<!-- Configure a few settings and attach camera -->
-
-<script language="JavaScript">
-
-//let photo = document.getElementById('imgPhoto');
-let file = document.getElementById('flImage');
-
-/*photo.addEventListener('click', () => {
-    file.click();
-});
-*/
-file.addEventListener('change', () => {
-
-    if (file.files.length <= 0) {
-        return;
-    }
-
-    let reader = new FileReader();
-
-    reader.onload = () => {
-     //   photo.src = reader.result;
-          document.getElementById('results').innerHTML = '<img  class="img-fluid" src="'+reader.result+'"/>';
-         document.getElementById('centro1').style.color = "transparent";
-    }
-
-    reader.readAsDataURL(file.files[0]);
-});
-
-
-
-
-
-
-
-
-
-
-
-//Capitura imagem da camera
-    Webcam.set({
-
-        width: 255,
-
-        height: 230,
-
-        image_format: 'jpeg',
-
-        jpeg_quality: 100
-
-    });
-
-
-
-    Webcam.attach( '#my_camera' );
-
-
-
-    function take_snapshot() {
-
-        Webcam.snap( function(data_uri) {
-
-            $(".image-tag").val(data_uri);
-
-            document.getElementById('results').innerHTML = '<img style="width:250px" src="'+data_uri+'"/>';
-             //document.getElementById('img').setAttribute("src", data_uri);
-             document.getElementById('centro1').style.color = "transparent";
-             image = new Image()
-           // image.src = event.target.result
-           image.src = data_uri
-            image.onload = onLoadImage
-
-
-            //limpa o input file
-			file.value = '';
-        } );
-
-    }
-
-
-</script>
-
-
-
+<script src="{{URL}}/resources/js/photo-capture.js?v=2"></script>

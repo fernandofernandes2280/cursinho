@@ -93,9 +93,10 @@ class User extends Page{
 		return $permissions;
 	}
 
-	private static function renderPermissionGroups($obUser = null, $tipo = '', $oldPermissions = []){
+	private static function renderPermissionGroups($obUser = null, $tipo = '', $oldPermissions = [], $disabled = false){
 		$oldPermissions = self::normalizePermissionsForRole($tipo, $oldPermissions);
 		$html = '';
+		$disabledAttr = $disabled ? 'disabled' : '';
 
 		foreach(Permission::groups() as $group => $permissions){
 			$html .= '<section class="user-permission-group">';
@@ -109,7 +110,7 @@ class User extends Page{
 
 				$checked = $isChecked ? 'checked' : '';
 				$escapedPermission = htmlspecialchars($permission, ENT_QUOTES, 'UTF-8');
-				$html .= '<label><input type="checkbox" '.$checked.' name="permissions[]" value="'.$escapedPermission.'" data-permission="'.$escapedPermission.'"> '.self::formatPermissionLabel($label).'</label>';
+				$html .= '<label><input type="checkbox" '.$checked.' '.$disabledAttr.' name="permissions[]" value="'.$escapedPermission.'" data-permission="'.$escapedPermission.'"> '.self::formatPermissionLabel($label).'</label>';
 			}
 
 			$html .= '</div>';
@@ -203,6 +204,7 @@ class User extends Page{
 		$content = View::render('painel/modules/users/index',[
 				'itens' => $itens,
 				'statusMessage' => Funcoes::getStatus($request),
+				'btnNovoUsuarioVisivel' => self::canManageUsers() ? permissaoBtnNovoUsuario : 'hidden',
 				
 				
 		]);
@@ -263,6 +265,12 @@ class User extends Page{
 		        'permissionGroups' => self::renderPermissionGroups(null, $tipo, $oldPermissions),
 		        'rolePermissionRules' => self::getRolePermissionRules(),
 		        'permissoesVisivel' => permissoes,
+		        'permissoesBloqueadas' => '0',
+		        'senhaInicialVisivel' => '',
+		        'trocaSenhaVisivel' => 'hidden',
+		        'senhaAtualVisivel' => 'hidden',
+		        'senhaAtualObrigatoria' => '0',
+		        'verificarSenhaUrl' => '',
 		        'habilitado' => ''
 				
 		]);
@@ -373,6 +381,7 @@ class User extends Page{
 		$obUser->tipo == 'Admin' ? $selectedAdmin = 'selected' : $selectedAdmin = '' ;
 		$obUser->tipo == 'Visitante' ? $selectedVisitante = 'selected' : $selectedVisitante = '' ;
 		$obUser->tipo == 'Operador' ? $selectedOperador = 'selected' : $selectedOperador = '' ;
+		$canManagePermissions = self::canManageUsers();
 		
 		$reload = rand();
 		//Conteúdo do Formulário
@@ -381,7 +390,7 @@ class User extends Page{
 				'nome' => $obUser->nome,
 		        'id' => $obUser->id,
 				'email' => $obUser->email,
-				'senha' => $obUser->senha,
+				'senha' => '',
 				'cpf' => Funcoes::mask($obUser->cpf, '###.###.###-##'), 
 					'selectedAdmin'=> $selectedAdmin,
 					'selectedVisitante'=> $selectedVisitante,
@@ -390,10 +399,16 @@ class User extends Page{
 			          'foto' => $obUser->foto.'?var='.$reload,
 		        'required' => '',
 		         'ponteiro' => '',
-			    'btnNovoUsuarioVisivel' => permissaoBtnNovoUsuario,
-		    'permissionGroups' => self::renderPermissionGroups($obUser, $obUser->tipo),
+			    'btnNovoUsuarioVisivel' => $canManagePermissions ? permissaoBtnNovoUsuario : 'hidden',
+		    'permissionGroups' => self::renderPermissionGroups($obUser, $obUser->tipo, [], !$canManagePermissions),
 		    'rolePermissionRules' => self::getRolePermissionRules(),
-		    'permissoesVisivel' => permissoes,
+		    'permissoesVisivel' => $canManagePermissions ? permissoes : 'hidden',
+		    'permissoesBloqueadas' => $canManagePermissions ? '0' : '1',
+		    'senhaInicialVisivel' => 'hidden',
+		    'trocaSenhaVisivel' => '',
+		    'senhaAtualVisivel' => $canManagePermissions ? 'hidden' : '',
+		    'senhaAtualObrigatoria' => $canManagePermissions ? '0' : '1',
+		    'verificarSenhaUrl' => URL.'/users/'.$obUser->id.'/verify-password',
 		    'habilitado' => habilitaCPFTIPO,
 		         
 				
@@ -403,6 +418,35 @@ class User extends Page{
 		//Retorna a página completa
 		return parent::getPanel('Editar Usuário > SISCAPS', $content,'users', self::$hidden);
 		
+	}
+
+	public static function verifyCurrentPassword($request,$id){
+		self::checkUserAccess($request, $id);
+
+		$postVars = $request->getPostVars();
+		$senhaAtual = $postVars['senhaAtual'] ?? '';
+		$obUser = EntityUser::getUserById($id);
+
+		if(!$obUser instanceof EntityUser){
+			return [
+				'valid' => false,
+				'message' => 'Usuário não encontrado.'
+			];
+		}
+
+		if($senhaAtual === ''){
+			return [
+				'valid' => false,
+				'message' => 'Informe a senha atual.'
+			];
+		}
+
+		$isValid = $senhaAtual === $obUser->senha;
+
+		return [
+			'valid' => $isValid,
+			'message' => $isValid ? 'Senha atual validada.' : 'Senha atual inválida.'
+		];
 	}
 	
 	//Metodo responsável por gravar a atualizacao de um usuário
@@ -416,6 +460,9 @@ class User extends Page{
 		$nome = $postVars['nome'] ?? '';
 		$email = $postVars['email'] ?? '';
 		$senha = $postVars['senha'] ?? '';
+		$senhaAtual = $postVars['senhaAtual'] ?? '';
+		$novaSenha = $postVars['novaSenha'] ?? '';
+		$confirmeNovaSenha = $postVars['confirmeNovaSenha'] ?? '';
 		$tipo = $postVars['tipo'] ?? '';
 		$cpf = $postVars['cpf'] ?? '';
 		$permissions = self::normalizePermissionsForRole($tipo, $postVars['permissions'] ?? []);
@@ -459,6 +506,25 @@ class User extends Page{
 		//verifica se o E-MAIL já está sendo usado por outro usuário
 		if($obUserEmail instanceof EntityUser && $obUserEmail->id != $id){
 			$request->getRouter()->redirect('/users/'.$id.'/edit?statusMessage=emailDuplicated');
+		}
+
+		$alterarSenha = $senhaAtual !== '' || $novaSenha !== '' || $confirmeNovaSenha !== '';
+		if($alterarSenha){
+			if($novaSenha === '' || $confirmeNovaSenha === ''){
+				$request->getRouter()->redirect('/users/'.$id.'/edit?statusMessage=senhaObrigatoria');
+			}
+
+			if(!self::canManageUsers() && $senhaAtual !== $obUser->senha){
+				$request->getRouter()->redirect('/users/'.$id.'/edit?statusMessage=senhaAtualInvalida');
+			}
+
+			if($novaSenha !== $confirmeNovaSenha){
+				$request->getRouter()->redirect('/users/'.$id.'/edit?statusMessage=senhaDiferente');
+			}
+
+			$senha = $novaSenha;
+		}else{
+			$senha = $obUser->senha;
 		}
 		
 		//Atualiza a instância

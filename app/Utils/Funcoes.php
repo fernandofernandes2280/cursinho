@@ -50,9 +50,18 @@ class Funcoes{
             case 'cpfduplicated':
                 return Alert::getError('CPF já está sendo utilizado por outro usuário!');
                 break;
-            case 'emailDuplicated':
-                return Alert::getError('E-mail já está sendo utilizado!');
-                break;
+	            case 'emailDuplicated':
+	                return Alert::getError('E-mail já está sendo utilizado!');
+	                break;
+	            case 'senhaAtualInvalida':
+	                return Alert::getError('Senha atual inválida.');
+	                break;
+	            case 'senhaObrigatoria':
+	                return Alert::getError('Informe a nova senha e a confirmação.');
+	                break;
+	            case 'senhaDiferente':
+	                return Alert::getError('Nova senha e confirmação são diferentes.');
+	                break;
 	            case 'loginSuccess':
 	                return Alert::getSuccess('Login efetuado com sucesso!');
 	                break;
@@ -63,14 +72,14 @@ class Funcoes{
 	                return Alert::getError('A assinatura do coordenador deve ser enviada exclusivamente em PNG, para preservar o fundo transparente.');
 	                break;
 	            case 'documentoInvalid':
-	                return Alert::getError('Envie os documentos do aluno somente em PDF.');
+	                return Alert::getError('Envie os documentos somente em PDF.');
 	                break;
 	            case 'documentoDeleted':
 	                return Alert::getSuccess('Documento excluído com sucesso!');
 	                break;
-	            case 'documentoDeleteError':
-	                return Alert::getError('Não foi possível excluir o documento.');
-	                break;
+            case 'documentoDeleteError':
+                return Alert::getError('Não foi possível excluir o documento.');
+                break;
 	        }
 	    }
     

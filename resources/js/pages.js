@@ -287,7 +287,7 @@ $( document ).ready(function() {
                 if (toast.parentNode) {
                     fecharToast(toast, toast.getAttribute("data-toast-redirect"));
                 }
-            }, 3500);
+            }, 2333);
         });
     }
 

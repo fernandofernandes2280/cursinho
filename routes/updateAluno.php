@@ -4,6 +4,26 @@ use \App\Http\Response;
 use \App\Controller\Pages;
 use \App\Controller\Painel;
 
+//ROTA DE PRÉ-CADASTRO DO ALUNO
+$obRouter->get('/precadastro',[
+
+    function ($request){
+
+        return new Response(200, Pages\PreCadastroAluno::getPreCadastro($request));
+
+    }
+    ]);
+
+//ROTA DE VERIFICAÇÃO/SALVAMENTO DO PRÉ-CADASTRO DO ALUNO
+$obRouter->post('/precadastro',[
+
+    function ($request){
+
+        return new Response(200, Pages\PreCadastroAluno::setPreCadastro($request));
+
+    }
+    ]);
+
 
 //ROTA PARA VERIFICAÇÃO DO CPF
 $obRouter->get('/aluno',[

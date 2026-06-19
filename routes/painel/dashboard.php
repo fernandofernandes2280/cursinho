@@ -18,4 +18,16 @@ $obRouter->get('/dashboard',[
 		    
 		}
 		]);
+
+//ROTA GET DOS DADOS ATUALIZADOS DO DASHBOARD
+$obRouter->get('/dashboard/live',[
+		'middlewares' => [
+				'require-user-login',
+				'can:dashboard.view'
+		],
+
+		function ($request){
+			return new Response(200, Painel\Dashboard::getDashboardLive($request), 'application/json');
+		}
+		]);
 		

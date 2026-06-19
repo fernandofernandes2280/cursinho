@@ -2,6 +2,7 @@
 
 use \App\Http\Response;
 use \App\Controller\Painel;
+use \App\Session\User\Login as SessionUserLogin;
 
 //ROTA de Listagem de Aulas
 $obRouter->get('/aulas',[
@@ -77,7 +78,11 @@ $obRouter->get('/aulas/{id}/delete',[
         'can:aulas.delete'
     ],
     function ($request,$id){
-     //   return new Response(200, Painel\Aula::getAulaDelete($request,$id));
+        if(!SessionUserLogin::isAdmin()){
+            $request->getRouter()->redirect('/aulas');
+        }
+
+        return new Response(200, Painel\Aula::getAulaDelete($request,$id));
         
     }
     ]);
@@ -90,6 +95,10 @@ $obRouter->post('/aulas/{id}/delete',[
     ],
     
     function ($request, $id){
+        if(!SessionUserLogin::isAdmin()){
+            $request->getRouter()->redirect('/aulas');
+        }
+
         return new Response(200, Painel\Aula::setAulaDelete($request, $id));
         
     }

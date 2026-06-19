@@ -1,0 +1,267 @@
+<main class="precadastro-page">
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    class="precadastro-form"
+    data-precadastro-form
+    data-selfie-required="{{fotoObrigatoria}}"
+    novalidate
+  >
+    <input type="hidden" name="acao" value="salvar">
+    <input type="hidden" name="id" value="{{id}}">
+
+    <header class="precadastro-header">
+      <div>
+        <span>Pré-cadastro -- Cursinho Preparatório Prof. Anunciação</span>
+        <h1>{{nome}}</h1>
+        <small>Matrícula: {{matricula}}</small>
+      </div>
+    </header>
+
+    <div class="aluno-completion-card precadastro-completion-card" data-precadastro-completion>
+      <div class="aluno-completion-main">
+        <div>
+          <strong>Conclusão do cadastro</strong>
+          <small data-completion-detail>Calculando preenchimento...</small>
+        </div>
+        <span data-completion-label>0%</span>
+      </div>
+      <div class="aluno-completion-track" aria-hidden="true">
+        <span data-completion-bar></span>
+      </div>
+    </div>
+
+    <div class="precadastro-status">{{statusMessage}}</div>
+    <div class="precadastro-client-error" data-precadastro-error hidden></div>
+
+    <section class="precadastro-section precadastro-selfie-section" data-photo-capture data-photo-manual-start="1" data-photo-max-size="5242880">
+      <div class="precadastro-section-title">
+        <div>
+          <span>Foto</span>
+          <h2>Selfie</h2>
+        </div>
+        <strong>{{selfieStatus}}</strong>
+      </div>
+
+      <input type="hidden" name="fotoSelfie" data-photo-image>
+      <input
+        type="file"
+        id="selfie"
+        name="selfie"
+        accept="image/jpeg,image/png"
+        capture="user"
+        class="photo-capture-file"
+        data-photo-file
+      >
+
+      <div class="precadastro-selfie-grid precadastro-current-grid">
+        <div class="precadastro-current-photo">
+          <span>Atual</span>
+          <img src="{{URL}}/app/Controller/File/files/fotos/{{foto}}" alt="Foto atual">
+          {{selfieRequirement}}
+        </div>
+      </div>
+
+      <div class="precadastro-photo-start">
+        <button type="button" class="btn btn-success precadastro-photo-start-button" data-photo-start>
+          <i class="material-icons" aria-hidden="true">photo_camera</i>
+          <span>Abrir captura da selfie</span>
+        </button>
+      </div>
+
+      <div class="precadastro-selfie-grid precadastro-capture-grid" data-photo-areas hidden>
+        <div class="precadastro-camera-box">
+          <div class="photo-capture-panel-header">
+            <strong>Câmera</strong>
+            <span data-photo-status>Câmera desligada</span>
+          </div>
+          <div class="photo-capture-stage photo-capture-camera">
+            <video autoplay muted playsinline data-photo-video></video>
+            <div class="photo-capture-frame" aria-hidden="true">
+              <span>Centralize o rosto</span>
+            </div>
+          </div>
+          <div class="precadastro-photo-actions">
+            <button type="button" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Capturar" data-photo-capture-action>
+              <i class="material-icons">photo_camera</i>
+            </button>
+            <button type="button" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Abrir câmera" data-photo-file-trigger>
+              <i class="material-icons">add_a_photo</i>
+            </button>
+          </div>
+        </div>
+
+        <div class="precadastro-preview-box">
+          <div class="photo-capture-panel-header">
+            <strong>Prévia</strong>
+            <span data-photo-preview-status>Aguardando captura</span>
+          </div>
+          <div class="photo-capture-stage photo-capture-preview">
+            <canvas data-photo-canvas hidden></canvas>
+            <img alt="Pré-visualização da selfie" data-photo-preview hidden>
+            <div class="photo-capture-placeholder" data-photo-placeholder>
+              <i class="material-icons" aria-hidden="true">portrait</i>
+              <span>Selfie</span>
+            </div>
+          </div>
+          <div class="precadastro-photo-actions">
+            <button type="button" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Tirar outra" data-photo-retake>
+              <i class="material-icons">refresh</i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="precadastro-section">
+      <div class="precadastro-section-title">
+        <div>
+          <span>Dados</span>
+          <h2>Informações pessoais</h2>
+        </div>
+      </div>
+
+      <div class="aluno-fields-grid precadastro-fields-grid">
+        <div class="aluno-field aluno-span-8">
+          <label for="nome">Nome</label>
+          <input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required>
+        </div>
+
+        <div class="aluno-field aluno-span-4">
+          <label for="cpf">CPF</label>
+          <input class="form-control-pessoal mascara-cpf" required type="text" id="cpf" value="{{cpf}}" name="cpf" readonly>
+        </div>
+
+        <div class="aluno-field aluno-span-3">
+          <label for="dataNasc">Data de nascimento</label>
+          <input type="date" class="form-control-pessoal" id="dataNasc" name="dataNasc" value="{{dataNasc}}" required>
+        </div>
+
+        <div class="aluno-field aluno-span-3">
+          <label for="sexo">Sexo</label>
+          <select class="custom-select" id="sexo" name="sexo" required>
+            <option></option>
+            <option {{selectedSexoM}} value="MAS">MAS</option>
+            <option {{selectedSexoF}} value="FEM">FEM</option>
+          </select>
+        </div>
+
+        <div class="aluno-field aluno-span-3">
+          <label for="fone">Telefone</label>
+          <input type="text" class="form-control-pessoal mascara-telefone" id="fone" name="fone" value="{{fone}}" maxlength="14" inputmode="tel" required>
+        </div>
+
+        <div class="aluno-field aluno-span-3">
+          <label for="turma">Turma</label>
+          <select class="custom-select" id="turma" name="turma" required>
+            {{optionTurma}}
+          </select>
+        </div>
+
+        <div class="aluno-field aluno-span-4">
+          <label for="mae">Mãe</label>
+          <input type="text" class="form-control-pessoal" id="mae" name="mae" value="{{mae}}" required>
+        </div>
+
+        <div class="aluno-field aluno-span-4">
+          <label for="naturalidade">Naturalidade</label>
+          <input type="text" class="form-control-pessoal" id="naturalidade" name="naturalidade" value="{{naturalidade}}" required>
+        </div>
+
+        <div class="aluno-field aluno-span-4">
+          <label for="escolaridade">Escolaridade</label>
+          <select class="custom-select" id="escolaridade" name="escolaridade" required>
+            {{optionEscolaridade}}
+          </select>
+        </div>
+
+        <div class="aluno-field aluno-span-4">
+          <label for="estadoCivil">Estado Civil</label>
+          <select class="custom-select" id="estadoCivil" name="estadoCivil" required>
+            {{optionEstadoCivil}}
+          </select>
+        </div>
+
+        <div class="aluno-field aluno-span-2">
+          <label for="cep">CEP</label>
+          <input type="text" class="form-control-pessoal" id="cep" name="cep" value="{{cep}}" inputmode="numeric" required>
+        </div>
+
+        <div class="aluno-field aluno-span-4">
+          <label for="endereco">Endereço</label>
+          <input type="text" class="form-control-pessoal" id="endereco" name="endereco" value="{{endereco}}" required>
+        </div>
+
+        <div class="aluno-field aluno-span-2">
+          <label for="numero">Nº</label>
+          <input type="text" class="form-control-pessoal" id="numero" name="numero" value="{{numero}}" required>
+        </div>
+
+        <div class="aluno-field aluno-span-4">
+          <label for="bairro">Bairro</label>
+          <select class="custom-select" id="bairro" name="bairro" required>
+            {{optionBairros}}
+          </select>
+        </div>
+
+        <div class="aluno-field aluno-span-3">
+          <label for="cidade">Cidade</label>
+          <input type="text" class="form-control-pessoal" id="cidade" name="cidade" value="{{cidade}}" required>
+        </div>
+
+        <div class="aluno-field aluno-span-1">
+          <label for="uf">UF</label>
+          <input type="text" class="form-control-pessoal" id="uf" name="uf" value="{{uf}}" required>
+        </div>
+
+        <div class="aluno-field aluno-span-2 precadastro-status-field">
+          <label for="status">Status</label>
+          <select class="custom-select" id="status" name="status" disabled>
+            {{optionStatus}}
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="precadastro-section">
+      <div class="precadastro-section-title">
+        <div>
+          <span>Documentos</span>
+          <h2>Arquivos do aluno</h2>
+          <small class="precadastro-section-hint">Envie os documentos em PDF.</small>
+        </div>
+      </div>
+
+      <div class="aluno-documents-grid precadastro-documents-grid">
+        <div class="aluno-document-upload" data-document-required="1">
+          <input type="file" id="documentoIdentificacao" name="documentoIdentificacao" accept="application/pdf,.pdf">
+          <div class="aluno-document-main-row">
+            <button type="button" class="aluno-document-button" data-document-trigger>Documento de Identificação <span>Obrigatório</span></button>
+            <div class="aluno-document-file-row">
+              <small data-document-feedback>{{documentoIdentificacaoInfo}}</small>
+            </div>
+          </div>
+          <div class="aluno-document-progress" aria-hidden="true"><span></span></div>
+        </div>
+
+        <div class="aluno-document-upload" data-document-required="1">
+          <input type="file" id="documentoResidencia" name="documentoResidencia" accept="application/pdf,.pdf">
+          <div class="aluno-document-main-row">
+            <button type="button" class="aluno-document-button" data-document-trigger>Comprovante de Residência <span>Obrigatório</span></button>
+            <div class="aluno-document-file-row">
+              <small data-document-feedback>{{documentoResidenciaInfo}}</small>
+            </div>
+          </div>
+          <div class="aluno-document-progress" aria-hidden="true"><span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <button type="submit" class="precadastro-save-float" rel="tooltip" title="Salvar">
+      <i class="material-icons" aria-hidden="true">save</i>
+      <span>Salvar</span>
+    </button>
+  </form>
+</main>
+
+<script src="{{URL}}/resources/js/photo-capture.js?v=5"></script>

@@ -1,13 +1,16 @@
-<form method="post" class="professor-form">
+<form method="post" enctype="multipart/form-data" class="professor-form">
   <div class="row professor-form-header">
     <div class="col-md-3">
       <h5>{{title}}</h5>
     </div>
-    <div class="col-md-5">
+    <div class="col-md-4">
       {{statusMessage}}
     </div>
 
-    <div class="col-md-4 text-right form-actions">
+    <div class="col-md-5 text-right form-actions">
+      <a href="#" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Imprimir Dados Cadastrais" data-professor-form-print>
+        <i class="material-icons">print</i>
+      </a>
       <button class="btn btn-facebook btn-round btn-just-icon" type="submit" rel="tooltip" title="Salvar">
         <i class="material-icons">save</i>
       </button>
@@ -85,6 +88,48 @@
         <label for="email">Email</label>
         <input type="email" id="email" name="email" class="form-control-pessoal" value="{{email}}" required>
       </div>
+
+      <div class="professor-field professor-span-12 aluno-documents-section">
+        <div class="aluno-documents-header">
+          <strong>Documentos do professor</strong>
+          <small>Envie arquivos separados em PDF.</small>
+        </div>
+        <div class="aluno-documents-grid">
+          <div class="aluno-document-upload">
+            <input type="file" id="documentoIdentificacaoProfessor" name="documentoIdentificacaoProfessor" accept="application/pdf,.pdf">
+            <div class="aluno-document-main-row">
+              <button type="button" class="aluno-document-button" data-document-trigger>Documentos de Identificação</button>
+              <div class="aluno-document-file-row">
+                <small data-document-feedback>{{documentoIdentificacaoProfessorInfo}}</small>
+                {{documentoIdentificacaoProfessorDelete}}
+              </div>
+            </div>
+            <div class="aluno-document-progress" aria-hidden="true"><span></span></div>
+          </div>
+          <div class="aluno-document-upload">
+            <input type="file" id="documentoCurriculoProfessor" name="documentoCurriculoProfessor" accept="application/pdf,.pdf">
+            <div class="aluno-document-main-row">
+              <button type="button" class="aluno-document-button" data-document-trigger>Currículo</button>
+              <div class="aluno-document-file-row">
+                <small data-document-feedback>{{documentoCurriculoProfessorInfo}}</small>
+                {{documentoCurriculoProfessorDelete}}
+              </div>
+            </div>
+            <div class="aluno-document-progress" aria-hidden="true"><span></span></div>
+          </div>
+          <div class="aluno-document-upload">
+            <input type="file" id="documentoOutrosProfessor" name="documentoOutrosProfessor" accept="application/pdf,.pdf">
+            <div class="aluno-document-main-row">
+              <button type="button" class="aluno-document-button" data-document-trigger>Outros documentos</button>
+              <div class="aluno-document-file-row">
+                <small data-document-feedback>{{documentoOutrosProfessorInfo}}</small>
+                {{documentoOutrosProfessorDelete}}
+              </div>
+            </div>
+            <div class="aluno-document-progress" aria-hidden="true"><span></span></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </form>
@@ -145,6 +190,91 @@
 </div>
 
 <script>
+  $('.professor-form .aluno-document-upload [data-document-trigger]').on('click', function() {
+    $(this).closest('.aluno-document-upload').find('input[type="file"]').trigger('click');
+  });
+
+  $('.professor-form .aluno-document-upload [data-document-delete]').on('click', function() {
+    if (!confirm('Deseja excluir este documento?')) return;
+
+    $('<form>', {
+      method: 'post',
+      action: $(this).data('document-delete')
+    }).appendTo('body').trigger('submit');
+  });
+
+  function applyProfessorDocumentLoadedState($card) {
+    var $feedback = $card.find('[data-document-feedback]');
+    var $progress = $card.find('.aluno-document-progress span');
+
+    if ($.trim($feedback.text()).length) {
+      $card.addClass('is-loaded');
+      $progress.css('width', '100%');
+    }
+  }
+
+  $('.professor-form .aluno-document-upload').each(function() {
+    applyProfessorDocumentLoadedState($(this));
+  });
+
+  $('.professor-form .aluno-document-upload input[type="file"]').on('change', function() {
+    var input = this;
+    var file = input.files && input.files[0] ? input.files[0] : null;
+    var $card = $(input).closest('.aluno-document-upload');
+    var $feedback = $card.find('[data-document-feedback]');
+    var $progress = $card.find('.aluno-document-progress span');
+    var previousText = $feedback.data('previous-text') || $feedback.html();
+
+    $feedback.data('previous-text', previousText);
+    $card.removeClass('is-loading is-loaded is-invalid');
+    $progress.css('width', '0%');
+
+    if (!file) {
+      $feedback.html(previousText);
+      applyProfessorDocumentLoadedState($card);
+      return;
+    }
+
+    if (!/\.pdf$/i.test(file.name)) {
+      input.value = '';
+      $card.addClass('is-invalid');
+      $feedback.text('Envie apenas arquivo PDF.');
+      return;
+    }
+
+    $card.addClass('is-loading');
+    $feedback.text('Carregando PDF...');
+
+    var finishLoaded = function() {
+      $progress.css('width', '100%');
+      window.setTimeout(function() {
+        $card.removeClass('is-loading').addClass('is-loaded');
+        $feedback.text(file.name);
+      }, 180);
+    };
+
+    if (!window.FileReader) {
+      window.setTimeout(finishLoaded, 450);
+      return;
+    }
+
+    var reader = new FileReader();
+    reader.onprogress = function(event) {
+      if (!event.lengthComputable) return;
+
+      var percent = Math.min(95, Math.round((event.loaded / event.total) * 100));
+      $progress.css('width', percent + '%');
+    };
+    reader.onload = finishLoaded;
+    reader.onerror = function() {
+      input.value = '';
+      $card.removeClass('is-loading').addClass('is-invalid');
+      $feedback.text('Não foi possível carregar este PDF.');
+      $progress.css('width', '0%');
+    };
+    reader.readAsArrayBuffer(file);
+  });
+
   document.addEventListener('DOMContentLoaded', function () {
     var form = document.querySelector('.professor-disciplina-form');
     if (!form || form.hasAttribute('hidden')) return;

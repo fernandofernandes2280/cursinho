@@ -189,7 +189,6 @@ class Permission{
 			self::AULAS_VIEW,
 			self::AULAS_CREATE,
 			self::AULAS_UPDATE,
-			self::AULAS_DELETE,
 			self::AULAS_PRESENTES,
 			self::FREQUENCIAS_VIEW,
 			self::FREQUENCIAS_UPDATE,
@@ -208,6 +207,7 @@ class Permission{
 			self::USUARIOS_UPDATE,
 			self::USUARIOS_DELETE,
 			self::USUARIOS_PHOTO,
+			self::AULAS_DELETE,
 		],
 	];
 

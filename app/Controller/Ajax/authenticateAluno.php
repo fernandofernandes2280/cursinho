@@ -198,7 +198,19 @@ if($idAula > 0){
         exit;
     }
 
-    if(!aulaEhDeHoje($obAulaInformada)){
+    if($aulaGenerica){
+        $turmaAulaGeralAtual = EntityConfiguracao::getTurmaFrequenciaGeralAtual((int)$obAluno->turma);
+
+        if(!aulaEhDeHoje($obAulaInformada) || (int)$obAulaInformada->turma !== (int)$turmaAulaGeralAtual){
+            $idAula = 0;
+            $response['idAula'] = 0;
+            $response['aulaTitulo'] = 'Frequência Geral';
+            $response['aulaGenerica'] = true;
+        }else{
+            $obAula = $obAulaInformada;
+            preencherDadosAulaResposta($response, $obAula);
+        }
+    }elseif(!aulaEhDeHoje($obAulaInformada)){
         $aulaGenerica = true;
         $idAula = 0;
         $response['idAula'] = 0;
