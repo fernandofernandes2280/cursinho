@@ -152,20 +152,33 @@ class Professor extends Page{
 		}
 
 		$extension = strtolower(pathinfo((string)($file['name'] ?? ''), PATHINFO_EXTENSION));
+
+		if($extension !== 'pdf'){
+			return false;
+		}
+
+		$tmpName = (string)($file['tmp_name'] ?? '');
 		$type = strtolower((string)($file['type'] ?? ''));
 
-		if(is_file((string)($file['tmp_name'] ?? '')) && function_exists('finfo_open')){
-			$finfo = finfo_open(FILEINFO_MIME_TYPE);
-			if($finfo){
-				$detectedType = finfo_file($finfo, $file['tmp_name']);
-				finfo_close($finfo);
-				if($detectedType){
-					$type = strtolower((string)$detectedType);
+		if(is_file($tmpName)){
+			$header = file_get_contents($tmpName, false, null, 0, 1024);
+			if($header !== false && strpos($header, '%PDF-') !== false){
+				return true;
+			}
+
+			if(function_exists('finfo_open')){
+				$finfo = finfo_open(FILEINFO_MIME_TYPE);
+				if($finfo){
+					$detectedType = finfo_file($finfo, $tmpName);
+					finfo_close($finfo);
+					if($detectedType){
+						$type = strtolower((string)$detectedType);
+					}
 				}
 			}
 		}
 
-		return $extension === 'pdf' && in_array($type, ['application/pdf', 'application/x-pdf'], true);
+		return in_array($type, ['application/pdf', 'application/x-pdf'], true);
 	}
 
 	private static function documentosProfessorValidos($request){
