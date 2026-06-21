@@ -47,10 +47,17 @@
     editor.x = clamp(editor.x, -maxX, maxX);
     editor.y = clamp(editor.y, -maxY, maxY);
 
+    context.preview.style.position = 'absolute';
     context.preview.style.width = editor.baseWidth + 'px';
     context.preview.style.height = editor.baseHeight + 'px';
     context.preview.style.left = 'calc(50% + ' + editor.x + 'px)';
     context.preview.style.top = 'calc(50% + ' + editor.y + 'px)';
+    context.preview.style.maxWidth = 'none';
+    context.preview.style.maxHeight = 'none';
+    context.preview.style.objectFit = 'fill';
+    context.preview.style.pointerEvents = 'none';
+    context.preview.style.userSelect = 'none';
+    context.preview.style.transformOrigin = 'center center';
     context.preview.style.transform = 'translate(-50%, -50%) scale(' + editor.scale + ')';
   }
 
@@ -142,7 +149,7 @@
       return;
     }
 
-    context.editor = null;
+    clearEditor(context);
     context.imageInput.value = '';
     dispatchFieldChange(context.imageInput);
     var imageLoaded = false;
@@ -174,7 +181,14 @@
       context.preview.style.removeProperty('height');
       context.preview.style.removeProperty('left');
       context.preview.style.removeProperty('top');
+      context.preview.style.removeProperty('max-width');
+      context.preview.style.removeProperty('max-height');
+      context.preview.style.removeProperty('object-fit');
+      context.preview.style.removeProperty('pointer-events');
+      context.preview.style.removeProperty('position');
       context.preview.style.removeProperty('transform');
+      context.preview.style.removeProperty('transform-origin');
+      context.preview.style.removeProperty('user-select');
       context.preview.classList.remove('is-editing');
     }
 
@@ -238,6 +252,8 @@
     if (!stage) {
       return;
     }
+
+    stage.style.touchAction = 'none';
 
     stage.addEventListener('pointerdown', function(event) {
       if (!context.editor || !context.editor.ready) {
