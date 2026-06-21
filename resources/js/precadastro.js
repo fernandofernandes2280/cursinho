@@ -119,6 +119,10 @@
   }
 
   forms.forEach(function(form) {
+    var cadastroSaved = form.getAttribute('data-precadastro-saved') === '1';
+    var cadastroCompleto = form.getAttribute('data-precadastro-completo') === '1';
+    var cadastroDirty = false;
+
     function onlyDigits(value) {
       return String(value || '').replace(/\D/g, '');
     }
@@ -137,6 +141,33 @@
 
     function clearRequiredState(field) {
       field.classList.remove('precadastro-input-invalid');
+    }
+
+    function markCadastroDirty() {
+      if (!cadastroSaved) {
+        return;
+      }
+
+      cadastroDirty = true;
+      cadastroSaved = false;
+      form.setAttribute('data-precadastro-saved', '0');
+    }
+
+    function updateCarteiraButton(percent) {
+      var button = form.querySelector('[data-precadastro-carteira]');
+
+      if (!button) {
+        return;
+      }
+
+      var canGenerate = cadastroSaved && cadastroCompleto && !cadastroDirty && percent >= 100;
+
+      button.disabled = !canGenerate;
+      button.classList.toggle('is-disabled', !canGenerate);
+      button.setAttribute(
+        'title',
+        canGenerate ? 'Gerar carteira' : 'Salve o cadastro com 100% de conclusão para gerar a carteira'
+      );
     }
 
     function validateRequiredFields() {
@@ -387,26 +418,50 @@
           ? completed + ' de ' + total + ' itens preenchidos. Pendentes: ' + pending.slice(0, 3).join(', ') + (pending.length > 3 ? '...' : '')
           : 'Cadastro completo nos dados principais e documentos.';
       }
+
+      updateCarteiraButton(percent);
+
+      return percent;
     }
 
     setupDocumentUploads();
 
     getRequiredFields().forEach(function(field) {
       field.addEventListener('input', function() {
+        markCadastroDirty();
         clearRequiredState(field);
         updateCadastroCompletion();
       });
       field.addEventListener('change', function() {
+        markCadastroDirty();
         clearRequiredState(field);
         updateCadastroCompletion();
       });
     });
 
-    form.addEventListener('change', function() {
+    form.addEventListener('change', function(event) {
+      if (event.target && event.target.matches('[data-precadastro-carteira]')) {
+        return;
+      }
+
+      markCadastroDirty();
       updateCadastroCompletion();
     });
 
     updateCadastroCompletion();
+
+    var carteiraButton = form.querySelector('[data-precadastro-carteira]');
+    if (carteiraButton) {
+      carteiraButton.addEventListener('click', function() {
+        var url = carteiraButton.getAttribute('data-carteira-url');
+
+        if (carteiraButton.disabled || !url) {
+          return;
+        }
+
+        window.location.href = url;
+      });
+    }
 
     form.addEventListener('submit', function(event) {
       var requiresSelfie = form.getAttribute('data-selfie-required') === '1';

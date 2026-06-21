@@ -24,6 +24,26 @@ $obRouter->post('/precadastro',[
     }
     ]);
 
+//ROTA PÚBLICA PARA GERAR CARTEIRA APÓS O PRÉ-CADASTRO
+$obRouter->get('/precadastro/{id}/carteira',[
+
+    function ($request,$id){
+
+        return new Response(200, Pages\PreCadastroAluno::getCarteiraAluno($request,$id));
+
+    }
+    ]);
+
+//ROTA PÚBLICA PARA DOWNLOAD DA CARTEIRA APÓS O PRÉ-CADASTRO
+$obRouter->post('/precadastro/{id}/carteira',[
+
+    function ($request,$id){
+
+        return new Response(200, Pages\PreCadastroAluno::setCarteiraAluno($request,$id));
+
+    }
+    ]);
+
 
 //ROTA PARA VERIFICAÇÃO DO CPF
 $obRouter->get('/aluno',[

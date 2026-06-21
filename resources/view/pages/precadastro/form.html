@@ -5,6 +5,8 @@
     class="precadastro-form"
     data-precadastro-form
     data-selfie-required="{{fotoObrigatoria}}"
+    data-precadastro-saved="{{cadastroSalvo}}"
+    data-precadastro-completo="{{cadastroCompleto}}"
     novalidate
   >
     <input type="hidden" name="acao" value="salvar">
@@ -255,6 +257,19 @@
           <div class="aluno-document-progress" aria-hidden="true"><span></span></div>
         </div>
       </div>
+    </section>
+
+    <section class="precadastro-section precadastro-carteira-section">
+      <button
+        type="button"
+        class="precadastro-carteira-button"
+        data-precadastro-carteira
+        data-carteira-url="{{carteiraUrl}}"
+        {{carteiraDisabled}}
+      >
+        <i class="material-icons" aria-hidden="true">badge</i>
+        <span>Gerar minha carteira</span>
+      </button>
     </section>
 
     <button type="submit" class="precadastro-save-float" rel="tooltip" title="Salvar">

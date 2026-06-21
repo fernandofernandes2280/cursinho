@@ -3,6 +3,7 @@
 namespace App\Controller\Pages;
 
 use \App\Controller\Painel\Resize;
+use \App\Controller\Painel\Aluno as PainelAluno;
 use \App\Model\Entity\Aluno as EntityAluno;
 use \App\Model\Entity\Bairro as EntityBairro;
 use \App\Model\Entity\Escolaridade as EntityEscolaridade;
@@ -447,6 +448,41 @@ class PreCadastroAluno extends Page{
         return true;
     }
 
+    private static function hasAlunoRequiredFields(EntityAluno $obAluno){
+        $requiredFields = [
+            'nome',
+            'dataNasc',
+            'sexo',
+            'fone',
+            'turma',
+            'mae',
+            'naturalidade',
+            'escolaridade',
+            'estadoCivil',
+            'cep',
+            'endereco',
+            'numero',
+            'bairro',
+            'cidade',
+            'uf',
+        ];
+
+        foreach($requiredFields as $field){
+            if(trim((string)($obAluno->$field ?? '')) === ''){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static function isPreCadastroCompleto(EntityAluno $obAluno){
+        return self::hasAlunoRequiredFields($obAluno) &&
+            !$obAluno->semFoto() &&
+            self::hasAlunoDocumento($obAluno->id, self::DOCUMENTOS_ALUNO['documentoIdentificacao']) &&
+            self::hasAlunoDocumento($obAluno->id, self::DOCUMENTOS_ALUNO['documentoResidencia']);
+    }
+
     private static function renderCheck($request){
         $queryParams = $request->getQueryParams();
         $cpf = (string)($queryParams['cpf'] ?? '');
@@ -548,20 +584,23 @@ class PreCadastroAluno extends Page{
 
     private static function renderForm($request, EntityAluno $obAluno){
         $queryParams = $request->getQueryParams();
+        $preStatus = $queryParams['preStatus'] ?? '';
         $foto = $obAluno->getFoto(false);
         $semFoto = $obAluno->semFoto();
         $sexo = (string)$obAluno->sexo;
+        $cadastroCompleto = self::isPreCadastroCompleto($obAluno);
+        $cadastroSalvo = $preStatus === 'saved' && $cadastroCompleto;
 
         return self::renderPage('Pré-cadastro do aluno', View::render('pages/precadastro/form', array_merge([
-            'statusMessage' => self::getStatusMessage($queryParams['preStatus'] ?? ''),
+            'statusMessage' => self::getStatusMessage($preStatus),
             'id' => (int)$obAluno->id,
             'matricula' => htmlspecialchars((string)$obAluno->matricula, ENT_QUOTES, 'UTF-8'),
             'nome' => htmlspecialchars((string)$obAluno->nome, ENT_QUOTES, 'UTF-8'),
             'cep' => htmlspecialchars((string)$obAluno->cep, ENT_QUOTES, 'UTF-8'),
             'endereco' => htmlspecialchars((string)$obAluno->endereco, ENT_QUOTES, 'UTF-8'),
             'numero' => htmlspecialchars((string)$obAluno->numero, ENT_QUOTES, 'UTF-8'),
-            'cidade' => htmlspecialchars((string)($obAluno->cidade ?: 'Santana'), ENT_QUOTES, 'UTF-8'),
-            'uf' => htmlspecialchars((string)($obAluno->uf ?: 'Ap'), ENT_QUOTES, 'UTF-8'),
+            'cidade' => htmlspecialchars((string)$obAluno->cidade, ENT_QUOTES, 'UTF-8'),
+            'uf' => htmlspecialchars((string)$obAluno->uf, ENT_QUOTES, 'UTF-8'),
             'naturalidade' => htmlspecialchars((string)$obAluno->naturalidade, ENT_QUOTES, 'UTF-8'),
             'dataNasc' => self::formatDateInput($obAluno->dataNasc),
             'fone' => htmlspecialchars((string)$obAluno->fone, ENT_QUOTES, 'UTF-8'),
@@ -580,7 +619,50 @@ class PreCadastroAluno extends Page{
             'selfieRequirement' => $semFoto ? '<p class="precadastro-selfie-alert">A foto atual é padrão. Envie uma selfie nova para concluir o pré-cadastro.</p>' : '',
             'documentMaxSize' => self::getUploadMaxBytes(),
             'documentMaxSizeLabel' => self::formatBytes(self::getUploadMaxBytes()),
+            'cadastroSalvo' => $cadastroSalvo ? '1' : '0',
+            'cadastroCompleto' => $cadastroCompleto ? '1' : '0',
+            'carteiraUrl' => URL.'/precadastro/'.(int)$obAluno->id.'/carteira',
+            'carteiraDisabled' => $cadastroSalvo ? '' : 'disabled',
         ], self::getAlunoDocumentosVars($obAluno->id))));
+    }
+
+    public static function getCarteiraAluno($request, $id){
+        $obAluno = EntityAluno::getAlunoById($id);
+
+        if(!$obAluno instanceof EntityAluno || !self::isPreCadastroCompleto($obAluno)){
+            $request->getRouter()->redirect('/precadastro');
+        }
+
+        Funcoes::init();
+        $sessionBackup = [
+            'idAluno' => $_SESSION['idAluno'] ?? null,
+            'naoCompleto' => $_SESSION['naoCompleto'] ?? null,
+            'updated' => $_SESSION['updated'] ?? null,
+        ];
+        unset($_SESSION['idAluno'], $_SESSION['naoCompleto'], $_SESSION['updated']);
+
+        $content = PainelAluno::getCarteiraAluno($request, $id);
+
+        foreach($sessionBackup as $key => $value){
+            if($value === null){
+                unset($_SESSION[$key]);
+                continue;
+            }
+
+            $_SESSION[$key] = $value;
+        }
+
+        return $content;
+    }
+
+    public static function setCarteiraAluno($request, $id){
+        $obAluno = EntityAluno::getAlunoById($id);
+
+        if(!$obAluno instanceof EntityAluno || !self::isPreCadastroCompleto($obAluno)){
+            $request->getRouter()->redirect('/precadastro');
+        }
+
+        return PainelAluno::setCarteiraAluno($request, $id);
     }
 
     public static function getPreCadastro($request){

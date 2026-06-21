@@ -1056,6 +1056,35 @@ body.precadastro-body {
   cursor: pointer;
 }
 
+.precadastro-carteira-section {
+  display: flex;
+  justify-content: center;
+}
+
+.precadastro-carteira-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  min-height: 2.85rem;
+  padding: 0 1.1rem;
+  border: 0;
+  border-radius: .5rem;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 0 16px 32px rgba(37, 99, 235, .22);
+  cursor: pointer;
+}
+
+.precadastro-carteira-button:disabled,
+.precadastro-carteira-button.is-disabled {
+  background: #cbd5e1;
+  color: #64748b;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
 @media (max-width: 900px) {
   .precadastro-selfie-grid {
     grid-template-columns: 1fr;
