@@ -278,6 +278,27 @@ textarea {
   object-fit: cover;
 }
 
+.photo-capture-preview.is-editing {
+  cursor: grab;
+  touch-action: none;
+}
+
+.photo-capture-preview.is-dragging {
+  cursor: grabbing;
+}
+
+.photo-capture-preview img.is-editing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: none;
+  max-height: none;
+  object-fit: fill;
+  user-select: none;
+  will-change: transform;
+  pointer-events: none;
+}
+
 .photo-capture-frame {
   position: absolute;
   inset: 7%;
