@@ -209,6 +209,24 @@ class PreCadastroAluno extends Page{
         return array_merge([$documento['fileName']], (array)($documento['fallbackFileNames'] ?? []));
     }
 
+    private static function limparDocumentosSubstituidos($dir, $documento, &$meta){
+        foreach(self::getAlunoDocumentoFileNames($documento) as $fileName){
+            if($fileName === $documento['fileName']){
+                continue;
+            }
+
+            $path = $dir.'/'.$fileName;
+
+            if(is_file($path) && !unlink($path)){
+                return false;
+            }
+
+            unset($meta[$fileName]);
+        }
+
+        return true;
+    }
+
     private static function getAlunoDocumentoInfo($idAluno, $documento){
         if((int)$idAluno <= 0){
             return '';
@@ -385,6 +403,10 @@ class PreCadastroAluno extends Page{
             }
 
             if(!move_uploaded_file($file['tmp_name'], $dir.'/'.$documento['fileName'])){
+                return false;
+            }
+
+            if(!self::limparDocumentosSubstituidos($dir, $documento, $meta)){
                 return false;
             }
 
