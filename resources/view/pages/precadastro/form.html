@@ -228,12 +228,12 @@
         <div>
           <span>Documentos</span>
           <h2>Arquivos do aluno</h2>
-          <small class="precadastro-section-hint">Envie os documentos em PDF.</small>
+          <small class="precadastro-section-hint">Envie os documentos em PDF, até {{documentMaxSizeLabel}} cada.</small>
         </div>
       </div>
 
       <div class="aluno-documents-grid precadastro-documents-grid">
-        <div class="aluno-document-upload" data-document-required="1">
+        <div class="aluno-document-upload" data-document-required="1" data-document-max-size="{{documentMaxSize}}" data-document-max-size-label="{{documentMaxSizeLabel}}">
           <input type="file" id="documentoIdentificacao" name="documentoIdentificacao" accept="application/pdf,.pdf">
           <div class="aluno-document-main-row">
             <button type="button" class="aluno-document-button" data-document-trigger>Documento de Identificação <span>Obrigatório</span></button>
@@ -244,7 +244,7 @@
           <div class="aluno-document-progress" aria-hidden="true"><span></span></div>
         </div>
 
-        <div class="aluno-document-upload" data-document-required="1">
+        <div class="aluno-document-upload" data-document-required="1" data-document-max-size="{{documentMaxSize}}" data-document-max-size-label="{{documentMaxSizeLabel}}">
           <input type="file" id="documentoResidencia" name="documentoResidencia" accept="application/pdf,.pdf">
           <div class="aluno-document-main-row">
             <button type="button" class="aluno-document-button" data-document-trigger>Comprovante de Residência <span>Obrigatório</span></button>

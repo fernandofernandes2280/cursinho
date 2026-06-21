@@ -14,6 +14,8 @@ use \App\Utils\View;
 use Bissolli\ValidadorCpfCnpj\CPF;
 
 class PreCadastroAluno extends Page{
+    private const DOCUMENTO_MAX_BYTES = 5 * 1024 * 1024;
+
     private const DOCUMENTOS_ALUNO = [
         'documentoIdentificacao' => [
             'fileName' => 'documento-identificacao.pdf',
@@ -23,10 +25,6 @@ class PreCadastroAluno extends Page{
         'documentoResidencia' => [
             'fileName' => 'comprovante-residencia.pdf',
             'label' => 'Comprovante de Residência',
-        ],
-        'documentoOutros' => [
-            'fileName' => 'outros-documentos.pdf',
-            'label' => 'Outros documentos',
         ],
     ];
 
@@ -38,6 +36,8 @@ class PreCadastroAluno extends Page{
     }
 
     private static function getStatusMessage($status){
+        $uploadMaxLabel = self::formatBytes(self::getUploadMaxBytes());
+        $appUploadMaxLabel = self::formatBytes(self::DOCUMENTO_MAX_BYTES);
         $messages = [
             'cpfInvalid' => ['danger', 'CPF inválido.'],
             'cpfNotFound' => ['danger', 'CPF não localizado para pré-cadastro.'],
@@ -46,6 +46,11 @@ class PreCadastroAluno extends Page{
             'fotoInvalid' => ['danger', 'Envie uma selfie válida em JPG ou PNG, com até 5 MB.'],
             'requiredFields' => ['danger', 'Preencha todos os campos obrigatórios.'],
             'documentoInvalid' => ['danger', 'Envie os documentos somente em PDF.'],
+            'documentoUploadError' => ['danger', 'Não foi possível receber o PDF. Verifique se cada arquivo tem até '.$uploadMaxLabel.' e tente novamente.'],
+            'documentoUploadLimit' => ['danger', 'O servidor PHP ainda está limitando o upload a '.$uploadMaxLabel.'. Para aceitar até '.$appUploadMaxLabel.', reinicie o servidor com upload_max_filesize=5M e post_max_size=16M.'],
+            'documentoUploadPartial' => ['danger', 'O envio do PDF foi interrompido antes de concluir. Tente selecionar o arquivo novamente.'],
+            'documentoUploadServerError' => ['danger', 'O servidor não conseguiu receber o PDF. Verifique a pasta temporária e as permissões de upload do PHP.'],
+            'documentoSaveError' => ['danger', 'Não foi possível salvar os documentos. Verifique as permissões da pasta de uploads.'],
             'documentosRequired' => ['danger', 'Envie Documento de Identificação e Comprovante de Residência.'],
         ];
 
@@ -68,6 +73,75 @@ class PreCadastroAluno extends Page{
         $validaCpf = new CPF($cpf);
 
         return $validaCpf->isValid() ? $validaCpf->getValue() : '';
+    }
+
+    private static function parseIniBytes($value){
+        $value = trim((string)$value);
+
+        if($value === ''){
+            return 0;
+        }
+
+        $unit = strtolower(substr($value, -1));
+        $number = (float)$value;
+
+        if($unit === 'g'){
+            return (int)($number * 1024 * 1024 * 1024);
+        }
+
+        if($unit === 'm'){
+            return (int)($number * 1024 * 1024);
+        }
+
+        if($unit === 'k'){
+            return (int)($number * 1024);
+        }
+
+        return (int)$number;
+    }
+
+    private static function getPhpUploadMaxBytes(){
+        return self::parseIniBytes(ini_get('upload_max_filesize') ?: '');
+    }
+
+    private static function getUploadMaxBytes(){
+        $phpUploadMax = self::getPhpUploadMaxBytes();
+
+        if($phpUploadMax <= 0){
+            return self::DOCUMENTO_MAX_BYTES;
+        }
+
+        return min(self::DOCUMENTO_MAX_BYTES, $phpUploadMax);
+    }
+
+    private static function formatBytes($bytes){
+        $bytes = (int)$bytes;
+
+        if($bytes >= 1024 * 1024){
+            return rtrim(rtrim(number_format($bytes / 1024 / 1024, 1, ',', ''), '0'), ',').' MB';
+        }
+
+        if($bytes >= 1024){
+            return rtrim(rtrim(number_format($bytes / 1024, 1, ',', ''), '0'), ',').' KB';
+        }
+
+        return $bytes.' bytes';
+    }
+
+    private static function getDocumentoUploadErrorStatus($error){
+        switch((int)$error){
+            case UPLOAD_ERR_INI_SIZE:
+            case UPLOAD_ERR_FORM_SIZE:
+                return 'documentoUploadLimit';
+            case UPLOAD_ERR_PARTIAL:
+                return 'documentoUploadPartial';
+            case UPLOAD_ERR_NO_TMP_DIR:
+            case UPLOAD_ERR_CANT_WRITE:
+            case UPLOAD_ERR_EXTENSION:
+                return 'documentoUploadServerError';
+        }
+
+        return 'documentoUploadError';
     }
 
     private static function getAlunoByCpf($cpf){
@@ -189,7 +263,6 @@ class PreCadastroAluno extends Page{
         return [
             'documentoIdentificacaoInfo' => self::getAlunoDocumentoInfo($idAluno, self::DOCUMENTOS_ALUNO['documentoIdentificacao']),
             'documentoResidenciaInfo' => self::getAlunoDocumentoInfo($idAluno, self::DOCUMENTOS_ALUNO['documentoResidencia']),
-            'documentoOutrosInfo' => self::getAlunoDocumentoInfo($idAluno, self::DOCUMENTOS_ALUNO['documentoOutros']),
         ];
     }
 
@@ -199,6 +272,10 @@ class PreCadastroAluno extends Page{
         }
 
         if((int)($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK){
+            return false;
+        }
+
+        if((int)($file['size'] ?? 0) > self::getUploadMaxBytes()){
             return false;
         }
 
@@ -230,6 +307,32 @@ class PreCadastroAluno extends Page{
         }
 
         return in_array($type, ['application/pdf', 'application/x-pdf'], true);
+    }
+
+    private static function documentosAlunoUploadStatus($request){
+        $fileVars = $request->getFileVars();
+
+        foreach(self::DOCUMENTOS_ALUNO as $field => $documento){
+            $file = $fileVars[$field] ?? null;
+
+            if(!is_array($file)){
+                continue;
+            }
+
+            $error = (int)($file['error'] ?? UPLOAD_ERR_NO_FILE);
+
+            if($error === UPLOAD_ERR_OK || $error === UPLOAD_ERR_NO_FILE){
+                if($error === UPLOAD_ERR_OK && (int)($file['size'] ?? 0) > self::getUploadMaxBytes()){
+                    return 'documentoUploadLimit';
+                }
+
+                continue;
+            }
+
+            return self::getDocumentoUploadErrorStatus($error);
+        }
+
+        return '';
     }
 
     private static function documentosAlunoValidos($request){
@@ -453,6 +556,8 @@ class PreCadastroAluno extends Page{
             'fotoObrigatoria' => $semFoto ? '1' : '0',
             'selfieStatus' => $semFoto ? 'Selfie pendente' : 'Selfie cadastrada',
             'selfieRequirement' => $semFoto ? '<p class="precadastro-selfie-alert">A foto atual é padrão. Envie uma selfie nova para concluir o pré-cadastro.</p>' : '',
+            'documentMaxSize' => self::getUploadMaxBytes(),
+            'documentMaxSizeLabel' => self::formatBytes(self::getUploadMaxBytes()),
         ], self::getAlunoDocumentosVars($obAluno->id))));
     }
 
@@ -496,6 +601,11 @@ class PreCadastroAluno extends Page{
             $request->getRouter()->redirect('/precadastro?cpf='.$cpf.'&preStatus=requiredFields');
         }
 
+        $documentoUploadStatus = self::documentosAlunoUploadStatus($request);
+        if($documentoUploadStatus !== ''){
+            $request->getRouter()->redirect('/precadastro?cpf='.$cpf.'&preStatus='.$documentoUploadStatus);
+        }
+
         if(!self::documentosAlunoValidos($request)){
             $request->getRouter()->redirect('/precadastro?cpf='.$cpf.'&preStatus=documentoInvalid');
         }
@@ -533,7 +643,7 @@ class PreCadastroAluno extends Page{
         $obAluno->atualizar();
 
         if(!self::salvarDocumentosAluno($request, $obAluno->id)){
-            $request->getRouter()->redirect('/precadastro?cpf='.$cpf.'&preStatus=documentoInvalid');
+            $request->getRouter()->redirect('/precadastro?cpf='.$cpf.'&preStatus=documentoSaveError');
         }
 
         $request->getRouter()->redirect('/precadastro?cpf='.$cpf.'&preStatus=saved');

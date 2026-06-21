@@ -204,6 +204,8 @@
         var trigger = card.querySelector('[data-document-trigger]');
         var feedback = card.querySelector('[data-document-feedback]');
         var progress = card.querySelector('.aluno-document-progress span');
+        var maxSize = parseInt(card.getAttribute('data-document-max-size') || '0', 10);
+        var maxSizeLabel = card.getAttribute('data-document-max-size-label') || 'o limite permitido';
 
         applyDocumentLoadedState(card);
 
@@ -235,6 +237,7 @@
               feedback.innerHTML = previousText;
             }
             applyDocumentLoadedState(card);
+            setError(form, '');
             updateCadastroCompletion();
             return;
           }
@@ -245,10 +248,23 @@
             if (feedback) {
               feedback.textContent = 'Envie apenas arquivo PDF.';
             }
+            setError(form, 'Envie os documentos somente em PDF.');
             updateCadastroCompletion();
             return;
           }
 
+          if (maxSize > 0 && file.size > maxSize) {
+            input.value = '';
+            card.classList.add('is-invalid');
+            if (feedback) {
+              feedback.textContent = 'O PDF precisa ter até ' + maxSizeLabel + '.';
+            }
+            setError(form, 'O PDF precisa ter até ' + maxSizeLabel + '.');
+            updateCadastroCompletion();
+            return;
+          }
+
+          setError(form, '');
           card.classList.add('is-loading');
           if (feedback) {
             feedback.textContent = 'Carregando PDF...';
