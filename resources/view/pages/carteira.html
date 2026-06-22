@@ -172,10 +172,70 @@
 </style>
 
 <script type="text/javascript">
+	function drawRoundedRect(ctx, x, y, width, height, radius) {
+		var size = Math.min(radius, width / 2, height / 2);
+
+		ctx.beginPath();
+		ctx.moveTo(x + size, y);
+		ctx.lineTo(x + width - size, y);
+		ctx.quadraticCurveTo(x + width, y, x + width, y + size);
+		ctx.lineTo(x + width, y + height - size);
+		ctx.quadraticCurveTo(x + width, y + height, x + width - size, y + height);
+		ctx.lineTo(x + size, y + height);
+		ctx.quadraticCurveTo(x, y + height, x, y + height - size);
+		ctx.lineTo(x, y + size);
+		ctx.quadraticCurveTo(x, y, x + size, y);
+		ctx.closePath();
+	}
+
+	function roundPhotoOnCanvas(canvas) {
+		var target = document.getElementById('target');
+		var photo = target ? target.querySelector('.carteira-photo-frame img') : null;
+
+		if (!canvas || !target || !photo) {
+			return canvas;
+		}
+
+		var targetRect = target.getBoundingClientRect();
+		var photoRect = photo.getBoundingClientRect();
+
+		if (!targetRect.width || !targetRect.height || !photoRect.width || !photoRect.height) {
+			return canvas;
+		}
+
+		var scaleX = canvas.width / targetRect.width;
+		var scaleY = canvas.height / targetRect.height;
+		var x = Math.round((photoRect.left - targetRect.left) * scaleX);
+		var y = Math.round((photoRect.top - targetRect.top) * scaleY);
+		var width = Math.round(photoRect.width * scaleX);
+		var height = Math.round(photoRect.height * scaleY);
+		var computedStyle = window.getComputedStyle ? window.getComputedStyle(photo) : null;
+		var radius = computedStyle ? parseFloat(computedStyle.borderTopLeftRadius) || 14 : 14;
+		var scaledRadius = Math.round(radius * Math.min(scaleX, scaleY));
+		var ctx = canvas.getContext('2d');
+		var photoCanvas = document.createElement('canvas');
+		var photoCtx = photoCanvas.getContext('2d');
+
+		photoCanvas.width = width;
+		photoCanvas.height = height;
+		photoCtx.drawImage(canvas, x, y, width, height, 0, 0, width, height);
+
+		ctx.fillStyle = '#ffffff';
+		ctx.fillRect(x, y, width, height);
+		ctx.save();
+		drawRoundedRect(ctx, x, y, width, height, scaledRadius);
+		ctx.clip();
+		ctx.drawImage(photoCanvas, x, y);
+		ctx.restore();
+
+		return canvas;
+	}
+
 	function capture() {
 		$('#target').html2canvas({
 			allowTaint: true,
 			onrendered: function(canvas) {
+				roundPhotoOnCanvas(canvas);
 				$('#img_val').val(canvas.toDataURL("image/png"));
 				document.getElementById("opcao").value = "view";
 				document.getElementById("myForm").submit();
@@ -187,6 +247,7 @@
 		$('#target').html2canvas({
 			allowTaint: true,
 			onrendered: function(canvas) {
+				roundPhotoOnCanvas(canvas);
 				$('#img_val').val(canvas.toDataURL("image/png"));
 				document.getElementById("opcao").value = "down";
 				document.getElementById("myForm").submit();
