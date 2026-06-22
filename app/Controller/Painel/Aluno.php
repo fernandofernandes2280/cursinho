@@ -514,11 +514,17 @@ class Aluno extends Page{
 		$obTurma = (int)$obAluno->turma > 0 ? EntityTurma::getTurmaById((int)$obAluno->turma) : null;
 		$obStatus = (int)$obAluno->status > 0 ? EntityStatus::getStatusById((int)$obAluno->status) : null;
 		$configVars = is_array($configVars) ? $configVars : self::getCarteiraConfigVars();
+		$nomeAluno = strtoupper((string)$obAluno->nome);
+		$nomeAlunoLength = strlen($nomeAluno);
+		$nomeCarteiraAlunoClass = $nomeAlunoLength > 60
+			? ' carteira-info-nome-extra-long'
+			: ($nomeAlunoLength > 42 ? ' carteira-info-nome-long' : '');
 
 		return array_merge($configVars, [
 			'foto' => $obAluno->getFoto(),
 			'matricula'=> $obAluno->matricula,
-			'nome' => strtoupper((string)$obAluno->nome),
+			'nome' => $nomeAluno,
+			'nomeCarteiraAlunoClass' => $nomeCarteiraAlunoClass,
 			'turma' => $obTurma ? strtoupper((string)$obTurma->nome) : 'SEM TURMA',
 			'mae' => strtoupper((string)$obAluno->mae),
 			'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##'),

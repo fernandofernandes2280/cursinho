@@ -266,7 +266,27 @@
 }
 
 .carteira-info-nome strong {
-	font-size: 18px;
+	font-size: 17px;
+	line-height: 1.04;
+}
+
+.carteira-info-nome-long strong {
+	font-size: 15px;
+	line-height: 1.03;
+}
+
+.carteira-info-nome-extra-long span {
+	margin-bottom: 2px;
+}
+
+.carteira-info-nome-extra-long strong {
+	font-size: 13px;
+	line-height: 1.02;
+}
+
+.carteira-info-nome-long,
+.carteira-info-nome-extra-long {
+	height: 84px;
 }
 
 .carteira-info-turma {
@@ -302,6 +322,22 @@
 	top: 136px;
 	width: 370px;
 	height: 56px;
+}
+
+.carteira-info-nome-long ~ .carteira-info-turma,
+.carteira-info-nome-long ~ .carteira-info-cpf,
+.carteira-info-nome-long ~ .carteira-info-nascimento,
+.carteira-info-nome-extra-long ~ .carteira-info-turma,
+.carteira-info-nome-extra-long ~ .carteira-info-cpf,
+.carteira-info-nome-extra-long ~ .carteira-info-nascimento {
+	top: 92px;
+}
+
+.carteira-info-nome-long ~ .carteira-info-cadastro,
+.carteira-info-nome-long ~ .carteira-info-mae,
+.carteira-info-nome-extra-long ~ .carteira-info-cadastro,
+.carteira-info-nome-extra-long ~ .carteira-info-mae {
+	top: 154px;
 }
 
 .carteira-info-mae strong {
