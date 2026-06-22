@@ -54,6 +54,12 @@
     input.classList.toggle('precadastro-input-invalid', Boolean(message));
   }
 
+  function hasCpfMessage() {
+    var messageBox = document.querySelector('[data-precadastro-cpf-message]');
+
+    return messageBox && messageBox.textContent.trim() !== '';
+  }
+
   function validarCpfPreCadastro(showEmpty) {
     if (!cpfForm) {
       return true;
@@ -94,12 +100,27 @@
     });
 
     if (cpfInput) {
-      validarCpfPreCadastro(false);
+      var initialCpf = normalizarCpf(cpfInput.value);
+      var keepInitialCpfMessage = hasCpfMessage();
+
+      if (!keepInitialCpfMessage) {
+        validarCpfPreCadastro(false);
+      }
 
       cpfInput.addEventListener('input', function() {
+        if (keepInitialCpfMessage && normalizarCpf(cpfInput.value) === initialCpf) {
+          return;
+        }
+
+        keepInitialCpfMessage = false;
         validarCpfPreCadastro(false);
       });
       cpfInput.addEventListener('blur', function() {
+        if (keepInitialCpfMessage && normalizarCpf(cpfInput.value) === initialCpf) {
+          return;
+        }
+
+        keepInitialCpfMessage = false;
         validarCpfPreCadastro(false);
       });
     }

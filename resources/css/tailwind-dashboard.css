@@ -822,6 +822,34 @@ body.precadastro-body {
   font-weight: 700;
 }
 
+.precadastro-back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  min-height: 2.35rem;
+  padding: 0 .85rem;
+  border: 1px solid #cbd5e1;
+  border-radius: .5rem;
+  background: #fff;
+  color: #334155;
+  font-size: .86rem;
+  font-weight: 800;
+  line-height: 1;
+  text-decoration: none;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, .08);
+}
+
+.precadastro-back-button:hover,
+.precadastro-back-button:focus {
+  color: #1f2937;
+  text-decoration: none;
+}
+
+.precadastro-back-button .material-icons {
+  font-size: 1.1rem;
+}
+
 .precadastro-header img {
   width: 3.25rem;
   height: 3.25rem;
@@ -1046,6 +1074,13 @@ body.precadastro-body {
   opacity: .8;
 }
 
+.precadastro-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+}
+
 .precadastro-save-float {
   display: inline-flex;
   align-items: center;
@@ -1151,11 +1186,22 @@ body.precadastro-body {
     flex-direction: column;
   }
 
-  .precadastro-save-float {
+  .precadastro-form-actions {
     position: fixed;
     right: 1rem;
     bottom: 1rem;
     z-index: 40;
+    justify-content: flex-end;
+  }
+
+  .precadastro-form-actions .precadastro-back-button {
+    min-height: 3rem;
+    padding: 0 .9rem;
+    border-radius: 999px;
+    box-shadow: 0 14px 28px rgba(15, 23, 42, .16);
+  }
+
+  .precadastro-save-float {
     width: 4rem;
     height: 4rem;
     min-height: 4rem;

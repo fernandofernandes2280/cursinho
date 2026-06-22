@@ -16,6 +16,7 @@ use Bissolli\ValidadorCpfCnpj\CPF;
 
 class PreCadastroAluno extends Page{
     private const DOCUMENTO_MAX_BYTES = 5 * 1024 * 1024;
+    private const STATUS_ALUNO_ATIVO = 1;
 
     private const DOCUMENTOS_ALUNO = [
         'documentoIdentificacao' => [
@@ -42,6 +43,7 @@ class PreCadastroAluno extends Page{
         $messages = [
             'cpfInvalid' => ['danger', 'CPF inválido.'],
             'cpfNotFound' => ['danger', 'CPF não localizado para pré-cadastro.'],
+            'inactiveComplete' => ['danger', 'Seu cadastro já está completo, mas sua situação está inativa. Procure a coordenação do cursinho para regularizar sua situação.'],
             'saved' => ['success', 'Pré-cadastro salvo com sucesso.'],
             'selfieRequired' => ['danger', 'Envie uma selfie para concluir o pré-cadastro.'],
             'fotoInvalid' => ['danger', 'Envie uma selfie válida em JPG ou PNG, com até 5 MB.'],
@@ -483,14 +485,28 @@ class PreCadastroAluno extends Page{
             self::hasAlunoDocumento($obAluno->id, self::DOCUMENTOS_ALUNO['documentoResidencia']);
     }
 
+    private static function isAlunoAtivo(EntityAluno $obAluno){
+        return (int)$obAluno->status === self::STATUS_ALUNO_ATIVO;
+    }
+
+    private static function ativarAlunoSePreCadastroCompleto(EntityAluno $obAluno){
+        if(self::isAlunoAtivo($obAluno) || !self::isPreCadastroCompleto($obAluno)){
+            return false;
+        }
+
+        $obAluno->status = self::STATUS_ALUNO_ATIVO;
+
+        return $obAluno->atualizar();
+    }
+
     private static function getCarteiraRoute($idAluno){
         return '/precadastro/'.(int)$idAluno.'/carteira';
     }
 
-    private static function renderCheck($request){
+    private static function renderCheck($request, $statusOverride = null, $cpfOverride = null){
         $queryParams = $request->getQueryParams();
-        $cpf = (string)($queryParams['cpf'] ?? '');
-        $status = $queryParams['preStatus'] ?? '';
+        $cpf = $cpfOverride !== null ? (string)$cpfOverride : (string)($queryParams['cpf'] ?? '');
+        $status = $statusOverride !== null ? (string)$statusOverride : (string)($queryParams['preStatus'] ?? '');
 
         if($status === 'cpfNotFound' && trim($cpf) === ''){
             $status = '';
@@ -637,6 +653,10 @@ class PreCadastroAluno extends Page{
             $request->getRouter()->redirect('/precadastro');
         }
 
+        if(!self::isAlunoAtivo($obAluno)){
+            $request->getRouter()->redirect('/precadastro?cpf='.rawurlencode((string)$obAluno->cpf).'&preStatus=inactiveComplete');
+        }
+
         Funcoes::init();
         $sessionBackup = [
             'idAluno' => $_SESSION['idAluno'] ?? null,
@@ -666,6 +686,10 @@ class PreCadastroAluno extends Page{
             $request->getRouter()->redirect('/precadastro');
         }
 
+        if(!self::isAlunoAtivo($obAluno)){
+            $request->getRouter()->redirect('/precadastro?cpf='.rawurlencode((string)$obAluno->cpf).'&preStatus=inactiveComplete');
+        }
+
         return PainelAluno::setCarteiraAluno($request, $id);
     }
 
@@ -680,7 +704,11 @@ class PreCadastroAluno extends Page{
         $obAluno = self::getAlunoByCpf($cpf);
 
         if(!$obAluno instanceof EntityAluno){
-            return self::renderCheck($request);
+            return self::renderCheck($request, 'cpfNotFound', $cpf);
+        }
+
+        if(self::isPreCadastroCompleto($obAluno) && !self::isAlunoAtivo($obAluno)){
+            return self::renderCheck($request, 'inactiveComplete', $cpf);
         }
 
         if(($queryParams['preStatus'] ?? '') === '' && self::isPreCadastroCompleto($obAluno)){
@@ -702,7 +730,11 @@ class PreCadastroAluno extends Page{
         $obAluno = self::getAlunoByCpf($cpf);
 
         if(!$obAluno instanceof EntityAluno){
-            $request->getRouter()->redirect('/precadastro?preStatus=cpfNotFound&cpf='.$cpf);
+            return self::renderCheck($request, 'cpfNotFound', $cpf);
+        }
+
+        if(self::isPreCadastroCompleto($obAluno) && !self::isAlunoAtivo($obAluno)){
+            return self::renderCheck($request, 'inactiveComplete', $cpf);
         }
 
         if($acao !== 'salvar'){
@@ -761,6 +793,8 @@ class PreCadastroAluno extends Page{
         if(!self::salvarDocumentosAluno($request, $obAluno->id)){
             $request->getRouter()->redirect('/precadastro?cpf='.$cpf.'&preStatus=documentoSaveError');
         }
+
+        self::ativarAlunoSePreCadastroCompleto($obAluno);
 
         $request->getRouter()->redirect('/precadastro?cpf='.$cpf.'&preStatus=saved');
     }
