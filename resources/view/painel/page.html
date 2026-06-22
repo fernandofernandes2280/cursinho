@@ -773,6 +773,7 @@
         var tableId = datatablesSimple.id || 'datatablesSimple';
         var configuredColumnMap = {};
         var currentStatusFilter = '';
+        var refreshDataTableSearch = function() {};
 
         function addConfiguredColumn(columnIndex, config) {
           var index = parseInt(columnIndex, 10);
@@ -787,6 +788,19 @@
             );
           }
         }
+
+        function parseColumnIndexes(value) {
+          return normalizeReportText(value).split(',')
+            .map(function(columnIndex) {
+              return parseInt(columnIndex.trim(), 10);
+            })
+            .filter(function(columnIndex) {
+              return !Number.isNaN(columnIndex);
+            });
+        }
+
+        var searchColumns = parseColumnIndexes(datatablesSimple.getAttribute('data-search-columns'));
+        var searchVisibleOnly = datatablesSimple.getAttribute('data-search-visible-only') === 'true';
 
         var htmlColumns = datatablesSimple.getAttribute('data-html-columns');
         if (htmlColumns) {
@@ -813,10 +827,6 @@
           searchable: false
         });
 
-        var configuredColumns = Object.keys(configuredColumnMap).map(function(index) {
-          return configuredColumnMap[index];
-        });
-
 	        var basePrintableColumns = [];
 	        var columnVisibility = {};
 	        var columnVisibilityStyle = document.createElement('style');
@@ -838,6 +848,39 @@
 	            });
 	          });
 	        }
+
+        if (headerRow) {
+          Array.prototype.forEach.call(headerRow.cells, function(cell, index) {
+            var isConfiguredSearchColumn = searchColumns.length && searchColumns.indexOf(index) !== -1;
+            var shouldControlSearch = searchVisibleOnly || searchColumns.length;
+            var isStatusFilterColumn = index === statusColumn && datatablesSimple.getAttribute('data-status-filter') === 'ativo-inativo';
+
+            if (!shouldControlSearch || index === actionsColumn || cell.getAttribute('data-searchable') === 'false') {
+              return;
+            }
+
+            if (searchColumns.length && !isConfiguredSearchColumn && !isStatusFilterColumn) {
+              addConfiguredColumn(index, {
+                type: cell.getAttribute('data-type') || 'string',
+                searchable: false
+              });
+              return;
+            }
+
+            addConfiguredColumn(index, {
+              type: cell.getAttribute('data-type') || 'string',
+              searchMethod: getVisibleColumnSearchMethod(
+                index,
+                isStatusFilterColumn ? statusSearchMethod : defaultColumnSearchMethod,
+                isStatusFilterColumn
+              )
+            });
+          });
+        }
+
+        var configuredColumns = Object.keys(configuredColumnMap).map(function(index) {
+          return configuredColumnMap[index];
+        });
 
 	        function getTableCssSelector() {
 	          return '#' + tableId.replace(/([^\w-])/g, '\\$1');
@@ -927,6 +970,7 @@
 	              }
 
 	              updateColumnVisibilityStyles();
+	              refreshDataTableSearch();
 	            });
 
 	            option.appendChild(input);
@@ -1037,6 +1081,45 @@
           return stripHtmlText(String(cell));
         }
 
+        function normalizeSearchTerms(terms) {
+          return (Array.isArray(terms) ? terms : [terms])
+            .map(function(term) {
+              return normalizeSearchText(term);
+            })
+            .filter(Boolean);
+        }
+
+        function defaultColumnSearchMethod(terms, cell) {
+          var cellText = normalizeSearchText(getDataTableCellSearchText(cell));
+          var normalizedTerms = normalizeSearchTerms(terms);
+
+          if (!normalizedTerms.length) {
+            return true;
+          }
+
+          return normalizedTerms.some(function(term) {
+            return cellText.indexOf(term) !== -1;
+          });
+        }
+
+        function hasStatusFilterSearchTerm(terms) {
+          return normalizeSearchTerms(terms).some(function(term) {
+            return term === getStatusFilterToken('ativo') || term === getStatusFilterToken('inativo');
+          });
+        }
+
+        function getVisibleColumnSearchMethod(columnIndex, searchMethod, allowStatusFilterWhenHidden) {
+          return function(terms, cell) {
+            var isHidden = searchVisibleOnly && columnVisibility[columnIndex] === false;
+
+            if (isHidden && !(allowStatusFilterWhenHidden && hasStatusFilterSearchTerm(terms))) {
+              return false;
+            }
+
+            return (searchMethod || defaultColumnSearchMethod)(terms, cell);
+          };
+        }
+
         function normalizeStatusTerm(term) {
           if (term === 'ativo' || term === 'ativos') {
             return 'ativo';
@@ -1122,6 +1205,32 @@
 	          return normalizeReportText(clone.textContent || '');
 	        }
 
+        function getSearchableRowText(valuesByColumn) {
+          if (!searchColumns.length && !searchVisibleOnly) {
+            return valuesByColumn.join(' ');
+          }
+
+          return getSearchableColumnIndexes().map(function(columnIndex) {
+            return valuesByColumn[columnIndex] || '';
+          }).join(' ');
+        }
+
+        function getSearchableColumnIndexes() {
+          if (searchColumns.length) {
+            return searchColumns.slice();
+          }
+
+          if (searchVisibleOnly) {
+            return getPrintableColumns().map(function(column) {
+              return column.index;
+            });
+          }
+
+          return basePrintableColumns.map(function(column) {
+            return column.index;
+          });
+        }
+
 	        createColumnVisibilityControls();
 
 	        var reportRows = Array.prototype.map.call(datatablesSimple.tBodies[0].rows, function(row) {
@@ -1131,8 +1240,8 @@
 	          var statusValue = !Number.isNaN(statusColumn) ? getCleanCellText(row.cells[statusColumn] || document.createElement('td')) : '';
 
 	          return {
+	            id: row.getAttribute('data-aluno-id') || '',
 	            valuesByColumn: valuesByColumn,
-	            search: normalizeSearchText(valuesByColumn.join(' ')),
 	            status: getStatusCellValue(statusValue)
 	          };
 	        });
@@ -1167,18 +1276,13 @@
 	          return filters.length ? filters.join(' | ') : 'Nenhum';
 	        }
 
-	        function getFilteredReportRows() {
+	        function getFilteredReportRowObjects() {
 	          var searchValue = getReportSearchValue();
 	          var statusFilter = getReportStatusFilter();
-	          var columns = getPrintableColumns();
 	          var terms = normalizeSearchText(searchValue).split(/\s+/).filter(Boolean);
 
 	          if (!terms.length && !statusFilter) {
-	            return reportRows.map(function(row) {
-	              return columns.map(function(column) {
-	                return row.valuesByColumn[column.index] || '';
-	              });
-	            });
+	            return reportRows;
 	          }
 
           return reportRows.filter(function(row) {
@@ -1189,13 +1293,19 @@
             return terms.every(function(term) {
               var statusTerm = normalizeStatusTerm(term);
 
-              if (!Number.isNaN(statusColumn) && statusTerm) {
+              if (!Number.isNaN(statusColumn) && statusTerm && (!searchVisibleOnly || columnVisibility[statusColumn] !== false)) {
                 return row.status === statusTerm;
               }
 
-              return row.search.indexOf(term) !== -1;
+              return normalizeSearchText(getSearchableRowText(row.valuesByColumn)).indexOf(term) !== -1;
             });
-	          }).map(function(row) {
+	          });
+	        }
+
+	        function getFilteredReportRows() {
+	          var columns = getPrintableColumns();
+
+	          return getFilteredReportRowObjects().map(function(row) {
 	            return columns.map(function(column) {
 	              return row.valuesByColumn[column.index] || '';
 	            });
@@ -1204,7 +1314,7 @@
 
         function createTableSearchControls(dataTable) {
           var hasStatusFilter = !Number.isNaN(statusColumn) && datatablesSimple.getAttribute('data-status-filter') === 'ativo-inativo';
-          var hasMultiSearch = hasStatusFilter || datatablesSimple.getAttribute('data-multi-search') === 'true';
+          var hasMultiSearch = hasStatusFilter || searchVisibleOnly || searchColumns.length || datatablesSimple.getAttribute('data-multi-search') === 'true';
 
           if (!hasMultiSearch) {
             return;
@@ -1222,24 +1332,46 @@
             return normalizeReportText(searchInput ? searchInput.value : '').split(/\s+/).filter(Boolean);
           }
 
+          function syncSearchInputColumns() {
+            var searchInput = search.querySelector('.datatable-input');
+
+            if (!searchInput) {
+              return;
+            }
+
+            if (searchVisibleOnly || searchColumns.length) {
+              searchInput.dataset.columns = JSON.stringify(getSearchableColumnIndexes());
+              return;
+            }
+
+            delete searchInput.dataset.columns;
+          }
+
           function applyCombinedSearch() {
             var queries = [];
             var searchTerms = getCurrentSearchTerms();
+            var termColumns = getSearchableColumnIndexes();
+
+            syncSearchInputColumns();
 
             searchTerms.forEach(function(term) {
               queries.push({
-                term: term
+                term: term,
+                columns: termColumns
               });
             });
 
             if (hasStatusFilter && currentStatusFilter) {
               queries.push({
-                term: getStatusFilterToken(currentStatusFilter)
+                term: getStatusFilterToken(currentStatusFilter),
+                columns: [statusColumn]
               });
             }
 
             dataTable.multiSearch(queries);
           }
+
+          refreshDataTableSearch = applyCombinedSearch;
 
           function scheduleCombinedSearch() {
             setTimeout(applyCombinedSearch, 0);
@@ -1248,6 +1380,7 @@
           var searchInput = search.querySelector('.datatable-input');
 
           if (searchInput) {
+            syncSearchInputColumns();
             searchInput.addEventListener('input', scheduleCombinedSearch);
             searchInput.addEventListener('search', scheduleCombinedSearch);
             searchInput.addEventListener('keyup', scheduleCombinedSearch);
@@ -1615,6 +1748,132 @@
           button.addEventListener('click', function(event) {
             event.preventDefault();
             generateTablePdf();
+          });
+        });
+
+        var walletPdfFrame = null;
+        var walletPdfJobId = '';
+        var walletPdfButton = null;
+        var walletProgress = document.querySelector('[data-table-wallet-progress]');
+        var walletProgressMessage = document.querySelector('[data-table-wallet-progress-message]');
+        var walletProgressCount = document.querySelector('[data-table-wallet-progress-count]');
+        var walletProgressBar = document.querySelector('[data-table-wallet-progress-bar]');
+
+        function setWalletPdfProgress(message, percent, count) {
+          if (!walletProgress) {
+            return;
+          }
+
+          walletProgress.hidden = false;
+
+          if (walletProgressMessage) {
+            walletProgressMessage.textContent = message;
+          }
+
+          if (walletProgressCount && count !== undefined) {
+            walletProgressCount.textContent = count;
+          }
+
+          if (walletProgressBar) {
+            walletProgressBar.style.width = Math.max(0, Math.min(100, percent || 0)) + '%';
+          }
+        }
+
+        function resetWalletPdfJob() {
+          if (walletPdfFrame && walletPdfFrame.parentNode) {
+            walletPdfFrame.parentNode.removeChild(walletPdfFrame);
+          }
+
+          walletPdfFrame = null;
+
+          if (walletPdfButton) {
+            walletPdfButton.removeAttribute('aria-busy');
+            walletPdfButton.classList.remove('is-loading');
+          }
+
+          walletPdfButton = null;
+        }
+
+        window.addEventListener('message', function(event) {
+          if (event.origin !== window.location.origin) {
+            return;
+          }
+
+          var data = event.data || {};
+
+          if (!data.type || data.jobId !== walletPdfJobId) {
+            return;
+          }
+
+          if (data.type === 'wallet-pdf-progress') {
+            setWalletPdfProgress(data.message || 'Gerando carteiras...', data.percent || 0, data.count || '');
+            return;
+          }
+
+          if (data.type === 'wallet-pdf-error') {
+            setWalletPdfProgress(data.message || 'Não foi possível gerar o PDF das carteiras.', 0, '');
+            resetWalletPdfJob();
+            return;
+          }
+
+          if (data.type === 'wallet-pdf-complete') {
+            setWalletPdfProgress(data.message || 'PDF gerado. Abrindo arquivo...', 100, data.count || '');
+
+            if (data.blob) {
+              var pdfUrl = URL.createObjectURL(data.blob);
+              var pdfWindow = window.open(pdfUrl, '_blank');
+
+              if (!pdfWindow) {
+                window.location.href = pdfUrl;
+              }
+
+              setTimeout(function() {
+                URL.revokeObjectURL(pdfUrl);
+              }, 60000);
+            }
+
+            resetWalletPdfJob();
+          }
+        });
+
+        document.querySelectorAll('[data-table-wallet-print]').forEach(function(button) {
+          button.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            if (button.getAttribute('aria-busy') === 'true') {
+              return;
+            }
+
+            var ids = getFilteredReportRowObjects().map(function(row) {
+              return row.id;
+            }).filter(Boolean);
+
+            if (!ids.length) {
+              alert('Nenhum aluno encontrado nos filtros atuais.');
+              return;
+            }
+
+            resetWalletPdfJob();
+            walletPdfButton = button;
+            walletPdfJobId = String(Date.now()) + String(Math.floor(Math.random() * 100000));
+            button.setAttribute('aria-busy', 'true');
+            button.classList.add('is-loading');
+            setWalletPdfProgress('Preparando ' + ids.length + ' carteiras...', 3, ids.length + ' alunos');
+
+            var separator = button.href.indexOf('?') === -1 ? '?' : '&';
+            var url = button.href + separator + 'ids=' + encodeURIComponent(ids.join(',')) + '&embedded=1&job=' + encodeURIComponent(walletPdfJobId);
+            walletPdfFrame = document.createElement('iframe');
+            walletPdfFrame.src = url;
+            walletPdfFrame.setAttribute('aria-hidden', 'true');
+            walletPdfFrame.style.position = 'absolute';
+            walletPdfFrame.style.left = '-2200px';
+            walletPdfFrame.style.top = '0';
+            walletPdfFrame.style.width = '1200px';
+            walletPdfFrame.style.height = '800px';
+            walletPdfFrame.style.opacity = '0';
+            walletPdfFrame.style.pointerEvents = 'none';
+            walletPdfFrame.style.border = '0';
+            document.body.appendChild(walletPdfFrame);
           });
         });
 

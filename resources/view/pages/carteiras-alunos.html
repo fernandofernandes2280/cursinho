@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{title}}</title>
+	<link rel="icon" type="image/png" href="{{URL}}/resources/assets/img/iconPrepara.png">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons">
+	{{carteiraStyles}}
+	<style>
+		body {
+			margin: 0;
+			background: #eef4f8;
+			color: #172033;
+			font-family: Inter, Arial, sans-serif;
+		}
+
+		.wallet-bulk-page,
+		.wallet-bulk-page * {
+			box-sizing: border-box;
+		}
+
+		.wallet-bulk-page {
+			min-height: 100vh;
+			padding: 28px;
+		}
+
+		.wallet-bulk-shell {
+			max-width: 920px;
+			margin: 0 auto;
+			padding: 24px;
+			background: #fff;
+			border: 1px solid #d8e1ea;
+			border-radius: 12px;
+			box-shadow: 0 18px 46px rgba(15, 23, 42, .12);
+		}
+
+		.wallet-bulk-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 18px;
+			margin-bottom: 18px;
+		}
+
+		.wallet-bulk-header h1 {
+			margin: 0;
+			color: #111827;
+			font-size: 22px;
+			font-weight: 900;
+			line-height: 1.2;
+		}
+
+		.wallet-bulk-header p {
+			margin: 5px 0 0;
+			color: #64748b;
+			font-size: 14px;
+			font-weight: 700;
+		}
+
+		.wallet-bulk-actions {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			flex-wrap: wrap;
+		}
+
+		.wallet-bulk-button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			height: 42px;
+			padding: 0 15px;
+			border: 0;
+			border-radius: 8px;
+			background: #1f7a3f;
+			color: #fff;
+			font-size: 14px;
+			font-weight: 900;
+			text-decoration: none;
+			cursor: pointer;
+		}
+
+		.wallet-bulk-button.is-muted {
+			background: #fff;
+			color: #334155;
+			border: 1px solid #d8e1ea;
+		}
+
+		.wallet-bulk-button[disabled] {
+			cursor: wait;
+			opacity: .72;
+		}
+
+		.wallet-bulk-status {
+			min-height: 56px;
+			padding: 14px 16px;
+			background: #f8fafc;
+			border: 1px solid #d8e1ea;
+			border-radius: 10px;
+			color: #334155;
+			font-size: 14px;
+			font-weight: 700;
+			line-height: 1.45;
+		}
+
+		.wallet-bulk-progress {
+			width: 100%;
+			height: 8px;
+			margin-top: 12px;
+			overflow: hidden;
+			background: #e2e8f0;
+			border-radius: 999px;
+		}
+
+		.wallet-bulk-progress span {
+			display: block;
+			width: 0;
+			height: 100%;
+			background: #1f7a3f;
+			border-radius: inherit;
+			transition: width .2s ease;
+		}
+
+		.wallet-print-source {
+			position: absolute;
+			left: -2000px;
+			top: 0;
+			width: 1050px;
+		}
+
+		.wallet-print-source .carteira-card {
+			margin-bottom: 28px;
+		}
+
+		@media (max-width: 720px) {
+			.wallet-bulk-page {
+				padding: 14px;
+			}
+
+			.wallet-bulk-header {
+				align-items: flex-start;
+				flex-direction: column;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="wallet-bulk-page">
+		<section class="wallet-bulk-shell">
+			<header class="wallet-bulk-header">
+				<div>
+					<h1>{{title}}</h1>
+					<p>{{totalCarteiras}} carteiras em duas colunas no PDF.</p>
+				</div>
+				<div class="wallet-bulk-actions">
+					<button type="button" class="wallet-bulk-button" data-generate-wallets-pdf>
+						<i class="material-icons" aria-hidden="true">picture_as_pdf</i>
+						<span>Gerar PDF</span>
+					</button>
+					<a href="{{URL}}/alunos" class="wallet-bulk-button is-muted">
+						<i class="material-icons" aria-hidden="true">arrow_back</i>
+						<span>Voltar</span>
+					</a>
+				</div>
+			</header>
+			<div class="wallet-bulk-status" data-wallet-pdf-status>
+				<span data-wallet-pdf-message>Preparando as carteiras para geração do PDF...</span>
+				<div class="wallet-bulk-progress" aria-hidden="true"><span data-wallet-pdf-progress></span></div>
+			</div>
+		</section>
+	</main>
+
+	<div class="wallet-print-source" data-wallet-print-source>
+		{{carteiras}}
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+	<script>
+		(function() {
+			var button = document.querySelector('[data-generate-wallets-pdf]');
+			var statusMessage = document.querySelector('[data-wallet-pdf-message]');
+			var progress = document.querySelector('[data-wallet-pdf-progress]');
+			var cards = Array.prototype.slice.call(document.querySelectorAll('[data-wallet-card]'));
+			var autoStarted = false;
+			var params = new URLSearchParams(window.location.search);
+			var jobId = params.get('job') || '';
+			var isEmbedded = window.parent && window.parent !== window;
+
+			function notifyParent(type, payload) {
+				if (!isEmbedded) {
+					return;
+				}
+
+				payload = payload || {};
+				payload.type = type;
+				payload.jobId = jobId;
+				window.parent.postMessage(payload, window.location.origin);
+			}
+
+			function setStatus(text, percent) {
+				if (statusMessage) {
+					statusMessage.textContent = text;
+				}
+
+				if (progress) {
+					progress.style.width = Math.max(0, Math.min(100, percent || 0)) + '%';
+				}
+
+				notifyParent('wallet-pdf-progress', {
+					message: text,
+					percent: percent || 0,
+					count: cards.length ? cards.length + ' alunos' : ''
+				});
+			}
+
+			function waitForImages() {
+				var images = Array.prototype.slice.call(document.images);
+
+				return Promise.all(images.map(function(img) {
+					if (img.complete) {
+						return Promise.resolve();
+					}
+
+					return new Promise(function(resolve) {
+						img.onload = resolve;
+						img.onerror = resolve;
+					});
+				}));
+			}
+
+			async function generateWalletsPdf() {
+				var jsPDFConstructor = window.jspdf && window.jspdf.jsPDF;
+
+				if (!cards.length) {
+					var emptyMessage = 'Nenhuma carteira encontrada para gerar o PDF.';
+					setStatus(emptyMessage, 0);
+					notifyParent('wallet-pdf-error', {
+						message: emptyMessage
+					});
+					return;
+				}
+
+				if (!window.html2canvas || !jsPDFConstructor) {
+					var resourceMessage = 'Não foi possível carregar os recursos de geração do PDF. Verifique a conexão e tente novamente.';
+					setStatus(resourceMessage, 0);
+					notifyParent('wallet-pdf-error', {
+						message: resourceMessage
+					});
+					return;
+				}
+
+				if (button) {
+					button.disabled = true;
+				}
+
+				try {
+					await waitForImages();
+
+					if (document.fonts && document.fonts.ready) {
+						await document.fonts.ready;
+					}
+
+					var doc = new jsPDFConstructor({
+						orientation: 'portrait',
+						unit: 'pt',
+						format: 'a4'
+					});
+					var pageWidth = doc.internal.pageSize.getWidth();
+					var pageHeight = doc.internal.pageSize.getHeight();
+					var margin = 12;
+					var columnGap = 7;
+					var rowGap = 7;
+					var cardRatio = 480 / 1050;
+					var cardWidth = (pageWidth - (margin * 2) - columnGap) / 2;
+					var cardHeight = cardWidth * cardRatio;
+					var rowsPerPage = Math.max(1, Math.floor((pageHeight - (margin * 2) + rowGap) / (cardHeight + rowGap)));
+					var cardsPerPage = rowsPerPage * 2;
+
+					for (var index = 0; index < cards.length; index++) {
+						if (index > 0 && index % cardsPerPage === 0) {
+							doc.addPage();
+						}
+
+						setStatus('Gerando carteira ' + (index + 1) + ' de ' + cards.length + '...', (index / cards.length) * 100);
+
+						var canvas = await window.html2canvas(cards[index], {
+							backgroundColor: null,
+							scale: 2,
+							useCORS: true,
+							allowTaint: true,
+							logging: false
+						});
+						var pageIndex = index % cardsPerPage;
+						var column = pageIndex % 2;
+						var row = Math.floor(pageIndex / 2);
+						var x = margin + column * (cardWidth + columnGap);
+						var y = margin + row * (cardHeight + rowGap);
+						var imageData = canvas.toDataURL('image/jpeg', .95);
+
+						doc.addImage(imageData, 'JPEG', x, y, cardWidth, cardHeight);
+					}
+
+					setStatus('PDF gerado. Abrindo arquivo...', 100);
+
+					if (isEmbedded) {
+						notifyParent('wallet-pdf-complete', {
+							message: 'PDF gerado. Abrindo arquivo...',
+							percent: 100,
+							count: cards.length + ' alunos',
+							blob: doc.output('blob')
+						});
+						return;
+					}
+
+					var pdfUrl = doc.output('bloburl');
+					var pdfWindow = window.open(pdfUrl, '_blank');
+
+					if (!pdfWindow) {
+						window.location.href = pdfUrl;
+					}
+				} catch (error) {
+					console.error(error);
+					var errorMessage = 'Não foi possível gerar o PDF das carteiras. Atualize a página e tente novamente.';
+					setStatus(errorMessage, 0);
+					notifyParent('wallet-pdf-error', {
+						message: errorMessage
+					});
+				} finally {
+					if (button) {
+						button.disabled = false;
+					}
+				}
+			}
+
+			if (button) {
+				button.addEventListener('click', function(event) {
+					event.preventDefault();
+					generateWalletsPdf();
+				});
+			}
+
+			window.addEventListener('load', function() {
+				if (autoStarted) {
+					return;
+				}
+				autoStarted = true;
+				setTimeout(generateWalletsPdf, 350);
+			});
+		})();
+	</script>
+</body>
+</html>

@@ -788,10 +788,15 @@ body.precadastro-body {
 .precadastro-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 1rem;
   margin-bottom: 1rem;
   color: var(--text);
+  text-align: center;
+}
+
+.precadastro-header > div {
+  width: 100%;
 }
 
 .precadastro-header span,
@@ -803,7 +808,8 @@ body.precadastro-body {
   text-transform: uppercase;
 }
 
-.precadastro-header h1 {
+.precadastro-header h1,
+.precadastro-header h3 {
   margin: .1rem 0;
   color: #172033;
   font-size: clamp(1.45rem, 3vw, 2.15rem);
@@ -1127,7 +1133,7 @@ body.precadastro-body {
   }
 
   .precadastro-header {
-    align-items: flex-start;
+    align-items: center;
   }
 
   .precadastro-header img {
@@ -2315,6 +2321,56 @@ body.sidebar-collapsed .navbar {
 
 .alunos-status:empty {
   display: none;
+}
+
+.alunos-wallet-progress {
+  margin-top: 1rem;
+  padding: .9rem 1rem;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: .65rem;
+}
+
+.alunos-wallet-progress[hidden] {
+  display: none !important;
+}
+
+.alunos-wallet-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-bottom: .65rem;
+  color: var(--text);
+  font-size: .92rem;
+}
+
+.alunos-wallet-progress-header strong {
+  font-weight: 800;
+}
+
+.alunos-wallet-progress-header span {
+  color: var(--muted);
+  font-size: .82rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.alunos-wallet-progress-track {
+  width: 100%;
+  height: .55rem;
+  overflow: hidden;
+  background: #e2e8f0;
+  border-radius: 999px;
+}
+
+.alunos-wallet-progress-track span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: #1f7a3f;
+  border-radius: inherit;
+  transition: width .2s ease;
 }
 
 .alunos-column-controls {

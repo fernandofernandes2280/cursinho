@@ -483,6 +483,10 @@ class PreCadastroAluno extends Page{
             self::hasAlunoDocumento($obAluno->id, self::DOCUMENTOS_ALUNO['documentoResidencia']);
     }
 
+    private static function getCarteiraRoute($idAluno){
+        return '/precadastro/'.(int)$idAluno.'/carteira';
+    }
+
     private static function renderCheck($request){
         $queryParams = $request->getQueryParams();
         $cpf = (string)($queryParams['cpf'] ?? '');
@@ -621,7 +625,7 @@ class PreCadastroAluno extends Page{
             'documentMaxSizeLabel' => self::formatBytes(self::getUploadMaxBytes()),
             'cadastroSalvo' => $cadastroSalvo ? '1' : '0',
             'cadastroCompleto' => $cadastroCompleto ? '1' : '0',
-            'carteiraUrl' => URL.'/precadastro/'.(int)$obAluno->id.'/carteira',
+            'carteiraUrl' => URL.self::getCarteiraRoute($obAluno->id),
             'carteiraDisabled' => $cadastroSalvo ? '' : 'disabled',
         ], self::getAlunoDocumentosVars($obAluno->id))));
     }
@@ -679,6 +683,10 @@ class PreCadastroAluno extends Page{
             return self::renderCheck($request);
         }
 
+        if(($queryParams['preStatus'] ?? '') === '' && self::isPreCadastroCompleto($obAluno)){
+            $request->getRouter()->redirect(self::getCarteiraRoute($obAluno->id));
+        }
+
         return self::renderForm($request, $obAluno);
     }
 
@@ -698,6 +706,10 @@ class PreCadastroAluno extends Page{
         }
 
         if($acao !== 'salvar'){
+            if(self::isPreCadastroCompleto($obAluno)){
+                $request->getRouter()->redirect(self::getCarteiraRoute($obAluno->id));
+            }
+
             $request->getRouter()->redirect('/precadastro?cpf='.$cpf);
         }
 

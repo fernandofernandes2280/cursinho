@@ -46,6 +46,19 @@ $obRouter->post('/alunos',[
     }
     ]);
 
+//ROTA DE IMPRESSÃO DAS CARTEIRAS DA LISTAGEM DE ALUNOS
+$obRouter->get('/alunos/carteiras',[
+
+    'middlewares' => [
+        'require-user-login',
+        'can:alunos.carteira'
+    ],
+
+    function ($request){
+        return new Response(200, Painel\Aluno::getCarteirasAlunos($request));
+    }
+    ]);
+
 
 
 

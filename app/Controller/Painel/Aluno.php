@@ -469,6 +469,77 @@ class Aluno extends Page{
 		return implode(' - ', $partes);
 	}
 
+	private static function getCarteiraQrcodeInfo($obAluno){
+		$oQRC = new \App\Controller\Qrcode\Qrcode();
+		$oQRC->fullName($obAluno->matricula);
+
+		$name = $obAluno->matricula.'.png';
+		$src = 'data:image/png;base64,'.base64_encode($oQRC->png(300));
+
+		return [
+			'name' => $name,
+			'src' => $src,
+		];
+	}
+
+	private static function getCarteiraConfigVars(){
+		$marcaDaguaCarteiraAlunoHtml = EntityConfiguracao::getUsarMarcaDaguaCarteiraAluno()
+			? '<img width="400" class="img-fluid logocursocontainer" alt="Marca d\'água da carteira digital do aluno" src="'.htmlspecialchars(EntityConfiguracao::getMarcaDaguaCarteiraAlunoUrl(), ENT_QUOTES, 'UTF-8').'">'
+			: '';
+
+		return [
+			'logoCarteiraAluno1' => htmlspecialchars(EntityConfiguracao::getLogoCarteiraAluno1Url(), ENT_QUOTES, 'UTF-8'),
+			'logoCarteiraAluno2' => htmlspecialchars(EntityConfiguracao::getLogoCarteiraAluno2Url(), ENT_QUOTES, 'UTF-8'),
+			'cabecalhoCarteiraAluno' => self::renderCarteiraLinhas(EntityConfiguracao::getCabecalhoCarteiraAlunoLinhas()),
+			'cabecalhoCarteiraAlunoTamanho' => EntityConfiguracao::getCabecalhoCarteiraAlunoTamanho(),
+			'cabecalhoCarteiraAlunoCor' => htmlspecialchars(EntityConfiguracao::getCabecalhoCarteiraAlunoCor(), ENT_QUOTES, 'UTF-8'),
+			'subtituloCarteiraAluno' => self::escape(EntityConfiguracao::getSubtituloCarteiraAluno()),
+			'subtituloCarteiraAlunoTamanho' => EntityConfiguracao::getSubtituloCarteiraAlunoTamanho(),
+			'subtituloCarteiraAlunoCor' => htmlspecialchars(EntityConfiguracao::getSubtituloCarteiraAlunoCor(), ENT_QUOTES, 'UTF-8'),
+			'textoCentralCarteiraAluno' => self::escape(EntityConfiguracao::getTextoCentralCarteiraAluno()),
+			'textoCentralCarteiraAlunoTamanho' => EntityConfiguracao::getTextoCentralCarteiraAlunoTamanho(),
+			'textoCentralCarteiraAlunoCor' => htmlspecialchars(EntityConfiguracao::getTextoCentralCarteiraAlunoCor(), ENT_QUOTES, 'UTF-8'),
+			'rodapeCarteiraAluno' => self::escape(EntityConfiguracao::getRodapeCarteiraAluno()),
+			'rodapeCarteiraAlunoTamanho' => EntityConfiguracao::getRodapeCarteiraAlunoTamanho(),
+			'rodapeCarteiraAlunoCor' => htmlspecialchars(EntityConfiguracao::getRodapeCarteiraAlunoCor(), ENT_QUOTES, 'UTF-8'),
+			'corFundoCarteiraAluno' => htmlspecialchars(EntityConfiguracao::getCorFundoCarteiraAluno(), ENT_QUOTES, 'UTF-8'),
+			'marcaDaguaCarteiraAlunoHtml' => $marcaDaguaCarteiraAlunoHtml,
+			'marcaDaguaCarteiraAlunoOpacidade' => EntityConfiguracao::getMarcaDaguaCarteiraAlunoOpacidadeCss(),
+			'assinaturaCarteiraAluno' => htmlspecialchars(EntityConfiguracao::getAssinaturaCarteiraAlunoUrl(), ENT_QUOTES, 'UTF-8'),
+		];
+	}
+
+	private static function getCarteiraAlunoVars($obAluno, $cardIdAttribute = '', $cardExtraClass = '', $configVars = null){
+		$qrcode = self::getCarteiraQrcodeInfo($obAluno);
+		$obTurma = (int)$obAluno->turma > 0 ? EntityTurma::getTurmaById((int)$obAluno->turma) : null;
+		$obStatus = (int)$obAluno->status > 0 ? EntityStatus::getStatusById((int)$obAluno->status) : null;
+		$configVars = is_array($configVars) ? $configVars : self::getCarteiraConfigVars();
+
+		return array_merge($configVars, [
+			'foto' => $obAluno->getFoto(),
+			'matricula'=> $obAluno->matricula,
+			'nome' => strtoupper((string)$obAluno->nome),
+			'turma' => $obTurma ? strtoupper((string)$obTurma->nome) : 'SEM TURMA',
+			'mae' => strtoupper((string)$obAluno->mae),
+			'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##'),
+			'dataNasc' => self::formatDate($obAluno->dataNasc),
+			'dataCad'=> self::formatDate($obAluno->dataCad),
+			'qrcode' => $qrcode['name'],
+			'qrcodePath' => $qrcode['src'],
+			'status' => $obStatus ? $obStatus->nome : 'Sem status',
+			'cardIdAttribute' => $cardIdAttribute,
+			'cardExtraClass' => $cardExtraClass,
+		]);
+	}
+
+	private static function renderCarteiraAlunoCard($obAluno, $cardIdAttribute = '', $cardExtraClass = '', $configVars = null){
+		return View::render('pages/carteira/card', self::getCarteiraAlunoVars($obAluno, $cardIdAttribute, $cardExtraClass, $configVars));
+	}
+
+	private static function renderCarteiraStyles(){
+		return View::render('pages/carteira/styles', self::getCarteiraConfigVars());
+	}
+
 	//Método responsavel por obter a rendereizacao da lista de Alunos
 	private static function getAlunoItems($request){
 
@@ -537,6 +608,41 @@ class Aluno extends Page{
 		//Retorna a página completa
 		return parent::getPanel('Alunos > Cursinho', $content,'alunos');
 
+	}
+
+	public static function getCarteirasAlunos($request){
+		Funcoes::init();
+
+		$queryParams = $request->getQueryParams();
+		$ids = [];
+
+		if(isset($queryParams['ids'])){
+			foreach(explode(',', (string)$queryParams['ids']) as $id){
+				$id = (int)$id;
+				if($id > 0){
+					$ids[] = $id;
+				}
+			}
+			$ids = array_values(array_unique($ids));
+		}
+
+		$where = count($ids) ? 'id IN ('.implode(',', $ids).')' : null;
+		$results = EntityAluno::getAlunos($where, 'nome ASC');
+		$carteiras = '';
+		$total = 0;
+		$configVars = self::getCarteiraConfigVars();
+
+		while($obAluno = $results->fetchObject(EntityAluno::class)){
+			$carteiras .= self::renderCarteiraAlunoCard($obAluno, '', 'carteira-card-print', $configVars);
+			$total++;
+		}
+
+		return View::render('pages/carteiras-alunos', [
+			'title' => 'Carteiras dos alunos',
+			'carteiras' => $carteiras,
+			'carteiraStyles' => View::render('pages/carteira/styles', $configVars),
+			'totalCarteiras' => $total,
+		]);
 	}
 
 
@@ -1012,68 +1118,15 @@ class Aluno extends Page{
 	    //verifica se o aluno enviou a foto. se não enviou volta pro form update de cadastro
 	    if(isset($_SESSION['idAluno']) && (!isset($_SESSION['usuario'])) && $obAluno->semFoto()) $request->getRouter()->redirect('/aluno/update');
 
-	    //gera o qrcode
-	    $oQRC = new \App\Controller\Qrcode\Qrcode(); // Create vCard Object
-	    $oQRC->fullName($obAluno->matricula); // Add Full Name
-	      //  ->finish(); // End vCard
-
-
-	      $dir = __DIR__.'/carteiras/';
-	      $name = $obAluno->matricula.'.png';
-	      if(!is_dir($dir)) mkdir($dir, 0777, true);
-	      $oQRC->savePng($dir.$name, 300);
-
-	   //     $type = pathinfo($path, PATHINFO_EXTENSION);
-	    //    $data = file_get_contents($path);
-	     //   $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-	        //Decode the string
-	     //   $unencodedData=base64_decode($base64);
-	   //     file_put_contents(__DIR__.'/carteiras/imgQrcode.png', $path);
-	    // echo '<p><img src="' . $oQRC->get(300) . '" alt="QR Code" /></p>'; // Generate and display the QR Code
-	  //  $oQRC->display(300); // Set size and display QR Code default 150px
-	     $reload = rand();
-	     $marcaDaguaCarteiraAlunoHtml = EntityConfiguracao::getUsarMarcaDaguaCarteiraAluno()
-	        ? '<img width="400" class="img-fluid logocursocontainer" alt="Marca d\'água da carteira digital do aluno" src="'.htmlspecialchars(EntityConfiguracao::getMarcaDaguaCarteiraAlunoUrl(), ENT_QUOTES, 'UTF-8').'">'
-	        : '';
-	    //Conteúdo do Formulário
-
-	    $content = View::render('pages/carteira',[
+	    $carteiraVars = self::getCarteiraAlunoVars($obAluno, 'id="target"', '');
+	    $content = View::render('pages/carteira', array_merge($carteiraVars, [
 	        'title'=>'Alunos > Carteira de Estudante',
-	        'foto' => $obAluno->getFoto(),
-	        'matricula'=> $obAluno->matricula,
-	        'nome' => strtoupper($obAluno->nome),
-	        'turma' => strtoupper(EntityTurma::getTurmaById($obAluno->turma)->nome),
-	        'mae' => strtoupper($obAluno->mae),
-	        'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##'),
-	        'dataNasc' => date('d/m/Y', strtotime($obAluno->dataNasc)),
-	        'dataCad'=>date('d/m/Y', strtotime($obAluno->dataCad)),
-	        'qrcode' => $name,
-	        'qrcodePath' => 'app/Controller/Painel/carteiras/'.$name,
-	        'status' => EntityStatus::getStatusById($obAluno->status)->nome,
 	        'hiddenBtnAlterar' => $hiddenAlterar,
 	        'hiddenBtnSairUpdate' => $hiddenBtnSairUpdate,
 	        'hiddenBtnSair' => $hiddenBtnSair,
-	        'logoCarteiraAluno1' => htmlspecialchars(EntityConfiguracao::getLogoCarteiraAluno1Url(), ENT_QUOTES, 'UTF-8'),
-	        'logoCarteiraAluno2' => htmlspecialchars(EntityConfiguracao::getLogoCarteiraAluno2Url(), ENT_QUOTES, 'UTF-8'),
-	        'cabecalhoCarteiraAluno' => self::renderCarteiraLinhas(EntityConfiguracao::getCabecalhoCarteiraAlunoLinhas()),
-	        'cabecalhoCarteiraAlunoTamanho' => EntityConfiguracao::getCabecalhoCarteiraAlunoTamanho(),
-	        'cabecalhoCarteiraAlunoCor' => htmlspecialchars(EntityConfiguracao::getCabecalhoCarteiraAlunoCor(), ENT_QUOTES, 'UTF-8'),
-	        'subtituloCarteiraAluno' => self::escape(EntityConfiguracao::getSubtituloCarteiraAluno()),
-	        'subtituloCarteiraAlunoTamanho' => EntityConfiguracao::getSubtituloCarteiraAlunoTamanho(),
-	        'subtituloCarteiraAlunoCor' => htmlspecialchars(EntityConfiguracao::getSubtituloCarteiraAlunoCor(), ENT_QUOTES, 'UTF-8'),
-	        'textoCentralCarteiraAluno' => self::escape(EntityConfiguracao::getTextoCentralCarteiraAluno()),
-	        'textoCentralCarteiraAlunoTamanho' => EntityConfiguracao::getTextoCentralCarteiraAlunoTamanho(),
-	        'textoCentralCarteiraAlunoCor' => htmlspecialchars(EntityConfiguracao::getTextoCentralCarteiraAlunoCor(), ENT_QUOTES, 'UTF-8'),
-	        'rodapeCarteiraAluno' => self::escape(EntityConfiguracao::getRodapeCarteiraAluno()),
-	        'rodapeCarteiraAlunoTamanho' => EntityConfiguracao::getRodapeCarteiraAlunoTamanho(),
-	        'rodapeCarteiraAlunoCor' => htmlspecialchars(EntityConfiguracao::getRodapeCarteiraAlunoCor(), ENT_QUOTES, 'UTF-8'),
-	        'corFundoCarteiraAluno' => htmlspecialchars(EntityConfiguracao::getCorFundoCarteiraAluno(), ENT_QUOTES, 'UTF-8'),
-	        'marcaDaguaCarteiraAlunoHtml' => $marcaDaguaCarteiraAlunoHtml,
-	        'marcaDaguaCarteiraAlunoOpacidade' => EntityConfiguracao::getMarcaDaguaCarteiraAlunoOpacidadeCss(),
-	        'assinaturaCarteiraAluno' => htmlspecialchars(EntityConfiguracao::getAssinaturaCarteiraAlunoUrl(), ENT_QUOTES, 'UTF-8'),
-
-
-	    ]);
+	        'carteiraCard' => View::render('pages/carteira/card', $carteiraVars),
+	        'carteiraStyles' => View::render('pages/carteira/styles', $carteiraVars),
+	    ]));
 
 	    //Retorna a página completa
 
@@ -1097,21 +1150,18 @@ class Aluno extends Page{
 	    $filteredData=substr($_POST['img_val'], strpos($_POST['img_val'], ",")+1);
 
 	    //Decode the string
-	    $unencodedData=base64_decode($filteredData);
+	    $unencodedData=base64_decode($filteredData, true);
 
 	    $name=$_POST['matricula'].$_POST['nome'].'.png';
 
-	    //   var_dump(__DIR__.'/carteiras/img.png');exit;
-	    //Save the image
-	    file_put_contents(__DIR__.'/carteiras/'.$name, $unencodedData);
-
-	    $imagem = __DIR__.'/carteiras/'.$name;
-
-
-
-	    $filename = $imagem;
 	    $rotang = -90; // Rotation angle
-	    $source = imagecreatefrompng($filename) or die('Error opening file '.$filename);
+	    $source = $unencodedData !== false ? imagecreatefromstring($unencodedData) : false;
+
+	    if(!$source){
+	        http_response_code(400);
+	        exit('Imagem inválida.');
+	    }
+
 	    imagealphablending($source, false);
 	    imagesavealpha($source, true);
 
@@ -1128,7 +1178,6 @@ class Aluno extends Page{
 	    imagepng($rotation);
 	    imagedestroy($source);
 	    imagedestroy($rotation);
-	    unlink($filename);
 
 	    //   header("Content-Disposition: attachment; filename=\"$filename\"");
 	    //  readfile($filename);

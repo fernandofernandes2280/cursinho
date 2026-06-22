@@ -1,415 +1,196 @@
+<div class="carteira-page">
+	<div class="carteira-toolbar">
+		<div>
+			<p class="carteira-toolbar-kicker">Carteira digital</p>
+			<h5>{{title}}</h5>
+		</div>
+		<div class="carteira-toolbar-actions">
+			<button type="button" class="carteira-action carteira-action-primary" rel="tooltip" title="Download da Carteira" onclick="captureDown();">
+				<i class="material-icons">download</i>
+				<span>Baixar</span>
+			</button>
+			<a href="{{URL}}/aluno/update" class="carteira-action carteira-action-warning" rel="tooltip" title="Alterar dados da Carteira" {{hiddenBtnAlterar}}>
+				<i class="material-icons">edit</i>
+				<span>Alterar dados</span>
+			</a>
+			<a href="{{URL}}/aluno" class="carteira-action carteira-action-muted" rel="tooltip" title="Sair" {{hiddenBtnSairUpdate}}>
+				<i class="material-icons">logout</i>
+				<span>Sair</span>
+			</a>
+			<a href="javascript:history.back()" class="carteira-action carteira-action-muted" rel="tooltip" title="Sair" {{hiddenBtnSair}}>
+				<i class="material-icons">logout</i>
+				<span>Sair</span>
+			</a>
+		</div>
+	</div>
 
-<h5>{{title}}</h5>
+	<form method="POST" enctype="multipart/form-data" id="myForm">
+		<input type="hidden" name="img_val" id="img_val" value="" />
+		<input type="hidden" name="matricula" value="{{matricula}}" />
+		<input type="hidden" name="nome" value="{{nome}}" />
+		<input type="hidden" name="opcao" id="opcao" value="" />
+	</form>
 
-<form method="POST" enctype="multipart/form-data" id="myForm">
-	<input type="hidden" name="img_val" id="img_val" value="" />
-	<input type="hidden" name="matricula" value="{{matricula}}"/>
-	<input type="hidden" name="nome" value="{{nome}}"/>
-	<input type="hidden" name="opcao" id="opcao" value=""/>
-	
-</form>
+	<div class="carteira-stage" aria-label="Prévia da carteira do aluno">
+		{{carteiraCard}}
+	</div>
+</div>
+
+{{carteiraStyles}}
+
 <style>
-:root {
-	--carteira-logo1-width: 310px;
-	--carteira-logo1-height: 84px;
-	--carteira-logo1-left: 1px;
-	--carteira-logo1-right: auto;
-	--carteira-logo1-top: 50%;
-	--carteira-logo1-bottom: auto;
-	--carteira-logo1-transform: translateY(-50%);
-	--carteira-logo1-object-position: left center;
-
-	--carteira-logo2-width: 132px;
-	--carteira-logo2-height: 84px;
-	--carteira-logo2-left: auto;
-	--carteira-logo2-right: 4px;
-	--carteira-logo2-top: 50%;
-	--carteira-logo2-bottom: auto;
-	--carteira-logo2-transform: translateY(-50%);
-	--carteira-logo2-object-position: right center;
-
-	--carteira-header-min-height: 88px;
-	--carteira-header-padding-left: 10px;
-	--carteira-header-padding-right: 10px;
-	--carteira-header-padding-top: 10px;
-	--carteira-header-padding-bottom: 10px;
-
-	--carteira-header-text-size: {{cabecalhoCarteiraAlunoTamanho}}px;
-	--carteira-header-text-color: {{cabecalhoCarteiraAlunoCor}};
-	--carteira-subtitle-text-size: {{subtituloCarteiraAlunoTamanho}}px;
-	--carteira-subtitle-text-color: {{subtituloCarteiraAlunoCor}};
-	--carteira-center-text-size: {{textoCentralCarteiraAlunoTamanho}}px;
-	--carteira-center-text-color: {{textoCentralCarteiraAlunoCor}};
-	--carteira-footer-text-size: {{rodapeCarteiraAlunoTamanho}}px;
-	--carteira-footer-text-color: {{rodapeCarteiraAlunoCor}};
-	--carteira-background-color: {{corFundoCarteiraAluno}};
-	--carteira-watermark-opacity: {{marcaDaguaCarteiraAlunoOpacidade}};
+.carteira-page,
+.carteira-page * {
+	box-sizing: border-box;
 }
 
-#target {
-		
-		background-color: var(--carteira-background-color);
-		position:relative;
-		height:480px;
-		width: 1050px;
-		opacity: 100%;
-		
-		
+.carteira-page {
+	min-height: 100vh;
+	padding: 32px;
+	background: #eef4f8;
+	color: #1d2633;
+	font-family: Inter, Arial, sans-serif;
+}
+
+.carteira-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	max-width: 1120px;
+	margin: 0 auto 24px;
+}
+
+.carteira-toolbar h5 {
+	margin: 0;
+	color: #111827;
+	font-size: 24px;
+	font-weight: 800;
+	line-height: 1.2;
+}
+
+.carteira-toolbar-kicker {
+	margin: 0 0 4px;
+	color: #2f855a;
+	font-size: 12px;
+	font-weight: 800;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+}
+
+.carteira-toolbar-actions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.carteira-action {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 42px;
+	padding: 0 15px;
+	border: 0;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 800;
+	text-decoration: none;
+	cursor: pointer;
+	box-shadow: 0 12px 24px rgba(17, 24, 39, .12);
+	transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.carteira-action:hover {
+	transform: translateY(-1px);
+	text-decoration: none;
+	box-shadow: 0 16px 28px rgba(17, 24, 39, .16);
+}
+
+.carteira-action .material-icons {
+	font-size: 20px;
+}
+
+.carteira-action-primary {
+	background: #1f7a3f;
+	color: #fff;
+}
+
+.carteira-action-warning {
+	background: #f0b429;
+	color: #1f2937;
+}
+
+.carteira-action-muted {
+	background: #fff;
+	color: #334155;
+	border: 1px solid #d8e1ea;
+	box-shadow: none;
+}
+
+.carteira-stage {
+	max-width: 1120px;
+	margin: 0 auto;
+	overflow-x: auto;
+	padding: 18px;
+	background: rgba(255, 255, 255, .72);
+	border: 1px solid #d8e1ea;
+	border-radius: 18px;
+	box-shadow: 0 24px 60px rgba(15, 23, 42, .12);
+}
+
+@media (max-width: 900px) {
+	.carteira-page {
+		padding: 18px;
 	}
-	.col-titulo{
-		width: 97%;
+
+	.carteira-toolbar {
+		align-items: flex-start;
+		flex-direction: column;
 	}
-	.cabecalho{
-		position: relative;
-		min-height: var(--carteira-header-min-height);
-		padding-left: var(--carteira-header-padding-left) !important;
-		padding-right: var(--carteira-header-padding-right) !important;
-		padding-top: var(--carteira-header-padding-top) !important;
-		padding-bottom: var(--carteira-header-padding-bottom) !important;
-		overflow: hidden;
+
+	.carteira-toolbar-actions {
+		justify-content: flex-start;
 	}
-	.logo1{
-		position: absolute;
-		left: var(--carteira-logo1-left);
-		right: var(--carteira-logo1-right);
-		top: var(--carteira-logo1-top);
-		bottom: var(--carteira-logo1-bottom);
-		transform: var(--carteira-logo1-transform);
-		width: var(--carteira-logo1-width);
-		height: var(--carteira-logo1-height);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		overflow: hidden;
+
+	.carteira-action span {
+		display: none;
 	}
-	.logo1 img{
-		width: 100% !important;
-		height: 100% !important;
-		max-width: 100%;
-		max-height: 100%;
-		object-fit: contain;
-		object-position: var(--carteira-logo1-object-position);
-	}
-	.logo2{
-		position: absolute;
-		left: var(--carteira-logo2-left);
-		right: var(--carteira-logo2-right);
-		top: var(--carteira-logo2-top);
-		bottom: var(--carteira-logo2-bottom);
-		transform: var(--carteira-logo2-transform);
-		width: var(--carteira-logo2-width);
-		height: var(--carteira-logo2-height);
+
+	.carteira-action {
+		width: 44px;
 		padding: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		overflow: hidden;
 	}
-	.logo2 img{
-		width: 100% !important;
-		height: 100% !important;
-		max-width: 100%;
-		max-height: 100%;
-		object-fit: contain;
-		object-position: var(--carteira-logo2-object-position);
-		margin-bottom: 0 !important;
+
+	.carteira-stage {
+		padding: 10px;
+		border-radius: 14px;
 	}
-	.logocursocontainer{
-		position: absolute;
-		top:0;
-		width: 100%;
-		height:100%;
-		right: 0;	
-		opacity: var(--carteira-watermark-opacity);
-		z-index: 0;
-		pointer-events: none;
-	}
-	.label{
-	background-color:#57AF5B; 
-	 display: inline-block;
-  padding: 0.55em 0.9em;
-  font-size: 0.75em;
-  font-weight: 700;
-  line-height: 1;
-  color: #fff;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: baseline;
-  border-radius: 0.45rem;
-  text-transform: uppercase;
-	}
-	.colfotoCarteira{
-	width: 20%;
-	}
-	.colfotoQrcode{
-	width: 18%;
-	}
-	.colcpfCarteira{
-	margin-right: 10px;
-	width: 47%;
-	}
-	.coldatacarteira{
-	width: 25%;
-	
-	}
-	.prepara{
-	 
-	font-size: 30px;
-	color:#E7B538;
-	-webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: #E7B538;
-	white-space: nowrap;
-	}
-	.santana{
-	
-	font-size: 30px;
-	color:#fff;
-	-webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: #fff;
-	}
-	.subtitle{
-	 
-	font-size: var(--carteira-center-text-size);
-	color: var(--carteira-center-text-color);
-	-webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: var(--carteira-center-text-color);
-	}
-	.carteira-header-copy{
-		display: block;
-		width: 100%;
-		text-align: center;
-		line-height: 1.05;
-	}
-	.carteira-header-text{
-		display: inline-block;
-		font-size: var(--carteira-header-text-size);
-		color: var(--carteira-header-text-color);
-		font-weight: 700;
-		line-height: 1.05;
-		white-space: nowrap;
-	}
-	.carteira-subtitle-text{
-		display: inline-block;
-		font-size: var(--carteira-subtitle-text-size);
-		color: var(--carteira-subtitle-text-color);
-		font-weight: 700;
-		line-height: 1.05;
-		white-space: nowrap;
-	}
-	.carteira-footer-text{
-		margin: 0;
-		color: var(--carteira-footer-text-color) !important;
-		font-size: var(--carteira-footer-text-size);
-		font-weight: 700;
-		line-height: 1.2;
-	}
-	.assinatura{
-	position:absolute; top:68%;
-	left: 79%;
-	z-index: 2;
-	
-	}
-	#target > .form-row{
-		position: relative;
-		z-index: 1;
-	}
-	.carteira-data-panel{
-		position: relative;
-		z-index: 2;
-	}
-	.carteira-data-panel .label,
-	.carteira-data-panel .form-control-pessoal{
-		position: relative;
-		z-index: 3;
-		opacity: 1;
-	}
-	.carteira-data-panel .label{
-		background-color: #57AF5B !important;
-	}
-	.carteira-data-panel .form-control-pessoal{
-		background-color: #fff !important;
-		color: #1f2937 !important;
-	}
+}
 </style>
-<table>
-	<tr>
-		<td colspan="2">
-			<table width="100%">
-				<tr>
-					<td class="form-actions form-actions-start">
-						<input hidden type="submit" rel="tooltip" title="Visualizar Imagem" value="Visualizar" onclick="capture();" />
-						
-							<button type="submit" class="btn btn-facebook btn-round btn-just-icon" rel="tooltip" title="Download da Carteira" name="imageDown" onclick="captureDown();">
-								<i class="material-icons">download</i>
-							</button>
-						
-						<a href="{{URL}}/aluno/update" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Alterar dados da Carteira" {{hiddenBtnAlterar}}>
-							<i class="material-icons">reply</i>
-						</a>
-						<a href="{{URL}}/aluno" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Sair" {{hiddenBtnSairUpdate}}>
-							<i class="material-icons">logout</i>
-						</a>
-						<a href="javascript:history.back()" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Sair" {{hiddenBtnSair}}>
-							<i class="material-icons">logout</i>
-						</a>
-		
-					</td>
-				</tr>
-			</table>
-		</td>
-	</tr>
-	<tr>
 
-		<td>
-			<div class="col-md-11 mt-4" id="target">
-				{{marcaDaguaCarteiraAlunoHtml}}
-				<img width="140" class="assinatura pt-5" src="{{assinaturaCarteiraAluno}}">
-				<div class="form-row">
-					<div class="col-md-12">
-						<div class="form-row">
-							<div class="cabecalho col-titulo ml-2 mb-2 pl-2 pr-2 text-center pt-2 mt-2 pb-2" style="border:2px solid;border-radius: 10px">
-						
-					
-								<div class="form-row">
-									<div class="colfoto logo1">
-										<img style="border-radius: 10px;" width=400 class="img-fluid" alt="Logo 1 da carteira digital do aluno" src="{{logoCarteiraAluno1}}">
-									</div>
-									<div class="col-md-9 pt-0 text-dark" style="padding-left: 180px">
-										<div class="carteira-header-copy">
-											<span class="carteira-header-text">{{cabecalhoCarteiraAluno}}</span><br><br>
-											<span class="carteira-subtitle-text">{{subtituloCarteiraAluno}}</span>
-										</div>
-									</div>
-									<div class="logo2 ">
-										<img width=250 class="img-fluid mb-2" alt="Logo 2 da carteira digital do aluno" src="{{logoCarteiraAluno2}}">
-									</div>
-								</div>
-								
-							</div>
-						</div>
-							<div class="row">
-								<div class="col-md-12 text-center text-dark font-weight-bold">
-								<span class="subtitle">{{textoCentralCarteiraAluno}}</span>
-								</div>
-							</div>
-					</div>
-				</div>
-				
-				<div class="form-row mt-1 ">
-				 <div class="col-md-12">
-				  <div class="form-row">
-				   <div class="col-titulo ml-2 mb-2 pl-2 pr-2 pt-2 mt-0 pb-2 carteira-data-panel" style="border:2px solid; border-radius: 10px">
-				    <div class="row">
-					 <div class="colfotoCarteira ml-3">
-				      <img style="background-color: #fff; border-radius: 10%" class="img-fluido" alt="FotoAluno" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}">
-				      <span hidden class="label mt-1" >Status:</span>
-				      <input hidden type="text" class="form-control-pessoal mb-2" id="status" name="status" value="{{status}}" readonly/>
-				     </div>
-				    
-				     
-				     <div class="col-md-7 mb-2">
-				        <div class="form-row">
-				        	<div class="col-md-3 mb-3">
-				        		 <span class="label" >Matrícula:</span>
-				      			<input type="text" class="form-control-pessoal mb-2" id="nome" name="nome" value="{{matricula}}" readonly/>	
-				        	</div>
-				    		<div class="col-md-9">
-				    		    <span class="label">Nome:</span>
-					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{nome}}" required readonly/>
-				    		</div>
-				    	</div>
-				        <div class="form-row">
-				        	<div class="col-md-3 mb-4">
-				        	    <span class="label">Turma:</span>
-				      			<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{turma}}" readonly/>	
-				        	</div>
-				    		<div class="colcpfCarteira ">
-				    			<span class="label">CPF:</span>
-					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{cpf}}" required readonly/>
-				    		</div>
-				    		<div class="coldatacarteira">
-				    			<span class="label">Data Nasc.:</span>
-					      		<input type="text" class="form-control-pessoal mb-2" id="nome" name="nome" value="{{dataNasc}}" required readonly/>
-				    		</div>
-				    	</div>
-				        <div class="form-row">
-				        	<div class="coldatacarteira">
-				        		<span class="label">Data Cad.:</span>
-				      			<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{dataCad}}" readonly/>	
-				        	</div>
-				    		<div class="col-md-9 mb-0">
-				    			<span class="label">Mãe:</span>
-					      		<input type="text" class="form-control-pessoal" id="nome" name="nome" value="{{mae}}" required readonly/>
-				    		</div>
-				    	</div>
-							
-					</div>
-				
-				    
-				    	
-				   
-				     <div class="pl-0 pr-0 colfotoQrcode">
-				        
-				    			<span class="label ">Qr-Code:</span>
-							     <img class="img-fluid " alt="" src="{{URL}}/{{qrcodePath}}"/>
-				    		
-				    </div>
-				  </div>
-				       
-				    </div>
-				    	</div>
-					</div>
-				    
-				  </div>
-				 
-				
-				
-				  <!-- Footer -->
-				 <div class="form-row pt-0 ">
-					 <div class="col-md-12">
-						 <div class="form-row">
-						 	<div class="col-titulo ml-2 mb-2 text-center" style="border:2px solid; border-radius: 10px">
-								<label class="carteira-footer-text">{{rodapeCarteiraAluno}}</label>
-						 	</div>
-						 </div>
-					 </div>
-				 </div>
-				  
-				  
-
-			</div>
-			
-		</td>
-	</tr>
-</table>
 <script type="text/javascript">
-
-   
-//alert("Atenção: se estiver utizando celular, mude a exibição do navegador para computador ou desktop.");
-
 	function capture() {
 		$('#target').html2canvas({
-			allowTaint : true,
-			onrendered: function (canvas) {
-                //Defina o valor do campo oculto para dados de imagem (base-64 string)
+			allowTaint: true,
+			onrendered: function(canvas) {
 				$('#img_val').val(canvas.toDataURL("image/png"));
-                //Envie o formulário manualmente
-                document.getElementById("opcao").value = "view";
+				document.getElementById("opcao").value = "view";
 				document.getElementById("myForm").submit();
 			}
 		});
 	}
+
 	function captureDown() {
 		$('#target').html2canvas({
-			allowTaint : true,
-			onrendered: function (canvas) {
-                //Defina o valor do campo oculto para dados de imagem (base-64 string)
+			allowTaint: true,
+			onrendered: function(canvas) {
 				$('#img_val').val(canvas.toDataURL("image/png"));
-                //Envie o formulário manualmente
-                document.getElementById("opcao").value = "down";
+				document.getElementById("opcao").value = "down";
 				document.getElementById("myForm").submit();
 			}
 		});
 	}
-	
 </script>

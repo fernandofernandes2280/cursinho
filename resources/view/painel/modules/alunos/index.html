@@ -13,11 +13,23 @@
           <button type="button" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Imprimir" data-table-print>
             <i class="material-icons">print</i>
           </button>
+          <a href="{{URL}}/alunos/carteiras" target="_blank" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Imprimir carteiras dos alunos filtrados" data-table-wallet-print>
+            <i class="material-icons">badge</i>
+          </a>
           <button type="button" class="btn btn-success btn-round btn-just-icon" rel="tooltip" title="Novo" data-toggle="modal" data-target="#modalNovoCpfAluno">
             <i class="material-icons">person_add</i>
           </button>
         </div>
         <div id="alunosColumnControls" class="alunos-column-controls" data-table-column-controls="datatablesSimple" hidden></div>
+      </div>
+      <div class="alunos-wallet-progress" data-table-wallet-progress hidden>
+        <div class="alunos-wallet-progress-header">
+          <strong data-table-wallet-progress-message>Preparando carteiras...</strong>
+          <span data-table-wallet-progress-count></span>
+        </div>
+        <div class="alunos-wallet-progress-track" aria-hidden="true">
+          <span data-table-wallet-progress-bar></span>
+        </div>
       </div>
   </section>
 
@@ -31,6 +43,7 @@
       data-placeholder="Buscar aluno..."
       data-search-title="Buscar na listagem de alunos"
       data-name-column="1"
+      data-search-visible-only="true"
       data-status-column="2"
       data-status-filter="ativo-inativo"
       data-actions-column="12"

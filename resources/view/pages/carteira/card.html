@@ -1,0 +1,67 @@
+<div {{cardIdAttribute}} class="carteira-card {{cardExtraClass}}" data-wallet-card>
+	<div class="carteira-watermark">{{marcaDaguaCarteiraAlunoHtml}}</div>
+	<div class="carteira-top-accent"></div>
+	<div class="carteira-side-accent carteira-side-accent-left"></div>
+	<div class="carteira-side-accent carteira-side-accent-right"></div>
+
+	<div class="carteira-header-band">
+		<div class="logo1">
+			<img alt="Logo 1 da carteira digital do aluno" src="{{logoCarteiraAluno1}}">
+		</div>
+		<div class="carteira-header-copy">
+			<div class="carteira-header-text">{{cabecalhoCarteiraAluno}}</div>
+			<div class="carteira-subtitle-text">{{subtituloCarteiraAluno}}</div>
+		</div>
+		<div class="logo2">
+			<img alt="Logo 2 da carteira digital do aluno" src="{{logoCarteiraAluno2}}">
+		</div>
+	</div>
+
+	<div class="carteira-center-title">{{textoCentralCarteiraAluno}}</div>
+
+	<div class="carteira-photo-panel">
+		<div class="carteira-photo-frame">
+			<img alt="Foto do aluno" src="{{URL}}/app/Controller/File/files/fotos/{{foto}}">
+		</div>
+	</div>
+
+	<div class="carteira-info-panel">
+		<div class="carteira-info-item carteira-info-matricula">
+			<span>Matrícula</span>
+			<strong>{{matricula}}</strong>
+		</div>
+		<div class="carteira-info-item carteira-info-nome">
+			<span>Nome</span>
+			<strong>{{nome}}</strong>
+		</div>
+		<div class="carteira-info-item carteira-info-turma">
+			<span>Turma</span>
+			<strong>{{turma}}</strong>
+		</div>
+		<div class="carteira-info-item carteira-info-cpf">
+			<span>CPF</span>
+			<strong>{{cpf}}</strong>
+		</div>
+		<div class="carteira-info-item carteira-info-nascimento">
+			<span>Nascimento</span>
+			<strong>{{dataNasc}}</strong>
+		</div>
+		<div class="carteira-info-item carteira-info-cadastro">
+			<span>Cadastro</span>
+			<strong>{{dataCad}}</strong>
+		</div>
+		<div class="carteira-info-item carteira-info-mae">
+			<span>Mãe</span>
+			<strong>{{mae}}</strong>
+		</div>
+	</div>
+
+	<div class="carteira-qr-panel">
+		<img alt="QR Code da matrícula" src="{{qrcodePath}}">
+		<img class="carteira-qr-assinatura" alt="Assinatura da carteira digital do aluno" src="{{assinaturaCarteiraAluno}}">
+	</div>
+
+	<div class="carteira-footer-panel">
+		<span>{{rodapeCarteiraAluno}}</span>
+	</div>
+</div>
