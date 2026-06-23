@@ -27,6 +27,9 @@ include __DIR__.'/painel/escolaridades.php';
 //Inclui as rotas de Usuários
 include __DIR__.'/painel/users.php';
 
+//Inclui as rotas de Auditoria
+include __DIR__.'/painel/auditoria.php';
+
 //Inclui as rotas de Relatorios
 include __DIR__.'/painel/relatorios.php';
 

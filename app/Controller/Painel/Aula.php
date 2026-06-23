@@ -404,6 +404,48 @@ class Aula extends Page{
 	    ]);
 	}
 
+	private static function getComparacaoFacialPresenca($obFrequencia){
+	    $status = trim((string)($obFrequencia->comparacaoFacialResultado ?? ''));
+	    $score = $obFrequencia->comparacaoFacialPontuacao ?? null;
+	    $details = trim((string)($obFrequencia->comparacaoFacialDetalhes ?? ''));
+
+	    $labels = [
+	        'compativel' => 'Compatível',
+	        'verificar' => 'Verificar',
+	        'divergente' => 'Divergente',
+	        'sem_captura' => 'Sem captura',
+	        'sem_foto_aluno' => 'Sem foto',
+	        'indisponivel' => 'Indisponível',
+	    ];
+
+	    $classes = [
+	        'compativel' => 'bg-gradient-success',
+	        'verificar' => 'bg-gradient-warning',
+	        'divergente' => 'bg-gradient-danger',
+	        'sem_captura' => 'bg-gradient-secondary',
+	        'sem_foto_aluno' => 'bg-gradient-secondary',
+	        'indisponivel' => 'bg-gradient-secondary',
+	    ];
+
+	    if($status === ''){
+	        return '<span class="student-status-pill bg-gradient-secondary">Não realizada</span>';
+	    }
+
+	    $label = $labels[$status] ?? $status;
+	    $class = $classes[$status] ?? 'bg-gradient-secondary';
+	    $scoreLabel = is_numeric($score) ? ' '.number_format((float)$score, 0, ',', '.').'%' : '';
+	    $title = '';
+
+	    if($details !== ''){
+	        $decoded = json_decode($details, true);
+	        if(is_array($decoded) && isset($decoded['message'])){
+	            $title = ' rel="tooltip" title="'.htmlspecialchars((string)$decoded['message'], ENT_QUOTES, 'UTF-8').'"';
+	        }
+	    }
+
+	    return '<span class="student-status-pill '.$class.'"'.$title.'>'.htmlspecialchars($label.$scoreLabel, ENT_QUOTES, 'UTF-8').'</span>';
+	}
+
 	//Método responsavel por obter a rendereizacao os alunos presentes 
 	private static function getAulasPresentesItems($idAula){
 	    $resultados = '';
@@ -443,7 +485,8 @@ class Aula extends Page{
 	            'hora' =>  date('H:i:s', strtotime($obFrequencia->dataReg)),
 	            'foto' => $obAluno->getFoto(),
 	            'idAluno' => $obFrequencia->idAluno,
-	            'fotoAuditoria' => self::getFotoAuditoriaPresenca($obFrequencia->fotoAuditoria ?? '', $obAluno->nome)
+	            'fotoAuditoria' => self::getFotoAuditoriaPresenca($obFrequencia->fotoAuditoria ?? '', $obAluno->nome),
+	            'comparacaoFacial' => self::getComparacaoFacialPresenca($obFrequencia)
 	        ]);
 	    }
 	    //Retorna as agendas

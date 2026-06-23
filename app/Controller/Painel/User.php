@@ -9,8 +9,28 @@ use Bissolli\ValidadorCpfCnpj\CPF;
 use \App\Utils\Funcoes;
 use App\Controller\File\Upload;
 use App\Session\User\Login;
+use App\Service\AuditLogger;
 
 class User extends Page{
+	private const AUDIT_USER_FIELDS = [
+		'id',
+		'nome',
+		'email',
+		'cpf',
+		'tipo',
+		'foto',
+		'excluirAluno',
+		'excluirProfessor',
+		'excluirDisciplina',
+		'excluirUsuario',
+		'menuAlunos',
+		'menuProfessores',
+		'menuAulas',
+		'menuFrequencias',
+		'btnNovoUsuario',
+		'menuDisciplinas',
+		'permissoes',
+	];
 	
 	//esconde busca rápida de prontuário no navBar
 	private static $hidden = 'hidden';
@@ -348,11 +368,21 @@ class User extends Page{
 		
 		//grava as informações
 		$obUser->cadastrar();
-		
+
+		AuditLogger::record(
+			$request,
+			'criar',
+			'usuarios',
+			'Usuário',
+			$obUser->id,
+			'Usuário criado: '.$obUser->nome,
+			null,
+			AuditLogger::snapshot($obUser, self::AUDIT_USER_FIELDS)
+		);
+
 		//Atualiza a sessão de usuário
 		Login::login($obUser);
-		
-		
+
 		//encerra sessão com os dados do form
 		EntityUser::getFinalizaSessaoDados();
 		
@@ -470,12 +500,13 @@ class User extends Page{
 				//obtém o usuário do banco de dados
 		$obUser = EntityUser::getUserById($id);
 		
-		//Valida a instancia
-		if(!$obUser instanceof EntityUser){
-			$request->getRouter()->redirect('/users');
-		}
+			//Valida a instancia
+			if(!$obUser instanceof EntityUser){
+				$request->getRouter()->redirect('/users');
+			}
+			$auditBefore = AuditLogger::snapshot($obUser, self::AUDIT_USER_FIELDS);
 
-		if(!self::canManageUsers()){
+			if(!self::canManageUsers()){
 			$tipo = $obUser->tipo;
 			$cpf = $obUser->cpf;
 			$permissions = Permission::getExplicitPermissions($obUser);
@@ -538,15 +569,24 @@ class User extends Page{
 		
 		//grava as informações
 		$obUser->atualizar();
-		
-		
+
+		AuditLogger::record(
+			$request,
+			'atualizar',
+			'usuarios',
+			'Usuário',
+			$obUser->id,
+			'Usuário atualizado: '.$obUser->nome,
+			$auditBefore,
+			AuditLogger::snapshot($obUser, self::AUDIT_USER_FIELDS)
+		);
+
 		//Atualiza a sessão de usuário
 		Funcoes::getSessaoPermissoes($obUser);
-		
+
 		//Redireciona o usuário
 		$request->getRouter()->redirect('/users/'.$obUser->id.'/edit?statusMessage=updated');
-		
-		
+
 	}
 	
 	
@@ -579,20 +619,30 @@ class User extends Page{
 	public static function setDeleteUser($request,$id){
 		//obtém o usuário do banco de dados
 		$obUser = EntityUser::getUserById($id);
-		
+
 		//Valida a instancia
 		if(!$obUser instanceof EntityUser){
 			$request->getRouter()->redirect('/users');
 		}
-		
-			
+		$auditBefore = AuditLogger::snapshot($obUser, self::AUDIT_USER_FIELDS);
+
 		//Exclui o usuário
 		$obUser->excluir($id);
-		
+
+		AuditLogger::record(
+			$request,
+			'excluir',
+			'usuarios',
+			'Usuário',
+			$id,
+			'Usuário excluído: '.$obUser->nome,
+			$auditBefore,
+			null
+		);
+
 		//Redireciona o usuário
 		$request->getRouter()->redirect('/users?statusMessage=deleted');
-		
-		
+
 	}
 	
 	

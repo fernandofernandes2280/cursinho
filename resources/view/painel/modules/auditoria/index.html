@@ -1,0 +1,77 @@
+<main class="alunos-page auditoria-page">
+  <section class="alunos-panel">
+    <div class="alunos-toolbar">
+      <div class="alunos-title">
+        <h5>Auditoria</h5>
+      </div>
+      <div class="auditoria-total">{{totalRegistros}} registro(s)</div>
+    </div>
+  </section>
+
+  <section class="alunos-panel auditoria-filtros-panel">
+    <form method="get" class="auditoria-filtros">
+      <label>
+        <span>Data inicial</span>
+        <input type="date" name="dataInicial" value="{{dataInicial}}">
+      </label>
+
+      <label>
+        <span>Data final</span>
+        <input type="date" name="dataFinal" value="{{dataFinal}}">
+      </label>
+
+      <label>
+        <span>Usuário</span>
+        <select name="usuario">{{usuarioOptions}}</select>
+      </label>
+
+      <label>
+        <span>Módulo</span>
+        <select name="modulo">{{moduloOptions}}</select>
+      </label>
+
+      <label>
+        <span>Ação</span>
+        <select name="acao">{{acaoOptions}}</select>
+      </label>
+
+      <label class="auditoria-busca">
+        <span>Busca</span>
+        <input type="search" name="busca" value="{{busca}}" placeholder="Descrição, entidade ou usuário">
+      </label>
+
+      <div class="auditoria-filtros-actions">
+        <button type="submit" class="btn btn-info btn-round btn-just-icon" rel="tooltip" title="Filtrar">
+          <i class="material-icons">search</i>
+        </button>
+        <a href="{{URL}}/auditoria" class="btn btn-default btn-round btn-just-icon" rel="tooltip" title="Limpar filtros">
+          <i class="material-icons">filter_alt_off</i>
+        </a>
+      </div>
+    </form>
+  </section>
+
+  <section class="alunos-datatable-panel">
+    <table class="table table-striped alunos-table auditoria-table">
+      <caption>Registros de auditoria</caption>
+      <thead>
+        <tr>
+          <th>Data/Hora</th>
+          <th>Usuário</th>
+          <th>Módulo</th>
+          <th>Ação</th>
+          <th>Entidade</th>
+          <th>Descrição</th>
+          <th class="text-center">Detalhes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{itens}}
+      </tbody>
+    </table>
+  </section>
+
+  <div class="auditoria-pagination">
+    {{pagination}}
+  </div>
+</main>

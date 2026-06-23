@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS auditoria_logs (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  usuario_id INT NULL,
+  usuario_nome VARCHAR(190) NULL,
+  usuario_tipo VARCHAR(60) NULL,
+  acao VARCHAR(80) NOT NULL,
+  modulo VARCHAR(80) NOT NULL,
+  entidade VARCHAR(120) NULL,
+  entidade_id VARCHAR(80) NULL,
+  descricao VARCHAR(500) NOT NULL,
+  dados_antes LONGTEXT NULL,
+  dados_depois LONGTEXT NULL,
+  ip VARCHAR(80) NULL,
+  user_agent VARCHAR(500) NULL,
+  criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  INDEX idx_auditoria_criado_em (criado_em),
+  INDEX idx_auditoria_usuario_id (usuario_id),
+  INDEX idx_auditoria_modulo (modulo),
+  INDEX idx_auditoria_acao (acao),
+  INDEX idx_auditoria_entidade (entidade(60), entidade_id(40))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

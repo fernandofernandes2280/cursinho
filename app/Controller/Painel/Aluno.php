@@ -12,10 +12,24 @@ use \App\Model\Entity\Status as EntityStatus;
 use \App\Model\Entity\Configuracao as EntityConfiguracao;
 use \App\Utils\Funcoes;
 use \App\Controller\File\Upload as Upload;
+use App\Service\AuditLogger;
 use Bissolli\ValidadorCpfCnpj\CPF;
 use \WilliamCosta\DatabaseManager\Database;
 
 class Aluno extends Page{
+	private const AUDIT_ALUNO_FIELDS = [
+		'id',
+		'matricula',
+		'nome',
+		'cpf',
+		'fone',
+		'status',
+		'turma',
+		'dataNasc',
+		'dataCad',
+		'foto',
+	];
+
 	private const DOCUMENTOS_ALUNO = [
 		'documentoIdentificacao' => [
 			'fileName' => 'documento-identificacao.pdf',
@@ -713,6 +727,7 @@ class Aluno extends Page{
 
 
 	    $obAluno = EntityAluno::getAlunoById($postVars['id']);
+	    $auditBefore = AuditLogger::snapshot($obAluno, self::AUDIT_ALUNO_FIELDS);
 	    $fileUpload = $fileVars['fImage'] ?? null;
 	    $hasFileUpload = is_array($fileUpload)
 	        && trim((string)($fileUpload['name'] ?? '')) !== ''
@@ -725,6 +740,19 @@ class Aluno extends Page{
 	        if(!Upload::setUploadImages($request)){
 	            $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=fotoSaveError');
 	        }
+
+	        $obAlunoAtualizado = EntityAluno::getAlunoById($obAluno->id);
+	        AuditLogger::record(
+	            $request,
+	            'atualizar_foto',
+	            'alunos',
+	            'Aluno',
+	            $obAluno->id,
+	            'Foto do aluno atualizada: '.$obAluno->nome,
+	            $auditBefore,
+	            AuditLogger::snapshot($obAlunoAtualizado, self::AUDIT_ALUNO_FIELDS)
+	        );
+
 	        //Redireciona o usuário
 	        $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=updated');
 	    }
@@ -737,6 +765,18 @@ class Aluno extends Page{
 	    if(!Upload::setUploadImagesWebCamAluno($request)){
 	        $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=fotoSaveError');
 	    }
+
+	    $obAlunoAtualizado = EntityAluno::getAlunoById($obAluno->id);
+	    AuditLogger::record(
+	        $request,
+	        'atualizar_foto',
+	        'alunos',
+	        'Aluno',
+	        $obAluno->id,
+	        'Foto do aluno atualizada pela câmera: '.$obAluno->nome,
+	        $auditBefore,
+	        AuditLogger::snapshot($obAlunoAtualizado, self::AUDIT_ALUNO_FIELDS)
+	    );
 
 
 
@@ -842,6 +882,7 @@ class Aluno extends Page{
 	    if(!$obAluno instanceof EntityAluno){
 	        $request->getRouter()->redirect('/alunos');
 	    }
+	    $auditBefore = AuditLogger::snapshot($obAluno, self::AUDIT_ALUNO_FIELDS);
 
 	    //redireciona caso seja feita busca rápida pela Matrícula
 	    if(@$postVars['matricula']){
@@ -888,7 +929,17 @@ class Aluno extends Page{
 	        $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=documentoInvalid');
 	    }
 
-	    //	Logs::setNewLog($request);
+	    $auditAfter = AuditLogger::snapshot($obAluno, self::AUDIT_ALUNO_FIELDS);
+	    AuditLogger::record(
+	        $request,
+	        'atualizar',
+	        'alunos',
+	        'Aluno',
+	        $obAluno->id,
+	        'Aluno atualizado: '.$obAluno->nome,
+	        $auditBefore,
+	        $auditAfter
+	    );
 
 	    //Redireciona o usuário
 	    $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=updated');
@@ -1032,6 +1083,17 @@ class Aluno extends Page{
 	    $obMatricula->matricula = EntityAluno::geraMatricula($obMatricula->id);
 	    $obMatricula->atualizar();
 
+	    AuditLogger::record(
+	        $request,
+	        'criar',
+	        'alunos',
+	        'Aluno',
+	        $obMatricula->id,
+	        'Aluno criado: '.$obMatricula->nome,
+	        null,
+	        AuditLogger::snapshot($obMatricula, self::AUDIT_ALUNO_FIELDS)
+	    );
+
 	    if(!self::salvarDocumentosAluno($request, $obAluno->id)){
 	        EntityAluno::getFinalizaSessaoDados();
 	        $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=documentoInvalid');
@@ -1039,8 +1101,6 @@ class Aluno extends Page{
 
 	    //encerra sessão com os dados do form
 	    EntityAluno::getFinalizaSessaoDados();
-
-	    //	Logs::setNewLog($request);
 
 	    //Redireciona o usuário
 	    if(($postVars['redirectPhoto'] ?? '') == '1'){
@@ -1086,9 +1146,21 @@ class Aluno extends Page{
 	    if(!$obAluno instanceof EntityAluno){
 	        $request->getRouter()->redirect('/alunos');
 	    }
+	    $auditBefore = AuditLogger::snapshot($obAluno, self::AUDIT_ALUNO_FIELDS);
 
 	    //Exclui o depoimento
 	    $obAluno->excluir();
+
+	    AuditLogger::record(
+	        $request,
+	        'excluir',
+	        'alunos',
+	        'Aluno',
+	        $id,
+	        'Aluno excluído: '.$obAluno->nome,
+	        $auditBefore,
+	        null
+	    );
 
 	    //Redireciona o usuário
 	    $request->getRouter()->redirect('/alunos?statusMessage=deleted');

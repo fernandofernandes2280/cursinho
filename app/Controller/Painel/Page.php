@@ -67,12 +67,19 @@ class Page{
 	        'visivel' => permissaoMenuFrequencias
 	        
 	    ],
-				'users' =>[
+			'users' =>[
 					'label' => 'Usuários',
 					'link' => URL.'/users',
 					'material-icons' => 'people',
 			    'modal' => '',
 			    'visivel' => permissaoMenuUsuarios
+			],
+			'auditoria' =>[
+					'label' => 'Auditoria',
+					'link' => URL.'/auditoria',
+					'material-icons' => 'manage_search',
+			    'modal' => '',
+			    'visivel' => permissaoMenuAuditoria
 			],
 			'relatorios' =>[
 					'label' => 'Relatórios',

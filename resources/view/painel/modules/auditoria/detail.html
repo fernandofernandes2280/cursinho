@@ -1,0 +1,64 @@
+<main class="alunos-page auditoria-page">
+  <section class="alunos-panel">
+    <div class="alunos-toolbar">
+      <div class="alunos-title">
+        <h5>Auditoria #{{id}}</h5>
+      </div>
+      <div class="alunos-actions">
+        <a href="{{URL}}/auditoria" class="btn btn-warning btn-round btn-just-icon" rel="tooltip" title="Voltar">
+          <i class="material-icons">reply</i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="alunos-panel auditoria-detail">
+    <dl class="auditoria-detail-grid">
+      <div>
+        <dt>Data/Hora</dt>
+        <dd>{{criadoEm}}</dd>
+      </div>
+      <div>
+        <dt>Usuário</dt>
+        <dd>{{usuario}} <span>{{tipoUsuario}}</span></dd>
+      </div>
+      <div>
+        <dt>Módulo</dt>
+        <dd>{{modulo}}</dd>
+      </div>
+      <div>
+        <dt>Ação</dt>
+        <dd>{{acao}}</dd>
+      </div>
+      <div>
+        <dt>Entidade</dt>
+        <dd>{{entidade}}</dd>
+      </div>
+      <div>
+        <dt>IP</dt>
+        <dd>{{ip}}</dd>
+      </div>
+    </dl>
+
+    <div class="auditoria-detail-description">
+      <h6>Descrição</h6>
+      <p>{{descricao}}</p>
+    </div>
+
+    <div class="auditoria-json-grid">
+      <section>
+        <h6>Antes</h6>
+        <pre>{{dadosAntes}}</pre>
+      </section>
+      <section>
+        <h6>Depois</h6>
+        <pre>{{dadosDepois}}</pre>
+      </section>
+    </div>
+
+    <div class="auditoria-user-agent">
+      <h6>Navegador</h6>
+      <p>{{userAgent}}</p>
+    </div>
+  </section>
+</main>

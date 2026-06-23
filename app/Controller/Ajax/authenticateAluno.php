@@ -8,6 +8,7 @@ use App\Model\Entity\Turma as EntityTurma;
 use App\Model\Entity\Configuracao as EntityConfiguracao;
 use App\Model\Entity\Frequencia as EntityFrequencia;
 use App\Model\Entity\InativacaoAluno as EntityInativacaoAluno;
+use App\Service\FaceComparison;
 use WilliamCosta\DatabaseManager\Database;
 
 header('Content-Type: application/json; charset=utf-8');
@@ -293,10 +294,12 @@ if($obFrequencia instanceof EntityFrequencia){
     }
 
     $fotoAuditoria = salvarFotoAuditoriaPresenca($fotoAuditoriaRequest, $idAula, $idAluno, $obAluno->matricula);
+    $comparacaoFacial = FaceComparison::comparar($fotoAuditoria, $obAluno);
 
-    $response['successUpdate'] = $obFrequencia->registrarPresenca($autor, $fotoAuditoria);
+    $response['successUpdate'] = $obFrequencia->registrarPresenca($autor, $fotoAuditoria, $comparacaoFacial);
     $response['mensagem'] = $response['successUpdate'] ? 'Presença Registrada!' : 'Erro Interno! Tente novamente.';
     $response['fotoAuditoria'] = $fotoAuditoria;
+    $response['comparacaoFacial'] = $comparacaoFacial;
 
     echo json_encode($response, JSON_UNESCAPED_UNICODE);
     exit;

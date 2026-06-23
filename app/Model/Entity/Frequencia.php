@@ -4,9 +4,12 @@ namespace App\Model\Entity;
 
 use \WilliamCosta\DatabaseManager\Database;
 use \App\Utils\View;
+use PDO;
+use PDOException;
 
 class Frequencia{
-    
+    private static $comparacaoFacialColumnsReady = null;
+
     public $id;
     public $idAula;
     public $idAluno;
@@ -15,6 +18,10 @@ class Frequencia{
     public $autor;
     public $fotoAuditoria;
     public $dataAuditoria;
+    public $comparacaoFacialResultado;
+    public $comparacaoFacialPontuacao;
+    public $comparacaoFacialDetalhes;
+    public $comparacaoFacialData;
     
 	
 		
@@ -98,7 +105,57 @@ class Frequencia{
 	    ]);
 	}
 
-	public function registrarPresenca($autor, $fotoAuditoria = null){
+	private static function getSchemaConnection(){
+	    $port = getenv('DB_PORT') ?: 3306;
+	    $dsn = 'mysql:host='.getenv('DB_HOST').';dbname='.getenv('DB_NAME').';port='.$port.';charset=utf8mb4';
+	    $connection = new PDO($dsn, getenv('DB_USER'), getenv('DB_PASS'));
+	    $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+	    return $connection;
+	}
+
+	private static function hasColumn(PDO $connection, $column){
+	    $statement = $connection->prepare(
+	        'SELECT COUNT(*)
+	         FROM INFORMATION_SCHEMA.COLUMNS
+	         WHERE TABLE_SCHEMA = DATABASE()
+	           AND TABLE_NAME = "frequencia"
+	           AND COLUMN_NAME = :column'
+	    );
+	    $statement->execute([':column' => $column]);
+
+	    return (int)$statement->fetchColumn() > 0;
+	}
+
+	private static function ensureComparacaoFacialColumns(){
+	    if(self::$comparacaoFacialColumnsReady !== null){
+	        return self::$comparacaoFacialColumnsReady;
+	    }
+
+	    try{
+	        $connection = self::getSchemaConnection();
+	        $columns = [
+	            'comparacaoFacialResultado' => 'VARCHAR(30) NULL',
+	            'comparacaoFacialPontuacao' => 'DECIMAL(5,2) NULL',
+	            'comparacaoFacialDetalhes' => 'TEXT NULL',
+	            'comparacaoFacialData' => 'DATETIME NULL',
+	        ];
+
+	        foreach($columns as $column => $definition){
+	            if(!self::hasColumn($connection, $column)){
+	                $connection->exec('ALTER TABLE frequencia ADD COLUMN '.$column.' '.$definition);
+	            }
+	        }
+
+	        self::$comparacaoFacialColumnsReady = true;
+	    }catch(PDOException $e){
+	        self::$comparacaoFacialColumnsReady = false;
+	    }
+
+	    return self::$comparacaoFacialColumnsReady;
+	}
+
+	public function registrarPresenca($autor, $fotoAuditoria = null, $comparacaoFacial = null){
 	    $this->status = 'P';
 	    $this->autor = (int)$autor;
 	    $this->dataReg = date('Y-m-d H:i:s');
@@ -114,6 +171,18 @@ class Frequencia{
 	        $this->dataAuditoria = $this->dataReg;
 	        $values['fotoAuditoria'] = $this->fotoAuditoria;
 	        $values['dataAuditoria'] = $this->dataAuditoria;
+	    }
+
+	    if(is_array($comparacaoFacial) && self::ensureComparacaoFacialColumns()){
+	        $this->comparacaoFacialResultado = $comparacaoFacial['status'] ?? null;
+	        $this->comparacaoFacialPontuacao = $comparacaoFacial['score'] ?? null;
+	        $this->comparacaoFacialDetalhes = json_encode($comparacaoFacial, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+	        $this->comparacaoFacialData = $comparacaoFacial['createdAt'] ?? $this->dataReg;
+
+	        $values['comparacaoFacialResultado'] = $this->comparacaoFacialResultado;
+	        $values['comparacaoFacialPontuacao'] = $this->comparacaoFacialPontuacao;
+	        $values['comparacaoFacialDetalhes'] = $this->comparacaoFacialDetalhes;
+	        $values['comparacaoFacialData'] = $this->comparacaoFacialData;
 	    }
 
 	    return (new Database('frequencia'))->update('id = '.$this->id, $values);

@@ -4,6 +4,142 @@
   box-sizing: border-box;
 }
 
+.auditoria-total,
+.auditoria-muted {
+  color: #667085;
+  font-size: .82rem;
+}
+
+.auditoria-muted {
+  display: block;
+  margin-top: .15rem;
+}
+
+.auditoria-filtros-panel {
+  margin-top: 1rem;
+}
+
+.auditoria-filtros {
+  align-items: end;
+  display: grid;
+  gap: .85rem;
+  grid-template-columns: repeat(5, minmax(130px, 1fr)) minmax(220px, 1.4fr) auto;
+  width: 100%;
+}
+
+.auditoria-filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  margin: 0;
+}
+
+.auditoria-filtros span,
+.auditoria-detail dt {
+  color: #667085;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.auditoria-filtros input,
+.auditoria-filtros select {
+  background: #fff;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  color: #101828;
+  min-height: 42px;
+  padding: .55rem .7rem;
+}
+
+.auditoria-filtros-actions {
+  display: inline-flex;
+  gap: .45rem;
+  justify-content: flex-end;
+}
+
+.auditoria-table td {
+  vertical-align: middle;
+}
+
+.auditoria-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.auditoria-detail {
+  margin-top: 1rem;
+}
+
+.auditoria-detail-grid,
+.auditoria-json-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.auditoria-detail-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.auditoria-detail-grid div {
+  border-bottom: 1px solid #eaecf0;
+  padding-bottom: .75rem;
+}
+
+.auditoria-detail dd {
+  color: #101828;
+  margin: .25rem 0 0;
+}
+
+.auditoria-detail dd span {
+  color: #667085;
+  margin-left: .35rem;
+}
+
+.auditoria-detail-description,
+.auditoria-user-agent {
+  margin-top: 1.2rem;
+}
+
+.auditoria-detail h6 {
+  font-weight: 700;
+  margin-bottom: .5rem;
+}
+
+.auditoria-json-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 1.2rem;
+}
+
+.auditoria-json-grid pre {
+  background: #101828;
+  border-radius: 8px;
+  color: #f9fafb;
+  font-size: .78rem;
+  max-height: 460px;
+  overflow: auto;
+  padding: 1rem;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 1100px) {
+  .auditoria-filtros {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .auditoria-busca,
+  .auditoria-filtros-actions {
+    grid-column: 1 / -1;
+  }
+
+  .auditoria-detail-grid,
+  .auditoria-json-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 :root {
   --sidebar-width: 280px;
   --mobile-sidebar-width: min(20rem, 64vw);

@@ -50,6 +50,8 @@ define('permissaoMenuUsuarios', $permissao['menuUsuarios']);
 
 define('permissaoMenuConfiguracoes', $permissao['menuConfiguracoes']);
 
+define('permissaoMenuAuditoria', SessionUserLogin::isAdmin() ? '' : 'hidden');
+
 define('permissaoExcluirDisciplinas', $permissao['excluirDisciplina']);
 
 define('permissaoExcluirProfessor', $permissao['excluirProfessor']);
@@ -78,6 +80,7 @@ MiddlewareQueue::setMap([
 		'maintenance' => \App\Http\Middleware\Maintenance::class,
 		'require-user-logout' => \App\Http\Middleware\RequireUserLogout::class,
 		'require-user-login' => \App\Http\Middleware\RequireUserLogin::class,
+		'require-admin' => \App\Http\Middleware\RequireAdmin::class,
 		'can' => \App\Http\Middleware\Can::class,
 		'require-visitor-logout' => \App\Http\Middleware\RequireVisitorLogout::class,
 		'require-visitor-login' => \App\Http\Middleware\RequireVisitorLogin::class,

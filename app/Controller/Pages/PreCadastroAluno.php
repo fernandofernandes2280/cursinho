@@ -12,11 +12,23 @@ use \App\Model\Entity\Status as EntityStatus;
 use \App\Model\Entity\Turma as EntityTurma;
 use \App\Utils\Funcoes;
 use \App\Utils\View;
+use App\Service\AuditLogger;
 use Bissolli\ValidadorCpfCnpj\CPF;
 
 class PreCadastroAluno extends Page{
     private const DOCUMENTO_MAX_BYTES = 5 * 1024 * 1024;
     private const STATUS_ALUNO_ATIVO = 1;
+    private const AUDIT_ALUNO_FIELDS = [
+        'id',
+        'matricula',
+        'nome',
+        'cpf',
+        'fone',
+        'status',
+        'turma',
+        'dataNasc',
+        'foto',
+    ];
 
     private const DOCUMENTOS_ALUNO = [
         'documentoIdentificacao' => [
@@ -779,6 +791,8 @@ class PreCadastroAluno extends Page{
             $request->getRouter()->redirect('/precadastro?cpf='.$cpf.'&preStatus=selfieRequired');
         }
 
+        $auditBefore = AuditLogger::snapshot($obAluno, self::AUDIT_ALUNO_FIELDS);
+
         $obAluno->nome = Funcoes::convertePriMaiuscula($postVars['nome'] ?? $obAluno->nome);
         $obAluno->cep = $postVars['cep'] ?? $obAluno->cep;
         $obAluno->endereco = Funcoes::convertePriMaiuscula($postVars['endereco'] ?? $obAluno->endereco);
@@ -803,6 +817,18 @@ class PreCadastroAluno extends Page{
         }
 
         self::ativarAlunoSePreCadastroCompleto($obAluno);
+
+        $obAlunoAtualizado = EntityAluno::getAlunoById($obAluno->id);
+        AuditLogger::record(
+            $request,
+            'atualizar',
+            'precadastro',
+            'Aluno',
+            $obAluno->id,
+            'Pré-cadastro salvo pelo aluno: '.$obAluno->nome,
+            $auditBefore,
+            AuditLogger::snapshot($obAlunoAtualizado, self::AUDIT_ALUNO_FIELDS)
+        );
 
         $request->getRouter()->redirect('/precadastro?cpf='.$cpf.'&preStatus=saved');
     }

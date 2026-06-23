@@ -5,6 +5,7 @@ namespace App\Controller\Painel;
 use \App\Utils\View;
 use \App\Model\Entity\Aluno as EntityAluno;
 use \App\Model\Entity\Aula as EntityAula;
+use App\Service\AuditLogger;
 
 class Inativar extends Page{
 	
@@ -54,6 +55,7 @@ class Inativar extends Page{
     $results = EntityAula::getAulasInativaAluno($where,$order,null,$fields,$table);
     
     $cont = 0;
+    $alunosInativados = [];
     while ($obInativo = $results -> fetchObject(EntityAula::class)) {
         
         if($obInativo->qtd > 2){ //INATIVA COM MAIS DE DUAS FALTAS NO INTERVALO DE DIAS
@@ -62,9 +64,34 @@ class Inativar extends Page{
                 $obAluno ->status = 2; //status INATIVO
                 $obAluno -> atualizar();
                 $cont++;
+                $alunosInativados[] = [
+                    'id' => $obAluno->id,
+                    'matricula' => $obAluno->matricula,
+                    'nome' => $obAluno->nome,
+                    'faltas' => $obInativo->qtd,
+                    'status' => 2,
+                ];
             }
             
         }
+    }
+
+    if($cont > 0){
+        AuditLogger::record(
+            $request,
+            'inativar_lote',
+            'inativar',
+            'Aluno',
+            null,
+            'Inativação em lote de '.$cont.' aluno(s)',
+            null,
+            [
+                'dataInicial' => $dataIncial,
+                'dataFinal' => $dataFinal,
+                'quantidade' => $cont,
+                'alunos' => $alunosInativados,
+            ]
+        );
     }
     
     $request->getRouter()->redirect('/inativar?statusMessage=success&cont='.$cont.'');
