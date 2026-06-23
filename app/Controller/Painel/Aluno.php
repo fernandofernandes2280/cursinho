@@ -713,25 +713,29 @@ class Aluno extends Page{
 
 
 	    $obAluno = EntityAluno::getAlunoById($postVars['id']);
+	    $fileUpload = $fileVars['fImage'] ?? null;
+	    $hasFileUpload = is_array($fileUpload)
+	        && trim((string)($fileUpload['name'] ?? '')) !== ''
+	        && (int)($fileUpload['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
+	    $hasWebcamImage = trim((string)($postVars['image'] ?? '')) !== '';
 
-	    if(!empty($fileVars['fImage']['name'] != '')){
+	    if($hasFileUpload){
 	        $postVars['image'] = '';
 
-
-
-
-	        Upload::setUploadImages($request);
+	        if(!Upload::setUploadImages($request)){
+	            $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=fotoSaveError');
+	        }
 	        //Redireciona o usuário
 	        $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=updated');
 	    }
 
-	    if ($postVars['image'] != ''){
+	    if ($hasWebcamImage){
 
 
 
 	    //MÉTODO RESPONSÁVEL POR FAZER O UPLOADO DA IMAGE VINDA DA WEB CAM DO PROFESSOR
 	    if(!Upload::setUploadImagesWebCamAluno($request)){
-	        $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=semfoto');
+	        $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=fotoSaveError');
 	    }
 
 

@@ -128,11 +128,20 @@ class Upload{
 	    //caminho completo de destino
 	    $path = $dir.'/'.$nomeArquivo;
 	    
-	    //	var_dump($path);exit;
-	    
-	    
-	    //move o arquivo para a pasta de destino
-	    return move_uploaded_file($this->tmpName, $path);
+	    if(!self::ensureWritableDirectory($dir)){
+	        return false;
+	    }
+
+	    if(!is_file($path) || is_writable($path)){
+	        return @move_uploaded_file($this->tmpName, $path);
+	    }
+
+	    $tempPath = self::getTempFilePath($path);
+	    if(!@move_uploaded_file($this->tmpName, $tempPath)){
+	        return false;
+	    }
+
+	    return self::replaceFileWithTemp($tempPath, $path);
 	    
 	}
 
@@ -142,6 +151,41 @@ class Upload{
 	    }
 
 	    return is_dir($dir) && is_writable($dir);
+	}
+
+	private static function getTempFilePath($file){
+	    return $file.'.tmp-'.uniqid('', true);
+	}
+
+	private static function replaceFileWithTemp($tempFile, $file){
+	    if(is_file($file) && !@unlink($file)){
+	        @unlink($tempFile);
+	        return false;
+	    }
+
+	    if(!@rename($tempFile, $file)){
+	        @unlink($tempFile);
+	        return false;
+	    }
+
+	    return true;
+	}
+
+	private static function writeFileContents($file, $contents){
+	    if(!self::ensureWritableDirectory(dirname($file))){
+	        return false;
+	    }
+
+	    if(!is_file($file) || is_writable($file)){
+	        return @file_put_contents($file, $contents) !== false;
+	    }
+
+	    $tempFile = self::getTempFilePath($file);
+	    if(@file_put_contents($tempFile, $contents) === false){
+	        return false;
+	    }
+
+	    return self::replaceFileWithTemp($tempFile, $file);
 	}
 
 	private static function getBase64ImageBinary($image){
@@ -174,7 +218,7 @@ class Upload{
 	    $fileName = $prefix.$nome.'.png';
 	    $file = $folderPath.$fileName;
 
-	    if(@file_put_contents($file, $imageBinary) === false){
+	    if(!self::writeFileContents($file, $imageBinary)){
 	        return false;
 	    }
 
@@ -232,87 +276,54 @@ class Upload{
 			
 		//busca Aluno no banco
 		$obAluno = EntityAluno::getAlunoById($postVars['id']);
+		if(!$obAluno){
+		    return false;
+		}
 		
 		$upload = new Image(__DIR__.'/files', '/fotos');
 		
 		$files = $request->getFileVars();
 	
-		if(!empty($files['fImage'])){
-			$file = $files['fImage'];
-			
-			//verifica se o arquivo existe e se o tipo é permitido
-			if(empty($file['type']) || !in_array($file['type'], $upload::isAllowed())  ){
-				
-			    //$request->getRouter()->redirect('/pacientes'); 
-				
-			}else{
-				//faz o upload da imagem
-				
-				//instancia de upload
-				$obUpload = new Upload($files['fImage']);
-
-					//gera um nome aleatório pro arquivo
-					//$obUpload->generateNewName();
-					
-					//Move os arquivos de upload
-					//$sucesso = $obUpload->upload(__DIR__.'/files/fotos',false);
-				
-				
-				if($files['fImage']['name'] == 'profile.png')
-				    {
-				        $nameFile = $files['fImage']['name'];
-				    } else
-				    {
-				        $nameFile = $obUpload->nomeArquivo($obAluno->matricula, str_replace(' ', '',$obAluno->nome), '.png');
-				    }
-					
-				
-				
-				
-				$sucesso = $obUpload->uploadFotoAluno(__DIR__.'/files/fotos',false,$nameFile);
-			//	chmod(__DIR__."/files/fotos/".$nameFile, 0777); //Corrige a permissão do arquivo.
-				//corta a foto
-				$img = new Resize();
-				$config = array();
-				$config['source_image'] = __DIR__.'/files/fotos/'.$nameFile;
-				$config['width'] = 195;
-				$config['height'] = 230;
-				$img->initialize($config);
-				$img->crop();
-				
-				
-					if($sucesso){
-
-						
-						//caminho da imagem completo gravada no banco
-					//	$filename = __DIR__.'/files/fotos/'.$obAluno->foto;
-						//verifica se o arquivo existe, se existir, atribui as permissoes e apaga o arquivo anterior
-				//		if (file_exists($filename)){
-					//		chmod($filename, 0777);
-				//			unlink($filename);}
-						//salva o nome do arquivo no banco
-							$obAluno->foto = $nameFile;
-							$obAluno->Atualizar();
-							
-						
-							
-							
-						//exit;
-					}
-				//	echo 'Problemas ao enviar o arquivo <br>';
-					
-				
-			//	exit;
-			//  $uploaded = $upload->upload($file, pathinfo($file['name'], PATHINFO_FILENAME),350);
-			
-			//  chmod(__DIR__."/File/files/images/" . $file['name'], 0777); //Corrige a permissão do arquivo.
-				
-			}
-			//mkdir(__DIR__.'/files/teste',0777,true);
-			
-		//	var_dump(pathinfo($file['name']));exit;
+		if(empty($files['fImage']) || !is_array($files['fImage'])){
+		    return false;
 		}
-		
+
+		$file = $files['fImage'];
+		if((int)($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK){
+		    return false;
+		}
+
+		if(empty($file['type']) || !in_array($file['type'], $upload::isAllowed(), true)){
+		    return false;
+		}
+
+		$obUpload = new Upload($files['fImage']);
+
+		if($files['fImage']['name'] == 'profile.png'){
+		    $nameFile = $files['fImage']['name'];
+		}else{
+		    $nameFile = $obUpload->nomeArquivo($obAluno->matricula, str_replace(' ', '',$obAluno->nome), '.png');
+		}
+
+		$filePath = __DIR__.'/files/fotos/'.$nameFile;
+		if(!$obUpload->uploadFotoAluno(__DIR__.'/files/fotos',false,$nameFile)){
+		    return false;
+		}
+
+		$img = new Resize();
+		$config = array();
+		$config['source_image'] = $filePath;
+		$config['width'] = 195;
+		$config['height'] = 230;
+		$img->initialize($config);
+
+		if(!$img->crop()){
+		    @unlink($filePath);
+		    return false;
+		}
+
+		$obAluno->foto = $nameFile;
+		return $obAluno->atualizar();
 	}
 	
 	

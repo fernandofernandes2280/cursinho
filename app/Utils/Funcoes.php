@@ -41,6 +41,9 @@ class Funcoes{
             case 'semfoto':
                 return Alert::getError('Nenhuma foto foi enviada!');
                 break;
+            case 'fotoSaveError':
+                return Alert::getError('Não foi possível salvar a foto. Verifique as permissões da pasta de fotos no servidor.');
+                break;
             case 'cpfInvalid':
                 return Alert::getError('CPF Inválido!');
                 break;
