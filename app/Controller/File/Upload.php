@@ -119,7 +119,7 @@ class Upload{
 	    
 	}
 	//método responsável por mover o arquivo de upload
-		public function uploadFotoAluno($dir, $overwrite, $nomeArquivo ){
+	public function uploadFotoAluno($dir, $overwrite, $nomeArquivo ){
 	        
 	    //verificar erro
 	    if($this->error != 0) return false;
@@ -135,35 +135,73 @@ class Upload{
 	    return move_uploaded_file($this->tmpName, $path);
 	    
 	}
+
+	private static function ensureWritableDirectory($dir){
+	    if(!is_dir($dir) && !@mkdir($dir, 0775, true)){
+	        return false;
+	    }
+
+	    return is_dir($dir) && is_writable($dir);
+	}
+
+	private static function getBase64ImageBinary($image){
+	    $image = (string)$image;
+	    $imageParts = explode(';base64,', $image, 2);
+
+	    if(count($imageParts) !== 2 || strpos($imageParts[0], 'image/') === false){
+	        return false;
+	    }
+
+	    return base64_decode($imageParts[1], true);
+	}
+
+	private static function saveWebcamImage($obEntity, $image, $prefix, $width, $height){
+	    if(!$obEntity){
+	        return false;
+	    }
+
+	    $folderPath = __DIR__.'/files/fotos/';
+	    if(!self::ensureWritableDirectory($folderPath)){
+	        return false;
+	    }
+
+	    $imageBinary = self::getBase64ImageBinary($image);
+	    if($imageBinary === false){
+	        return false;
+	    }
+
+	    $nome = str_replace(' ', '', $obEntity->nome);
+	    $fileName = $prefix.$nome.'.png';
+	    $file = $folderPath.$fileName;
+
+	    if(@file_put_contents($file, $imageBinary) === false){
+	        return false;
+	    }
+
+	    $img = new Resize();
+	    $img->initialize([
+	        'source_image' => $file,
+	        'width' => $width,
+	        'height' => $height,
+	    ]);
+
+	    if(!$img->crop()){
+	        @unlink($file);
+	        return false;
+	    }
+
+	    $obEntity->foto = $fileName;
+
+	    return $obEntity->atualizar();
+	}
 	
 	//MÉTODO RESPONSÁVEL POR FAZER O UPLOADO DA IMAGE VINDA DA WEB CAM DO ALUNO
 	public static function setUploadImagesWebCamAluno($request){
 	    
 	    $postVars = $request->getPostVars();
 	    $obAluno = EntityAluno::getAlunoById($postVars['id']);
-	    $img = $postVars['image'];
-	    $folderPath = __DIR__."/files/fotos/";
-	    $image_parts = explode(";base64,", $img);
-	    $image_type_aux = explode("image/", $image_parts[0]);
-	    $image_type = $image_type_aux[1];
-	    $image_base64 = base64_decode($image_parts[1]);
-	    $nome =  str_replace(' ', '',$obAluno->nome);
-	    $matricula = $obAluno->matricula;
-	    $fileName = $matricula.$nome . '.png';
-	    $obAluno->foto = $fileName;
-	    $obAluno->atualizar();
-	    $file = $folderPath . $fileName;
-	    file_put_contents($file, $image_base64);
-	  //  chmod($file, 0777); //Corrige a permissão do arquivo.
-	    
-	    //corta a immagem vinda da foto do aluno
-	    $img = new Resize();
-	    $config = array();
-	    $config['source_image'] = $file;
-	    $config['width'] = 175; //largura da imagem
-	    $config['height'] = 252; //altura da imagem
-	    $img->initialize($config);
-	    $img->crop();
+
+	    return self::saveWebcamImage($obAluno, $postVars['image'] ?? '', $obAluno ? $obAluno->matricula : '', 175, 252);
 	}
 	
 	//MÉTODO RESPONSÁVEL POR FAZER O UPLOADO DA IMAGE VINDA DA WEB CAM DO PROFESSOR
@@ -171,28 +209,8 @@ class Upload{
 	    
 	    $postVars = $request->getPostVars();
 	    $obProfessor = EntityProfessor::getProfessorById($postVars['id']);
-	    $img = $postVars['image'];
-	    $folderPath = __DIR__."/files/fotos/";
-	    $image_parts = explode(";base64,", $img);
-	    $image_type_aux = explode("image/", $image_parts[0]);
-	    $image_type = $image_type_aux[1];
-	    $image_base64 = base64_decode($image_parts[1]);
-	    $nome =  str_replace(' ', '',$obProfessor->nome);
-	    $matricula = $obProfessor->id;
-	    $fileName = $matricula.$nome . '.png';
-	    $obProfessor->foto = $fileName;
-	    $obProfessor->atualizar();
-	    $file = $folderPath . $fileName;
-	    file_put_contents($file, $image_base64);
-	    //  chmod($file, 0777); //Corrige a permissão do arquivo.
-	    
-	    $img = new Resize();
-	    $config = array();
-	    $config['source_image'] = $file;
-	    $config['width'] = 195;
-	    $config['height'] = 230;
-	    $img->initialize($config);
-	    $img->crop();
+
+	    return self::saveWebcamImage($obProfessor, $postVars['image'] ?? '', $obProfessor ? $obProfessor->id : '', 195, 230);
 	}
 	
 
@@ -201,28 +219,8 @@ class Upload{
 	    
 	    $postVars = $request->getPostVars();
 	    $obUser = EntityUser::getUserById($postVars['id']);
-	    $img = $postVars['image'];
-	    $folderPath = __DIR__."/files/fotos/";
-	    $image_parts = explode(";base64,", $img);
-	    $image_type_aux = explode("image/", $image_parts[0]);
-	    $image_type = $image_type_aux[1];
-	    $image_base64 = base64_decode($image_parts[1]);
-	    $nome =  str_replace(' ', '',$obUser->nome);
-	    $matricula = $obUser->id;
-	    $fileName = $matricula.$nome . '.png';
-	    $obUser->foto = $fileName;
-	    $obUser->atualizar();
-	    $file = $folderPath . $fileName;
-	    file_put_contents($file, $image_base64);
-	    //  chmod($file, 0777); //Corrige a permissão do arquivo.
-	    
-	    $img = new Resize();
-	    $config = array();
-	    $config['source_image'] = $file;
-	    $config['width'] = 195;
-	    $config['height'] = 230;
-	    $img->initialize($config);
-	    $img->crop();
+
+	    return self::saveWebcamImage($obUser, $postVars['image'] ?? '', $obUser ? $obUser->id : '', 195, 230);
 	}
 	
 	

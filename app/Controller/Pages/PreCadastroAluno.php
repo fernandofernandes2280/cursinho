@@ -540,14 +540,18 @@ class PreCadastroAluno extends Page{
         }
 
         $diretorioFotos = dirname(__DIR__).'/File/files/fotos/';
-        if(!is_dir($diretorioFotos)){
-            mkdir($diretorioFotos, 0775, true);
+        if(!is_dir($diretorioFotos) && !@mkdir($diretorioFotos, 0775, true)){
+            return false;
+        }
+
+        if(!is_writable($diretorioFotos)){
+            return false;
         }
 
         $fileName = self::getSelfieFileName($obAluno, $mime);
         $filePath = $diretorioFotos.$fileName;
 
-        if(file_put_contents($filePath, $binary) === false){
+        if(@file_put_contents($filePath, $binary) === false){
             return false;
         }
 
@@ -557,7 +561,11 @@ class PreCadastroAluno extends Page{
             'width' => 160,
             'height' => 200,
         ]);
-        $img->crop();
+
+        if(!$img->crop()){
+            @unlink($filePath);
+            return false;
+        }
 
         $obAluno->foto = $fileName;
 

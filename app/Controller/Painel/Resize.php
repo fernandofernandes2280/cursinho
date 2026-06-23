@@ -42,7 +42,12 @@ class Resize
         $source_path                        = $this->source_image;
         $target_width                       = $this->width;
         $target_height                      = $this->height;
-        list($source_width, $source_height) = $imagesize = getimagesize($source_path);
+        $imagesize                          = @getimagesize($source_path);
+        if($imagesize === false){
+            return false;
+        }
+
+        list($source_width, $source_height) = $imagesize;
         $source_mime                        = $imagesize['mime'];
         switch ($source_mime) {
             case 'image/gif':
@@ -66,7 +71,10 @@ class Resize
                 $suffix      = '.jpg';
                 break;
         }
-        $source_image = $source_func($source_path);
+        $source_image = @$source_func($source_path);
+        if(!$source_image){
+            return false;
+        }
         
         $width_ratio  = $target_width / $source_width;
         $height_ratio = $target_height / $source_height;
@@ -96,17 +104,19 @@ class Resize
         
         // 图片地址为url
         if (strpos($source_path, 'http') !== false) {
-            $output_func($target_image, __DIR__ . '/tmp' . $suffix);
+            $success = @$output_func($target_image, __DIR__ . '/tmp' . $suffix);
         } else {
             if ($this->create_thumb) {
                 $source_path = str_replace('.', $this->thumb_marker . '.', $source_path);
             }
-            $output_func($target_image, $source_path);
+            $success = is_writable(dirname($source_path)) && @$output_func($target_image, $source_path);
         }
         
         //销毁资源
         imagedestroy($source_image);
         @imagedestroy($target_image);
+
+        return $success;
     }
     
     // 居中剪裁
@@ -115,7 +125,12 @@ class Resize
         $source_path                        = $this->source_image;
         $target_width                       = $this->width;
         $target_height                      = $this->height;
-        list($source_width, $source_height) = $imagesize = getimagesize($source_path);
+        $imagesize                          = @getimagesize($source_path);
+        if($imagesize === false){
+            return false;
+        }
+
+        list($source_width, $source_height) = $imagesize;
         $source_mime                        = $imagesize['mime'];
         $source_ratio                       = $source_height / $source_width;
         $target_ratio                       = $target_height / $target_width;
@@ -160,7 +175,10 @@ class Resize
                 $suffix      = '.jpg';
                 break;
         }
-        $source_image = $source_func($source_path);
+        $source_image = @$source_func($source_path);
+        if(!$source_image){
+            return false;
+        }
         
         // 声明图片资源
         $target_image  = imagecreatetruecolor($target_width, $target_height);
@@ -178,18 +196,20 @@ class Resize
         
         // 图片地址为url
         if (strpos($source_path, 'http') !== false) {
-            $output_func($target_image, __DIR__ . '/tmp' . $suffix);
+            $success = @$output_func($target_image, __DIR__ . '/tmp' . $suffix);
         } else {
             if ($this->create_thumb) {
                 $source_path = str_replace('.', $this->thumb_marker . '.', $source_path);
             }
-            $output_func($target_image, $source_path);
+            $success = is_writable(dirname($source_path)) && @$output_func($target_image, $source_path);
         }
         
         // 销毁资源
         imagedestroy($source_image);
         imagedestroy($target_image);
         imagedestroy($cropped_image);
+
+        return $success;
     }
     
 }

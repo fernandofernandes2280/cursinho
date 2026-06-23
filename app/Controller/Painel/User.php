@@ -638,7 +638,9 @@ class User extends Page{
 	    if ($postVars['image'] != ''){
 	        
 	        //MÉTODO RESPONSÁVEL POR FAZER O UPLOADO DA IMAGE VINDA DA WEB CAM DO PROFESSOR
-	        Upload::setUploadImagesWebCamUser($request);
+	        if(!Upload::setUploadImagesWebCamUser($request)){
+	            $request->getRouter()->redirect('/users/'.$obUser->id.'/edit?statusMessage=semfoto');
+	        }
 	        
 	        //Redireciona o usuário
 	        $request->getRouter()->redirect('/users/'.$obUser->id.'/edit?statusMessage=updated');

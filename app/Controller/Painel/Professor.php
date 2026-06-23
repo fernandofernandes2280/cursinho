@@ -757,7 +757,9 @@ class Professor extends Page{
 	    }
 	    
 	    if ($postVars['image'] != ''){
-	        Upload::setUploadImagesWebCamProfessor($request);
+	        if(!Upload::setUploadImagesWebCamProfessor($request)){
+	            $request->getRouter()->redirect('/professores/'.$obProfessor->id.'/edit?statusMessage=semfoto');
+	        }
 	        
 	        //Redireciona o usuário
 	        $request->getRouter()->redirect('/professores/'.$obProfessor->id.'/edit?statusMessage=updated');

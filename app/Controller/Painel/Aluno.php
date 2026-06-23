@@ -729,8 +729,10 @@ class Aluno extends Page{
 
 
 
-    	    //MÉTODO RESPONSÁVEL POR FAZER O UPLOADO DA IMAGE VINDA DA WEB CAM DO PROFESSOR
-    	    Upload::setUploadImagesWebCamAluno($request);
+	    //MÉTODO RESPONSÁVEL POR FAZER O UPLOADO DA IMAGE VINDA DA WEB CAM DO PROFESSOR
+	    if(!Upload::setUploadImagesWebCamAluno($request)){
+	        $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=semfoto');
+	    }
 
 
 
