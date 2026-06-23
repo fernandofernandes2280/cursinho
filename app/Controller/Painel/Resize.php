@@ -40,8 +40,8 @@ class Resize
     public function resize()
     {
         $source_path                        = $this->source_image;
-        $target_width                       = $this->width;
-        $target_height                      = $this->height;
+        $target_width                       = max(1, (int)round((float)$this->width));
+        $target_height                      = max(1, (int)round((float)$this->height));
         $imagesize                          = @getimagesize($source_path);
         if($imagesize === false){
             return false;
@@ -86,10 +86,10 @@ class Resize
             // 根据缩放倍率小的宽或者高缩放
             if ($width_ratio < $height_ratio) {
                 $zoom_width  = $target_width;
-                $zoom_height = $source_height * ($target_width / $source_width);
+                $zoom_height = max(1, (int)round($source_height * ($target_width / $source_width)));
             } else {
                 $zoom_height = $target_height;
-                $zoom_width  = $source_width * ($target_height / $source_height);
+                $zoom_width  = max(1, (int)round($source_width * ($target_height / $source_height)));
             }
             
             // 声明图片资源
@@ -123,8 +123,8 @@ class Resize
     public function crop()
     {
         $source_path                        = $this->source_image;
-        $target_width                       = $this->width;
-        $target_height                      = $this->height;
+        $target_width                       = max(1, (int)round((float)$this->width));
+        $target_height                      = max(1, (int)round((float)$this->height));
         $imagesize                          = @getimagesize($source_path);
         if($imagesize === false){
             return false;
@@ -153,6 +153,10 @@ class Resize
             $source_x       = 0;
             $source_y       = 0;
         }
+        $cropped_width = max(1, (int)round($cropped_width));
+        $cropped_height = max(1, (int)round($cropped_height));
+        $source_x = max(0, (int)round($source_x));
+        $source_y = max(0, (int)round($source_y));
         switch ($source_mime) {
             case 'image/gif':
                 $source_func = 'imagecreatefromgif';
