@@ -19,6 +19,11 @@ class FaceComparison{
 			return self::result('sem_foto_aluno', 'Sem foto do aluno', null, 'A foto cadastrada do aluno não está disponível.');
 		}
 
+		$pythonResult = self::compareWithPython($auditFile, $studentFile);
+		if(is_array($pythonResult)){
+			return $pythonResult;
+		}
+
 		if(!function_exists('imagecreatetruecolor') || !function_exists('getimagesize')){
 			return self::result('indisponivel', 'Indisponível', null, 'A extensão GD do PHP não está disponível.');
 		}
@@ -33,12 +38,13 @@ class FaceComparison{
 		$phash = self::hashSimilarity($audit['phash'], $student['phash']);
 		$dhash = self::hashSimilarity($audit['dhash'], $student['dhash']);
 		$histogram = self::histogramSimilarity($audit['histogram'], $student['histogram']);
-		$score = round((($phash * 0.45) + ($dhash * 0.35) + ($histogram * 0.20)) * 100, 2);
+		$structural = ($phash * 0.58) + ($dhash * 0.42);
+		$score = round((($structural * 0.92) + ($histogram * 0.08)) * 100, 2);
 
-		if($score >= 68){
+		if($structural >= 0.54 && $score >= 55){
 			$status = 'compativel';
 			$label = 'Compatível';
-		}elseif($score >= 45){
+		}elseif($structural >= 0.48 && $score >= 50){
 			$status = 'verificar';
 			$label = 'Verificar';
 		}else{
@@ -49,6 +55,7 @@ class FaceComparison{
 		return self::result($status, $label, $score, 'Comparação local por assinatura visual.', [
 			'phash' => round($phash * 100, 2),
 			'dhash' => round($dhash * 100, 2),
+			'estrutural' => round($structural * 100, 2),
 			'histograma' => round($histogram * 100, 2),
 		]);
 	}
@@ -62,6 +69,70 @@ class FaceComparison{
 			'metrics' => $metrics,
 			'createdAt' => date('Y-m-d H:i:s'),
 		];
+	}
+
+	private static function compareWithPython($auditFile, $studentFile){
+		$root = dirname(__DIR__, 2);
+		$script = $root.'/app/Python/face_compare.py';
+		$python = self::getPythonBinary($root);
+
+		if($python === null || !is_file($script) || !function_exists('proc_open')){
+			return null;
+		}
+
+		$command = escapeshellarg($python).' '.escapeshellarg($script).' '.escapeshellarg($auditFile).' '.escapeshellarg($studentFile);
+		$descriptors = [
+			0 => ['pipe', 'r'],
+			1 => ['pipe', 'w'],
+			2 => ['pipe', 'w'],
+		];
+
+		$process = @proc_open($command, $descriptors, $pipes, $root);
+		if(!is_resource($process)){
+			return null;
+		}
+
+		fclose($pipes[0]);
+		$output = stream_get_contents($pipes[1]);
+		$error = stream_get_contents($pipes[2]);
+		fclose($pipes[1]);
+		fclose($pipes[2]);
+		$exitCode = proc_close($process);
+
+		$decoded = json_decode(trim((string)$output), true);
+		if(!is_array($decoded) || !isset($decoded['status'])){
+			return null;
+		}
+
+		if(($decoded['status'] ?? '') === 'indisponivel'){
+			return null;
+		}
+
+		$decoded['score'] = isset($decoded['score']) && is_numeric($decoded['score']) ? (float)$decoded['score'] : null;
+		$decoded['createdAt'] = $decoded['createdAt'] ?? date('Y-m-d H:i:s');
+
+		if($exitCode !== 0 && empty($decoded['message']) && trim((string)$error) !== ''){
+			$decoded['message'] = trim((string)$error);
+		}
+
+		return $decoded;
+	}
+
+	private static function getPythonBinary($root){
+		$envPython = trim((string)getenv('FACE_COMPARE_PYTHON'));
+		$candidates = [
+			$envPython,
+			$root.'/.venv-face/bin/python',
+			$root.'/.venv-face/bin/python3',
+		];
+
+		foreach($candidates as $candidate){
+			if($candidate !== '' && is_file($candidate) && is_executable($candidate)){
+				return $candidate;
+			}
+		}
+
+		return null;
 	}
 
 	private static function getAuditPhotoPath($fotoAuditoria){

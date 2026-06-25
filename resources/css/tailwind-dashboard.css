@@ -1497,7 +1497,7 @@ body.precadastro-body {
 }
 
 .dashboard-report-table {
-  min-width: 54rem;
+  min-width: 60rem;
   margin-bottom: 0;
 }
 
@@ -1568,6 +1568,25 @@ body.precadastro-body {
 .dashboard-lesson-status.is-canceled {
   background: #fef3c7;
   color: #92400e;
+}
+
+.dashboard-recognition-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.45rem;
+  padding: .2rem .5rem;
+  border-radius: 999px;
+  background: #eaeef2;
+  color: var(--muted);
+  font-size: .74rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.dashboard-recognition-status.has-alert {
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 .dashboard-report-link {
@@ -3029,6 +3048,18 @@ body.light-edition .alunos-table td .professor-status-pill,
 body.light-edition .datatable-table td .student-status-pill,
 body.light-edition .datatable-table td .professor-status-pill {
   color: #fff !important;
+}
+
+.student-status-pill.recognition-status-neutral {
+  background: #eef2f7;
+  color: #334155 !important;
+  text-shadow: none;
+  box-shadow: inset 0 0 0 1px #cbd5e1;
+}
+
+body.light-edition .alunos-table td .student-status-pill.recognition-status-neutral,
+body.light-edition .datatable-table td .student-status-pill.recognition-status-neutral {
+  color: #334155 !important;
 }
 
 .modal-dialog.student-photo-dialog {

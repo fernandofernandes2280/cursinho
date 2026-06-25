@@ -14,6 +14,7 @@ use \App\Model\Entity\Frequencia as EntityFrequencia;
 use \App\Model\Entity\StatusAula as EntityStatusAula;
 use \App\Model\Entity\User as EntityUser;
 use \App\Session\User\Login as SessionUserLogin;
+use App\Service\FaceComparison;
 use App\Utils\Funcoes;
 use \WilliamCosta\DatabaseManager\Database;
 
@@ -404,10 +405,39 @@ class Aula extends Page{
 	    ]);
 	}
 
-	private static function getComparacaoFacialPresenca($obFrequencia){
+	private static function getComparacaoFacialAtualizada($obFrequencia, $obAluno){
+	    if(!$obAluno instanceof EntityAluno){
+	        return null;
+	    }
+
+	    if(trim((string)($obFrequencia->fotoAuditoria ?? '')) === ''){
+	        return null;
+	    }
+
+	    $status = trim((string)($obFrequencia->comparacaoFacialResultado ?? ''));
+	    $details = trim((string)($obFrequencia->comparacaoFacialDetalhes ?? ''));
+	    $needsUpdate = $status === '' || $details === '';
+
+	    if(!$needsUpdate && $details !== ''){
+	        $decoded = json_decode($details, true);
+	        $needsUpdate = !is_array($decoded)
+	            || (($decoded['engine'] ?? '') !== 'python-face-recognition' && !isset($decoded['metrics']['estrutural']));
+	    }
+
+	    return $needsUpdate ? FaceComparison::comparar($obFrequencia->fotoAuditoria, $obAluno) : null;
+	}
+
+	private static function getComparacaoFacialPresenca($obFrequencia, $obAluno = null){
 	    $status = trim((string)($obFrequencia->comparacaoFacialResultado ?? ''));
 	    $score = $obFrequencia->comparacaoFacialPontuacao ?? null;
 	    $details = trim((string)($obFrequencia->comparacaoFacialDetalhes ?? ''));
+	    $comparacaoAtualizada = self::getComparacaoFacialAtualizada($obFrequencia, $obAluno);
+
+	    if(is_array($comparacaoAtualizada)){
+	        $status = trim((string)($comparacaoAtualizada['status'] ?? ''));
+	        $score = $comparacaoAtualizada['score'] ?? null;
+	        $details = json_encode($comparacaoAtualizada, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+	    }
 
 	    $labels = [
 	        'compativel' => 'Compatível',
@@ -415,6 +445,8 @@ class Aula extends Page{
 	        'divergente' => 'Divergente',
 	        'sem_captura' => 'Sem captura',
 	        'sem_foto_aluno' => 'Sem foto',
+	        'sem_rosto_captura' => 'Sem rosto',
+	        'sem_rosto_aluno' => 'Sem rosto aluno',
 	        'indisponivel' => 'Indisponível',
 	    ];
 
@@ -422,17 +454,19 @@ class Aula extends Page{
 	        'compativel' => 'bg-gradient-success',
 	        'verificar' => 'bg-gradient-warning',
 	        'divergente' => 'bg-gradient-danger',
-	        'sem_captura' => 'bg-gradient-secondary',
-	        'sem_foto_aluno' => 'bg-gradient-secondary',
-	        'indisponivel' => 'bg-gradient-secondary',
+	        'sem_captura' => 'recognition-status-neutral',
+	        'sem_foto_aluno' => 'recognition-status-neutral',
+	        'sem_rosto_captura' => 'recognition-status-neutral',
+	        'sem_rosto_aluno' => 'recognition-status-neutral',
+	        'indisponivel' => 'recognition-status-neutral',
 	    ];
 
 	    if($status === ''){
-	        return '<span class="student-status-pill bg-gradient-secondary">Não realizada</span>';
+	        return '<span class="student-status-pill recognition-status-neutral">Não realizada</span>';
 	    }
 
 	    $label = $labels[$status] ?? $status;
-	    $class = $classes[$status] ?? 'bg-gradient-secondary';
+	    $class = $classes[$status] ?? 'recognition-status-neutral';
 	    $scoreLabel = is_numeric($score) ? ' '.number_format((float)$score, 0, ',', '.').'%' : '';
 	    $title = '';
 
@@ -486,7 +520,7 @@ class Aula extends Page{
 	            'foto' => $obAluno->getFoto(),
 	            'idAluno' => $obFrequencia->idAluno,
 	            'fotoAuditoria' => self::getFotoAuditoriaPresenca($obFrequencia->fotoAuditoria ?? '', $obAluno->nome),
-	            'comparacaoFacial' => self::getComparacaoFacialPresenca($obFrequencia)
+	            'comparacaoFacial' => self::getComparacaoFacialPresenca($obFrequencia, $obAluno)
 	        ]);
 	    }
 	    //Retorna as agendas

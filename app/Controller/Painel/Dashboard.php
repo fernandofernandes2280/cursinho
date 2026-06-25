@@ -26,6 +26,30 @@ class Dashboard extends Page{
         return (int)($obResult->qtd ?? 0);
     }
 
+    private static function getDivergenciasReconhecimento($idAula){
+        try{
+            return self::getQuantidade(EntityFrequencia::getFrequencias(
+                'idAula = '.(int)$idAula.' AND comparacaoFacialResultado = "divergente"',
+                null,
+                null,
+                'COUNT(*) as qtd'
+            ));
+        }catch(\Throwable $e){
+            return 0;
+        }
+    }
+
+    private static function getReconhecimentoAlerta($totalDivergencias){
+        $totalDivergencias = (int)$totalDivergencias;
+
+        if($totalDivergencias > 0){
+            $label = $totalDivergencias.' divergência'.($totalDivergencias > 1 ? 's' : '');
+            return '<span class="dashboard-recognition-status has-alert" rel="tooltip" title="Há reconhecimento facial divergente nesta aula">'.$label.'</span>';
+        }
+
+        return '<span class="dashboard-recognition-status">OK</span>';
+    }
+
     private static function getUltimasAulas(){
         $resultados = '';
         $results = EntityAula::getAulas(null, 'data DESC, id DESC', 5);
@@ -39,6 +63,7 @@ class Dashboard extends Page{
             $obDisciplina2 = (int)$obAula->disciplina2 > 0 ? EntityDisciplina::getDisciplinaById((int)$obAula->disciplina2) : null;
             $totalPresencas = self::getQuantidade(EntityFrequencia::getFrequencias('idAula = '.$obAula->id.' AND status = "P"', null, null, 'COUNT(*) as qtd'));
             $totalFaltas = self::getQuantidade(EntityFrequencia::getFrequencias('idAula = '.$obAula->id.' AND status = "F"', null, null, 'COUNT(*) as qtd'));
+            $totalDivergencias = self::getDivergenciasReconhecimento($obAula->id);
             $complemento = '';
 
             if($obProfessor2 || $obDisciplina2){
@@ -54,6 +79,7 @@ class Dashboard extends Page{
                 'complemento' => $complemento,
                 'presencas' => $totalPresencas,
                 'faltas' => $totalFaltas,
+                'reconhecimento' => self::getReconhecimentoAlerta($totalDivergencias),
                 'status' => $obStatus ? $obStatus->nome : 'Sem status',
                 'statusClasse' => self::getStatusAulaClasse((int)$obAula->status)
             ]);
@@ -63,7 +89,7 @@ class Dashboard extends Page{
             return $resultados;
         }
 
-        return '<tr><td colspan="7" class="dashboard-report-empty">Nenhuma aula cadastrada.</td></tr>';
+        return '<tr><td colspan="8" class="dashboard-report-empty">Nenhuma aula cadastrada.</td></tr>';
     }
 
     private static function getStatusAulaClasse($status){
