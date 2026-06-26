@@ -19,11 +19,112 @@ class Dashboard extends Page{
     
     //esconde busca rápida de prontuário no navBar
     private static $hidden = 'hidden';
+    private const ALUNO_CADASTRO_MIN_PERCENTUAL = 55;
+    private const ALUNO_DOCUMENTOS_COMPLETUDE = [
+        'documentoIdentificacao' => ['documento-identificacao.pdf', 'rg.pdf', 'cpf.pdf'],
+        'documentoResidencia' => ['comprovante-residencia.pdf'],
+    ];
 
     private static function getQuantidade($result){
         $obResult = $result ? $result->fetchObject() : null;
 
         return (int)($obResult->qtd ?? 0);
+    }
+
+    private static function hasValorUtil($value){
+        $value = trim((string)$value);
+
+        return $value !== '' && $value !== '0' && $value !== '0000-00-00' && $value !== '0000-00-00 00:00:00';
+    }
+
+    private static function hasDigitosValidos($value, $length, $exact = true){
+        $digits = preg_replace('/\D+/', '', (string)$value);
+
+        if($digits === '' || preg_match('/^0+$/', $digits)){
+            return false;
+        }
+
+        return $exact ? strlen($digits) === $length : strlen($digits) >= $length;
+    }
+
+    private static function hasDataUtil($value){
+        if(!self::hasValorUtil($value)){
+            return false;
+        }
+
+        return strtotime((string)$value) !== false;
+    }
+
+    private static function hasDocumentoAluno($idAluno, $fileNames){
+        $dir = dirname(__DIR__).'/File/files/documentos-alunos/'.(int)$idAluno;
+
+        foreach((array)$fileNames as $fileName){
+            if(is_file($dir.'/'.$fileName)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static function getPercentualCadastroAluno($obAluno){
+        $items = [
+            self::hasValorUtil($obAluno->nome ?? ''),
+            self::hasDigitosValidos($obAluno->cep ?? '', 8, false),
+            self::hasValorUtil($obAluno->endereco ?? ''),
+            self::hasValorUtil($obAluno->numero ?? ''),
+            self::hasValorUtil($obAluno->bairro ?? ''),
+            self::hasValorUtil($obAluno->cidade ?? ''),
+            self::hasValorUtil($obAluno->uf ?? ''),
+            self::hasValorUtil($obAluno->naturalidade ?? ''),
+            self::hasValorUtil($obAluno->escolaridade ?? ''),
+            self::hasValorUtil($obAluno->estadoCivil ?? ''),
+            self::hasValorUtil($obAluno->sexo ?? ''),
+            self::hasDataUtil($obAluno->dataNasc ?? ''),
+            self::hasDataUtil($obAluno->dataCad ?? ''),
+            self::hasDigitosValidos($obAluno->fone ?? '', 11),
+            self::hasDigitosValidos($obAluno->cpf ?? '', 11),
+            self::hasValorUtil($obAluno->turma ?? ''),
+            self::hasValorUtil($obAluno->mae ?? ''),
+            self::hasValorUtil($obAluno->status ?? ''),
+            self::hasDocumentoAluno($obAluno->id ?? 0, self::ALUNO_DOCUMENTOS_COMPLETUDE['documentoIdentificacao']),
+            self::hasDocumentoAluno($obAluno->id ?? 0, self::ALUNO_DOCUMENTOS_COMPLETUDE['documentoResidencia']),
+        ];
+
+        $total = count($items);
+        $preenchidos = count(array_filter($items));
+
+        return $total > 0 ? round(($preenchidos / $total) * 100) : 0;
+    }
+
+    private static function alunoEntraNoDashboard($obAluno){
+        return self::getPercentualCadastroAluno($obAluno) > self::ALUNO_CADASTRO_MIN_PERCENTUAL;
+    }
+
+    private static function getContagemAlunosDashboard($turma = null){
+        $where = $turma !== null ? 'turma = '.(int)$turma : null;
+        $results = EntityAluno::getAlunos($where, 'id DESC');
+        $contagem = [
+            'total' => 0,
+            'ativos' => 0,
+            'inativos' => 0,
+        ];
+
+        while($obAluno = $results->fetchObject(EntityAluno::class)){
+            if(!self::alunoEntraNoDashboard($obAluno)){
+                continue;
+            }
+
+            $contagem['total']++;
+
+            if((int)$obAluno->status === 1){
+                $contagem['ativos']++;
+            }elseif((int)$obAluno->status === 2){
+                $contagem['inativos']++;
+            }
+        }
+
+        return $contagem;
     }
 
     private static function getDivergenciasReconhecimento($idAula){
@@ -127,15 +228,18 @@ class Dashboard extends Page{
       //  $P_Dia = date('Y-m-01',strtotime("-1 month"));
        // $U_Dia = date('Y-m-t',strtotime("-1 month"));
        
-        $totalAlunos = self::getQuantidade(EntityAluno::getAlunos(null, 'id DESC',null,'COUNT(*) as qtd'));
-        $totalAtivos = self::getQuantidade(EntityAluno::getAlunos('status = 1', 'id DESC',null,'COUNT(*) as qtd'));
-        $totalInativos = self::getQuantidade(EntityAluno::getAlunos('status = 2', 'id DESC',null,'COUNT(*) as qtd'));
-        $totalManha = self::getQuantidade(EntityAluno::getAlunos('turma = 1', 'id DESC',null,'COUNT(*) as qtd'));
-        $totalManhaAtivos = self::getQuantidade(EntityAluno::getAlunos('turma = 1 AND status = 1', 'id DESC',null,'COUNT(*) as qtd'));
-        $totalManhaInativos = self::getQuantidade(EntityAluno::getAlunos('turma = 1 AND status = 2', 'id DESC',null,'COUNT(*) as qtd'));
-        $totalNoite = self::getQuantidade(EntityAluno::getAlunos('turma = 3', 'id DESC',null,'COUNT(*) as qtd'));
-        $totalNoiteAtivos = self::getQuantidade(EntityAluno::getAlunos('turma = 3 AND status = 1', 'id DESC',null,'COUNT(*) as qtd'));
-        $totalNoiteInativos = self::getQuantidade(EntityAluno::getAlunos('turma = 3 AND status = 2', 'id DESC',null,'COUNT(*) as qtd'));
+        $alunosDashboard = self::getContagemAlunosDashboard();
+        $alunosManhaDashboard = self::getContagemAlunosDashboard(1);
+        $alunosNoiteDashboard = self::getContagemAlunosDashboard(3);
+        $totalAlunos = $alunosDashboard['total'];
+        $totalAtivos = $alunosDashboard['ativos'];
+        $totalInativos = $alunosDashboard['inativos'];
+        $totalManha = $alunosManhaDashboard['total'];
+        $totalManhaAtivos = $alunosManhaDashboard['ativos'];
+        $totalManhaInativos = $alunosManhaDashboard['inativos'];
+        $totalNoite = $alunosNoiteDashboard['total'];
+        $totalNoiteAtivos = $alunosNoiteDashboard['ativos'];
+        $totalNoiteInativos = $alunosNoiteDashboard['inativos'];
         $totalProfessores = self::getQuantidade(EntityProfessor::getProfessores(null, null, null, 'COUNT(*) as qtd'));
         $totalProfessoresAtivos = self::getQuantidade(EntityProfessor::getProfessores('status = 1', null, null, 'COUNT(*) as qtd'));
         $totalProfessoresInativos = max(0, $totalProfessores - $totalProfessoresAtivos);

@@ -150,8 +150,7 @@ class Aluno extends Generica{
 	    
 		//define a data
 		$this->dataCad = date('Y-m-d H:i:s');
-		//DEFINE A DATA DE NASC TEMPORARIA
-		$this->dataNasc = date('Y-m-d H:i:s');
+		$this->dataNasc = trim((string)$this->dataNasc) !== '' ? $this->dataNasc : null;
 		//Insere aluno no banco de dados
 		$this->id = (new Database('alunos'))->insert([
 				'nome' => $this->nome,

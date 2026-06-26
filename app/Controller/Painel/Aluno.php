@@ -47,9 +47,52 @@ class Aluno extends Page{
 	];
 
 	private static function formatDate($date){
+		if(in_array(trim((string)$date), ['', '0000-00-00', '0000-00-00 00:00:00'], true)){
+			return '';
+		}
+
 		$timestamp = strlen((string)$date) ? strtotime($date) : false;
 
 		return $timestamp ? date('d/m/Y', $timestamp) : '';
+	}
+
+	private static function formatDateInput($date){
+		if(in_array(trim((string)$date), ['', '0000-00-00', '0000-00-00 00:00:00'], true)){
+			return '';
+		}
+
+		$timestamp = strlen((string)$date) ? strtotime($date) : false;
+
+		return $timestamp ? date('Y-m-d', $timestamp) : '';
+	}
+
+	private static function normalizeBirthDate($date){
+		$date = trim((string)$date);
+
+		if($date === ''){
+			return null;
+		}
+
+		$formats = ['Y-m-d', 'd/m/Y'];
+		$today = new \DateTime('today');
+		foreach($formats as $format){
+			$birthDate = \DateTime::createFromFormat($format, $date);
+			$errors = \DateTime::getLastErrors() ?: ['warning_count' => 0, 'error_count' => 0];
+			if($birthDate instanceof \DateTime){
+				$birthDate->setTime(0, 0, 0);
+			}
+
+			if(
+				$birthDate instanceof \DateTime
+				&& (empty($errors['warning_count']) && empty($errors['error_count']))
+				&& $birthDate->format($format) === $date
+				&& $birthDate <= $today
+			){
+				return $birthDate->format('Y-m-d');
+			}
+		}
+
+		return false;
 	}
 
 	private static function formatPhone($phone){
@@ -831,7 +874,7 @@ class Aluno extends Page{
 	        'optionEstadoCivil' => EntityEstadoCivil::getSelectEstadoCivil($obAluno->estadoCivil),
 	        'cidade' => $obAluno->cidade,
 	        'uf' => $obAluno->uf,
-	        'dataNasc' => date('Y-m-d', strtotime($obAluno->dataNasc)),
+	        'dataNasc' => self::formatDateInput($obAluno->dataNasc),
 	        'dataCad' => date('Y-m-d', strtotime($obAluno->dataCad)),
 	        'optionTurma' => EntityTurma::getSelectTurmas($obAluno->turma),
 	        'optionStatus' => EntityStatus::getSelectStatus($obAluno->status),
@@ -897,6 +940,11 @@ class Aluno extends Page{
 	        $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=documentoInvalid');
 	    }
 
+	    $dataNasc = self::normalizeBirthDate($postVars['dataNasc'] ?? '');
+	    if($dataNasc === false){
+	        $request->getRouter()->redirect('/alunos/'.$obAluno->id.'/edit?statusMessage=dataNascimentoInvalid');
+	    }
+
 
 	    //Atualiza a instância
 	    $obAluno->nome = Funcoes::convertePriMaiuscula($postVars['nome']) ?? $obAluno->nome;
@@ -906,7 +954,7 @@ class Aluno extends Page{
 	    $obAluno->bairro =  $postVars['bairro'] ?? $obAluno->bairro;
 	    $obAluno->cidade = $postVars['cidade'] ?? $obAluno->cidade;
 	    $obAluno->uf = Funcoes::convertePriMaiuscula($postVars['uf']) ?? $obAluno->uf;
-	    $obAluno->dataNasc = implode("-",array_reverse(explode("/",$postVars['dataNasc'])));
+	    $obAluno->dataNasc = $dataNasc;
 	    //recebe a data do formulário e converte para objeto data
 	    $dataCad = date_create_from_format('Y-m-d', $postVars['dataCad']);
 	    //formata a data vinda do formulário com a hora atual
@@ -1049,6 +1097,14 @@ class Aluno extends Page{
 	        ]));
 	    }
 
+	    $dataNasc = self::normalizeBirthDate($postVars['dataNasc'] ?? '');
+	    if($dataNasc === false){
+	        $request->getRouter()->redirect('/alunos/new?'.http_build_query([
+	            'cpfAluno' => $validaCpf->getValue(),
+	            'statusMessage' => 'dataNascimentoInvalid'
+	        ]));
+	    }
+
 
 	    //Nova instância de Aluno
 	    $obAluno = new EntityAluno;
@@ -1062,7 +1118,7 @@ class Aluno extends Page{
 	    $obAluno->bairro =  $postVars['bairro'];
 	    $obAluno->cidade = $postVars['cidade'];
 	    $obAluno->uf = Funcoes::convertePriMaiuscula($postVars['uf']);
-	    $obAluno->dataNasc = implode("-",array_reverse(explode("/",$postVars['dataNasc'])));
+	    $obAluno->dataNasc = $dataNasc;
 	    //Data de cadastro sempre baseada na data atual do sistema.
 	    $obAluno->dataCad = date('Y-m-d H:i:s');
 	    $obAluno->sexo = $postVars['sexo'];

@@ -83,6 +83,9 @@ class Funcoes{
             case 'documentoDeleteError':
                 return Alert::getError('Não foi possível excluir o documento.');
                 break;
+            case 'dataNascimentoInvalid':
+                return Alert::getError('Informe uma data de nascimento válida.');
+                break;
 	        }
 	    }
     
