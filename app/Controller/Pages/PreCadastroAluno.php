@@ -90,6 +90,23 @@ class PreCadastroAluno extends Page{
         return $validaCpf->isValid() ? $validaCpf->getValue() : '';
     }
 
+    private static function nullIfBlank($value){
+        if(is_null($value)){
+            return null;
+        }
+
+        $value = trim((string)$value);
+
+        return $value === '' ? null : $value;
+    }
+
+    private static function getOptionalSelectOptions($callback, $selected){
+        $selected = self::nullIfBlank($selected);
+        $options = call_user_func($callback, $selected ?? -1);
+
+        return '<option value=""></option>'.$options;
+    }
+
     private static function parseIniBytes($value){
         $value = trim((string)$value);
 
@@ -646,9 +663,9 @@ class PreCadastroAluno extends Page{
             'fone' => htmlspecialchars((string)$obAluno->fone, ENT_QUOTES, 'UTF-8'),
             'cpf' => htmlspecialchars((string)$obAluno->cpf, ENT_QUOTES, 'UTF-8'),
             'mae' => htmlspecialchars((string)$obAluno->mae, ENT_QUOTES, 'UTF-8'),
-            'optionBairros' => EntityBairro::getSelectBairros($obAluno->bairro),
-            'optionEscolaridade' => EntityEscolaridade::getSelectEscolaridade($obAluno->escolaridade),
-            'optionEstadoCivil' => EntityEstadoCivil::getSelectEstadoCivil($obAluno->estadoCivil),
+            'optionBairros' => self::getOptionalSelectOptions([EntityBairro::class, 'getSelectBairros'], $obAluno->bairro),
+            'optionEscolaridade' => self::getOptionalSelectOptions([EntityEscolaridade::class, 'getSelectEscolaridade'], $obAluno->escolaridade),
+            'optionEstadoCivil' => self::getOptionalSelectOptions([EntityEstadoCivil::class, 'getSelectEstadoCivil'], $obAluno->estadoCivil),
             'optionTurma' => EntityTurma::getSelectTurmas($obAluno->turma),
             'optionStatus' => EntityStatus::getSelectStatus($obAluno->status ?: 1),
             'selectedSexoM' => $sexo === 'MAS' ? 'selected' : '',
