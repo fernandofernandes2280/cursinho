@@ -673,7 +673,7 @@ class PreCadastroAluno extends Page{
             'foto' => $foto,
             'fotoObrigatoria' => $semFoto ? '1' : '0',
             'selfieStatus' => $semFoto ? 'Selfie pendente' : 'Selfie cadastrada',
-            'selfieRequirement' => $semFoto ? '<p class="precadastro-selfie-alert">A foto atual é padrão. Envie uma selfie nova para concluir o pré-cadastro.</p>' : '',
+            'selfieRequirement' => $semFoto ? '<p class="precadastro-selfie-alert">Foto obrigatória</p>' : '',
             'documentMaxSize' => self::getUploadMaxBytes(),
             'documentMaxSizeLabel' => self::formatBytes(self::getUploadMaxBytes()),
             'cadastroSalvo' => $cadastroSalvo ? '1' : '0',
