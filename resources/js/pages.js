@@ -370,7 +370,7 @@ $( document ).ready(function() {
 
     // Definições de Máscaras
     $(".mascara-data").mask("99/99/9999");
-    $(".mascara-cpf").mask("999.999.999-99");
+    $(".mascara-cpf").mask("000.000.000-00");
     $(".mascara-cnpj").mask("99.999.999/9999-99");
     $(".mascara-telefone1").mask("(96)9999-99999");
     $(".mascara-cep").mask("99.999-999");
