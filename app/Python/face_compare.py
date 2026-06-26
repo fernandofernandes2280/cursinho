@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
 import sys
+import warnings
 from datetime import datetime
 from pathlib import Path
 
@@ -70,6 +71,7 @@ def main():
         return 1
 
     try:
+        warnings.filterwarnings("ignore", message="pkg_resources is deprecated as an API.*", category=UserWarning)
         import face_recognition
     except Exception as exc:
         print_result(result("indisponivel", "Indisponível", None, f"Biblioteca face_recognition indisponível: {exc}"))
