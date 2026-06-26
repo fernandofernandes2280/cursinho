@@ -306,12 +306,7 @@ $( document ).ready(function() {
 
             campo.attr("maxlength", "14");
 
-            if (!valor) {
-                campo.val("(00)00000-0000");
-                return;
-            }
-
-            if (!telefoneValido(valor)) {
+            if (valor && !telefoneValido(valor)) {
                 campo.val(formatarTelefone(valor));
             }
         });
@@ -319,7 +314,7 @@ $( document ).ready(function() {
         campos.mask("(00)00000-0000");
 
         campos.on("focus", function() {
-            if ($(this).val() === "(00)00000-0000") {
+            if ($(this).val()) {
                 this.select();
             }
         });
@@ -328,11 +323,11 @@ $( document ).ready(function() {
             var campo = $(this);
 
             setTimeout(function() {
-                if (!campo.val()) {
-                    campo.val("(00)00000-0000");
+                if (telefoneValido(campo.val())) {
+                    limpar_validacao(campo);
                 }
 
-                if (telefoneValido(campo.val())) {
+                if (!campo.val()) {
                     limpar_validacao(campo);
                 }
             }, 0);
@@ -340,6 +335,11 @@ $( document ).ready(function() {
 
         campos.on("blur", function() {
             var campo = $(this);
+
+            if (!campo.val()) {
+                limpar_validacao(campo);
+                return;
+            }
 
             if (telefoneValido(campo.val())) {
                 limpar_validacao(campo);
@@ -355,7 +355,8 @@ $( document ).ready(function() {
 
         campos.closest("form").on("submit", function(event) {
             var campoInvalido = $(this).find(".mascara-telefone").filter(function() {
-                return !telefoneValido($(this).val());
+                var valor = $(this).val();
+                return valor && !telefoneValido(valor);
             }).first();
 
             if (!campoInvalido.length) {

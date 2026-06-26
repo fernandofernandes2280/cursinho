@@ -105,6 +105,39 @@ class Aluno extends Page{
 		return trim((string)$phone);
 	}
 
+	private static function nullIfBlank($value){
+		if(is_null($value)){
+			return null;
+		}
+
+		$value = trim((string)$value);
+
+		return $value === '' ? null : $value;
+	}
+
+	private static function digitsOrNull($value){
+		$digits = preg_replace('/\D+/', '', (string)$value);
+
+		return $digits === '' || preg_match('/^0+$/', $digits) ? null : $digits;
+	}
+
+	private static function phoneInputValue($value){
+		$digits = preg_replace('/\D+/', '', (string)$value);
+
+		if($digits === '' || preg_match('/^0+$/', $digits)){
+			return '';
+		}
+
+		return trim((string)$value);
+	}
+
+	private static function getOptionalSelectOptions($callback, $selected){
+		$selected = self::nullIfBlank($selected);
+		$options = call_user_func($callback, $selected ?? -1);
+
+		return '<option value=""></option>'.$options;
+	}
+
 	private static function formatDateTime($date){
 		$timestamp = strlen((string)$date) ? strtotime($date) : false;
 
@@ -865,13 +898,13 @@ class Aluno extends Page{
 	        'numero' => $obAluno->numero,
 	        'statusMessage' => Funcoes::getStatus($request),
 	        'naturalidade' => $obAluno->naturalidade,
-	        'fone' =>$obAluno->fone ,
+	        'fone' => self::phoneInputValue($obAluno->fone),
 	        'mae' => $obAluno->mae,
 	        'obs' => $obAluno->obs,
 	        'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##') ,
-	        'optionBairros' => EntityBairro::getSelectBairros($obAluno->bairro),
-	        'optionEscolaridade' => EntityEscolaridade::getSelectEscolaridade($obAluno->escolaridade),
-	        'optionEstadoCivil' => EntityEstadoCivil::getSelectEstadoCivil($obAluno->estadoCivil),
+	        'optionBairros' => self::getOptionalSelectOptions([EntityBairro::class, 'getSelectBairros'], $obAluno->bairro),
+	        'optionEscolaridade' => self::getOptionalSelectOptions([EntityEscolaridade::class, 'getSelectEscolaridade'], $obAluno->escolaridade),
+	        'optionEstadoCivil' => self::getOptionalSelectOptions([EntityEstadoCivil::class, 'getSelectEstadoCivil'], $obAluno->estadoCivil),
 	        'cidade' => $obAluno->cidade,
 	        'uf' => $obAluno->uf,
 	        'dataNasc' => self::formatDateInput($obAluno->dataNasc),
@@ -951,7 +984,7 @@ class Aluno extends Page{
 	    $obAluno->cep = $postVars['cep'] ?? $obAluno->cep;
 	    $obAluno->endereco = Funcoes::convertePriMaiuscula($postVars['endereco']) ?? $obAluno->endereco;
 	    $obAluno->numero =  $postVars['numero'] ?? $obAluno->numero;
-	    $obAluno->bairro =  $postVars['bairro'] ?? $obAluno->bairro;
+	    $obAluno->bairro = self::nullIfBlank($postVars['bairro'] ?? null);
 	    $obAluno->cidade = $postVars['cidade'] ?? $obAluno->cidade;
 	    $obAluno->uf = Funcoes::convertePriMaiuscula($postVars['uf']) ?? $obAluno->uf;
 	    $obAluno->dataNasc = $dataNasc;
@@ -961,10 +994,10 @@ class Aluno extends Page{
 	    $obAluno->dataCad = $dataCad->format('Y-m-d H:i:s');
 	    $obAluno->sexo = $postVars['sexo'] ?? $obAluno->sexo;
 	    $obAluno->naturalidade = $postVars['naturalidade'] ?? $obAluno->naturalidade;
-	    $obAluno->escolaridade = $postVars['escolaridade'] ?? $obAluno->escolaridade;
-	    $obAluno->fone = preg_replace('/\D+/', '', $postVars['fone'] ?? '') ?: $obAluno->fone;
+	    $obAluno->escolaridade = self::nullIfBlank($postVars['escolaridade'] ?? null);
+	    $obAluno->fone = self::digitsOrNull($postVars['fone'] ?? '');
 	    $obAluno->mae = Funcoes::convertePriMaiuscula($postVars['mae'])?? $obAluno->mae;
-	    $obAluno->estadoCivil = $postVars['estadoCivil'] ?? $obAluno->estadoCivil;
+	    $obAluno->estadoCivil = self::nullIfBlank($postVars['estadoCivil'] ?? null);
 	    $obAluno->status = $postVars['status'] ?? $obAluno->status;
 	    $obAluno->obs = $postVars['obs'] ?? $obAluno->obs;
 	    $obAluno->sexo = $postVars['sexo'] ?? $obAluno->sexo;
@@ -1034,16 +1067,16 @@ class Aluno extends Page{
 	        'endereco' => $old['endereco'] ?? '',
 	        'numero' => $old['numero'] ?? '',
 	        'naturalidade' => $old['naturalidade'] ?? '',
-	        'fone' => ($old['fone'] ?? '') ?: '(00)00000-0000',
+	        'fone' => self::phoneInputValue($old['fone'] ?? ''),
 	        'mae' => $old['mae'] ?? '',
 	        'obs' => $old['obs'] ?? '',
 	        'cpf' => $old['cpf'] ?? $validaCpf->getValue(),
 	        'dataNasc' => $old['dataNasc'] ??'',
 	        'dataCad' => $old['dataCad'] ?? date('Y-m-d'),
 	        'statusMessage' => Funcoes::getStatus($request),
-	        'optionBairros' => EntityBairro::getSelectBairros($old['bairro'] ?? null),
-	        'optionEscolaridade' => EntityEscolaridade::getSelectEscolaridade($old['escolaridade'] ?? null),
-	        'optionEstadoCivil' => EntityEstadoCivil::getSelectEstadoCivil($old['estadoCivil'] ?? null),
+	        'optionBairros' => self::getOptionalSelectOptions([EntityBairro::class, 'getSelectBairros'], $old['bairro'] ?? null),
+	        'optionEscolaridade' => self::getOptionalSelectOptions([EntityEscolaridade::class, 'getSelectEscolaridade'], $old['escolaridade'] ?? null),
+	        'optionEstadoCivil' => self::getOptionalSelectOptions([EntityEstadoCivil::class, 'getSelectEstadoCivil'], $old['estadoCivil'] ?? null),
 	        'cidade' => $old['cidade'] ?? 'Santana',
 	        'uf' => $old['uf'] ?? 'Ap',
 	        'optionTurma' => EntityTurma::getSelectTurmas($old['turma'] ?? null),
@@ -1115,7 +1148,7 @@ class Aluno extends Page{
 	    $obAluno->cep = $postVars['cep'];
 	    $obAluno->endereco = Funcoes::convertePriMaiuscula($postVars['endereco']);
 	    $obAluno->numero =  $postVars['numero'];
-	    $obAluno->bairro =  $postVars['bairro'];
+	    $obAluno->bairro = self::nullIfBlank($postVars['bairro'] ?? null);
 	    $obAluno->cidade = $postVars['cidade'];
 	    $obAluno->uf = Funcoes::convertePriMaiuscula($postVars['uf']);
 	    $obAluno->dataNasc = $dataNasc;
@@ -1123,10 +1156,10 @@ class Aluno extends Page{
 	    $obAluno->dataCad = date('Y-m-d H:i:s');
 	    $obAluno->sexo = $postVars['sexo'];
 	    $obAluno->naturalidade = $postVars['naturalidade'];
-	    $obAluno->escolaridade = $postVars['escolaridade'];
-	    $obAluno->fone = preg_replace('/\D+/', '', $postVars['fone'] ?? '');
+	    $obAluno->escolaridade = self::nullIfBlank($postVars['escolaridade'] ?? null);
+	    $obAluno->fone = self::digitsOrNull($postVars['fone'] ?? '');
 	    $obAluno->mae = Funcoes::convertePriMaiuscula($postVars['mae']);
-	    $obAluno->estadoCivil = $postVars['estadoCivil'];
+	    $obAluno->estadoCivil = self::nullIfBlank($postVars['estadoCivil'] ?? null);
 	    $obAluno->status = $postVars['status'];
 	    $obAluno->obs = $postVars['obs'];
 	    //recebe apenas os números do cpf
