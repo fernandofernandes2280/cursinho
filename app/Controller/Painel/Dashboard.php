@@ -19,7 +19,7 @@ class Dashboard extends Page{
     
     //esconde busca rápida de prontuário no navBar
     private static $hidden = 'hidden';
-    private const ALUNO_CADASTRO_MIN_PERCENTUAL = 55;
+    private const ALUNO_CADASTRO_MIN_PERCENTUAL = 50;
     private const ALUNO_DOCUMENTOS_COMPLETUDE = [
         'documentoIdentificacao' => ['documento-identificacao.pdf', 'rg.pdf', 'cpf.pdf'],
         'documentoResidencia' => ['comprovante-residencia.pdf'],
