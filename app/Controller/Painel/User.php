@@ -380,9 +380,6 @@ class User extends Page{
 			AuditLogger::snapshot($obUser, self::AUDIT_USER_FIELDS)
 		);
 
-		//Atualiza a sessão de usuário
-		Login::login($obUser);
-
 		//encerra sessão com os dados do form
 		EntityUser::getFinalizaSessaoDados();
 		
