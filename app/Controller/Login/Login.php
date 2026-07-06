@@ -8,7 +8,6 @@ use \App\Session\Visitor\Login as SessionVisitorLogin;
 use \App\Session\User\Login as SessionUserLogin;
 use \App\Controller\Painel\Alert;
 use \App\Controller\Pages\Page;
-use Bissolli\ValidadorCpfCnpj\CPF;
 use \App\Controller\Comunication\Email;
 
 
@@ -53,7 +52,7 @@ class Login extends Page{
 		//Post Vars
 		$postVars = $request->getPostVars();
 		
-		//busca usuário pelo CPF sem a maskara
+		//busca usuário pelo e-mail
 		$obUser = User::getUserByEmail($postVars['email']);
 		
 		
@@ -118,25 +117,22 @@ class Login extends Page{
 		//Post Vars
 		$postVars = $request->getPostVars();
 	
-		$cpf = $postVars['cpf'] ?? '';
+		$email = trim($postVars['email'] ?? '');
 		$senha = $postVars['senha'] ?? '';
 		
-		//instancia classe pra verificar CPF
-		$validaCpf = new CPF($cpf);
-		
-		//verifica se é válido o cpf
-		if (!$validaCpf->isValid()){
+		//verifica se é válido o e-mail
+		if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
 			
-			return self::getLogin($request,'CPF inválido');
+			return self::getLogin($request,'E-mail inválido');
 		}
 		
 		
-		//busca usuário pelo CPF sem a maskara
-		$obUser = User::getUserByCPF($validaCpf->getValue());
+		//busca usuário pelo e-mail
+		$obUser = User::getUserByEmail($email);
 		
 		
 		if(!$obUser instanceof User){
-			return self::getLogin($request,'CPF não cadastrado!');
+			return self::getLogin($request,'E-mail não cadastrado!');
 		}
 		
 		//Verifica a senha do usuário
