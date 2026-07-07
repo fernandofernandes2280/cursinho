@@ -80,6 +80,7 @@
     var returnTimer = null;
     var countdownTimer = null;
     var torchOn = false;
+    var feedbackReturnDelay = 2000;
 
     if (!reader || !results) {
       return;
@@ -138,7 +139,9 @@
     }
 
     function scheduleReaderReturn(delay) {
-      var seconds = Math.max(1, Math.ceil((delay || 3000) / 1000));
+      delay = delay || feedbackReturnDelay;
+
+      var seconds = Math.max(1, Math.ceil(delay / 1000));
       var timer = results.querySelector('.qr-timer');
 
       clearTimers();
@@ -158,7 +161,7 @@
       }
 
       tick();
-      returnTimer = window.setTimeout(resumeReader, delay || 3000);
+      returnTimer = window.setTimeout(resumeReader, delay);
     }
 
     function createFeedback(type, iconName, heading, message, options) {
@@ -223,7 +226,7 @@
         'Tente aproximar novamente o QR Code da câmera.',
         { timer: true }
       );
-      scheduleReaderReturn(3000);
+      scheduleReaderReturn();
     }
 
     function getFotoUrl(fileName) {
@@ -272,7 +275,7 @@
       section.appendChild(timer);
       results.appendChild(section);
 
-      scheduleReaderReturn(3000);
+      scheduleReaderReturn();
     }
 
     function captureAuditPhoto() {
