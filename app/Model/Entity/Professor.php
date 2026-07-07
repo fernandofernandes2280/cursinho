@@ -46,11 +46,26 @@ class Professor extends Generica {
     
     //foto do professor
     public $foto;
+
+	private static function nullIfBlank($value){
+		if(is_null($value)){
+			return null;
+		}
+
+		$value = trim((string)$value);
+
+		return $value === '' ? null : $value;
+	}
+
+	private function normalizeNullableFields(){
+		$this->bairro = self::nullIfBlank($this->bairro);
+	}
     
     
     //Método responsavel por cadastrar um Professor no banco de dados
 	public function cadastrar(){
 	    $this->foto = 'profile.png';
+	    $this->normalizeNullableFields();
 	    //Insere Professor no banco de dados
 		$this->id = (new Database('professores'))->insert([
 				'nome'=>$this->nome,
@@ -73,6 +88,8 @@ class Professor extends Generica {
 	
 	//Método responsavel por atualizar os dados no banco
 	public function atualizar(){
+	    $this->normalizeNullableFields();
+
 	    return (new Database('professores'))->update('id = '.$this->id,[
 	        'nome'=>$this->nome,
 	        'endereco'=>$this->endereco,

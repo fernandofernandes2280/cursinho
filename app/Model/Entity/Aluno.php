@@ -90,6 +90,20 @@ class Aluno extends Generica{
 	/** @var string|null */
 	public $autor;
 
+	private static function nullIfBlank($value){
+		if(is_null($value)){
+			return null;
+		}
+
+		$value = trim((string)$value);
+
+		return $value === '' ? null : $value;
+	}
+
+	private function normalizeNullableFields(){
+		$this->bairro = self::nullIfBlank($this->bairro);
+	}
+
 	public function getFoto($cache = true){
 	    $foto = trim((string)$this->foto);
 	    $path = parse_url($foto, PHP_URL_PATH);
@@ -147,6 +161,7 @@ class Aluno extends Generica{
 	public function cadastrar(){
 	    
 	    $this->foto = self::FOTO_PADRAO;
+	    $this->normalizeNullableFields();
 	    
 		//define a data
 		$this->dataCad = date('Y-m-d H:i:s');
@@ -183,6 +198,7 @@ class Aluno extends Generica{
 	
 	//Método responsavel por atualizar os banco de dados com os dados da instancia atual de aluno
 	public function atualizar(){
+		$this->normalizeNullableFields();
 		
 		//Atualiza aluno no banco de dados
 		return (new Database('alunos'))->update('id = '.$this->id,[
