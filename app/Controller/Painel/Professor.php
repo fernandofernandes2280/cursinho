@@ -38,6 +38,16 @@ class Professor extends Page{
 		return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
 	}
 
+	private static function nullIfBlank($value){
+		if(is_null($value)){
+			return null;
+		}
+
+		$value = trim((string)$value);
+
+		return $value === '' ? null : $value;
+	}
+
 	private static function getProfessorDocumentosDir($idProfessor){
 		return dirname(__DIR__).'/File/files/documentos-professores/'.(int)$idProfessor;
 	}
@@ -443,7 +453,7 @@ class Professor extends Page{
 	        'cpf' => $old['cpf'] ?? $validaCpf->getValue(),
 	        'funcao' => $old['funcao'] ??'Professor',
 	        'dataNasc' => $old['dataNasc'] ??'',
-	        'optionBairros' => EntityBairro::getSelectBairros($old['bairro'] ?? null),
+	        'optionBairros' => '<option value=""></option>'.EntityBairro::getSelectBairros(self::nullIfBlank($old['bairro'] ?? null) ?? -1),
 	        'email' => $old['email'] ??'',
 	        'adicionarDisciplina' => 'hidden',
 	        'optionStatus' => EntityStatus::getSelectStatus($old['status'] ?? null),
@@ -497,7 +507,7 @@ class Professor extends Page{
 	    $obProfessor->nome = Funcoes::convertePriMaiuscula($postVars['nome']);
 	    $obProfessor->cep = $postVars['cep'] ?? '';
 	    $obProfessor->endereco = $postVars['endereco'] ?? '';
-	    $obProfessor->bairro =  $postVars['bairro'];
+	    $obProfessor->bairro =  self::nullIfBlank($postVars['bairro'] ?? null);
 	    $obProfessor->cidade = Funcoes::convertePriMaiuscula($postVars['cidade']) ?? '';
 	    $obProfessor->uf = Funcoes::convertePriMaiuscula($postVars['uf']) ?? '';
 	    $obProfessor->funcao = $postVars['funcao'];
@@ -555,7 +565,7 @@ class Professor extends Page{
 	        'dataNasc' => date('Y-m-d', strtotime($obProfessor->dataNasc)),
 	        'selectedStatusA' => $obProfessor->status == 1 ? 'selected' : '',
 	        'selectedStatusI' => $obProfessor->status == 0 ? 'selected' : '',
-	        'optionBairros' => EntityBairro::getSelectBairros($obProfessor->bairro),
+	        'optionBairros' => '<option value=""></option>'.EntityBairro::getSelectBairros(self::nullIfBlank($obProfessor->bairro) ?? -1),
 	        'optionDisciplinas' => EntityDisciplina::getSelectDisciplinas(null),
 	        'email' => $obProfessor->email,
 	        'escondeBotaoAcesso' => '',
@@ -617,7 +627,7 @@ class Professor extends Page{
 	    $obProfessor->nome = Funcoes::convertePriMaiuscula($postVars['nome']) ?? $obProfessor->nome;
 	    $obProfessor->cep = $postVars['cep'] ?? $obProfessor->cep;
 	    $obProfessor->endereco = $postVars['endereco'] ?? $obProfessor->endereco;
-	    $obProfessor->bairro =  $postVars['bairro'] ?? $obProfessor->bairro;
+	    $obProfessor->bairro =  self::nullIfBlank($postVars['bairro'] ?? $obProfessor->bairro);
 	    $obProfessor->cidade = Funcoes::convertePriMaiuscula($postVars['cidade']) ?? $obProfessor->cidade;
 	    $obProfessor->uf = Funcoes::convertePriMaiuscula($postVars['uf']) ?? $obProfessor->uf;
 	    $obProfessor->funcao = Funcoes::convertePriMaiuscula($postVars['funcao']) ?? $obProfessor->funcao;
