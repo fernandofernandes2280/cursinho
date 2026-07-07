@@ -79,13 +79,17 @@ class Frequencia{
 
 	    $database = $database ?: new Database('frequencia');
 	    $database->execute(
-	        'INSERT IGNORE INTO frequencia (idAula, idAluno, dataReg, status, autor) VALUES (?, ?, ?, ?, ?)',
+	        'INSERT IGNORE INTO frequencia (idAula, idAluno, dataReg, status, autor)
+	         SELECT ?, A.id, ?, ?, ?
+	         FROM alunos AS A
+	         WHERE A.id = ?
+	           AND A.status = 1',
 	        [
 	            $idAula,
-	            $idAluno,
 	            date('Y-m-d H:i:s'),
 	            $status,
-	            (int)$autor
+	            (int)$autor,
+	            $idAluno
 	        ]
 	    );
 
