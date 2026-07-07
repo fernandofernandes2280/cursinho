@@ -373,6 +373,11 @@ class Aula extends Page{
 	    if(!$obAula instanceof EntityAula){
 	        $request->getRouter()->redirect('/aulas');
 	    }
+
+	    if(date('Y-m-d', strtotime($obAula->data)) === date('Y-m-d')){
+	        EntityFrequencia::removerFaltasDeAlunosInativosDaAula($obAula->id, $obAula->turma);
+	    }
+
 	    //Conteúdo do Formulário
 	    $content = View::render('pages/detalheAula/presentes',[
 	        'title' => 'Aula do dia: ' .date('d/m/Y',strtotime($obAula->data)).' ( '.$obAula->diaSemana.' ) '.EntityTurma::getTurmaById($obAula->turma)->nome,

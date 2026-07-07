@@ -177,7 +177,9 @@
 
       content.className = 'qr-feedback-content';
       appendText(content, 'strong', heading);
-      appendText(content, 'span', message);
+      if (message) {
+        appendText(content, 'span', message);
+      }
       section.appendChild(content);
 
       if (options.timer) {
@@ -358,7 +360,7 @@
         'success',
         'photo_camera',
         'Registrando presença',
-        'Mantenha o rosto visível para a foto de auditoria.'
+        ''
       );
 
       postQr({

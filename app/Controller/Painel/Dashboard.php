@@ -151,19 +151,33 @@ class Dashboard extends Page{
         return '<span class="dashboard-recognition-status">OK</span>';
     }
 
+    private static function getTotalFrequenciasAtivasAula($idAula, $status){
+        $status = addslashes((string)$status);
+        $table = 'frequencia AS F INNER JOIN alunos AS A ON A.id = F.idAluno';
+        $where = 'F.idAula = '.(int)$idAula.'
+                  AND F.status = "'.$status.'"
+                  AND '.EntityFrequencia::getCondicaoAlunoAtivoParaFrequencia('A');
+
+        return self::getQuantidade(EntityFrequencia::getFrequenciasSQL($where, null, null, 'COUNT(*) as qtd', $table));
+    }
+
     private static function getUltimasAulas(){
         $resultados = '';
         $results = EntityAula::getAulas(null, 'data DESC, id DESC', 5);
 
         while($obAula = $results->fetchObject(EntityAula::class)){
+            if(date('Y-m-d', strtotime($obAula->data)) === date('Y-m-d')){
+                EntityFrequencia::removerFaltasDeAlunosInativosDaAula($obAula->id, $obAula->turma);
+            }
+
             $obStatus = (int)$obAula->status > 0 ? EntityAula::getStatusAulaById((int)$obAula->status) : null;
             $obTurma = (int)$obAula->turma > 0 ? EntityTurma::getTurmaById((int)$obAula->turma) : null;
             $obProfessor1 = (int)$obAula->professor1 > 0 ? EntityProfessor::getProfessorById((int)$obAula->professor1) : null;
             $obDisciplina1 = (int)$obAula->disciplina1 > 0 ? EntityDisciplina::getDisciplinaById((int)$obAula->disciplina1) : null;
             $obProfessor2 = (int)$obAula->professor2 > 0 ? EntityProfessor::getProfessorById((int)$obAula->professor2) : null;
             $obDisciplina2 = (int)$obAula->disciplina2 > 0 ? EntityDisciplina::getDisciplinaById((int)$obAula->disciplina2) : null;
-            $totalPresencas = self::getQuantidade(EntityFrequencia::getFrequencias('idAula = '.$obAula->id.' AND status = "P"', null, null, 'COUNT(*) as qtd'));
-            $totalFaltas = self::getQuantidade(EntityFrequencia::getFrequencias('idAula = '.$obAula->id.' AND status = "F"', null, null, 'COUNT(*) as qtd'));
+            $totalPresencas = self::getTotalFrequenciasAtivasAula($obAula->id, 'P');
+            $totalFaltas = self::getTotalFrequenciasAtivasAula($obAula->id, 'F');
             $totalDivergencias = self::getDivergenciasReconhecimento($obAula->id);
             $complemento = '';
 

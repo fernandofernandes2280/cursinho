@@ -43,15 +43,26 @@ class Frequencia{
 		return true;
 	}
 
+	public static function getCondicaoAlunoAtivoParaFrequencia($alias = 'A'){
+	    $alias = preg_replace('/[^A-Za-z0-9_]/', '', (string)$alias);
+	    $alias = $alias !== '' ? $alias : 'A';
+
+	    return 'COALESCE('.$alias.'.status, 0) = 1
+	            AND TRIM(COALESCE('.$alias.'.nome, "")) <> ""
+	            AND TRIM(COALESCE('.$alias.'.matricula, "")) <> ""';
+	}
+
 	public static function cadastrarFaltasDaAula($idAula, $turma, $autor, $database = null){
 	    $database = $database ?: new Database('frequencia');
 	    $dataReg = date('Y-m-d H:i:s');
+
+	    self::removerFaltasDeAlunosInativosDaAula($idAula, $turma, $database);
 
 	    $query = 'INSERT IGNORE INTO frequencia (idAula, idAluno, dataReg, status, autor)
 	              SELECT ?, A.id, ?, ?, ?
 	              FROM alunos AS A
 	              WHERE A.turma = ?
-	                AND A.status = 1';
+	                AND '.self::getCondicaoAlunoAtivoParaFrequencia('A');
 
 	    return $database->execute($query, [
 	        (int)$idAula,
@@ -60,6 +71,34 @@ class Frequencia{
 	        (int)$autor,
 	        (int)$turma
 	    ])->rowCount();
+	}
+
+	public static function removerFaltasDeAlunosInativosDaAula($idAula, $turma = null, $database = null){
+	    $idAula = (int)$idAula;
+
+	    if($idAula <= 0){
+	        return 0;
+	    }
+
+	    $database = $database ?: new Database('frequencia');
+	    $params = [$idAula];
+	    $filtroTurma = '';
+
+	    if($turma !== null && $turma !== ''){
+	        $filtroTurma = ' AND A.turma = ?';
+	        $params[] = (int)$turma;
+	    }
+
+	    return $database->execute(
+	        'DELETE F
+	           FROM frequencia AS F
+	           INNER JOIN alunos AS A ON A.id = F.idAluno
+	          WHERE F.idAula = ?
+	            '.$filtroTurma.'
+	            AND NOT ('.self::getCondicaoAlunoAtivoParaFrequencia('A').')
+	            AND F.status <> "P"',
+	        $params
+	    )->rowCount();
 	}
 
 	public static function garantirVinculoAlunoAula($idAula, $idAluno, $autor, $status = 'F', $database = null){
@@ -71,7 +110,14 @@ class Frequencia{
 	    }
 
 	    $where = 'idAula = '.$idAula.' AND idAluno = '.$idAluno;
-	    $obFrequencia = self::getFrequencias($where)->fetchObject(self::class);
+	    $obFrequencia = (new Database('frequencia AS F INNER JOIN alunos AS A ON A.id = F.idAluno'))
+	        ->select(
+	            'F.idAula = '.$idAula.' AND F.idAluno = '.$idAluno.' AND '.self::getCondicaoAlunoAtivoParaFrequencia('A'),
+	            null,
+	            '1',
+	            'F.*'
+	        )
+	        ->fetchObject(self::class);
 
 	    if($obFrequencia instanceof self){
 	        return $obFrequencia;
@@ -83,7 +129,7 @@ class Frequencia{
 	         SELECT ?, A.id, ?, ?, ?
 	         FROM alunos AS A
 	         WHERE A.id = ?
-	           AND A.status = 1',
+	           AND '.self::getCondicaoAlunoAtivoParaFrequencia('A'),
 	        [
 	            $idAula,
 	            date('Y-m-d H:i:s'),
