@@ -297,6 +297,10 @@ class Page{
 			        'visivelMenu' => $module['visivel']
  					
 			]);
+
+			if($hash === 'configuracoes'){
+			    $links .= View::render('painel/menu/sidebarLogo');
+			}
 			
 		}
 

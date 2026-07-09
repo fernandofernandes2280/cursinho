@@ -1789,6 +1789,19 @@ body.precadastro-body {
   padding: .75rem;
 }
 
+.sidebar-brand-logo-item {
+  display: flex;
+  justify-content: center;
+  margin: .85rem 0 .35rem;
+  padding: .25rem .4rem;
+}
+
+.sidebar-brand-logo {
+  display: block;
+  width: min(100%, 13rem);
+  height: auto;
+}
+
 .nav {
   list-style: none;
   margin: 0;
@@ -4944,6 +4957,15 @@ body.light-edition {
 
 .sidebar-wrapper {
   padding: 8px;
+}
+
+.sidebar-brand-logo-item {
+  margin: 10px 0 4px;
+  padding: 4px 6px;
+}
+
+.sidebar-brand-logo {
+  width: min(100%, 180px);
 }
 
 .nav-item {
