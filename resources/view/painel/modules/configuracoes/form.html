@@ -386,6 +386,40 @@
         </div>
 
         <div class="aluno-field aluno-span-6">
+          <label for="logoCarteiraAluno1Escala">Escala da Logo 1</label>
+          <div class="settings-range-field">
+            <input
+              type="range"
+              id="logoCarteiraAluno1Escala"
+              name="logoCarteiraAluno1Escala"
+              min="50"
+              max="150"
+              value="{{logoCarteiraAluno1Escala}}"
+              data-range-output="logoCarteiraAluno1EscalaValor"
+            >
+            <output id="logoCarteiraAluno1EscalaValor">{{logoCarteiraAluno1Escala}}%</output>
+          </div>
+          <p class="form-field-hint">Ajusta largura e altura da Logo 1 na mesma proporção.</p>
+        </div>
+
+        <div class="aluno-field aluno-span-6">
+          <label for="logoCarteiraAluno2Escala">Escala da Logo 2</label>
+          <div class="settings-range-field">
+            <input
+              type="range"
+              id="logoCarteiraAluno2Escala"
+              name="logoCarteiraAluno2Escala"
+              min="50"
+              max="150"
+              value="{{logoCarteiraAluno2Escala}}"
+              data-range-output="logoCarteiraAluno2EscalaValor"
+            >
+            <output id="logoCarteiraAluno2EscalaValor">{{logoCarteiraAluno2Escala}}%</output>
+          </div>
+          <p class="form-field-hint">Ajusta largura e altura da Logo 2 na mesma proporção.</p>
+        </div>
+
+        <div class="aluno-field aluno-span-6">
           <label for="marcaDaguaCarteiraAluno">Marca d'água</label>
           <label class="settings-checkbox-field" for="usarMarcaDaguaCarteiraAluno">
             <input

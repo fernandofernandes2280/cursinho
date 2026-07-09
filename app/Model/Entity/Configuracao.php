@@ -9,6 +9,9 @@ class Configuracao extends Generica {
 	const KEY_RELATORIO_LOGO = 'relatorio_logo';
 	const KEY_CARTEIRA_ALUNO_LOGO_1 = 'carteira_aluno_logo_1';
 	const KEY_CARTEIRA_ALUNO_LOGO_2 = 'carteira_aluno_logo_2';
+	const KEY_CARTEIRA_ALUNO_LOGOS_ESCALA = 'carteira_aluno_logos_escala';
+	const KEY_CARTEIRA_ALUNO_LOGO_1_ESCALA = 'carteira_aluno_logo_1_escala';
+	const KEY_CARTEIRA_ALUNO_LOGO_2_ESCALA = 'carteira_aluno_logo_2_escala';
 	const KEY_CARTEIRA_ALUNO_CABECALHO = 'carteira_aluno_cabecalho';
 	const KEY_CARTEIRA_ALUNO_CABECALHO_TAMANHO = 'carteira_aluno_cabecalho_tamanho';
 	const KEY_CARTEIRA_ALUNO_CABECALHO_COR = 'carteira_aluno_cabecalho_cor';
@@ -39,6 +42,7 @@ class Configuracao extends Generica {
 	const DEFAULT_RELATORIO_LOGO = 'resources/assets/img/preparasantana.png';
 	const DEFAULT_CARTEIRA_ALUNO_LOGO_1 = 'resources/assets/img/preparasantana.png';
 	const DEFAULT_CARTEIRA_ALUNO_LOGO_2 = 'resources/assets/img/logopms.png';
+	const DEFAULT_CARTEIRA_ALUNO_LOGOS_ESCALA = 100;
 	const DEFAULT_CARTEIRA_ALUNO_CABECALHO = 'Programa Municipal de Cursos Preparatório';
 	const DEFAULT_CARTEIRA_ALUNO_CABECALHO_TAMANHO = 18;
 	const DEFAULT_CARTEIRA_ALUNO_CABECALHO_COR = '#E7B538';
@@ -321,6 +325,58 @@ class Configuracao extends Generica {
 	public static function setLogoCarteiraAluno2($logo){
 		$logo = trim((string)$logo);
 		return self::setValor(self::KEY_CARTEIRA_ALUNO_LOGO_2, $logo ?: self::DEFAULT_CARTEIRA_ALUNO_LOGO_2);
+	}
+
+	public static function getLogosCarteiraAlunoEscala(){
+		return self::normalizePercent(
+			self::getValor(self::KEY_CARTEIRA_ALUNO_LOGOS_ESCALA, self::DEFAULT_CARTEIRA_ALUNO_LOGOS_ESCALA),
+			self::DEFAULT_CARTEIRA_ALUNO_LOGOS_ESCALA,
+			50,
+			150
+		);
+	}
+
+	public static function setLogosCarteiraAlunoEscala($escala){
+		return self::setValor(
+			self::KEY_CARTEIRA_ALUNO_LOGOS_ESCALA,
+			self::normalizePercent($escala, self::DEFAULT_CARTEIRA_ALUNO_LOGOS_ESCALA, 50, 150)
+		);
+	}
+
+	public static function getLogoCarteiraAluno1Escala(){
+		$fallback = self::getLogosCarteiraAlunoEscala();
+
+		return self::normalizePercent(
+			self::getValor(self::KEY_CARTEIRA_ALUNO_LOGO_1_ESCALA, $fallback),
+			$fallback,
+			50,
+			150
+		);
+	}
+
+	public static function setLogoCarteiraAluno1Escala($escala){
+		return self::setValor(
+			self::KEY_CARTEIRA_ALUNO_LOGO_1_ESCALA,
+			self::normalizePercent($escala, self::getLogosCarteiraAlunoEscala(), 50, 150)
+		);
+	}
+
+	public static function getLogoCarteiraAluno2Escala(){
+		$fallback = self::getLogosCarteiraAlunoEscala();
+
+		return self::normalizePercent(
+			self::getValor(self::KEY_CARTEIRA_ALUNO_LOGO_2_ESCALA, $fallback),
+			$fallback,
+			50,
+			150
+		);
+	}
+
+	public static function setLogoCarteiraAluno2Escala($escala){
+		return self::setValor(
+			self::KEY_CARTEIRA_ALUNO_LOGO_2_ESCALA,
+			self::normalizePercent($escala, self::getLogosCarteiraAlunoEscala(), 50, 150)
+		);
 	}
 
 	public static function getCabecalhoCarteiraAluno(){

@@ -576,10 +576,22 @@ class Aluno extends Page{
 		$marcaDaguaCarteiraAlunoHtml = EntityConfiguracao::getUsarMarcaDaguaCarteiraAluno()
 			? '<img width="400" class="img-fluid logocursocontainer" alt="Marca d\'água da carteira digital do aluno" src="'.htmlspecialchars(EntityConfiguracao::getMarcaDaguaCarteiraAlunoUrl(), ENT_QUOTES, 'UTF-8').'">'
 			: '';
+		$logoCarteiraAluno1Escala = EntityConfiguracao::getLogoCarteiraAluno1Escala();
+		$logoCarteiraAluno2Escala = EntityConfiguracao::getLogoCarteiraAluno2Escala();
+		$logoCarteiraAluno1Largura = (int)round(100 * $logoCarteiraAluno1Escala / 100);
+		$logoCarteiraAluno1Altura = (int)round(90 * $logoCarteiraAluno1Escala / 100);
+		$logoCarteiraAluno2Largura = (int)round(100 * $logoCarteiraAluno2Escala / 100);
+		$logoCarteiraAluno2Altura = (int)round(90 * $logoCarteiraAluno2Escala / 100);
 
 		return [
 			'logoCarteiraAluno1' => htmlspecialchars(EntityConfiguracao::getLogoCarteiraAluno1Url(), ENT_QUOTES, 'UTF-8'),
 			'logoCarteiraAluno2' => htmlspecialchars(EntityConfiguracao::getLogoCarteiraAluno2Url(), ENT_QUOTES, 'UTF-8'),
+			'logoCarteiraAluno1Escala' => $logoCarteiraAluno1Escala,
+			'logoCarteiraAluno1Largura' => $logoCarteiraAluno1Largura,
+			'logoCarteiraAluno1Altura' => $logoCarteiraAluno1Altura,
+			'logoCarteiraAluno2Escala' => $logoCarteiraAluno2Escala,
+			'logoCarteiraAluno2Largura' => $logoCarteiraAluno2Largura,
+			'logoCarteiraAluno2Altura' => $logoCarteiraAluno2Altura,
 			'cabecalhoCarteiraAluno' => self::renderCarteiraLinhas(EntityConfiguracao::getCabecalhoCarteiraAlunoLinhas()),
 			'cabecalhoCarteiraAlunoTamanho' => EntityConfiguracao::getCabecalhoCarteiraAlunoTamanho(),
 			'cabecalhoCarteiraAlunoCor' => htmlspecialchars(EntityConfiguracao::getCabecalhoCarteiraAlunoCor(), ENT_QUOTES, 'UTF-8'),

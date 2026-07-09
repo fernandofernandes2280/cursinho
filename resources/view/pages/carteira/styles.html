@@ -1,9 +1,9 @@
 <style>
 :root {
-	--carteira-logo1-width: 100px;
-	--carteira-logo1-height: 90px;
-	--carteira-logo2-width: 100px;
-	--carteira-logo2-height: 90px;
+	--carteira-logo1-width: {{logoCarteiraAluno1Largura}}px;
+	--carteira-logo1-height: {{logoCarteiraAluno1Altura}}px;
+	--carteira-logo2-width: {{logoCarteiraAluno2Largura}}px;
+	--carteira-logo2-height: {{logoCarteiraAluno2Altura}}px;
 	--carteira-header-text-size: {{cabecalhoCarteiraAlunoTamanho}}px;
 	--carteira-header-text-color: {{cabecalhoCarteiraAlunoCor}};
 	--carteira-subtitle-text-size: {{subtituloCarteiraAlunoTamanho}}px;
@@ -92,18 +92,19 @@
 	top: 20px;
 	height: 116px;
 	z-index: 3;
-	overflow: hidden;
 	background: rgba(255, 255, 255, .96);
 	border: 1px solid rgba(15, 23, 42, .14);
 	border-top: 4px solid #2f7d45;
 	border-radius: 20px;
 	box-shadow: 0 14px 34px rgba(15, 23, 42, .12);
+	overflow: visible;
 }
 
 .logo1,
 .logo2 {
 	position: absolute;
-	top: 15px;
+	top: 50%;
+	transform: translateY(-50%);
 	height: var(--carteira-logo1-height);
 	overflow: hidden;
 	text-align: center;
@@ -134,7 +135,7 @@
 	right: 0;
 	top: 50%;
 	transform: translateY(-50%);
-	padding: 0 145px;
+	padding: 0 calc(var(--carteira-logo2-width) + 45px) 0 calc(var(--carteira-logo1-width) + 45px);
 	text-align: center;
 	line-height: .95;
 }

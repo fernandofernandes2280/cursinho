@@ -109,6 +109,8 @@ class Configuracao extends Page{
 			'logoCarteiraAluno1Version' => self::getLogoVersion(EntityConfiguracao::getLogoCarteiraAluno1()),
 			'logoCarteiraAluno2' => htmlspecialchars($logoCarteiraAluno2, ENT_QUOTES, 'UTF-8'),
 			'logoCarteiraAluno2Version' => self::getLogoVersion(EntityConfiguracao::getLogoCarteiraAluno2()),
+			'logoCarteiraAluno1Escala' => EntityConfiguracao::getLogoCarteiraAluno1Escala(),
+			'logoCarteiraAluno2Escala' => EntityConfiguracao::getLogoCarteiraAluno2Escala(),
 			'cabecalhoCarteiraAluno' => htmlspecialchars(EntityConfiguracao::getCabecalhoCarteiraAluno(), ENT_QUOTES, 'UTF-8'),
 			'cabecalhoCarteiraAlunoTamanho' => EntityConfiguracao::getCabecalhoCarteiraAlunoTamanho(),
 			'cabecalhoCarteiraAlunoCor' => htmlspecialchars(EntityConfiguracao::getCabecalhoCarteiraAlunoCor(), ENT_QUOTES, 'UTF-8'),
@@ -146,6 +148,8 @@ class Configuracao extends Page{
 		$tituloRelatorio = $postVars['tituloRelatorio'] ?? '';
 
 		EntityConfiguracao::setTituloRelatorio($tituloRelatorio);
+		EntityConfiguracao::setLogoCarteiraAluno1Escala($postVars['logoCarteiraAluno1Escala'] ?? '');
+		EntityConfiguracao::setLogoCarteiraAluno2Escala($postVars['logoCarteiraAluno2Escala'] ?? '');
 		EntityConfiguracao::setCabecalhoCarteiraAluno($postVars['cabecalhoCarteiraAluno'] ?? '');
 		EntityConfiguracao::setCabecalhoCarteiraAlunoTamanho($postVars['cabecalhoCarteiraAlunoTamanho'] ?? '');
 		EntityConfiguracao::setCabecalhoCarteiraAlunoCor($postVars['cabecalhoCarteiraAlunoCor'] ?? '');
