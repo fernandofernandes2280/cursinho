@@ -38,6 +38,9 @@ class Funcoes{
             case 'deletedfail':
                 return Alert::getError('Você não tem permissão para Excluir! Contate o administrador.');
                 break;
+            case 'deleteBlocked':
+                return Alert::getError('Não foi possível excluir o registro porque existem vínculos cadastrados.');
+                break;
             case 'semfoto':
                 return Alert::getError('Nenhuma foto foi enviada!');
                 break;
@@ -124,6 +127,24 @@ class Funcoes{
         unset($_SESSION[self::STATUS_FLASH_SESSION_KEY]);
 
         return is_array($status) ? $status : [];
+    }
+
+    public static function isAjaxRequest($request){
+        $headers = [];
+
+        foreach ((array)$request->getHeaders() as $name => $value) {
+            $headers[strtolower((string)$name)] = (string)$value;
+        }
+
+        return strtolower($headers['x-requested-with'] ?? '') === 'xmlhttprequest'
+            || stripos($headers['accept'] ?? '', 'application/json') !== false;
+    }
+
+    public static function getDeleteJsonResponse($success, $message, $extra = []){
+        return array_merge([
+            'success' => (bool)$success,
+            'message' => $message,
+        ], $extra);
     }
 
     //Método responsável por guardar temporariamente os dados digitados em um formulário

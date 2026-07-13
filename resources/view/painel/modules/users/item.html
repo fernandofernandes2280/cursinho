@@ -16,9 +16,25 @@
       <a href="{{URL}}/users/{{id}}/edit" class="table-action" rel="tooltip" title="Editar">
         <i class="material-icons">edit</i>
       </a>
-      <a href="{{URL}}/users/{{id}}/delete" class="table-action table-action-danger" rel="tooltip" title="Excluir" {{excluirUsuarioVisivel}}>
+      <button
+        type="button"
+        class="table-action table-action-danger"
+        rel="tooltip"
+        title="Excluir"
+        data-toggle="modal"
+        data-target="#modalDeleteRecord"
+        data-delete-url="{{deleteUrl}}"
+        data-delete-redirect="{{URL}}/users"
+        data-delete-title="Excluir usuário"
+        data-delete-warning="Confirme a exclusão deste usuário."
+        data-delete-detail-nome="{{nomeAttr}}"
+        data-delete-detail-email="{{emailAttr}}"
+        data-delete-detail-cpf="{{cpfAttr}}"
+        data-delete-detail-tipo="{{tipoAttr}}"
+        {{excluirUsuarioVisivel}}
+      >
         <i class="material-icons">delete</i>
-      </a>
+      </button>
     </div>
   </td>
 </tr>

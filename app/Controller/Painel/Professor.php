@@ -361,16 +361,22 @@ class Professor extends Page{
 		    $cor = $obProfessor->status == 1 ? 'bg-gradient-success' : 'bg-gradient-danger';
 		    $statusToken = $obProfessor->status == 1 ? 'ativo' : 'inativo';
 		    $foto = strlen((string)$obProfessor->foto) ? $obProfessor->foto : 'profile.png';
+		    $statusProfessor = $obStatus ? $obStatus->nome : 'Sem status';
+		    $cpfProfessor = Funcoes::mask($obProfessor->cpf, '###.###.###-##');
 
 			//View de professores
 			$resultados .= View::render('painel/modules/professores/item',[
 			    'nome' => $obProfessor->nome,
-			    'cpf' =>Funcoes::mask($obProfessor->cpf, '###.###.###-##') ,
-			    'status' => $obStatus ? $obStatus->nome : 'Sem status',
+			    'nomeAttr' => self::escape($obProfessor->nome),
+			    'cpf' => $cpfProfessor,
+			    'cpfAttr' => self::escape($cpfProfessor),
+			    'status' => $statusProfessor,
+			    'statusAttr' => self::escape($statusProfessor),
 			    'id' => $obProfessor->id,
 			    'cor' => $cor,
 			    'statusToken' => $statusToken,
 			    'email' => $obProfessor->email,
+			    'emailAttr' => self::escape($obProfessor->email),
 			    'fone' => self::formatPhone($obProfessor->fone),
 			    'endereco' => self::getProfessorEndereco($obProfessor),
 			    'funcao' => $obProfessor->funcao,
@@ -378,6 +384,7 @@ class Professor extends Page{
 			    'dataCad' => self::formatDate($obProfessor->dataCad ?? ''),
 			    'foto' => $foto.'?var='.$reload,
 			    'disciplinas' => self::getProfessorDisciplinas($obProfessor->id),
+			    'deleteUrl' => URL.'/professores/'.(int)$obProfessor->id.'/delete',
 			    'visivelDeleteProfessor' => permissaoExcluirProfessor,
 			]);
 		}
@@ -408,7 +415,7 @@ class Professor extends Page{
 	}
 	
 	
-	//Metodo responsávelpor retornar o formulário de Cadastro de um novo Profissional
+	//Metodo responsávelpor retornar o formulário de Cadastro de um novo Professor
 	public static function getNewProfessor($request){
 
 	    //Inicia sessão
@@ -533,10 +540,10 @@ class Professor extends Page{
 	    
 	}
 	
-	//Metodo responsávelpor retornar o formulário de Edição de um Profissional
+	//Metodo responsávelpor retornar o formulário de Edição de um Professor
 	public static function getEditProfessor($request,$id){
 	    
-	    //obtém o Profissional do banco de dados
+	    //obtém o Professor do banco de dados
 	    $obProfessor = EntityProfessor::getProfessorById($id);
 	    
 	    //Valida a instancia
@@ -685,42 +692,36 @@ class Professor extends Page{
 	
 	//Metodo responsávelpor retornar o formulário de Exclusão de um Paciente
 	public static function getDeleteProfessor($request,$id){
-	    
-		//obtém o profissional do banco de dados
-	    $obProfessor = EntityProfessor::getProfessorById($id);
-		
-		//Valida a instancia
-		if(!$obProfessor instanceof EntityProfessor){
-			$request->getRouter()->redirect('/professores');
-		}
-		
-		
-		//Conteúdo do Formulário
-		$content = View::render('painel/modules/professores/delete',[
-		    'nome' => $obProfessor->nome,
-		    'title' => 'Professor > Excluir'
-			
-				
-		]);
-		
-		//Retorna a página completa
-		return parent::getPanel('Excluir Professor > Cursinho', $content,'professores', self::$buscaRapidaPront);
-		
+		$request->getRouter()->redirect('/professores');
 	}
 	
 	//Metodo responsável por Excluir um Paciente
 	public static function setDeleteProfessor($request,$id){
+		$isAjax = Funcoes::isAjaxRequest($request);
 		
 		//obtém o paciente do banco de dados
 	    $obProfessor = EntityProfessor::getProfessorById($id);
 		
 		//Valida a instancia
 	    if(!$obProfessor instanceof EntityProfessor){
+			if($isAjax){
+				return Funcoes::getDeleteJsonResponse(false, 'Professor não encontrado.');
+			}
+
 			$request->getRouter()->redirect('/professores');
 		}
 		
 		//Exclui o professor
 		$obProfessor->excluir();
+
+		if($isAjax){
+			Funcoes::flashStatus('deleted');
+
+			return Funcoes::getDeleteJsonResponse(true, 'Professor excluído com sucesso.', [
+				'id' => (int)$obProfessor->id,
+				'redirectUrl' => URL.'/professores',
+			]);
+		}
 		
 		//Redireciona o usuário
 		$request->getRouter()->redirect('/professores?statusMessage=deleted');

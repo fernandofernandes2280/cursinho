@@ -8,9 +8,22 @@
       <a href="{{URL}}/disciplinas/{{id}}/edit" class="table-action" rel="tooltip" title="Editar">
         <i class="material-icons">edit</i>
       </a>
-      <a href="{{URL}}/disciplinas/{{id}}/delete" class="table-action table-action-danger" rel="tooltip" title="Excluir" {{excluirDisciplinaVisivel}}>
+      <button
+        type="button"
+        class="table-action table-action-danger"
+        rel="tooltip"
+        title="Excluir"
+        data-toggle="modal"
+        data-target="#modalDeleteRecord"
+        data-delete-url="{{deleteUrl}}"
+        data-delete-redirect="{{URL}}/disciplinas"
+        data-delete-title="Excluir disciplina"
+        data-delete-warning="Confirme a exclusão desta disciplina."
+        data-delete-detail-nome="{{nomeAttr}}"
+        {{excluirDisciplinaVisivel}}
+      >
         <i class="material-icons">delete</i>
-      </a>
+      </button>
     </div>
   </td>
 </tr>

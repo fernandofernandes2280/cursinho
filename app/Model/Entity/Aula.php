@@ -46,9 +46,6 @@ class Aula {
 		        'autor'=>$_SESSION['usuario']['id'] //id  do usuario logado
 		]);
 		
-		//Grava o Log do usuário
-//		Logs::setNewLog('atendimentos',__FUNCTION__ ,'Profissional: '.Profissional::getProfissionalById($this->idProfissional)->nome.' Procedimento: '.Procedimento::getProcedimentoById($this->idProcedimento)->nome.' Status: '.$this->status);
-		
 		//Sucesso
 		return true;
 	}
@@ -58,10 +55,6 @@ class Aula {
 	public function atualizar(){
 //		$this->data = date('Y-m-d H:i:s');
 
-	
-		//Grava o Log do usuário
-//		Logs::setNewLog('atendimentos',__FUNCTION__ ,'Profissional: '.Profissional::getProfissionalById($this->idProfissional)->nome.' Procedimento: '.Procedimento::getProcedimentoById($this->idProcedimento)->nome.' Status: '.$this->status);
-		
 		//Atualiza paciente no banco de dados
 		return (new Database('aulas'))->update('id = '.$this->id,[
 				'data'=>$this->data,
@@ -81,9 +74,6 @@ class Aula {
 	
 	//Método responsavel por excluir um Atendimento do banco de dados
 	public function excluir(){
-		
-		//Grava o Log do usuário
-//		Logs::setNewLog('atendimentos',__FUNCTION__ ,'Profissional: '.Profissional::getProfissionalById($this->idProfissional)->nome.' Procedimento: '.Procedimento::getProcedimentoById($this->idProcedimento)->nome.' Status: '.$this->status);
 		
 			//Exclui o depoimento no Banco de Dados
 		return (new Database('aulas'))->delete('id = '.$this->id);

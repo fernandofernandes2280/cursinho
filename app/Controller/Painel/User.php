@@ -39,6 +39,10 @@ class User extends Page{
 		return Login::isAdmin();
 	}
 
+	private static function escape($value){
+		return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+	}
+
 	private static function checkUserAccess($request, $id){
 		$loggedUserId = (int)($_SESSION['usuario']['id'] ?? 0);
 
@@ -201,10 +205,15 @@ class User extends Page{
 			$itens.= View::render('painel/modules/users/item',[
 					'id' => $obUser->id,
 					'nome' => $obUser->nome,
+					'nomeAttr' => self::escape($obUser->nome),
 					'email' => $obUser->email,
+					'emailAttr' => self::escape($obUser->email),
 					'cpf' => Funcoes::mask($obUser->cpf, '###.###.###-##') ,
+					'cpfAttr' => self::escape(Funcoes::mask($obUser->cpf, '###.###.###-##')),
 					'tipo' => $obUser->tipo,
+					'tipoAttr' => self::escape($obUser->tipo),
 					'foto' => $foto.'?var='.$reload,
+					'deleteUrl' => URL.'/users/'.(int)$obUser->id.'/delete',
 					'excluirUsuarioVisivel' => self::canManageUsers() ? permissaoExcluirUsuario : 'hidden'
 			]);
 		}
@@ -589,36 +598,22 @@ class User extends Page{
 	
 	//Metodo responsávelpor retornar o formulário de Exclusão de um usuário
 	public static function getDeleteUser($request,$id){
-		//obtém o usuário do banco de dados
-		$obUser = EntityUser::getUserById($id);
-		
-		//Valida a instancia
-		if(!$obUser instanceof EntityUser){
-			$request->getRouter()->redirect('/users');
-		}
-		
-		
-		
-		//Conteúdo do Formulário
-		$content = View::render('painel/modules/users/delete',[
-				'nome' => $obUser->nome,
-				'email' => $obUser->email
-				
-				
-		]);
-		
-		//Retorna a página completa
-		return parent::getPanel('Excluir Usuário > SISCAPS', $content,'users', self::$hidden);
-		
+		$request->getRouter()->redirect('/users');
 	}
 	
 	//Metodo responsável por Excluir um usuário
 	public static function setDeleteUser($request,$id){
+		$isAjax = Funcoes::isAjaxRequest($request);
+
 		//obtém o usuário do banco de dados
 		$obUser = EntityUser::getUserById($id);
 
 		//Valida a instancia
 		if(!$obUser instanceof EntityUser){
+			if($isAjax){
+				return Funcoes::getDeleteJsonResponse(false, 'Usuário não encontrado.');
+			}
+
 			$request->getRouter()->redirect('/users');
 		}
 		$auditBefore = AuditLogger::snapshot($obUser, self::AUDIT_USER_FIELDS);
@@ -636,6 +631,15 @@ class User extends Page{
 			$auditBefore,
 			null
 		);
+
+		if($isAjax){
+			Funcoes::flashStatus('deleted');
+
+			return Funcoes::getDeleteJsonResponse(true, 'Usuário excluído com sucesso.', [
+				'id' => (int)$obUser->id,
+				'redirectUrl' => URL.'/users',
+			]);
+		}
 
 		//Redireciona o usuário
 		$request->getRouter()->redirect('/users?statusMessage=deleted');

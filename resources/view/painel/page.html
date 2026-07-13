@@ -120,6 +120,34 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="modalDeleteRecord" tabindex="-1" aria-labelledby="modalDeleteRecordLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="deleteRecordForm" method="post" action="">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalDeleteRecordLabel">Excluir registro</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p id="deleteRecordWarning" class="delete-record-warning">Confirme a exclusão do registro selecionado.</p>
+              <dl id="deleteRecordSummary" class="delete-record-summary"></dl>
+              <p id="deleteRecordMessage" class="delete-record-message" role="status" aria-live="polite"></p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default btn-round btn-just-icon" data-dismiss="modal" rel="tooltip" title="Cancelar">
+                <i class="material-icons">close</i>
+              </button>
+              <button type="submit" id="deleteRecordConfirm" class="btn btn-danger btn-round btn-just-icon" rel="tooltip" title="Excluir">
+                <i class="material-icons">delete</i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="{{URL}}/resources/js/jquery.mask.js"></script>
@@ -197,6 +225,76 @@
         modal.setAttribute('aria-hidden', 'true');
       }
 
+      function getDeleteDetailLabel(key) {
+        var labels = {
+          cadastro: 'Cadastro',
+          cpf: 'CPF',
+          data: 'Data',
+          email: 'E-mail',
+          escolaridade: 'Escolaridade',
+          id: 'ID',
+          matricula: 'Matrícula',
+          nome: 'Nome',
+          status: 'Status',
+          tipo: 'Tipo',
+          turma: 'Turma'
+        };
+
+        return labels[key] || key.replace(/-/g, ' ').replace(/\b\w/g, function(letter) {
+          return letter.toUpperCase();
+        });
+      }
+
+      function setDeleteRecordMessage(text, type) {
+        var message = document.getElementById('deleteRecordMessage');
+        if (!message) return;
+        message.textContent = text || '';
+        message.className = 'delete-record-message' + (type ? ' is-' + type : '');
+      }
+
+      function setDeleteRecordLoading(loading) {
+        var button = document.getElementById('deleteRecordConfirm');
+        var icon = button ? button.querySelector('.material-icons') : null;
+
+        if (!button) return;
+        button.disabled = loading;
+        if (icon) icon.textContent = loading ? 'hourglass_empty' : 'delete';
+      }
+
+      function prepareDeleteRecordModal(trigger) {
+        var modal = document.getElementById('modalDeleteRecord');
+        var form = document.getElementById('deleteRecordForm');
+        var title = document.getElementById('modalDeleteRecordLabel');
+        var warning = document.getElementById('deleteRecordWarning');
+        var summary = document.getElementById('deleteRecordSummary');
+
+        if (!modal || !form || !summary) return;
+
+        form.setAttribute('action', trigger.getAttribute('data-delete-url') || '');
+        form.dataset.redirectUrl = trigger.getAttribute('data-delete-redirect') || window.location.href.split('?')[0];
+        if (title) title.textContent = trigger.getAttribute('data-delete-title') || 'Excluir registro';
+        if (warning) warning.textContent = trigger.getAttribute('data-delete-warning') || 'Confirme a exclusão do registro selecionado.';
+
+        summary.innerHTML = '';
+        Array.prototype.forEach.call(trigger.attributes, function(attribute) {
+          if (attribute.name.indexOf('data-delete-detail-') !== 0) return;
+
+          var key = attribute.name.replace('data-delete-detail-', '');
+          var row = document.createElement('div');
+          var term = document.createElement('dt');
+          var description = document.createElement('dd');
+
+          term.textContent = getDeleteDetailLabel(key);
+          description.textContent = attribute.value || '-';
+          row.appendChild(term);
+          row.appendChild(description);
+          summary.appendChild(row);
+        });
+
+        setDeleteRecordLoading(false);
+        setDeleteRecordMessage('', '');
+      }
+
       document.addEventListener('click', function(event) {
         var modalTrigger = event.target.closest('[data-toggle="modal"][data-target]');
         if (modalTrigger) {
@@ -211,6 +309,9 @@
               photoPreview.alt = 'Foto de ' + title;
             }
             if (photoTitle) photoTitle.textContent = title;
+          }
+          if (modalTrigger.getAttribute('data-target') === '#modalDeleteRecord') {
+            prepareDeleteRecordModal(modalTrigger);
           }
           openModal(modalTrigger.getAttribute('data-target'));
           return;
@@ -263,6 +364,61 @@
           }
         });
       });
+
+      var deleteRecordForm = document.getElementById('deleteRecordForm');
+      if (deleteRecordForm) {
+        deleteRecordForm.addEventListener('submit', function(event) {
+          event.preventDefault();
+
+          var action = deleteRecordForm.getAttribute('action') || '';
+
+          if (!action) {
+            setDeleteRecordMessage('Não foi possível localizar o registro para exclusão.', 'error');
+            return;
+          }
+
+          setDeleteRecordLoading(true);
+          setDeleteRecordMessage('Excluindo registro...', 'loading');
+
+          fetch(action, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+              'Accept': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          })
+            .then(function(response) {
+              return response.text().then(function(text) {
+                var data = {};
+
+                try {
+                  data = text ? JSON.parse(text) : {};
+                } catch (error) {
+                  var plainText = (text || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+                  throw new Error(plainText && plainText.length <= 240 ? plainText : 'Resposta inválida do servidor.');
+                }
+
+                if (!response.ok) {
+                  throw new Error(data.message || 'Não foi possível excluir o registro.');
+                }
+
+                return data;
+              });
+            })
+            .then(function(data) {
+              if (!data || !data.success) {
+                throw new Error((data && data.message) || 'Não foi possível excluir o registro.');
+              }
+
+              window.location.href = data.redirectUrl || deleteRecordForm.dataset.redirectUrl || window.location.href.split('?')[0];
+            })
+            .catch(function(error) {
+              setDeleteRecordLoading(false);
+              setDeleteRecordMessage(error.message || 'Não foi possível excluir o registro.', 'error');
+            });
+        });
+      }
 
       function normalizePdfValue(value) {
         return (value || '').replace(/\s+/g, ' ').trim();

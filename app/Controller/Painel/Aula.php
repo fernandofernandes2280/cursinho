@@ -30,24 +30,6 @@ class Aula extends Page{
 		return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
 	}
 
-	private static function isAjaxRequest($request){
-		$headers = [];
-
-		foreach ((array)$request->getHeaders() as $name => $value) {
-			$headers[strtolower((string)$name)] = (string)$value;
-		}
-
-		return strtolower($headers['x-requested-with'] ?? '') === 'xmlhttprequest'
-			|| stripos($headers['accept'] ?? '', 'application/json') !== false;
-	}
-
-	private static function getDeleteJsonResponse($success, $message, $extra = []){
-		return array_merge([
-			'success' => (bool)$success,
-			'message' => $message,
-		], $extra);
-	}
-
 	private static function formatPhone($phone){
 	    $digits = preg_replace('/\D+/', '', (string)$phone);
 
@@ -338,7 +320,7 @@ class Aula extends Page{
 	
 	//Metodo responsável por Excluir um Paciente
 	public static function setAulaDelete($request,$id){
-		$isAjax = self::isAjaxRequest($request);
+		$isAjax = Funcoes::isAjaxRequest($request);
 		
 		//obtém o paciente do banco de dados
 		$obAula = EntityAula::getAulaById($id);
@@ -346,7 +328,7 @@ class Aula extends Page{
 		//Valida a instancia
 		if(!$obAula instanceof EntityAula){
 			if($isAjax){
-				return self::getDeleteJsonResponse(false, 'Aula não encontrada.');
+				return Funcoes::getDeleteJsonResponse(false, 'Aula não encontrada.');
 			}
 
 			$request->getRouter()->redirect('/aulas');
@@ -363,15 +345,18 @@ class Aula extends Page{
 			$database->rollBack();
 
 			if($isAjax){
-				return self::getDeleteJsonResponse(false, 'Não foi possível excluir a aula. Tente novamente.');
+				return Funcoes::getDeleteJsonResponse(false, 'Não foi possível excluir a aula. Tente novamente.');
 			}
 
 			throw $e;
 		}
 
 		if($isAjax){
-			return self::getDeleteJsonResponse(true, 'Aula excluída com sucesso.', [
+			Funcoes::flashStatus('deleted');
+
+			return Funcoes::getDeleteJsonResponse(true, 'Aula excluída com sucesso.', [
 				'id' => (int)$obAula->id,
+				'redirectUrl' => URL.'/aulas',
 			]);
 		}
 		

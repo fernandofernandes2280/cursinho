@@ -522,6 +522,21 @@ class Aluno extends Page{
 		];
 	}
 
+	private static function getAlunoDeleteBlockMessage($idAluno){
+		$totalFrequencias = (int)((new Database('frequencia'))->select(
+			'idAluno = '.(int)$idAluno,
+			null,
+			null,
+			'COUNT(*) AS total'
+		)->fetchObject()->total ?? 0);
+
+		if($totalFrequencias <= 0){
+			return '';
+		}
+
+		return 'Não foi possível excluir este aluno porque existem '.$totalFrequencias.' registros de frequência vinculados. Para preservar o histórico, inative o aluno ou remova as frequências antes de excluir.';
+	}
+
 	private static function getAlunoFrequenciasTable($obAluno){
 		$resumo = self::getAlunoFrequenciasResumo($obAluno->id);
 
@@ -662,14 +677,22 @@ class Aluno extends Page{
 			    $obEscolaridade = (int)$obAluno->escolaridade > 0 ? EntityEscolaridade::getEscolaridadeById((int)$obAluno->escolaridade) : null;
 			    $statusCor = $obAluno->status == 1 ? 'bg-gradient-success' : 'bg-gradient-danger';
 			    $statusToken = $obAluno->status == 1 ? 'ativo' : 'inativo';
+			    $statusAluno = $obStatus ? $obStatus->nome : 'Sem status';
+			    $turmaAluno = $obTurma ? $obTurma->nome : 'Sem turma';
+			    $cpfAluno = Funcoes::mask($obAluno->cpf, '###.###.###-##');
 
 				$resultados .= View::render('painel/modules/alunos/item',[
 			    'nome' => $obAluno->nome,
-			    'status' => $obStatus ? $obStatus->nome : 'Sem status',
-			    'cpf' => Funcoes::mask($obAluno->cpf, '###.###.###-##') ,
+			    'nomeAttr' => self::escape($obAluno->nome),
+			    'status' => $statusAluno,
+			    'statusAttr' => self::escape($statusAluno),
+			    'cpf' => $cpfAluno,
+			    'cpfAttr' => self::escape($cpfAluno),
 			    'id' => $obAluno->id,
 				    'matricula' => $obAluno->matricula,
-				    'turma' => $obTurma ? $obTurma->nome : 'Sem turma',
+				    'matriculaAttr' => self::escape($obAluno->matricula),
+				    'turma' => $turmaAluno,
+				    'turmaAttr' => self::escape($turmaAluno),
 				    'fone' => self::formatPhone($obAluno->fone),
 				    'endereco' => self::getAlunoEndereco($obAluno),
 				    'escolaridade' => $obEscolaridade ? $obEscolaridade->nome : '',
@@ -680,6 +703,7 @@ class Aluno extends Page{
 				    'foto' => $obAluno->getFoto(),
 				    'statusCor' => $statusCor,
 			    'statusToken' => $statusToken,
+			    'deleteUrl' => URL.'/alunos/'.(int)$obAluno->id.'/delete',
 			    'visivelDeleteAluno' => permissaoExcluirAluno,
 			]);
 		}
@@ -1214,39 +1238,33 @@ class Aluno extends Page{
 
 	//Metodo responsávelpor retornar o formulário de Exclusão de um Aluno
 	public static function getDeleteAluno($request,$id){
-	    //obtém o deopimento do banco de dados
-	    $obAluno = EntityAluno::getAlunoById($id);
-
-	    //Valida a instancia
-	    if(!$obAluno instanceof EntityAluno){
-	        $request->getRouter()->redirect('/alunos');
-	    }
-
-
-	    //Conteúdo do Formulário
-	    $content = View::render('painel/modules/alunos/delete',[
-	        'title'=> 'Alunos > Excluir',
-	        'matricula' => $obAluno->matricula,
-	        'nome' => $obAluno->nome
-
-
-	    ]);
-
-	    //Retorna a página completa
-	    return parent::getPanel('Excluir Aluno > Cursinho', $content,'alunos');
-
+	    $request->getRouter()->redirect('/alunos');
 	}
 	//Metodo responsável por Excluir um Aluno
 	public static function setDeleteAluno($request,$id){
-
+	    $isAjax = Funcoes::isAjaxRequest($request);
 
 	    //obtém o paciente do banco de dados
 	    $obAluno = EntityAluno::getAlunoById($id);
 
 	    //Valida a instancia
 	    if(!$obAluno instanceof EntityAluno){
+	        if($isAjax){
+	            return Funcoes::getDeleteJsonResponse(false, 'Aluno não encontrado.');
+	        }
+
 	        $request->getRouter()->redirect('/alunos');
 	    }
+
+	    $deleteBlockMessage = self::getAlunoDeleteBlockMessage($obAluno->id);
+	    if($deleteBlockMessage !== ''){
+	        if($isAjax){
+	            return Funcoes::getDeleteJsonResponse(false, $deleteBlockMessage);
+	        }
+
+	        $request->getRouter()->redirect('/alunos?statusMessage=deleteBlocked');
+	    }
+
 	    $auditBefore = AuditLogger::snapshot($obAluno, self::AUDIT_ALUNO_FIELDS);
 
 	    //Exclui o depoimento
@@ -1262,6 +1280,15 @@ class Aluno extends Page{
 	        $auditBefore,
 	        null
 	    );
+
+	    if($isAjax){
+	        Funcoes::flashStatus('deleted');
+
+	        return Funcoes::getDeleteJsonResponse(true, 'Aluno excluído com sucesso.', [
+	            'id' => (int)$obAluno->id,
+	            'redirectUrl' => URL.'/alunos',
+	        ]);
+	    }
 
 	    //Redireciona o usuário
 	    $request->getRouter()->redirect('/alunos?statusMessage=deleted');

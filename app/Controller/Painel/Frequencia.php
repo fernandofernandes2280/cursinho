@@ -176,8 +176,6 @@ class Frequencia extends Page{
 		
 		//Condições SQL
 		$condicoes = [
-				
-		//		strlen((string)$profissional) ? 'idProfissional = '.$profissional.' ' : null,
 				strlen((string)$filtroStatus) ? 'status = "'.$filtroStatus.'" ' : null,
 				strlen((string)$filtroData) ? 'data = "'.$filtroData.'" ' : null
 		];

@@ -4699,20 +4699,20 @@ body.update-aluno-page .card label,
   padding: 1rem;
 }
 
-.aula-delete-warning {
+.delete-record-warning {
   margin: 0 0 .9rem;
   color: #475569;
   font-size: .92rem;
   font-weight: 600;
 }
 
-.aula-delete-summary {
+.delete-record-summary {
   display: grid;
   gap: .65rem;
   margin: 0;
 }
 
-.aula-delete-summary div {
+.delete-record-summary div {
   display: grid;
   grid-template-columns: 5rem minmax(0, 1fr);
   gap: .75rem;
@@ -4723,31 +4723,31 @@ body.update-aluno-page .card label,
   background: #f8fafc;
 }
 
-.aula-delete-summary dt {
+.delete-record-summary dt {
   color: #64748b;
   font-size: .78rem;
   font-weight: 800;
   text-transform: uppercase;
 }
 
-.aula-delete-summary dd {
+.delete-record-summary dd {
   margin: 0;
   color: #1e293b;
   font-weight: 800;
 }
 
-.aula-delete-message {
+.delete-record-message {
   min-height: 1.25rem;
   margin: .85rem 0 0;
   font-size: .88rem;
   font-weight: 700;
 }
 
-.aula-delete-message.is-error {
+.delete-record-message.is-error {
   color: #b91c1c;
 }
 
-.aula-delete-message.is-loading {
+.delete-record-message.is-loading {
   color: #475569;
 }
 

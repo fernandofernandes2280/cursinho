@@ -103,7 +103,13 @@ $obRouter->post('/users/{id}/delete',[
 		
 		
 		function ($request,$id){
-			return new Response(200, Painel\User::setDeleteUser($request,$id));
+			$response = Painel\User::setDeleteUser($request,$id);
+
+			if(is_array($response)){
+				return new Response(200, $response, 'application/json');
+			}
+
+			return new Response(200, $response);
 		}
 		]);
 

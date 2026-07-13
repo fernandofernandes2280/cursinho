@@ -23,9 +23,26 @@
       <a href="{{URL}}/alunos/{{id}}/edit" class="table-action" rel="tooltip" title="Editar">
         <i class="material-icons">edit</i>
       </a>
-      <a href="{{URL}}/alunos/{{id}}/delete" class="table-action table-action-danger" rel="tooltip" title="Excluir" {{visivelDeleteAluno}}>
+      <button
+        type="button"
+        class="table-action table-action-danger"
+        rel="tooltip"
+        title="Excluir"
+        data-toggle="modal"
+        data-target="#modalDeleteRecord"
+        data-delete-url="{{deleteUrl}}"
+        data-delete-redirect="{{URL}}/alunos"
+        data-delete-title="Excluir aluno"
+        data-delete-warning="Confirme a exclusão deste aluno."
+        data-delete-detail-matricula="{{matriculaAttr}}"
+        data-delete-detail-nome="{{nomeAttr}}"
+        data-delete-detail-cpf="{{cpfAttr}}"
+        data-delete-detail-turma="{{turmaAttr}}"
+        data-delete-detail-status="{{statusAttr}}"
+        {{visivelDeleteAluno}}
+      >
         <i class="material-icons">delete</i>
-      </a>
+      </button>
     </div>
   </td>
 </tr>

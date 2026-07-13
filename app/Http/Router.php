@@ -154,6 +154,8 @@ class Router{
 	//Método responsavel pro executar a rota atual
 	public function run(){
 		try {
+			$this->redirectStatusMessageFromCurrentRequest();
+
 			//Obtem a rota atual
 			$route = $this->getRoute();
 
@@ -235,6 +237,31 @@ class Router{
 		}
 
 		return $cleanRoute;
+	}
+
+	private function redirectStatusMessageFromCurrentRequest(){
+		if($this->request->getHttpMethod() !== 'GET'){
+			return;
+		}
+
+		$queryParams = $_GET ?? [];
+
+		if(!isset($queryParams['statusMessage'])){
+			return;
+		}
+
+		Funcoes::flashStatus($queryParams['statusMessage'], $queryParams);
+		unset($queryParams['statusMessage']);
+
+		$route = $this->getUri();
+		$route = $route !== '' ? $route : '/';
+		$queryString = http_build_query($queryParams);
+
+		if($queryString !== ''){
+			$route .= '?'.$queryString;
+		}
+
+		$this->redirect($route);
 	}
 	
 	//Método responsavel por redirecionar a URL

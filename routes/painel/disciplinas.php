@@ -86,7 +86,13 @@ $obRouter->post('/disciplinas/{id}/delete',[
     ],
 		
 		function ($request,$id){
-		    return new Response(200, Painel\Disciplina::setDisciplinaDelete($request,$id));
+		    $response = Painel\Disciplina::setDisciplinaDelete($request,$id);
+
+		    if(is_array($response)){
+		        return new Response(200, $response, 'application/json');
+		    }
+
+		    return new Response(200, $response);
 		}
 		]);
 

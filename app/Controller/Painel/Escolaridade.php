@@ -4,12 +4,17 @@ namespace App\Controller\Painel;
 
 use \App\Utils\View;
 use \App\Model\Entity\Escolaridade as EntityEscolaridade;
+use \App\Utils\Funcoes;
 use \WilliamCosta\DatabaseManager\Pagination;
 
 class Escolaridade extends Page{
 	
 	//esconde busca rápida de prontuário no navBar
 	private static $hidden = 'hidden';
+
+	private static function escape($value){
+		return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+	}
 	
 	//Método responsavel por obter a renderização da listagem dos registros do banco
 	private static function getEscolaridadesItems($request, &$obPagination){
@@ -36,6 +41,8 @@ class Escolaridade extends Page{
 			$itens.= View::render('painel/modules/escolaridades/item',[
 					'id' => $ob->id,
 					'nome' => $ob->nome,
+					'nomeAttr' => self::escape($ob->nome),
+					'deleteUrl' => URL.'/escolaridades/'.(int)$ob->id.'/delete',
 					
 
 			]);
@@ -107,6 +114,10 @@ class Escolaridade extends Page{
 		//Query PArams
 		$queryParams = $request->getQueryParams();
 		
+		if(isset($queryParams['statusMessage'])){
+			return Funcoes::getStatus($request);
+		}
+
 		//Status
 		if(!isset($queryParams['status'])) return '';
 		
@@ -179,36 +190,22 @@ class Escolaridade extends Page{
 	
 	//Metodo responsávelpor retornar o formulário de Exclusão 
 	public static function getDeleteEscolaridade($request,$id){
-		//obtém o registro do banco de dados
-		$ob = EntityEscolaridade::getEscolaridadeById($id);
-		
-		//Valida a instancia
-		if(!$ob instanceof EntityEscolaridade){
-			$request->getRouter()->redirect('/escolaridades');
-		}
-		
-		
-		
-		//Conteúdo do Formulário
-		$content = View::render('painel/modules/escolaridades/delete',[
-				
-				'nome' => $ob->nome,
-				'title' => 'Excluir Escolaridade'
-				
-		]);
-		
-		//Retorna a página completa
-		return parent::getPanel('Excluir Escolaridade > Siscaps', $content,'escolaridades' , self::$hidden);
-		
+		$request->getRouter()->redirect('/escolaridades');
 	}
 	
 	//Metodo responsável por Excluir 
 	public static function setDeleteEscolaridade($request,$id){
+		$isAjax = Funcoes::isAjaxRequest($request);
+
 		//obtém o usuário do banco de dados
 		$ob = EntityEscolaridade::getEscolaridadeById($id);
 		
 		//Valida a instancia
 		if(!$ob instanceof EntityEscolaridade){
+			if($isAjax){
+				return Funcoes::getDeleteJsonResponse(false, 'Escolaridade não encontrada.');
+			}
+
 			$request->getRouter()->redirect('/escolaridades');
 		}
 		
@@ -217,11 +214,20 @@ class Escolaridade extends Page{
 		
 		//Exclui
 			$ob->excluir($id);
+
+		if($isAjax){
+			Funcoes::flashStatus('deleted');
+
+			return Funcoes::getDeleteJsonResponse(true, 'Escolaridade excluída com sucesso.', [
+				'id' => (int)$ob->id,
+				'redirectUrl' => URL.'/escolaridades',
+			]);
+		}
 	
 		
 		
 		//Redireciona o usuário
-		$request->getRouter()->redirect('/escolaridades?status=deleted');
+		$request->getRouter()->redirect('/escolaridades?statusMessage=deleted');
 		
 		
 	}

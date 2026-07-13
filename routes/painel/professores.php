@@ -127,7 +127,13 @@ $obRouter->post('/professores/{id}/delete',[
     
     
     function ($request,$id){
-        return new Response(200, Painel\Professor::setDeleteProfessor($request,$id));
+        $response = Painel\Professor::setDeleteProfessor($request,$id);
+
+        if(is_array($response)){
+            return new Response(200, $response, 'application/json');
+        }
+
+        return new Response(200, $response);
     }
     ]);
 
@@ -158,4 +164,3 @@ $obRouter->post('/professores/photo/{id}',[
         return new Response(200, Painel\Professor::setPhotoProfessor($request));
     }
     ]);
-

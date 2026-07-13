@@ -91,6 +91,12 @@ $obRouter->post('/escolaridades/{id}/delete',[
 		
 		
 		function ($request,$id){
-			return new Response(200, Painel\Escolaridade::setDeleteEscolaridade($request,$id));
+			$response = Painel\Escolaridade::setDeleteEscolaridade($request,$id);
+
+			if(is_array($response)){
+				return new Response(200, $response, 'application/json');
+			}
+
+			return new Response(200, $response);
 		}
 		]);

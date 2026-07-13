@@ -29,12 +29,14 @@
         rel="tooltip"
         title="Excluir"
         data-toggle="modal"
-        data-target="#modalAulaDelete"
-        data-aula-delete-url="{{deleteUrl}}"
-        data-aula-id="{{id}}"
-        data-aula-data="{{dataAttr}}"
-        data-aula-turma="{{turmaAttr}}"
-        data-aula-status="{{statusAttr}}"
+        data-target="#modalDeleteRecord"
+        data-delete-url="{{deleteUrl}}"
+        data-delete-redirect="{{URL}}/aulas"
+        data-delete-title="Excluir aula"
+        data-delete-warning="As frequências vinculadas a esta aula também serão removidas."
+        data-delete-detail-data="{{dataAttr}}"
+        data-delete-detail-turma="{{turmaAttr}}"
+        data-delete-detail-status="{{statusAttr}}"
         {{visivelDeleteAula}}
       >
         <i class="material-icons">delete</i>

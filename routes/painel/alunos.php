@@ -180,7 +180,13 @@ $obRouter->post('/alunos/{id}/delete',[
     ],
     
     function ($request,$id){
-        return new Response(200, Painel\Aluno::setDeleteAluno($request,$id));
+        $response = Painel\Aluno::setDeleteAluno($request,$id);
+
+        if(is_array($response)){
+            return new Response(200, $response, 'application/json');
+        }
+
+        return new Response(200, $response);
     }
     ]);
 

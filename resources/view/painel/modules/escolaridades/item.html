@@ -6,9 +6,21 @@
 					<a href="{{URL}}/escolaridades/{{id}}/edit" class="table-action" rel="tooltip" title="Editar">
 						<i class="material-icons">edit</i>
 					</a>
-					<a href="{{URL}}/escolaridades/{{id}}/delete" class="table-action table-action-danger" rel="tooltip" title="Excluir">
+					<button
+						type="button"
+						class="table-action table-action-danger"
+						rel="tooltip"
+						title="Excluir"
+						data-toggle="modal"
+						data-target="#modalDeleteRecord"
+						data-delete-url="{{deleteUrl}}"
+						data-delete-redirect="{{URL}}/escolaridades"
+						data-delete-title="Excluir escolaridade"
+						data-delete-warning="Confirme a exclusão desta escolaridade."
+						data-delete-detail-escolaridade="{{nomeAttr}}"
+					>
 						<i class="material-icons">delete</i>
-					</a>
+					</button>
 				</div>
 			</td>
 		</tr>
