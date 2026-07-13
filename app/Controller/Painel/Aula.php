@@ -26,6 +26,28 @@ class Aula extends Page{
 	//esconde busca rápida de prontuário no navBar
 	private static $hidden = '';
 
+	private static function escape($value){
+		return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+	}
+
+	private static function isAjaxRequest($request){
+		$headers = [];
+
+		foreach ((array)$request->getHeaders() as $name => $value) {
+			$headers[strtolower((string)$name)] = (string)$value;
+		}
+
+		return strtolower($headers['x-requested-with'] ?? '') === 'xmlhttprequest'
+			|| stripos($headers['accept'] ?? '', 'application/json') !== false;
+	}
+
+	private static function getDeleteJsonResponse($success, $message, $extra = []){
+		return array_merge([
+			'success' => (bool)$success,
+			'message' => $message,
+		], $extra);
+	}
+
 	private static function formatPhone($phone){
 	    $digits = preg_replace('/\D+/', '', (string)$phone);
 
@@ -82,14 +104,20 @@ class Aula extends Page{
 		    $obDisciplina1 = (int)$obAula->disciplina1 > 0 ? EntityDisciplina::getDisciplinaById((int)$obAula->disciplina1) : null;
 		    $obProfessor2 = (int)$obAula->professor2 > 0 ? EntityProfessor::getProfessorById((int)$obAula->professor2) : null;
 		    $obDisciplina2 = (int)$obAula->disciplina2 > 0 ? EntityDisciplina::getDisciplinaById((int)$obAula->disciplina2) : null;
+		    $dataAula = date('d/m/Y', strtotime($obAula->data)).' ( '.$obAula->diaSemana.' )';
+		    $turmaAula = $obTurma ? $obTurma->nome : 'Sem turma';
+		    $statusAula = $obStatus ? $obStatus->nome : 'Sem status';
 		    
 			//View de Agendas
 			$resultados .= View::render('painel/modules/aulas/item',[
 			    
 			    'id' => $obAula->id,
-			    'data' =>  date('d/m/Y', strtotime($obAula->data)).' ( '.$obAula->diaSemana.' )',
-			    'status' => $obStatus ? $obStatus->nome : 'Sem status',
-			    'turma' => $obTurma ? $obTurma->nome : 'Sem turma',
+			    'data' =>  $dataAula,
+			    'dataAttr' => self::escape($dataAula),
+			    'status' => $statusAula,
+			    'statusAttr' => self::escape($statusAula),
+			    'turma' => $turmaAula,
+			    'turmaAttr' => self::escape($turmaAula),
 			    'presencas' => EntityFrequencia::getFrequencias('idAula = '.$obAula->id.' AND status = "P"', null,null,'COUNT(*) as qtd')->fetchObject()->qtd,
 			    'faltas' => EntityFrequencia::getFrequencias('idAula = '.$obAula->id.' AND status = "F"', null,null,'COUNT(*) as qtd')->fetchObject()->qtd,
 			    'cor' => $cor,
@@ -99,6 +127,7 @@ class Aula extends Page{
 			    'professor2' => $obProfessor2 ? $obProfessor2->nome : '',
 			    'disciplina2' => $obDisciplina2 ? $obDisciplina2->nome : '',
 			    'visivelDeleteAula' => $visivelDeleteAula,
+			    'deleteUrl' => URL.'/aulas/'.(int)$obAula->id.'/delete',
 			    
 			]);
 		}
@@ -304,40 +333,22 @@ class Aula extends Page{
 	
 	//Metodo responsávelpor retornar o formulário de Exclusão de um Paciente
 	public static function getAulaDelete($request,$id){
-		
-		
-		
-		//obtém o deopimento do banco de dados
-		$obAula = EntityAula::getAulaById($id);
-		
-		//Valida a instancia
-		if(!$obAula instanceof EntityAula){
-			$request->getRouter()->redirect('/aulas');
-		}
-		
-		
-		//Conteúdo do Formulário
-		$content = View::render('painel/modules/aulas/delete',[
-				'title' => 'Aulas > Excluir',
-		        'data' => date('d/m/Y', strtotime($obAula->data)),
-				'turma' => EntityTurma::getTurmaById($obAula->turma) -> nome,
-		        'status' => EntityAula::getStatusAulaById($obAula->status)->nome,
-				
-		]);
-		
-		//Retorna a página completa
-		return parent::getPanel('Excluir Aula > Cursinho', $content,'aulas', 'hidden');
-		
+		$request->getRouter()->redirect('/aulas');
 	}
 	
 	//Metodo responsável por Excluir um Paciente
 	public static function setAulaDelete($request,$id){
+		$isAjax = self::isAjaxRequest($request);
 		
 		//obtém o paciente do banco de dados
 		$obAula = EntityAula::getAulaById($id);
 		
 		//Valida a instancia
 		if(!$obAula instanceof EntityAula){
+			if($isAjax){
+				return self::getDeleteJsonResponse(false, 'Aula não encontrada.');
+			}
+
 			$request->getRouter()->redirect('/aulas');
 		}
 		
@@ -350,7 +361,18 @@ class Aula extends Page{
 			$database->commit();
 		}catch(\Throwable $e){
 			$database->rollBack();
+
+			if($isAjax){
+				return self::getDeleteJsonResponse(false, 'Não foi possível excluir a aula. Tente novamente.');
+			}
+
 			throw $e;
+		}
+
+		if($isAjax){
+			return self::getDeleteJsonResponse(true, 'Aula excluída com sucesso.', [
+				'id' => (int)$obAula->id,
+			]);
 		}
 		
 		//Redireciona o usuário

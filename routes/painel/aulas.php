@@ -99,7 +99,13 @@ $obRouter->post('/aulas/{id}/delete',[
             $request->getRouter()->redirect('/aulas');
         }
 
-        return new Response(200, Painel\Aula::setAulaDelete($request, $id));
+        $response = Painel\Aula::setAulaDelete($request, $id);
+
+        if(is_array($response)){
+            return new Response(200, $response, 'application/json');
+        }
+
+        return new Response(200, $response);
         
     }
     ]);

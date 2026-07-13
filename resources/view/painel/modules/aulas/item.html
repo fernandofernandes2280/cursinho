@@ -23,9 +23,22 @@
       <a href="{{URL}}/aulas/{{id}}/edit" class="table-action" rel="tooltip" title="Editar">
         <i class="material-icons">edit</i>
       </a>
-      <a href="{{URL}}/aulas/{{id}}/delete" class="table-action table-action-danger" rel="tooltip" title="Excluir" {{visivelDeleteAula}}>
+      <button
+        type="button"
+        class="table-action table-action-danger"
+        rel="tooltip"
+        title="Excluir"
+        data-toggle="modal"
+        data-target="#modalAulaDelete"
+        data-aula-delete-url="{{deleteUrl}}"
+        data-aula-id="{{id}}"
+        data-aula-data="{{dataAttr}}"
+        data-aula-turma="{{turmaAttr}}"
+        data-aula-status="{{statusAttr}}"
+        {{visivelDeleteAula}}
+      >
         <i class="material-icons">delete</i>
-      </a>
+      </button>
     </div>
   </td>
 </tr>
