@@ -84,6 +84,9 @@ function getAulaGenericaExistente($data, $turma){
 function prepararAulaGenerica(EntityAluno $obAluno, $autor){
     $data = date('Y-m-d');
     $turma = EntityConfiguracao::getTurmaFrequenciaGeralAtual((int)$obAluno->turma);
+
+    EntityAula::fecharAulasAbertasAnteriores($data);
+
     $obAula = getAulaGenericaExistente($data, $turma);
 
     if($obAula instanceof EntityAula){
@@ -103,7 +106,7 @@ function prepararAulaGenerica(EntityAluno $obAluno, $autor){
         $obAula->disciplina1 = getIdRegistroNaoInformado('disciplinas');
         $obAula->disciplina2 = $obAula->disciplina1;
         $obAula->obs = 'Aula criada automaticamente pela leitura de frequência geral.';
-        $obAula->status = 1;
+        $obAula->status = EntityAula::STATUS_ABERTA;
         $obAula->diaSemana = getDiaSemanaAtualFrequencia();
         $obAula->cadastrar($database);
 

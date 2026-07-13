@@ -6,6 +6,9 @@ use \WilliamCosta\DatabaseManager\Database;
 use App\Utils\View;
 
 class Aula {
+	const STATUS_ABERTA = 1;
+	const STATUS_FECHADA = 2;
+	const STATUS_CANCELADA = 3;
 
 	public $id;
 	public $nome;
@@ -103,6 +106,28 @@ class Aula {
 	//Método responsavel por retornar Agendas
 	public static function getAulas($where = null, $order = null, $limit = null, $fields = '*') {
 		return (new Database('aulas'))->select($where,$order,$limit,$fields);
+	}
+
+	public static function fecharAulasAbertasAnteriores($dataReferencia = null, $database = null){
+		$dataReferencia = trim((string)$dataReferencia);
+
+		if(!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dataReferencia)){
+			$dataReferencia = date('Y-m-d');
+		}
+
+		$database = $database ?: new Database('aulas');
+
+		return $database->execute(
+			'UPDATE aulas
+			    SET status = ?
+			  WHERE status = ?
+			    AND DATE(data) < ?',
+			[
+				self::STATUS_FECHADA,
+				self::STATUS_ABERTA,
+				$dataReferencia
+			]
+		)->rowCount();
 	}
 	
 	//Método responsavel por retornar ALUNOS COM FALTAS PRA SEREM INATIVADOS
