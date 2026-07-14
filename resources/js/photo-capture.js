@@ -11,6 +11,24 @@
     }
   }
 
+  function formatBytes(bytes) {
+    bytes = parseInt(bytes || 0, 10);
+
+    if (bytes >= 1024 * 1024) {
+      return (bytes / 1024 / 1024).toLocaleString('pt-BR', {
+        maximumFractionDigits: 1
+      }).replace(',0', '') + ' MB';
+    }
+
+    if (bytes >= 1024) {
+      return (bytes / 1024).toLocaleString('pt-BR', {
+        maximumFractionDigits: 1
+      }).replace(',0', '') + ' KB';
+    }
+
+    return bytes + ' bytes';
+  }
+
   function dispatchFieldChange(field) {
     if (!field) {
       return;
@@ -425,7 +443,7 @@
 
   function handleFile(context) {
     var file = context.fileInput && context.fileInput.files ? context.fileInput.files[0] : null;
-    var maxSize = parseInt(context.root.getAttribute('data-photo-max-size') || '5242880', 10);
+    var maxSize = parseInt(context.root.getAttribute('data-photo-max-size') || '20971520', 10);
 
     if (!file) {
       return;
@@ -439,7 +457,7 @@
 
     if (file.size > maxSize) {
       context.fileInput.value = '';
-      setText(context.previewStatus, 'Imagem muito grande. Envie até 5 MB.');
+      setText(context.previewStatus, 'Imagem muito grande. Envie até ' + formatBytes(maxSize) + '.');
       return;
     }
 

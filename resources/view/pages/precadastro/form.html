@@ -7,6 +7,8 @@
     data-selfie-required="{{fotoObrigatoria}}"
     data-precadastro-saved="{{cadastroSalvo}}"
     data-precadastro-completo="{{cadastroCompleto}}"
+    data-upload-max-size="{{postMaxSize}}"
+    data-upload-max-size-label="{{postMaxSizeLabel}}"
     novalidate
   >
     <input type="hidden" name="acao" value="salvar">
@@ -36,7 +38,7 @@
     <div class="precadastro-status">{{statusMessage}}</div>
     <div class="precadastro-client-error" data-precadastro-error hidden></div>
 
-    <section class="precadastro-section precadastro-selfie-section" data-photo-capture data-photo-manual-start="1" data-photo-max-size="5242880">
+    <section class="precadastro-section precadastro-selfie-section" data-photo-capture data-photo-manual-start="1" data-photo-max-size="{{photoMaxSize}}">
       <div class="precadastro-section-title">
         <div>
           <span>Foto</span>
@@ -230,7 +232,7 @@
         <div>
           <span>Documentos</span>
           <h2>Arquivos do aluno</h2>
-          <small class="precadastro-section-hint">Envie os documentos em PDF, até {{documentMaxSizeLabel}} cada.</small>
+          <small class="precadastro-section-hint">Envie os documentos em PDF, até {{documentMaxSizeLabel}} cada. Total do envio: até {{postMaxSizeLabel}}.</small>
         </div>
       </div>
 

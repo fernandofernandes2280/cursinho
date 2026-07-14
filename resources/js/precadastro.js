@@ -250,6 +250,44 @@
       return false;
     }
 
+    function validateUploadTotalSize() {
+      var maxSize = parseInt(form.getAttribute('data-upload-max-size') || '0', 10);
+      var maxSizeLabel = form.getAttribute('data-upload-max-size-label') || 'o limite permitido';
+      var total = 0;
+      var firstFileInput = null;
+
+      if (maxSize <= 0) {
+        return true;
+      }
+
+      Array.prototype.slice.call(form.querySelectorAll('input[type="file"]')).forEach(function(input) {
+        if (!input.files || !input.files.length) {
+          return;
+        }
+
+        Array.prototype.slice.call(input.files).forEach(function(file) {
+          total += file.size || 0;
+          if (!firstFileInput) {
+            firstFileInput = input;
+          }
+        });
+      });
+
+      if (total <= maxSize) {
+        return true;
+      }
+
+      setError(form, 'O envio total precisa ter até ' + maxSizeLabel + '.');
+      if (firstFileInput) {
+        var section = firstFileInput.closest('.precadastro-section');
+        if (section) {
+          section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+
+      return false;
+    }
+
     function setupDocumentUploads() {
       Array.prototype.slice.call(form.querySelectorAll('.aluno-document-upload')).forEach(function(card) {
         var input = card.querySelector('input[type="file"]');
@@ -519,6 +557,11 @@
       if (!validateRequiredDocuments()) {
         event.preventDefault();
         updateCadastroCompletion();
+        return;
+      }
+
+      if (!validateUploadTotalSize()) {
+        event.preventDefault();
       }
     });
   });
