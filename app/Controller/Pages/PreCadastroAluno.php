@@ -102,6 +102,12 @@ class PreCadastroAluno extends Page{
         return $value === '' ? null : $value;
     }
 
+    private static function normalizeCep($value){
+        $digits = preg_replace('/\D+/', '', (string)$value);
+
+        return substr($digits, 0, 8);
+    }
+
     private static function getOptionalSelectOptions($callback, $selected){
         $selected = self::nullIfBlank($selected);
         $options = call_user_func($callback, $selected ?? -1);
@@ -831,7 +837,7 @@ class PreCadastroAluno extends Page{
         $auditBefore = AuditLogger::snapshot($obAluno, self::AUDIT_ALUNO_FIELDS);
 
         $obAluno->nome = Funcoes::convertePriMaiuscula($postVars['nome'] ?? $obAluno->nome);
-        $obAluno->cep = $postVars['cep'] ?? $obAluno->cep;
+        $obAluno->cep = self::normalizeCep($postVars['cep'] ?? $obAluno->cep);
         $obAluno->endereco = Funcoes::convertePriMaiuscula($postVars['endereco'] ?? $obAluno->endereco);
         $obAluno->numero = $postVars['numero'] ?? $obAluno->numero;
         $obAluno->bairro = $postVars['bairro'] ?? $obAluno->bairro;

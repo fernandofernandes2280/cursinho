@@ -121,6 +121,12 @@ class Aluno extends Page{
 		return $digits === '' || preg_match('/^0+$/', $digits) ? null : $digits;
 	}
 
+	private static function normalizeCep($value){
+		$digits = preg_replace('/\D+/', '', (string)$value);
+
+		return substr($digits, 0, 8);
+	}
+
 	private static function phoneInputValue($value){
 		$digits = preg_replace('/\D+/', '', (string)$value);
 
@@ -1017,7 +1023,7 @@ class Aluno extends Page{
 
 	    //Atualiza a instância
 	    $obAluno->nome = Funcoes::convertePriMaiuscula($postVars['nome']) ?? $obAluno->nome;
-	    $obAluno->cep = $postVars['cep'] ?? $obAluno->cep;
+	    $obAluno->cep = self::normalizeCep($postVars['cep'] ?? $obAluno->cep);
 	    $obAluno->endereco = Funcoes::convertePriMaiuscula($postVars['endereco']) ?? $obAluno->endereco;
 	    $obAluno->numero =  $postVars['numero'] ?? $obAluno->numero;
 	    $obAluno->bairro = self::nullIfBlank($postVars['bairro'] ?? null);
@@ -1181,7 +1187,7 @@ class Aluno extends Page{
 
 	    //recebe os dados
 	    $obAluno->nome = Funcoes::convertePriMaiuscula($postVars['nome']);
-	    $obAluno->cep = $postVars['cep'];
+	    $obAluno->cep = self::normalizeCep($postVars['cep'] ?? '');
 	    $obAluno->endereco = Funcoes::convertePriMaiuscula($postVars['endereco']);
 	    $obAluno->numero =  $postVars['numero'];
 	    $obAluno->bairro = self::nullIfBlank($postVars['bairro'] ?? null);

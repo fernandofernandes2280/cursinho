@@ -48,6 +48,12 @@ class Professor extends Page{
 		return $value === '' ? null : $value;
 	}
 
+	private static function normalizeCep($value){
+		$digits = preg_replace('/\D+/', '', (string)$value);
+
+		return substr($digits, 0, 8);
+	}
+
 	private static function getProfessorDocumentosDir($idProfessor){
 		return dirname(__DIR__).'/File/files/documentos-professores/'.(int)$idProfessor;
 	}
@@ -512,7 +518,7 @@ class Professor extends Page{
 	    //Nova instancia de Usuário
 	    $obProfessor = new EntityProfessor();
 	    $obProfessor->nome = Funcoes::convertePriMaiuscula($postVars['nome']);
-	    $obProfessor->cep = $postVars['cep'] ?? '';
+	    $obProfessor->cep = self::normalizeCep($postVars['cep'] ?? '');
 	    $obProfessor->endereco = $postVars['endereco'] ?? '';
 	    $obProfessor->bairro =  self::nullIfBlank($postVars['bairro'] ?? null);
 	    $obProfessor->cidade = Funcoes::convertePriMaiuscula($postVars['cidade']) ?? '';
@@ -632,7 +638,7 @@ class Professor extends Page{
 	    
 	    //Atualiza a instância
 	    $obProfessor->nome = Funcoes::convertePriMaiuscula($postVars['nome']) ?? $obProfessor->nome;
-	    $obProfessor->cep = $postVars['cep'] ?? $obProfessor->cep;
+	    $obProfessor->cep = self::normalizeCep($postVars['cep'] ?? $obProfessor->cep);
 	    $obProfessor->endereco = $postVars['endereco'] ?? $obProfessor->endereco;
 	    $obProfessor->bairro =  self::nullIfBlank($postVars['bairro'] ?? $obProfessor->bairro);
 	    $obProfessor->cidade = Funcoes::convertePriMaiuscula($postVars['cidade']) ?? $obProfessor->cidade;

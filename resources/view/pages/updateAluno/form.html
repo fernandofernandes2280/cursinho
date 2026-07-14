@@ -36,7 +36,7 @@
 		</div>
 		<div class="col-md-12  mb-2">
 			      <label for="cep">Cep</label>
-			      <input type="text" class="form-control-pessoal" id="cep" name="cep" value="{{cep}}" required>
+			      <input type="text" class="form-control-pessoal" id="cep" name="cep" value="{{cep}}" maxlength="9" inputmode="numeric" autocomplete="postal-code" required>
 		</div>
 		    <div class="col-md-12 mb-2">
 		      <label for="endereco">Endereço</label>
@@ -148,5 +148,4 @@ function readImage() {
 }
 document.getElementById("img-input").addEventListener("change", readImage, false);
 </script>
-
 

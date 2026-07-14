@@ -57,8 +57,15 @@ class Professor extends Generica {
 		return $value === '' ? null : $value;
 	}
 
+	private static function normalizeCep($value){
+		$digits = preg_replace('/\D+/', '', (string)$value);
+
+		return substr($digits, 0, 8);
+	}
+
 	private function normalizeNullableFields(){
 		$this->bairro = self::nullIfBlank($this->bairro);
+		$this->cep = self::normalizeCep($this->cep);
 	}
     
     
