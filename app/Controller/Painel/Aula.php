@@ -468,8 +468,8 @@ class Aula extends Page{
 	        'divergente' => 'bg-gradient-danger',
 	        'sem_captura' => 'recognition-status-neutral',
 	        'sem_foto_aluno' => 'recognition-status-neutral',
-	        'sem_rosto_captura' => 'recognition-status-neutral',
-	        'sem_rosto_aluno' => 'recognition-status-neutral',
+	        'sem_rosto_captura' => 'bg-gradient-danger',
+	        'sem_rosto_aluno' => 'bg-gradient-danger',
 	        'indisponivel' => 'recognition-status-neutral',
 	    ];
 

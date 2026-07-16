@@ -130,7 +130,7 @@ class Dashboard extends Page{
     private static function getDivergenciasReconhecimento($idAula){
         try{
             return self::getQuantidade(EntityFrequencia::getFrequencias(
-                'idAula = '.(int)$idAula.' AND comparacaoFacialResultado = "divergente"',
+                'idAula = '.(int)$idAula.' AND LOWER(TRIM(comparacaoFacialResultado)) IN ("divergente", "sem_rosto_captura", "sem_rosto_aluno", "sem rosto")',
                 null,
                 null,
                 'COUNT(*) as qtd'
@@ -145,7 +145,7 @@ class Dashboard extends Page{
 
         if($totalDivergencias > 0){
             $label = $totalDivergencias.' divergência'.($totalDivergencias > 1 ? 's' : '');
-            return '<span class="dashboard-recognition-status has-alert" rel="tooltip" title="Há reconhecimento facial divergente nesta aula">'.$label.'</span>';
+            return '<span class="dashboard-recognition-status has-alert" rel="tooltip" title="Há reconhecimento facial divergente ou sem rosto nesta aula">'.$label.'</span>';
         }
 
         return '<span class="dashboard-recognition-status">OK</span>';
