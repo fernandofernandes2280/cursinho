@@ -141,6 +141,16 @@
 	box-shadow: 0 24px 60px rgba(15, 23, 42, .12);
 }
 
+.carteira-capture-source {
+	position: absolute;
+	left: 0;
+	width: 1050px;
+	height: 480px;
+	overflow: visible;
+	pointer-events: none;
+	z-index: 0;
+}
+
 @media (max-width: 900px) {
 	.carteira-page {
 		padding: 18px;
@@ -188,8 +198,8 @@
 		ctx.closePath();
 	}
 
-	function roundPhotoOnCanvas(canvas) {
-		var target = document.getElementById('target');
+	function roundPhotoOnCanvas(canvas, target) {
+		target = target || document.getElementById('target');
 		var photo = target ? target.querySelector('.carteira-photo-frame img') : null;
 
 		if (!canvas || !target || !photo) {
@@ -231,27 +241,121 @@
 		return canvas;
 	}
 
-	function capture() {
-		$('#target').html2canvas({
-			allowTaint: true,
-			onrendered: function(canvas) {
-				roundPhotoOnCanvas(canvas);
-				$('#img_val').val(canvas.toDataURL("image/png"));
-				document.getElementById("opcao").value = "view";
-				document.getElementById("myForm").submit();
+	function waitForWalletImages(element) {
+		var images = Array.prototype.slice.call(element.querySelectorAll('img'));
+
+		return Promise.all(images.map(function(image) {
+			if (image.complete) {
+				return Promise.resolve();
 			}
+
+			return new Promise(function(resolve) {
+				image.onload = resolve;
+				image.onerror = resolve;
+			});
+		}));
+	}
+
+	function getDocumentWidth() {
+		return Math.max(
+			document.body.scrollWidth,
+			document.body.offsetWidth,
+			document.documentElement.clientWidth,
+			document.documentElement.scrollWidth,
+			document.documentElement.offsetWidth
+		);
+	}
+
+	function getDocumentHeight() {
+		return Math.max(
+			document.body.scrollHeight,
+			document.body.offsetHeight,
+			document.documentElement.clientHeight,
+			document.documentElement.scrollHeight,
+			document.documentElement.offsetHeight
+		);
+	}
+
+	function createWalletCaptureTarget() {
+		var target = document.getElementById('target');
+		var source = document.createElement('div');
+		var clone;
+		var sourceTop;
+
+		if (!target) {
+			return null;
+		}
+
+		clone = target.cloneNode(true);
+		clone.removeAttribute('id');
+		clone.setAttribute('data-wallet-capture-card', '1');
+
+		sourceTop = getDocumentHeight() + 24;
+		source.className = 'carteira-capture-source';
+		source.style.top = sourceTop + 'px';
+		source.appendChild(clone);
+		document.body.appendChild(source);
+
+		return {
+			element: clone,
+			source: source,
+			cleanup: function() {
+				if (source.parentNode) {
+					source.parentNode.removeChild(source);
+				}
+			}
+		};
+	}
+
+	function submitWalletCanvas(canvas, opcao) {
+		$('#img_val').val(canvas.toDataURL("image/png"));
+		document.getElementById("opcao").value = opcao;
+		document.getElementById("myForm").submit();
+	}
+
+	function captureWallet(opcao) {
+		var captureTarget;
+
+		if (!window.html2canvas) {
+			return;
+		}
+
+		captureTarget = createWalletCaptureTarget();
+
+		if (!captureTarget) {
+			return;
+		}
+
+		waitForWalletImages(captureTarget.element).then(function() {
+			var rect = captureTarget.element.getBoundingClientRect();
+			var width = Math.ceil(Math.max(getDocumentWidth(), rect.left + rect.width + 2));
+			var height = Math.ceil(Math.max(getDocumentHeight(), rect.top + rect.height + 2));
+
+			try {
+				window.html2canvas(captureTarget.element, {
+					allowTaint: true,
+					useCORS: true,
+					width: width,
+					height: height,
+					onrendered: function(canvas) {
+						roundPhotoOnCanvas(canvas, captureTarget.element);
+						captureTarget.cleanup();
+						submitWalletCanvas(canvas, opcao);
+					}
+				});
+			} catch (error) {
+				captureTarget.cleanup();
+			}
+		}).catch(function() {
+			captureTarget.cleanup();
 		});
 	}
 
+	function capture() {
+		captureWallet("view");
+	}
+
 	function captureDown() {
-		$('#target').html2canvas({
-			allowTaint: true,
-			onrendered: function(canvas) {
-				roundPhotoOnCanvas(canvas);
-				$('#img_val').val(canvas.toDataURL("image/png"));
-				document.getElementById("opcao").value = "down";
-				document.getElementById("myForm").submit();
-			}
-		});
+		captureWallet("down");
 	}
 </script>
