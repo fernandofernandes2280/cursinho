@@ -176,6 +176,101 @@ class Auditoria{
 		}
 	}
 
+	private static function decodeJson($json){
+		$data = json_decode((string)$json, true);
+
+		return is_array($data) ? $data : [];
+	}
+
+	private static function getStatusValue($data){
+		if(!is_array($data) || !array_key_exists('status', $data)){
+			return null;
+		}
+
+		return (string)$data['status'];
+	}
+
+	private static function loteContemAlunoInativado($dadosDepois, $idAluno){
+		$data = self::decodeJson($dadosDepois);
+		$alunos = $data['alunos'] ?? [];
+
+		if(!is_array($alunos)){
+			return false;
+		}
+
+		foreach($alunos as $aluno){
+			if(!is_array($aluno)){
+				continue;
+			}
+
+			if((int)($aluno['id'] ?? 0) === (int)$idAluno && (string)($aluno['status'] ?? '2') === '2'){
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static function contarInativacoesAluno($idAluno){
+		if(!self::ensureTable()){
+			return 0;
+		}
+
+		$idAluno = (int)$idAluno;
+
+		if($idAluno <= 0){
+			return 0;
+		}
+
+		try{
+			$statement = self::getConnection()->prepare(
+				'SELECT acao, entidade, entidade_id, dados_antes, dados_depois
+				   FROM '.self::TABLE."
+				  WHERE acao IN ('atualizar', 'inativar', 'inativar_automatico', 'inativar_lote')
+				    AND ((entidade = 'Aluno' AND entidade_id = :idAluno) OR acao = 'inativar_lote')"
+			);
+			$statement->execute([':idAluno' => (string)$idAluno]);
+
+			$total = 0;
+
+			foreach($statement->fetchAll(PDO::FETCH_ASSOC) as $row){
+				$acao = (string)($row['acao'] ?? '');
+				$entidadeId = (int)($row['entidade_id'] ?? 0);
+
+				if($acao === 'inativar_lote'){
+					if(self::loteContemAlunoInativado($row['dados_depois'] ?? '', $idAluno)){
+						$total++;
+					}
+					continue;
+				}
+
+				if($entidadeId !== $idAluno){
+					continue;
+				}
+
+				if(in_array($acao, ['inativar', 'inativar_automatico'], true)){
+					$total++;
+					continue;
+				}
+
+				if($acao === 'atualizar'){
+					$antes = self::decodeJson($row['dados_antes'] ?? '');
+					$depois = self::decodeJson($row['dados_depois'] ?? '');
+					$statusAntes = self::getStatusValue($antes);
+					$statusDepois = self::getStatusValue($depois);
+
+					if($statusDepois === '2' && $statusAntes !== '2'){
+						$total++;
+					}
+				}
+			}
+
+			return $total;
+		}catch(PDOException $e){
+			return 0;
+		}
+	}
+
 	public static function getValoresDistintos($column){
 		$allowed = ['modulo', 'acao'];
 		if(!in_array($column, $allowed, true) || !self::ensureTable()){

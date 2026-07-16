@@ -10,6 +10,7 @@ use \App\Model\Entity\EstadoCivil as EntityEstadoCivil;
 use \App\Model\Entity\Turma as EntityTurma;
 use \App\Model\Entity\Status as EntityStatus;
 use \App\Model\Entity\Configuracao as EntityConfiguracao;
+use \App\Model\Entity\Auditoria as EntityAuditoria;
 use \App\Utils\Funcoes;
 use \App\Controller\File\Upload as Upload;
 use App\Service\AuditLogger;
@@ -169,6 +170,14 @@ class Aluno extends Page{
 		return dirname(__DIR__).'/File/files/documentos-alunos/'.(int)$idAluno;
 	}
 
+	private static function getAlunoFotosDir(){
+		return dirname(__DIR__).'/File/files/fotos';
+	}
+
+	private static function getAlunoFotosAuditoriaDir(){
+		return dirname(__DIR__).'/File/files/frequencias-auditoria';
+	}
+
 	private static function getAlunoDocumentoUrl($idAluno, $fileName){
 		return URL.'/app/Controller/File/files/documentos-alunos/'.(int)$idAluno.'/'.$fileName;
 	}
@@ -204,6 +213,98 @@ class Aluno extends Page{
 
 	private static function getAlunoDocumentoFileNames($documento){
 		return array_merge([$documento['fileName']], (array)($documento['fallbackFileNames'] ?? []));
+	}
+
+	private static function removerArquivoUploadAluno($path, &$errors){
+		if($path === '' || !file_exists($path)){
+			return;
+		}
+
+		if(is_dir($path)){
+			self::removerDiretorioUploadAluno($path, $errors);
+			return;
+		}
+
+		if(is_file($path) && !@unlink($path)){
+			$errors[] = $path;
+		}
+	}
+
+	private static function removerDiretorioUploadAluno($dir, &$errors){
+		if(!is_dir($dir)){
+			return;
+		}
+
+		$items = scandir($dir);
+		if($items === false){
+			$errors[] = $dir;
+			return;
+		}
+
+		foreach($items as $item){
+			if($item === '.' || $item === '..'){
+				continue;
+			}
+
+			self::removerArquivoUploadAluno($dir.'/'.$item, $errors);
+		}
+
+		if(is_dir($dir) && !@rmdir($dir)){
+			$errors[] = $dir;
+		}
+	}
+
+	private static function getUploadBasename($fileName){
+		$path = parse_url((string)$fileName, PHP_URL_PATH);
+		$baseName = basename($path ?: (string)$fileName);
+
+		return $baseName === '.' ? '' : $baseName;
+	}
+
+	private static function getGlobSafePrefix($value){
+		$value = preg_replace('/[^0-9A-Za-z\-]/', '', (string)$value);
+
+		return strlen($value) >= 4 ? $value : '';
+	}
+
+	private static function limparUploadsAluno($obAluno){
+		$errors = [];
+		$idAluno = (int)$obAluno->id;
+		$fotosDir = self::getAlunoFotosDir();
+		$foto = self::getUploadBasename($obAluno->foto ?? '');
+
+		self::removerDiretorioUploadAluno(self::getAlunoDocumentosDir($idAluno), $errors);
+
+		if($foto !== '' && strtolower($foto) !== strtolower(EntityAluno::FOTO_PADRAO)){
+			self::removerArquivoUploadAluno($fotosDir.'/'.$foto, $errors);
+		}
+
+		$matriculaPrefix = self::getGlobSafePrefix($obAluno->matricula ?? '');
+		if($matriculaPrefix !== ''){
+			foreach((array)glob($fotosDir.'/'.$matriculaPrefix.'*') as $path){
+				self::removerArquivoUploadAluno($path, $errors);
+			}
+		}
+
+		foreach([$obAluno->matricula ?? '', $obAluno->cpf ?? '', $idAluno] as $base){
+			$base = self::getGlobSafePrefix($base);
+			if($base === ''){
+				continue;
+			}
+
+			foreach((array)glob($fotosDir.'/selfie_'.$base.'.*') as $path){
+				self::removerArquivoUploadAluno($path, $errors);
+			}
+		}
+
+		foreach((array)glob(self::getAlunoFotosAuditoriaDir().'/aula*_aluno'.$idAluno.'_*') as $path){
+			self::removerArquivoUploadAluno($path, $errors);
+		}
+
+		return [
+			'ok' => count($errors) === 0,
+			'errors' => $errors,
+		];
 	}
 
 	private static function limparDocumentosSubstituidos($dir, $documento, &$meta){
@@ -525,6 +626,7 @@ class Aluno extends Page{
 			'presencas' => $presencas,
 			'faltas' => $faltas,
 			'percentual' => number_format($percentual, 1, ',', '.').'%',
+			'inativacoes' => EntityAuditoria::contarInativacoesAluno($idAluno),
 		];
 	}
 
@@ -553,6 +655,7 @@ class Aluno extends Page{
 			'totalPresencas' => $resumo['presencas'],
 			'totalFaltas' => $resumo['faltas'],
 			'percentualPresenca' => $resumo['percentual'],
+			'totalInativacoes' => $resumo['inativacoes'],
 			'itens' => self::getAlunoFrequenciasItems($obAluno->id),
 		]);
 	}
@@ -1272,6 +1375,16 @@ class Aluno extends Page{
 	    }
 
 	    $auditBefore = AuditLogger::snapshot($obAluno, self::AUDIT_ALUNO_FIELDS);
+	    $uploadsCleanup = self::limparUploadsAluno($obAluno);
+
+	    if(!$uploadsCleanup['ok']){
+	        $message = 'Não foi possível excluir todos os uploads do aluno. Verifique as permissões dos arquivos e tente novamente.';
+	        if($isAjax){
+	            return Funcoes::getDeleteJsonResponse(false, $message);
+	        }
+
+	        $request->getRouter()->redirect('/alunos?statusMessage=deleteBlocked');
+	    }
 
 	    //Exclui o depoimento
 	    $obAluno->excluir();

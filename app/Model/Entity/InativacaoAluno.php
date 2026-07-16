@@ -3,6 +3,7 @@
 namespace App\Model\Entity;
 
 use \WilliamCosta\DatabaseManager\Database;
+use App\Service\AuditLogger;
 
 class InativacaoAluno {
 
@@ -86,6 +87,27 @@ class InativacaoAluno {
 			$databaseAlunos->update('id = '.(int)$idAluno.' AND status = 1', [
 				'status' => 2
 			]);
+			AuditLogger::record(
+				null,
+				'inativar_automatico',
+				'inativar',
+				'Aluno',
+				$idAluno,
+				'Aluno inativado automaticamente por faltas.',
+				[
+					'id' => (int)$idAluno,
+					'status' => 1,
+				],
+				[
+					'id' => (int)$idAluno,
+					'status' => 2,
+					'inicio' => $inicioMes,
+					'fim' => $dataFinal,
+					'faltasIntercaladas' => $faltasIntercaladas,
+					'faltasSeguidas' => $faltasSeguidas,
+					'totalFaltas' => $resumo['totalFaltas'],
+				]
+			);
 			$totalInativados++;
 		}
 
