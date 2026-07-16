@@ -630,19 +630,21 @@ class Aluno extends Page{
 		];
 	}
 
-	private static function getAlunoDeleteBlockMessage($idAluno){
-		$totalFrequencias = (int)((new Database('frequencia'))->select(
-			'idAluno = '.(int)$idAluno,
-			null,
-			null,
-			'COUNT(*) AS total'
-		)->fetchObject()->total ?? 0);
+	private static function excluirVinculosAluno(Database $database, $idAluno){
+		$idAluno = (int)$idAluno;
 
-		if($totalFrequencias <= 0){
-			return '';
+		if($idAluno <= 0){
+			return [
+				'frequencias' => 0,
+			];
 		}
 
-		return 'Não foi possível excluir este aluno porque existem '.$totalFrequencias.' registros de frequência vinculados. Para preservar o histórico, inative o aluno ou remova as frequências antes de excluir.';
+		return [
+			'frequencias' => (int)$database->execute(
+				'DELETE FROM frequencia WHERE idAluno = ?',
+				[$idAluno]
+			)->rowCount(),
+		];
 	}
 
 	private static function getAlunoFrequenciasTable($obAluno){
@@ -1365,15 +1367,6 @@ class Aluno extends Page{
 	        $request->getRouter()->redirect('/alunos');
 	    }
 
-	    $deleteBlockMessage = self::getAlunoDeleteBlockMessage($obAluno->id);
-	    if($deleteBlockMessage !== ''){
-	        if($isAjax){
-	            return Funcoes::getDeleteJsonResponse(false, $deleteBlockMessage);
-	        }
-
-	        $request->getRouter()->redirect('/alunos?statusMessage=deleteBlocked');
-	    }
-
 	    $auditBefore = AuditLogger::snapshot($obAluno, self::AUDIT_ALUNO_FIELDS);
 	    $uploadsCleanup = self::limparUploadsAluno($obAluno);
 
@@ -1386,8 +1379,33 @@ class Aluno extends Page{
 	        $request->getRouter()->redirect('/alunos?statusMessage=deleteBlocked');
 	    }
 
-	    //Exclui o depoimento
-	    $obAluno->excluir();
+	    $database = new Database('alunos');
+	    $database->beginTransaction();
+	    $vinculosExcluidos = [
+	        'frequencias' => 0,
+	    ];
+
+	    try{
+	        $vinculosExcluidos = self::excluirVinculosAluno($database, $obAluno->id);
+	        $database->execute('DELETE FROM alunos WHERE id = ?', [(int)$obAluno->id]);
+	        $database->commit();
+	    }catch(\Throwable $e){
+	        $database->rollBack();
+	        $message = 'Não foi possível excluir o aluno e seus vínculos. Tente novamente.';
+
+	        if($isAjax){
+	            return Funcoes::getDeleteJsonResponse(false, $message);
+	        }
+
+	        $request->getRouter()->redirect('/alunos?statusMessage=deleteBlocked');
+	    }
+
+	    $totalFrequenciasExcluidas = (int)($vinculosExcluidos['frequencias'] ?? 0);
+	    $descricaoAuditoria = 'Aluno excluído: '.$obAluno->nome;
+
+	    if($totalFrequenciasExcluidas > 0){
+	        $descricaoAuditoria .= '. Frequências vinculadas removidas: '.$totalFrequenciasExcluidas;
+	    }
 
 	    AuditLogger::record(
 	        $request,
@@ -1395,15 +1413,23 @@ class Aluno extends Page{
 	        'alunos',
 	        'Aluno',
 	        $id,
-	        'Aluno excluído: '.$obAluno->nome,
+	        $descricaoAuditoria,
 	        $auditBefore,
-	        null
+	        [
+	            'excluido' => true,
+	            'vinculosExcluidos' => $vinculosExcluidos,
+	        ]
 	    );
 
 	    if($isAjax){
 	        Funcoes::flashStatus('deleted');
+	        $message = 'Aluno excluído com sucesso.';
 
-	        return Funcoes::getDeleteJsonResponse(true, 'Aluno excluído com sucesso.', [
+	        if($totalFrequenciasExcluidas > 0){
+	            $message .= ' '.$totalFrequenciasExcluidas.' vínculo'.($totalFrequenciasExcluidas > 1 ? 's' : '').' de frequência removido'.($totalFrequenciasExcluidas > 1 ? 's' : '').'.';
+	        }
+
+	        return Funcoes::getDeleteJsonResponse(true, $message, [
 	            'id' => (int)$obAluno->id,
 	            'redirectUrl' => URL.'/alunos',
 	        ]);
